@@ -22497,12 +22497,6 @@ $(BUILD_ROOT)/tools/triecompiler/triecompiler.mf\
 
 $(BUILD_ROOT)/tools/triecompiler/triecompiler\
         ::\
-        $(BUILD_ROOT)/contrib/libs/base64/avx2/liblibs-base64-avx2.a\
-        $(BUILD_ROOT)/contrib/libs/base64/neon32/liblibs-base64-neon32.a\
-        $(BUILD_ROOT)/contrib/libs/base64/neon64/liblibs-base64-neon64.a\
-        $(BUILD_ROOT)/contrib/libs/base64/plain32/liblibs-base64-plain32.a\
-        $(BUILD_ROOT)/contrib/libs/base64/plain64/liblibs-base64-plain64.a\
-        $(BUILD_ROOT)/contrib/libs/base64/ssse3/liblibs-base64-ssse3.a\
         $(BUILD_ROOT)/contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a\
         $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a\
         $(BUILD_ROOT)/contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a\
@@ -22510,19 +22504,15 @@ $(BUILD_ROOT)/tools/triecompiler/triecompiler\
         $(BUILD_ROOT)/contrib/libs/double-conversion/libcontrib-libs-double-conversion.a\
         $(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a\
         $(BUILD_ROOT)/contrib/libs/zlib/libcontrib-libs-zlib.a\
-        $(BUILD_ROOT)/library/cpp/build_info/liblibrary-cpp-build_info.a\
         $(BUILD_ROOT)/library/cpp/colorizer/liblibrary-cpp-colorizer.a\
         $(BUILD_ROOT)/library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a\
         $(BUILD_ROOT)/library/cpp/containers/comptrie/libcpp-containers-comptrie.a\
         $(BUILD_ROOT)/library/cpp/cpuid_check/cpu_id_check.cpp.pic.o\
         $(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a\
-        $(BUILD_ROOT)/library/cpp/getopt/print.cpp.pic.o\
         $(BUILD_ROOT)/library/cpp/getopt/small/libcpp-getopt-small.a\
         $(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a\
         $(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a\
         $(BUILD_ROOT)/library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a\
-        $(BUILD_ROOT)/library/cpp/string_utils/base64/libcpp-string_utils-base64.a\
-        $(BUILD_ROOT)/library/cpp/svnversion/liblibrary-cpp-svnversion.a\
         $(BUILD_ROOT)/library/overloaded/liblibrary-overloaded.a\
         $(BUILD_ROOT)/library/packers/liblibrary-packers.a\
         $(BUILD_ROOT)/tools/triecompiler/lib/libtools-triecompiler-lib.a\
@@ -22536,10 +22526,367 @@ $(BUILD_ROOT)/tools/triecompiler/triecompiler\
         $(SOURCE_ROOT)/build/scripts/link_exe.py\
 
 	mkdir -p '$(BUILD_ROOT)/tools/triecompiler'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name triecompiler -o tools/triecompiler/triecompiler.mf -t PROGRAM -Ya,lics -Ya,peers contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a util/charset/libutil-charset.a contrib/libs/zlib/libcontrib-libs-zlib.a contrib/libs/double-conversion/libcontrib-libs-double-conversion.a util/libyutil.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a library/cpp/colorizer/liblibrary-cpp-colorizer.a library/overloaded/liblibrary-overloaded.a library/cpp/getopt/small/libcpp-getopt-small.a library/cpp/svnversion/liblibrary-cpp-svnversion.a contrib/libs/base64/avx2/liblibs-base64-avx2.a contrib/libs/base64/ssse3/liblibs-base64-ssse3.a contrib/libs/base64/neon32/liblibs-base64-neon32.a contrib/libs/base64/neon64/liblibs-base64-neon64.a contrib/libs/base64/plain32/liblibs-base64-plain32.a contrib/libs/base64/plain64/liblibs-base64-plain64.a library/cpp/string_utils/base64/libcpp-string_utils-base64.a library/cpp/build_info/liblibrary-cpp-build_info.a library/packers/liblibrary-packers.a library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a util/draft/libutil-draft.a library/cpp/containers/comptrie/libcpp-containers-comptrie.a library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a tools/triecompiler/lib/libtools-triecompiler-lib.a
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name triecompiler -o tools/triecompiler/triecompiler.mf -t PROGRAM -Ya,lics -Ya,peers contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a util/charset/libutil-charset.a contrib/libs/zlib/libcontrib-libs-zlib.a contrib/libs/double-conversion/libcontrib-libs-double-conversion.a util/libyutil.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a library/packers/liblibrary-packers.a library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a util/draft/libutil-draft.a library/cpp/containers/comptrie/libcpp-containers-comptrie.a library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a library/cpp/colorizer/liblibrary-cpp-colorizer.a library/overloaded/liblibrary-overloaded.a library/cpp/getopt/small/libcpp-getopt-small.a tools/triecompiler/lib/libtools-triecompiler-lib.a
 	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/vcs_info.py' '$(VCS)/vcs.json' '$(BUILD_ROOT)/tools/triecompiler/__vcs_version__.c' '$(SOURCE_ROOT)/build/scripts/c_templates/svn_interface.c'
 	${CC} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/tools/triecompiler/__vcs_version__.c.pic.o' '$(BUILD_ROOT)/tools/triecompiler/__vcs_version__.c' '-I$(SOURCE_ROOT)' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC
-	cd $(BUILD_ROOT) && '$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_exe.py' ${CXX} library/cpp/cpuid_check/cpu_id_check.cpp.pic.o library/cpp/getopt/print.cpp.pic.o '$(BUILD_ROOT)/tools/triecompiler/__vcs_version__.c.pic.o' '$(BUILD_ROOT)/tools/triecompiler/main.cpp.pic.o' -o '$(BUILD_ROOT)/tools/triecompiler/triecompiler' -rdynamic --target=x86_64-linux-gnu -Wl,--start-group contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a util/charset/libutil-charset.a contrib/libs/zlib/libcontrib-libs-zlib.a contrib/libs/double-conversion/libcontrib-libs-double-conversion.a util/libyutil.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a library/cpp/colorizer/liblibrary-cpp-colorizer.a library/overloaded/liblibrary-overloaded.a library/cpp/getopt/small/libcpp-getopt-small.a library/cpp/svnversion/liblibrary-cpp-svnversion.a contrib/libs/base64/avx2/liblibs-base64-avx2.a contrib/libs/base64/ssse3/liblibs-base64-ssse3.a contrib/libs/base64/neon32/liblibs-base64-neon32.a contrib/libs/base64/neon64/liblibs-base64-neon64.a contrib/libs/base64/plain32/liblibs-base64-plain32.a contrib/libs/base64/plain64/liblibs-base64-plain64.a library/cpp/string_utils/base64/libcpp-string_utils-base64.a library/cpp/build_info/liblibrary-cpp-build_info.a library/packers/liblibrary-packers.a library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a util/draft/libutil-draft.a library/cpp/containers/comptrie/libcpp-containers-comptrie.a library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a tools/triecompiler/lib/libtools-triecompiler-lib.a -Wl,--end-group -ldl -lrt -Wl,--no-as-needed -fPIC -fPIC -lpthread -lrt -ldl -nodefaultlibs -lpthread -lc -lm
+	cd $(BUILD_ROOT) && '$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_exe.py' ${CXX} library/cpp/cpuid_check/cpu_id_check.cpp.pic.o '$(BUILD_ROOT)/tools/triecompiler/__vcs_version__.c.pic.o' '$(BUILD_ROOT)/tools/triecompiler/main.cpp.pic.o' -o '$(BUILD_ROOT)/tools/triecompiler/triecompiler' -rdynamic --target=x86_64-linux-gnu -Wl,--start-group contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a util/charset/libutil-charset.a contrib/libs/zlib/libcontrib-libs-zlib.a contrib/libs/double-conversion/libcontrib-libs-double-conversion.a util/libyutil.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a library/packers/liblibrary-packers.a library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a util/draft/libutil-draft.a library/cpp/containers/comptrie/libcpp-containers-comptrie.a library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a library/cpp/colorizer/liblibrary-cpp-colorizer.a library/overloaded/liblibrary-overloaded.a library/cpp/getopt/small/libcpp-getopt-small.a tools/triecompiler/lib/libtools-triecompiler-lib.a -Wl,--end-group -ldl -lrt -Wl,--no-as-needed -fPIC -fPIC -lpthread -lrt -ldl -nodefaultlibs -lpthread -lc -lm
+
+$(BUILD_ROOT)/library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a.mf\
+        ::\
+        $(BUILD_ROOT)/library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a\
+
+$(BUILD_ROOT)/library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a\
+        ::\
+        $(BUILD_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp.pic.o\
+        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
+        $(SOURCE_ROOT)/build/scripts/link_lib.py\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/compact_vector'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name cpp-containers-compact_vector -o library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a.mf -t LIBRARY -Ya,lics -Ya,peers
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a' '$(BUILD_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp.pic.o'
+
+$(BUILD_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/compact_vector'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/containers/comptrie/libcpp-containers-comptrie.a.mf\
+        ::\
+        $(BUILD_ROOT)/library/cpp/containers/comptrie/libcpp-containers-comptrie.a\
+
+$(BUILD_ROOT)/library/cpp/containers/comptrie/libcpp-containers-comptrie.a\
+        ::\
+        $(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie.cpp.pic.o\
+        $(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_builder.cpp.pic.o\
+        $(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_impl.cpp.pic.o\
+        $(BUILD_ROOT)/library/cpp/containers/comptrie/make_fast_layout.cpp.pic.o\
+        $(BUILD_ROOT)/library/cpp/containers/comptrie/minimize.cpp.pic.o\
+        $(BUILD_ROOT)/library/cpp/containers/comptrie/node.cpp.pic.o\
+        $(BUILD_ROOT)/library/cpp/containers/comptrie/opaque_trie_iterator.cpp.pic.o\
+        $(BUILD_ROOT)/library/cpp/containers/comptrie/prefix_iterator.cpp.pic.o\
+        $(BUILD_ROOT)/library/cpp/containers/comptrie/search_iterator.cpp.pic.o\
+        $(BUILD_ROOT)/library/cpp/containers/comptrie/write_trie_backwards.cpp.pic.o\
+        $(BUILD_ROOT)/library/cpp/containers/comptrie/writeable_node.cpp.pic.o\
+        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
+        $(SOURCE_ROOT)/build/scripts/link_lib.py\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name cpp-containers-comptrie -o library/cpp/containers/comptrie/libcpp-containers-comptrie.a.mf -t LIBRARY -Ya,lics -Ya,peers
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/containers/comptrie/libcpp-containers-comptrie.a' '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_builder.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_impl.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/make_fast_layout.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/minimize.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/node.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/opaque_trie_iterator.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/prefix_iterator.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/search_iterator.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/write_trie_backwards.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/writeable_node.cpp.pic.o'
+
+$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/containers/comptrie/comptrie.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/comptrie.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_builder.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/containers/comptrie/comptrie_builder.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_builder.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/comptrie_builder.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_impl.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/containers/comptrie/comptrie_impl.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_impl.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/comptrie_impl.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/containers/comptrie/make_fast_layout.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/containers/comptrie/make_fast_layout.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/make_fast_layout.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/make_fast_layout.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/containers/comptrie/minimize.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/containers/comptrie/minimize.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/minimize.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/minimize.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/containers/comptrie/node.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/containers/comptrie/node.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/node.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/node.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/containers/comptrie/opaque_trie_iterator.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/containers/comptrie/opaque_trie_iterator.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/opaque_trie_iterator.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/opaque_trie_iterator.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/containers/comptrie/prefix_iterator.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/containers/comptrie/prefix_iterator.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/prefix_iterator.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/prefix_iterator.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/containers/comptrie/search_iterator.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/containers/comptrie/search_iterator.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/search_iterator.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/search_iterator.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/containers/comptrie/write_trie_backwards.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/containers/comptrie/write_trie_backwards.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/write_trie_backwards.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/write_trie_backwards.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/containers/comptrie/writeable_node.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/containers/comptrie/writeable_node.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/writeable_node.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/writeable_node.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a.mf\
+        ::\
+        $(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a\
+
+$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a\
+        ::\
+        $(BUILD_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp.pic.o\
+        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
+        $(SOURCE_ROOT)/build/scripts/link_lib.py\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name cpp-deprecated-mapped_file -o library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a.mf -t LIBRARY -Ya,lics -Ya,peers
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a' '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp.pic.o'
+
+$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a.mf\
+        ::\
+        $(BUILD_ROOT)/library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a\
+
+$(BUILD_ROOT)/library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a\
+        ::\
+        $(BUILD_ROOT)/library/cpp/on_disk/chunks/chunked_helpers.cpp.pic.o\
+        $(BUILD_ROOT)/library/cpp/on_disk/chunks/reader.cpp.pic.o\
+        $(BUILD_ROOT)/library/cpp/on_disk/chunks/writer.cpp.pic.o\
+        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
+        $(SOURCE_ROOT)/build/scripts/link_lib.py\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/on_disk/chunks'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name cpp-on_disk-chunks -o library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a.mf -t LIBRARY -Ya,lics -Ya,peers
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a' '$(BUILD_ROOT)/library/cpp/on_disk/chunks/chunked_helpers.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/on_disk/chunks/reader.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/on_disk/chunks/writer.cpp.pic.o'
+
+$(BUILD_ROOT)/library/cpp/on_disk/chunks/chunked_helpers.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/on_disk/chunks/chunked_helpers.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/on_disk/chunks'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/on_disk/chunks/chunked_helpers.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/on_disk/chunks/chunked_helpers.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/on_disk/chunks/reader.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/on_disk/chunks/reader.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/on_disk/chunks'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/on_disk/chunks/reader.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/on_disk/chunks/reader.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/on_disk/chunks/writer.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/on_disk/chunks/writer.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/on_disk/chunks'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/on_disk/chunks/writer.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/on_disk/chunks/writer.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/packers/liblibrary-packers.a.mf\
+        ::\
+        $(BUILD_ROOT)/library/packers/liblibrary-packers.a\
+
+$(BUILD_ROOT)/library/packers/liblibrary-packers.a\
+        ::\
+        $(BUILD_ROOT)/library/packers/packers.cpp.pic.o\
+        $(BUILD_ROOT)/library/packers/proto_packer.cpp.pic.o\
+        $(BUILD_ROOT)/library/packers/region_packer.cpp.pic.o\
+        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
+        $(SOURCE_ROOT)/build/scripts/link_lib.py\
+
+	mkdir -p '$(BUILD_ROOT)/library/packers'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name library-packers -o library/packers/liblibrary-packers.a.mf -t LIBRARY -Ya,lics -Ya,peers
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/packers/liblibrary-packers.a' '$(BUILD_ROOT)/library/packers/packers.cpp.pic.o' '$(BUILD_ROOT)/library/packers/proto_packer.cpp.pic.o' '$(BUILD_ROOT)/library/packers/region_packer.cpp.pic.o'
+
+$(BUILD_ROOT)/library/packers/packers.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/packers/packers.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/packers'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/packers/packers.cpp.pic.o' '$(SOURCE_ROOT)/library/packers/packers.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/packers/proto_packer.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/packers/proto_packer.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/packers'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/packers/proto_packer.cpp.pic.o' '$(SOURCE_ROOT)/library/packers/proto_packer.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/packers/region_packer.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/packers/region_packer.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/packers'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/packers/region_packer.cpp.pic.o' '$(SOURCE_ROOT)/library/packers/region_packer.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/tools/triecompiler/lib/libtools-triecompiler-lib.a.mf\
+        ::\
+        $(BUILD_ROOT)/tools/triecompiler/lib/libtools-triecompiler-lib.a\
+
+$(BUILD_ROOT)/tools/triecompiler/lib/libtools-triecompiler-lib.a\
+        ::\
+        $(BUILD_ROOT)/tools/triecompiler/lib/main.cpp.pic.o\
+        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
+        $(SOURCE_ROOT)/build/scripts/link_lib.py\
+
+	mkdir -p '$(BUILD_ROOT)/tools/triecompiler/lib'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name tools-triecompiler-lib -o tools/triecompiler/lib/libtools-triecompiler-lib.a.mf -t LIBRARY -Ya,lics -Ya,peers
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/tools/triecompiler/lib/libtools-triecompiler-lib.a' '$(BUILD_ROOT)/tools/triecompiler/lib/main.cpp.pic.o'
+
+$(BUILD_ROOT)/tools/triecompiler/lib/main.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/tools/triecompiler/lib/main.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/tools/triecompiler/lib'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/tools/triecompiler/lib/main.cpp.pic.o' '$(SOURCE_ROOT)/tools/triecompiler/lib/main.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/tools/triecompiler/main.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/tools/triecompiler/main.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/tools/triecompiler'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/tools/triecompiler/main.cpp.pic.o' '$(SOURCE_ROOT)/tools/triecompiler/main.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/util/draft/libutil-draft.a.mf\
+        ::\
+        $(BUILD_ROOT)/util/draft/libutil-draft.a\
+
+$(BUILD_ROOT)/util/draft/libutil-draft.a\
+        ::\
+        $(BUILD_ROOT)/util/draft/date.cpp.pic.o\
+        $(BUILD_ROOT)/util/draft/datetime.cpp.pic.o\
+        $(BUILD_ROOT)/util/draft/enum.cpp.pic.o\
+        $(BUILD_ROOT)/util/draft/holder_vector.cpp.pic.o\
+        $(BUILD_ROOT)/util/draft/ip.cpp.pic.o\
+        $(BUILD_ROOT)/util/draft/matrix.cpp.pic.o\
+        $(BUILD_ROOT)/util/draft/memory.cpp.pic.o\
+        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
+        $(SOURCE_ROOT)/build/scripts/link_lib.py\
+
+	mkdir -p '$(BUILD_ROOT)/util/draft'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name util-draft -o util/draft/libutil-draft.a.mf -t LIBRARY -Ya,lics -Ya,peers
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/util/draft/libutil-draft.a' '$(BUILD_ROOT)/util/draft/date.cpp.pic.o' '$(BUILD_ROOT)/util/draft/datetime.cpp.pic.o' '$(BUILD_ROOT)/util/draft/enum.cpp.pic.o' '$(BUILD_ROOT)/util/draft/holder_vector.cpp.pic.o' '$(BUILD_ROOT)/util/draft/ip.cpp.pic.o' '$(BUILD_ROOT)/util/draft/matrix.cpp.pic.o' '$(BUILD_ROOT)/util/draft/memory.cpp.pic.o'
+
+$(BUILD_ROOT)/util/draft/date.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/util/draft/date.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/util/draft'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/util/draft/date.cpp.pic.o' '$(SOURCE_ROOT)/util/draft/date.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/util/draft/datetime.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/util/draft/datetime.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/util/draft'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/util/draft/datetime.cpp.pic.o' '$(SOURCE_ROOT)/util/draft/datetime.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/util/draft/enum.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/util/draft/enum.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/util/draft'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/util/draft/enum.cpp.pic.o' '$(SOURCE_ROOT)/util/draft/enum.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/util/draft/holder_vector.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/util/draft/holder_vector.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/util/draft'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/util/draft/holder_vector.cpp.pic.o' '$(SOURCE_ROOT)/util/draft/holder_vector.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/util/draft/ip.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/util/draft/ip.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/util/draft'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/util/draft/ip.cpp.pic.o' '$(SOURCE_ROOT)/util/draft/ip.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/util/draft/matrix.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/util/draft/matrix.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/util/draft'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/util/draft/matrix.cpp.pic.o' '$(SOURCE_ROOT)/util/draft/matrix.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/util/draft/memory.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/util/draft/memory.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/util/draft'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/util/draft/memory.cpp.pic.o' '$(SOURCE_ROOT)/util/draft/memory.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/tools/archiver/archiver.mf\
+        ::\
+        $(BUILD_ROOT)/tools/archiver/archiver\
+
+$(BUILD_ROOT)/tools/archiver/archiver\
+        ::\
+        $(BUILD_ROOT)/contrib/libs/base64/avx2/liblibs-base64-avx2.a\
+        $(BUILD_ROOT)/contrib/libs/base64/neon32/liblibs-base64-neon32.a\
+        $(BUILD_ROOT)/contrib/libs/base64/neon64/liblibs-base64-neon64.a\
+        $(BUILD_ROOT)/contrib/libs/base64/plain32/liblibs-base64-plain32.a\
+        $(BUILD_ROOT)/contrib/libs/base64/plain64/liblibs-base64-plain64.a\
+        $(BUILD_ROOT)/contrib/libs/base64/ssse3/liblibs-base64-ssse3.a\
+        $(BUILD_ROOT)/contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a\
+        $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a\
+        $(BUILD_ROOT)/contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a\
+        $(BUILD_ROOT)/contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a\
+        $(BUILD_ROOT)/contrib/libs/double-conversion/libcontrib-libs-double-conversion.a\
+        $(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a\
+        $(BUILD_ROOT)/contrib/libs/nayuki_md5/libcontrib-libs-nayuki_md5.a\
+        $(BUILD_ROOT)/contrib/libs/zlib/libcontrib-libs-zlib.a\
+        $(BUILD_ROOT)/library/cpp/archive/liblibrary-cpp-archive.a\
+        $(BUILD_ROOT)/library/cpp/colorizer/liblibrary-cpp-colorizer.a\
+        $(BUILD_ROOT)/library/cpp/cpuid_check/cpu_id_check.cpp.pic.o\
+        $(BUILD_ROOT)/library/cpp/digest/md5/libcpp-digest-md5.a\
+        $(BUILD_ROOT)/library/cpp/getopt/small/libcpp-getopt-small.a\
+        $(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a\
+        $(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a\
+        $(BUILD_ROOT)/library/cpp/string_utils/base64/libcpp-string_utils-base64.a\
+        $(BUILD_ROOT)/library/overloaded/liblibrary-overloaded.a\
+        $(BUILD_ROOT)/tools/archiver/main.cpp.pic.o\
+        $(BUILD_ROOT)/util/charset/libutil-charset.a\
+        $(BUILD_ROOT)/util/libyutil.a\
+        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
+        $(SOURCE_ROOT)/build/scripts/vcs_info.py\
+        $(SOURCE_ROOT)/build/scripts/c_templates/svn_interface.c\
+        $(SOURCE_ROOT)/build/scripts/link_exe.py\
+
+	mkdir -p '$(BUILD_ROOT)/tools/archiver'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name archiver -o tools/archiver/archiver.mf -t PROGRAM -Ya,lics -Ya,peers contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a util/charset/libutil-charset.a contrib/libs/zlib/libcontrib-libs-zlib.a contrib/libs/double-conversion/libcontrib-libs-double-conversion.a util/libyutil.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a library/cpp/archive/liblibrary-cpp-archive.a contrib/libs/nayuki_md5/libcontrib-libs-nayuki_md5.a contrib/libs/base64/avx2/liblibs-base64-avx2.a contrib/libs/base64/ssse3/liblibs-base64-ssse3.a contrib/libs/base64/neon32/liblibs-base64-neon32.a contrib/libs/base64/neon64/liblibs-base64-neon64.a contrib/libs/base64/plain32/liblibs-base64-plain32.a contrib/libs/base64/plain64/liblibs-base64-plain64.a library/cpp/string_utils/base64/libcpp-string_utils-base64.a library/cpp/digest/md5/libcpp-digest-md5.a library/cpp/colorizer/liblibrary-cpp-colorizer.a library/overloaded/liblibrary-overloaded.a library/cpp/getopt/small/libcpp-getopt-small.a
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/vcs_info.py' '$(VCS)/vcs.json' '$(BUILD_ROOT)/tools/archiver/__vcs_version__.c' '$(SOURCE_ROOT)/build/scripts/c_templates/svn_interface.c'
+	${CC} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/tools/archiver/__vcs_version__.c.pic.o' '$(BUILD_ROOT)/tools/archiver/__vcs_version__.c' '-I$(SOURCE_ROOT)' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC
+	cd $(BUILD_ROOT) && '$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_exe.py' ${CXX} library/cpp/cpuid_check/cpu_id_check.cpp.pic.o '$(BUILD_ROOT)/tools/archiver/__vcs_version__.c.pic.o' '$(BUILD_ROOT)/tools/archiver/main.cpp.pic.o' -o '$(BUILD_ROOT)/tools/archiver/archiver' -rdynamic --target=x86_64-linux-gnu -Wl,--start-group contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a util/charset/libutil-charset.a contrib/libs/zlib/libcontrib-libs-zlib.a contrib/libs/double-conversion/libcontrib-libs-double-conversion.a util/libyutil.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a library/cpp/archive/liblibrary-cpp-archive.a contrib/libs/nayuki_md5/libcontrib-libs-nayuki_md5.a contrib/libs/base64/avx2/liblibs-base64-avx2.a contrib/libs/base64/ssse3/liblibs-base64-ssse3.a contrib/libs/base64/neon32/liblibs-base64-neon32.a contrib/libs/base64/neon64/liblibs-base64-neon64.a contrib/libs/base64/plain32/liblibs-base64-plain32.a contrib/libs/base64/plain64/liblibs-base64-plain64.a library/cpp/string_utils/base64/libcpp-string_utils-base64.a library/cpp/digest/md5/libcpp-digest-md5.a library/cpp/colorizer/liblibrary-cpp-colorizer.a library/overloaded/liblibrary-overloaded.a library/cpp/getopt/small/libcpp-getopt-small.a -Wl,--end-group -ldl -lrt -Wl,--no-as-needed -fPIC -fPIC -lpthread -lrt -ldl -nodefaultlibs -lpthread -lc -lm
 
 $(BUILD_ROOT)/contrib/libs/base64/avx2/liblibs-base64-avx2.a.mf\
         ::\
@@ -22715,485 +23062,6 @@ $(BUILD_ROOT)/contrib/libs/base64/ssse3/lib.c.pic.o\
 	mkdir -p '$(BUILD_ROOT)/contrib/libs/base64/ssse3'
 	${CC} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/base64/ssse3/lib.c.pic.o' '$(SOURCE_ROOT)/contrib/libs/base64/ssse3/lib.c' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -mssse3 -std=c11
 
-$(BUILD_ROOT)/library/cpp/build_info/liblibrary-cpp-build_info.a.mf\
-        ::\
-        $(BUILD_ROOT)/library/cpp/build_info/liblibrary-cpp-build_info.a\
-
-$(BUILD_ROOT)/library/cpp/build_info/liblibrary-cpp-build_info.a\
-        ::\
-        $(BUILD_ROOT)/library/cpp/build_info/build_info.cpp.pic.o\
-        $(BUILD_ROOT)/library/cpp/build_info/build_info_static.cpp.pic.o\
-        $(BUILD_ROOT)/library/cpp/build_info/sandbox.cpp.pic.o\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/link_lib.py\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/build_info'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name library-cpp-build_info -o library/cpp/build_info/liblibrary-cpp-build_info.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/build_info/liblibrary-cpp-build_info.a' '$(BUILD_ROOT)/library/cpp/build_info/build_info_static.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/build_info/sandbox.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/build_info/build_info.cpp.pic.o'
-
-$(BUILD_ROOT)/library/cpp/build_info/build_info.cpp.pic.o\
-        ::\
-        $(BUILD_ROOT)/library/cpp/build_info/build_info.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/build_info'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/build_info/build_info.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/build_info/build_info.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(BUILD_ROOT)/library/cpp/build_info' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/build_info/build_info.cpp\
-        ::\
-        $(SOURCE_ROOT)/build/scripts/configure_file.py\
-        $(SOURCE_ROOT)/library/cpp/build_info/build_info.cpp.in\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/build_info'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/configure_file.py' '$(SOURCE_ROOT)/library/cpp/build_info/build_info.cpp.in' '$(BUILD_ROOT)/library/cpp/build_info/build_info.cpp' BUILD_TYPE=RELEASE
-
-$(BUILD_ROOT)/library/cpp/build_info/build_info_static.cpp.pic.o\
-        ::\
-        $(BUILD_ROOT)/library/cpp/build_info/buildinfo_data.h\
-        $(SOURCE_ROOT)/library/cpp/build_info/build_info_static.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/build_info'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/build_info/build_info_static.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/build_info/build_info_static.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(BUILD_ROOT)/library/cpp/build_info' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/build_info/buildinfo_data.h\
-        ::\
-        $(SOURCE_ROOT)/build/scripts/yield_line.py\
-        $(SOURCE_ROOT)/build/scripts/xargs.py\
-        $(SOURCE_ROOT)/build/scripts/build_info_gen.py\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/build_info'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/yield_line.py' -- '$(BUILD_ROOT)/library/cpp/build_info/__args' ${CXX}
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/yield_line.py' -- '$(BUILD_ROOT)/library/cpp/build_info/__args' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/xargs.py' -- '$(BUILD_ROOT)/library/cpp/build_info/__args' '$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/build_info_gen.py' '$(BUILD_ROOT)/library/cpp/build_info/buildinfo_data.h'
-
-$(BUILD_ROOT)/library/cpp/build_info/sandbox.cpp.pic.o\
-        ::\
-        $(BUILD_ROOT)/library/cpp/build_info/sandbox.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/build_info'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/build_info/sandbox.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/build_info/sandbox.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(BUILD_ROOT)/library/cpp/build_info' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/build_info/sandbox.cpp\
-        ::\
-        $(SOURCE_ROOT)/build/scripts/configure_file.py\
-        $(SOURCE_ROOT)/library/cpp/build_info/sandbox.cpp.in\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/build_info'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/configure_file.py' '$(SOURCE_ROOT)/library/cpp/build_info/sandbox.cpp.in' '$(BUILD_ROOT)/library/cpp/build_info/sandbox.cpp' KOSHER_SVN_VERSION= SANDBOX_TASK_ID=0
-
-$(BUILD_ROOT)/library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a.mf\
-        ::\
-        $(BUILD_ROOT)/library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a\
-
-$(BUILD_ROOT)/library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a\
-        ::\
-        $(BUILD_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp.pic.o\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/link_lib.py\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/compact_vector'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name cpp-containers-compact_vector -o library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a' '$(BUILD_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp.pic.o'
-
-$(BUILD_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/compact_vector'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/containers/comptrie/libcpp-containers-comptrie.a.mf\
-        ::\
-        $(BUILD_ROOT)/library/cpp/containers/comptrie/libcpp-containers-comptrie.a\
-
-$(BUILD_ROOT)/library/cpp/containers/comptrie/libcpp-containers-comptrie.a\
-        ::\
-        $(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie.cpp.pic.o\
-        $(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_builder.cpp.pic.o\
-        $(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_impl.cpp.pic.o\
-        $(BUILD_ROOT)/library/cpp/containers/comptrie/make_fast_layout.cpp.pic.o\
-        $(BUILD_ROOT)/library/cpp/containers/comptrie/minimize.cpp.pic.o\
-        $(BUILD_ROOT)/library/cpp/containers/comptrie/node.cpp.pic.o\
-        $(BUILD_ROOT)/library/cpp/containers/comptrie/opaque_trie_iterator.cpp.pic.o\
-        $(BUILD_ROOT)/library/cpp/containers/comptrie/prefix_iterator.cpp.pic.o\
-        $(BUILD_ROOT)/library/cpp/containers/comptrie/search_iterator.cpp.pic.o\
-        $(BUILD_ROOT)/library/cpp/containers/comptrie/write_trie_backwards.cpp.pic.o\
-        $(BUILD_ROOT)/library/cpp/containers/comptrie/writeable_node.cpp.pic.o\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/link_lib.py\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name cpp-containers-comptrie -o library/cpp/containers/comptrie/libcpp-containers-comptrie.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/containers/comptrie/libcpp-containers-comptrie.a' '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_builder.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_impl.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/make_fast_layout.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/minimize.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/node.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/opaque_trie_iterator.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/prefix_iterator.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/search_iterator.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/write_trie_backwards.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/containers/comptrie/writeable_node.cpp.pic.o'
-
-$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/containers/comptrie/comptrie.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/comptrie.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_builder.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/containers/comptrie/comptrie_builder.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_builder.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/comptrie_builder.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_impl.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/containers/comptrie/comptrie_impl.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_impl.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/comptrie_impl.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/containers/comptrie/make_fast_layout.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/containers/comptrie/make_fast_layout.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/make_fast_layout.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/make_fast_layout.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/containers/comptrie/minimize.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/containers/comptrie/minimize.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/minimize.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/minimize.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/containers/comptrie/node.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/containers/comptrie/node.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/node.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/node.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/containers/comptrie/opaque_trie_iterator.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/containers/comptrie/opaque_trie_iterator.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/opaque_trie_iterator.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/opaque_trie_iterator.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/containers/comptrie/prefix_iterator.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/containers/comptrie/prefix_iterator.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/prefix_iterator.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/prefix_iterator.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/containers/comptrie/search_iterator.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/containers/comptrie/search_iterator.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/search_iterator.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/search_iterator.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/containers/comptrie/write_trie_backwards.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/containers/comptrie/write_trie_backwards.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/write_trie_backwards.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/write_trie_backwards.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/containers/comptrie/writeable_node.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/containers/comptrie/writeable_node.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/comptrie'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/comptrie/writeable_node.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/containers/comptrie/writeable_node.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a.mf\
-        ::\
-        $(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a\
-
-$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a\
-        ::\
-        $(BUILD_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp.pic.o\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/link_lib.py\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name cpp-deprecated-mapped_file -o library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a' '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp.pic.o'
-
-$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/getopt/print.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/getopt/print.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/getopt'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/getopt/print.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/getopt/print.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(BUILD_ROOT)/library/cpp/build_info' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a.mf\
-        ::\
-        $(BUILD_ROOT)/library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a\
-
-$(BUILD_ROOT)/library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a\
-        ::\
-        $(BUILD_ROOT)/library/cpp/on_disk/chunks/chunked_helpers.cpp.pic.o\
-        $(BUILD_ROOT)/library/cpp/on_disk/chunks/reader.cpp.pic.o\
-        $(BUILD_ROOT)/library/cpp/on_disk/chunks/writer.cpp.pic.o\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/link_lib.py\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/on_disk/chunks'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name cpp-on_disk-chunks -o library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a' '$(BUILD_ROOT)/library/cpp/on_disk/chunks/chunked_helpers.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/on_disk/chunks/reader.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/on_disk/chunks/writer.cpp.pic.o'
-
-$(BUILD_ROOT)/library/cpp/on_disk/chunks/chunked_helpers.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/on_disk/chunks/chunked_helpers.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/on_disk/chunks'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/on_disk/chunks/chunked_helpers.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/on_disk/chunks/chunked_helpers.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/on_disk/chunks/reader.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/on_disk/chunks/reader.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/on_disk/chunks'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/on_disk/chunks/reader.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/on_disk/chunks/reader.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/on_disk/chunks/writer.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/on_disk/chunks/writer.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/on_disk/chunks'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/on_disk/chunks/writer.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/on_disk/chunks/writer.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/string_utils/base64/libcpp-string_utils-base64.a.mf\
-        ::\
-        $(BUILD_ROOT)/library/cpp/string_utils/base64/libcpp-string_utils-base64.a\
-
-$(BUILD_ROOT)/library/cpp/string_utils/base64/libcpp-string_utils-base64.a\
-        ::\
-        $(BUILD_ROOT)/library/cpp/string_utils/base64/base64.cpp.pic.o\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/link_lib.py\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/string_utils/base64'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name cpp-string_utils-base64 -o library/cpp/string_utils/base64/libcpp-string_utils-base64.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/string_utils/base64/libcpp-string_utils-base64.a' '$(BUILD_ROOT)/library/cpp/string_utils/base64/base64.cpp.pic.o'
-
-$(BUILD_ROOT)/library/cpp/string_utils/base64/base64.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/string_utils/base64/base64.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/string_utils/base64'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/string_utils/base64/base64.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/string_utils/base64/base64.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/svnversion/liblibrary-cpp-svnversion.a.mf\
-        ::\
-        $(BUILD_ROOT)/library/cpp/svnversion/liblibrary-cpp-svnversion.a\
-
-$(BUILD_ROOT)/library/cpp/svnversion/liblibrary-cpp-svnversion.a\
-        ::\
-        $(BUILD_ROOT)/library/cpp/svnversion/svn_interface.c.pic.o\
-        $(BUILD_ROOT)/library/cpp/svnversion/svnversion.cpp.pic.o\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/link_lib.py\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/svnversion'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name library-cpp-svnversion -o library/cpp/svnversion/liblibrary-cpp-svnversion.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/svnversion/liblibrary-cpp-svnversion.a' '$(BUILD_ROOT)/library/cpp/svnversion/svnversion.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/svnversion/svn_interface.c.pic.o'
-
-$(BUILD_ROOT)/library/cpp/svnversion/svn_interface.c.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/svnversion/svn_interface.c\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/svnversion'
-	${CC} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/svnversion/svn_interface.c.pic.o' '$(SOURCE_ROOT)/library/cpp/svnversion/svn_interface.c' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC
-
-$(BUILD_ROOT)/library/cpp/svnversion/svnversion.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/svnversion/svnversion.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/svnversion'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/svnversion/svnversion.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/svnversion/svnversion.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/packers/liblibrary-packers.a.mf\
-        ::\
-        $(BUILD_ROOT)/library/packers/liblibrary-packers.a\
-
-$(BUILD_ROOT)/library/packers/liblibrary-packers.a\
-        ::\
-        $(BUILD_ROOT)/library/packers/packers.cpp.pic.o\
-        $(BUILD_ROOT)/library/packers/proto_packer.cpp.pic.o\
-        $(BUILD_ROOT)/library/packers/region_packer.cpp.pic.o\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/link_lib.py\
-
-	mkdir -p '$(BUILD_ROOT)/library/packers'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name library-packers -o library/packers/liblibrary-packers.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/packers/liblibrary-packers.a' '$(BUILD_ROOT)/library/packers/packers.cpp.pic.o' '$(BUILD_ROOT)/library/packers/proto_packer.cpp.pic.o' '$(BUILD_ROOT)/library/packers/region_packer.cpp.pic.o'
-
-$(BUILD_ROOT)/library/packers/packers.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/packers/packers.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/packers'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/packers/packers.cpp.pic.o' '$(SOURCE_ROOT)/library/packers/packers.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/packers/proto_packer.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/packers/proto_packer.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/packers'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/packers/proto_packer.cpp.pic.o' '$(SOURCE_ROOT)/library/packers/proto_packer.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/packers/region_packer.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/packers/region_packer.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/packers'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/packers/region_packer.cpp.pic.o' '$(SOURCE_ROOT)/library/packers/region_packer.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/tools/triecompiler/lib/libtools-triecompiler-lib.a.mf\
-        ::\
-        $(BUILD_ROOT)/tools/triecompiler/lib/libtools-triecompiler-lib.a\
-
-$(BUILD_ROOT)/tools/triecompiler/lib/libtools-triecompiler-lib.a\
-        ::\
-        $(BUILD_ROOT)/tools/triecompiler/lib/main.cpp.pic.o\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/link_lib.py\
-
-	mkdir -p '$(BUILD_ROOT)/tools/triecompiler/lib'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name tools-triecompiler-lib -o tools/triecompiler/lib/libtools-triecompiler-lib.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/tools/triecompiler/lib/libtools-triecompiler-lib.a' '$(BUILD_ROOT)/tools/triecompiler/lib/main.cpp.pic.o'
-
-$(BUILD_ROOT)/tools/triecompiler/lib/main.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/tools/triecompiler/lib/main.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/tools/triecompiler/lib'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/tools/triecompiler/lib/main.cpp.pic.o' '$(SOURCE_ROOT)/tools/triecompiler/lib/main.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/tools/triecompiler/main.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/tools/triecompiler/main.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/tools/triecompiler'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/tools/triecompiler/main.cpp.pic.o' '$(SOURCE_ROOT)/tools/triecompiler/main.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(BUILD_ROOT)/library/cpp/build_info' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/util/draft/libutil-draft.a.mf\
-        ::\
-        $(BUILD_ROOT)/util/draft/libutil-draft.a\
-
-$(BUILD_ROOT)/util/draft/libutil-draft.a\
-        ::\
-        $(BUILD_ROOT)/util/draft/date.cpp.pic.o\
-        $(BUILD_ROOT)/util/draft/datetime.cpp.pic.o\
-        $(BUILD_ROOT)/util/draft/enum.cpp.pic.o\
-        $(BUILD_ROOT)/util/draft/holder_vector.cpp.pic.o\
-        $(BUILD_ROOT)/util/draft/ip.cpp.pic.o\
-        $(BUILD_ROOT)/util/draft/matrix.cpp.pic.o\
-        $(BUILD_ROOT)/util/draft/memory.cpp.pic.o\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/link_lib.py\
-
-	mkdir -p '$(BUILD_ROOT)/util/draft'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name util-draft -o util/draft/libutil-draft.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/util/draft/libutil-draft.a' '$(BUILD_ROOT)/util/draft/date.cpp.pic.o' '$(BUILD_ROOT)/util/draft/datetime.cpp.pic.o' '$(BUILD_ROOT)/util/draft/enum.cpp.pic.o' '$(BUILD_ROOT)/util/draft/holder_vector.cpp.pic.o' '$(BUILD_ROOT)/util/draft/ip.cpp.pic.o' '$(BUILD_ROOT)/util/draft/matrix.cpp.pic.o' '$(BUILD_ROOT)/util/draft/memory.cpp.pic.o'
-
-$(BUILD_ROOT)/util/draft/date.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/util/draft/date.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/util/draft'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/util/draft/date.cpp.pic.o' '$(SOURCE_ROOT)/util/draft/date.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/util/draft/datetime.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/util/draft/datetime.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/util/draft'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/util/draft/datetime.cpp.pic.o' '$(SOURCE_ROOT)/util/draft/datetime.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/util/draft/enum.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/util/draft/enum.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/util/draft'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/util/draft/enum.cpp.pic.o' '$(SOURCE_ROOT)/util/draft/enum.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/util/draft/holder_vector.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/util/draft/holder_vector.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/util/draft'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/util/draft/holder_vector.cpp.pic.o' '$(SOURCE_ROOT)/util/draft/holder_vector.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/util/draft/ip.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/util/draft/ip.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/util/draft'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/util/draft/ip.cpp.pic.o' '$(SOURCE_ROOT)/util/draft/ip.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/util/draft/matrix.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/util/draft/matrix.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/util/draft'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/util/draft/matrix.cpp.pic.o' '$(SOURCE_ROOT)/util/draft/matrix.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/util/draft/memory.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/util/draft/memory.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/util/draft'
-	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/util/draft/memory.cpp.pic.o' '$(SOURCE_ROOT)/util/draft/memory.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/tools/archiver/archiver.mf\
-        ::\
-        $(BUILD_ROOT)/tools/archiver/archiver\
-
-$(BUILD_ROOT)/tools/archiver/archiver\
-        ::\
-        $(BUILD_ROOT)/contrib/libs/base64/avx2/liblibs-base64-avx2.a\
-        $(BUILD_ROOT)/contrib/libs/base64/neon32/liblibs-base64-neon32.a\
-        $(BUILD_ROOT)/contrib/libs/base64/neon64/liblibs-base64-neon64.a\
-        $(BUILD_ROOT)/contrib/libs/base64/plain32/liblibs-base64-plain32.a\
-        $(BUILD_ROOT)/contrib/libs/base64/plain64/liblibs-base64-plain64.a\
-        $(BUILD_ROOT)/contrib/libs/base64/ssse3/liblibs-base64-ssse3.a\
-        $(BUILD_ROOT)/contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a\
-        $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a\
-        $(BUILD_ROOT)/contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a\
-        $(BUILD_ROOT)/contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a\
-        $(BUILD_ROOT)/contrib/libs/double-conversion/libcontrib-libs-double-conversion.a\
-        $(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a\
-        $(BUILD_ROOT)/contrib/libs/nayuki_md5/libcontrib-libs-nayuki_md5.a\
-        $(BUILD_ROOT)/contrib/libs/zlib/libcontrib-libs-zlib.a\
-        $(BUILD_ROOT)/library/cpp/archive/liblibrary-cpp-archive.a\
-        $(BUILD_ROOT)/library/cpp/colorizer/liblibrary-cpp-colorizer.a\
-        $(BUILD_ROOT)/library/cpp/cpuid_check/cpu_id_check.cpp.pic.o\
-        $(BUILD_ROOT)/library/cpp/digest/md5/libcpp-digest-md5.a\
-        $(BUILD_ROOT)/library/cpp/getopt/small/libcpp-getopt-small.a\
-        $(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a\
-        $(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a\
-        $(BUILD_ROOT)/library/cpp/string_utils/base64/libcpp-string_utils-base64.a\
-        $(BUILD_ROOT)/library/overloaded/liblibrary-overloaded.a\
-        $(BUILD_ROOT)/tools/archiver/main.cpp.pic.o\
-        $(BUILD_ROOT)/util/charset/libutil-charset.a\
-        $(BUILD_ROOT)/util/libyutil.a\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/vcs_info.py\
-        $(SOURCE_ROOT)/build/scripts/c_templates/svn_interface.c\
-        $(SOURCE_ROOT)/build/scripts/link_exe.py\
-
-	mkdir -p '$(BUILD_ROOT)/tools/archiver'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name archiver -o tools/archiver/archiver.mf -t PROGRAM -Ya,lics -Ya,peers contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a util/charset/libutil-charset.a contrib/libs/zlib/libcontrib-libs-zlib.a contrib/libs/double-conversion/libcontrib-libs-double-conversion.a util/libyutil.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a library/cpp/archive/liblibrary-cpp-archive.a contrib/libs/nayuki_md5/libcontrib-libs-nayuki_md5.a contrib/libs/base64/avx2/liblibs-base64-avx2.a contrib/libs/base64/ssse3/liblibs-base64-ssse3.a contrib/libs/base64/neon32/liblibs-base64-neon32.a contrib/libs/base64/neon64/liblibs-base64-neon64.a contrib/libs/base64/plain32/liblibs-base64-plain32.a contrib/libs/base64/plain64/liblibs-base64-plain64.a library/cpp/string_utils/base64/libcpp-string_utils-base64.a library/cpp/digest/md5/libcpp-digest-md5.a library/cpp/colorizer/liblibrary-cpp-colorizer.a library/overloaded/liblibrary-overloaded.a library/cpp/getopt/small/libcpp-getopt-small.a
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/vcs_info.py' '$(VCS)/vcs.json' '$(BUILD_ROOT)/tools/archiver/__vcs_version__.c' '$(SOURCE_ROOT)/build/scripts/c_templates/svn_interface.c'
-	${CC} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/tools/archiver/__vcs_version__.c.pic.o' '$(BUILD_ROOT)/tools/archiver/__vcs_version__.c' '-I$(SOURCE_ROOT)' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC
-	cd $(BUILD_ROOT) && '$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_exe.py' ${CXX} library/cpp/cpuid_check/cpu_id_check.cpp.pic.o '$(BUILD_ROOT)/tools/archiver/__vcs_version__.c.pic.o' '$(BUILD_ROOT)/tools/archiver/main.cpp.pic.o' -o '$(BUILD_ROOT)/tools/archiver/archiver' -rdynamic --target=x86_64-linux-gnu -Wl,--start-group contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a util/charset/libutil-charset.a contrib/libs/zlib/libcontrib-libs-zlib.a contrib/libs/double-conversion/libcontrib-libs-double-conversion.a util/libyutil.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a library/cpp/archive/liblibrary-cpp-archive.a contrib/libs/nayuki_md5/libcontrib-libs-nayuki_md5.a contrib/libs/base64/avx2/liblibs-base64-avx2.a contrib/libs/base64/ssse3/liblibs-base64-ssse3.a contrib/libs/base64/neon32/liblibs-base64-neon32.a contrib/libs/base64/neon64/liblibs-base64-neon64.a contrib/libs/base64/plain32/liblibs-base64-plain32.a contrib/libs/base64/plain64/liblibs-base64-plain64.a library/cpp/string_utils/base64/libcpp-string_utils-base64.a library/cpp/digest/md5/libcpp-digest-md5.a library/cpp/colorizer/liblibrary-cpp-colorizer.a library/overloaded/liblibrary-overloaded.a library/cpp/getopt/small/libcpp-getopt-small.a -Wl,--end-group -ldl -lrt -Wl,--no-as-needed -fPIC -fPIC -lpthread -lrt -ldl -nodefaultlibs -lpthread -lc -lm
-
 $(BUILD_ROOT)/contrib/libs/nayuki_md5/libcontrib-libs-nayuki_md5.a.mf\
         ::\
         $(BUILD_ROOT)/contrib/libs/nayuki_md5/libcontrib-libs-nayuki_md5.a\
@@ -23264,6 +23132,27 @@ $(BUILD_ROOT)/library/cpp/digest/md5/md5.cpp.pic.o\
 
 	mkdir -p '$(BUILD_ROOT)/library/cpp/digest/md5'
 	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/digest/md5/md5.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/digest/md5/md5.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/string_utils/base64/libcpp-string_utils-base64.a.mf\
+        ::\
+        $(BUILD_ROOT)/library/cpp/string_utils/base64/libcpp-string_utils-base64.a\
+
+$(BUILD_ROOT)/library/cpp/string_utils/base64/libcpp-string_utils-base64.a\
+        ::\
+        $(BUILD_ROOT)/library/cpp/string_utils/base64/base64.cpp.pic.o\
+        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
+        $(SOURCE_ROOT)/build/scripts/link_lib.py\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/string_utils/base64'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name cpp-string_utils-base64 -o library/cpp/string_utils/base64/libcpp-string_utils-base64.a.mf -t LIBRARY -Ya,lics -Ya,peers
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/string_utils/base64/libcpp-string_utils-base64.a' '$(BUILD_ROOT)/library/cpp/string_utils/base64/base64.cpp.pic.o'
+
+$(BUILD_ROOT)/library/cpp/string_utils/base64/base64.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/string_utils/base64/base64.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/string_utils/base64'
+	${CXX} --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/string_utils/base64/base64.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/string_utils/base64/base64.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-fdebug-prefix-map=$(BUILD_ROOT)=/-B' '-fdebug-prefix-map=$(SOURCE_ROOT)=/-S' '-fdebug-prefix-map=$(TOOL_ROOT)=/-T' -Xclang -fdebug-compilation-dir -Xclang /tmp -pipe -m64 -O3 -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
 
 $(BUILD_ROOT)/tools/archiver/main.cpp.pic.o\
         ::\
@@ -26494,6 +26383,42 @@ clean\
 	rm -f '$(BUILD_ROOT)/library/cpp/tokenizer/SpecialTokens.rodata'
 	rm -f '$(BUILD_ROOT)/library/cpp/tokenizer/special_tokens.trie'
 	rm -f '$(BUILD_ROOT)/tools/triecompiler/triecompiler' '$(BUILD_ROOT)/tools/triecompiler/triecompiler.mf'
+	rm -f '$(BUILD_ROOT)/library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a' '$(BUILD_ROOT)/library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a.mf'
+	rm -f '$(BUILD_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/libcpp-containers-comptrie.a' '$(BUILD_ROOT)/library/cpp/containers/comptrie/libcpp-containers-comptrie.a.mf'
+	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_builder.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_impl.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/make_fast_layout.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/minimize.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/node.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/opaque_trie_iterator.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/prefix_iterator.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/search_iterator.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/write_trie_backwards.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/writeable_node.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a' '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a.mf'
+	rm -f '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a' '$(BUILD_ROOT)/library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a.mf'
+	rm -f '$(BUILD_ROOT)/library/cpp/on_disk/chunks/chunked_helpers.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/on_disk/chunks/reader.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/on_disk/chunks/writer.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/packers/liblibrary-packers.a' '$(BUILD_ROOT)/library/packers/liblibrary-packers.a.mf'
+	rm -f '$(BUILD_ROOT)/library/packers/packers.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/packers/proto_packer.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/packers/region_packer.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/tools/triecompiler/lib/libtools-triecompiler-lib.a' '$(BUILD_ROOT)/tools/triecompiler/lib/libtools-triecompiler-lib.a.mf'
+	rm -f '$(BUILD_ROOT)/tools/triecompiler/lib/main.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/tools/triecompiler/main.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/util/draft/libutil-draft.a' '$(BUILD_ROOT)/util/draft/libutil-draft.a.mf'
+	rm -f '$(BUILD_ROOT)/util/draft/date.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/util/draft/datetime.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/util/draft/enum.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/util/draft/holder_vector.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/util/draft/ip.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/util/draft/matrix.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/util/draft/memory.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/tools/archiver/archiver' '$(BUILD_ROOT)/tools/archiver/archiver.mf'
 	rm -f '$(BUILD_ROOT)/contrib/libs/base64/avx2/liblibs-base64-avx2.a' '$(BUILD_ROOT)/contrib/libs/base64/avx2/liblibs-base64-avx2.a.mf'
 	rm -f '$(BUILD_ROOT)/contrib/libs/base64/avx2/codec_avx2.c.pic.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/base64/avx2/lib.c.pic.o'
@@ -26512,55 +26437,6 @@ clean\
 	rm -f '$(BUILD_ROOT)/contrib/libs/base64/ssse3/liblibs-base64-ssse3.a' '$(BUILD_ROOT)/contrib/libs/base64/ssse3/liblibs-base64-ssse3.a.mf'
 	rm -f '$(BUILD_ROOT)/contrib/libs/base64/ssse3/codec_ssse3.c.pic.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/base64/ssse3/lib.c.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/build_info/liblibrary-cpp-build_info.a' '$(BUILD_ROOT)/library/cpp/build_info/liblibrary-cpp-build_info.a.mf'
-	rm -f '$(BUILD_ROOT)/library/cpp/build_info/build_info.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/build_info/build_info.cpp'
-	rm -f '$(BUILD_ROOT)/library/cpp/build_info/build_info_static.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/build_info/buildinfo_data.h'
-	rm -f '$(BUILD_ROOT)/library/cpp/build_info/sandbox.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/build_info/sandbox.cpp'
-	rm -f '$(BUILD_ROOT)/library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a' '$(BUILD_ROOT)/library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a.mf'
-	rm -f '$(BUILD_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/libcpp-containers-comptrie.a' '$(BUILD_ROOT)/library/cpp/containers/comptrie/libcpp-containers-comptrie.a.mf'
-	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_builder.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/comptrie_impl.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/make_fast_layout.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/minimize.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/node.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/opaque_trie_iterator.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/prefix_iterator.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/search_iterator.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/write_trie_backwards.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/containers/comptrie/writeable_node.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a' '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a.mf'
-	rm -f '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/getopt/print.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a' '$(BUILD_ROOT)/library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a.mf'
-	rm -f '$(BUILD_ROOT)/library/cpp/on_disk/chunks/chunked_helpers.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/on_disk/chunks/reader.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/on_disk/chunks/writer.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/string_utils/base64/libcpp-string_utils-base64.a' '$(BUILD_ROOT)/library/cpp/string_utils/base64/libcpp-string_utils-base64.a.mf'
-	rm -f '$(BUILD_ROOT)/library/cpp/string_utils/base64/base64.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/svnversion/liblibrary-cpp-svnversion.a' '$(BUILD_ROOT)/library/cpp/svnversion/liblibrary-cpp-svnversion.a.mf'
-	rm -f '$(BUILD_ROOT)/library/cpp/svnversion/svn_interface.c.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/svnversion/svnversion.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/packers/liblibrary-packers.a' '$(BUILD_ROOT)/library/packers/liblibrary-packers.a.mf'
-	rm -f '$(BUILD_ROOT)/library/packers/packers.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/packers/proto_packer.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/packers/region_packer.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/tools/triecompiler/lib/libtools-triecompiler-lib.a' '$(BUILD_ROOT)/tools/triecompiler/lib/libtools-triecompiler-lib.a.mf'
-	rm -f '$(BUILD_ROOT)/tools/triecompiler/lib/main.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/tools/triecompiler/main.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/util/draft/libutil-draft.a' '$(BUILD_ROOT)/util/draft/libutil-draft.a.mf'
-	rm -f '$(BUILD_ROOT)/util/draft/date.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/util/draft/datetime.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/util/draft/enum.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/util/draft/holder_vector.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/util/draft/ip.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/util/draft/matrix.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/util/draft/memory.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/tools/archiver/archiver' '$(BUILD_ROOT)/tools/archiver/archiver.mf'
 	rm -f '$(BUILD_ROOT)/contrib/libs/nayuki_md5/libcontrib-libs-nayuki_md5.a' '$(BUILD_ROOT)/contrib/libs/nayuki_md5/libcontrib-libs-nayuki_md5.a.mf'
 	rm -f '$(BUILD_ROOT)/contrib/libs/nayuki_md5/md5-fast-x8664.S.o'
 	rm -f '$(BUILD_ROOT)/library/cpp/archive/liblibrary-cpp-archive.a' '$(BUILD_ROOT)/library/cpp/archive/liblibrary-cpp-archive.a.mf'
@@ -26568,6 +26444,8 @@ clean\
 	rm -f '$(BUILD_ROOT)/library/cpp/archive/yarchive.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/library/cpp/digest/md5/libcpp-digest-md5.a' '$(BUILD_ROOT)/library/cpp/digest/md5/libcpp-digest-md5.a.mf'
 	rm -f '$(BUILD_ROOT)/library/cpp/digest/md5/md5.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/string_utils/base64/libcpp-string_utils-base64.a' '$(BUILD_ROOT)/library/cpp/string_utils/base64/libcpp-string_utils-base64.a.mf'
+	rm -f '$(BUILD_ROOT)/library/cpp/string_utils/base64/base64.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/tools/archiver/main.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/library/cpp/tokenizer/abbreviations.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/library/cpp/tokenizer/charclasses.cpp.pic.o'
