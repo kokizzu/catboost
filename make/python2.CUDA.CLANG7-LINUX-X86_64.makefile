@@ -7750,6 +7750,7 @@ $(BUILD_ROOT)/catboost/libs/fstr/libcatboost-libs-fstr.a\
         $(BUILD_ROOT)/catboost/libs/fstr/partial_dependence.cpp.pic.o\
         $(BUILD_ROOT)/catboost/libs/fstr/shap_exact.cpp.pic.o\
         $(BUILD_ROOT)/catboost/libs/fstr/shap_interaction_values.cpp.pic.o\
+        $(BUILD_ROOT)/catboost/libs/fstr/shap_prepared_trees.cpp.pic.o\
         $(BUILD_ROOT)/catboost/libs/fstr/shap_values.cpp.pic.o\
         $(BUILD_ROOT)/catboost/libs/fstr/util.cpp.pic.o\
         $(SOURCE_ROOT)/build/scripts/generate_mf.py\
@@ -7757,7 +7758,7 @@ $(BUILD_ROOT)/catboost/libs/fstr/libcatboost-libs-fstr.a\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/libs/fstr'
 	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name catboost-libs-fstr -o catboost/libs/fstr/libcatboost-libs-fstr.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/catboost/libs/fstr/libcatboost-libs-fstr.a' '$(BUILD_ROOT)/catboost/libs/fstr/calc_fstr.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/fstr/compare_documents.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/fstr/feature_str.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/fstr/output_fstr.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/fstr/partial_dependence.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/fstr/shap_values.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/fstr/shap_exact.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/fstr/shap_interaction_values.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/fstr/util.cpp.pic.o'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/catboost/libs/fstr/libcatboost-libs-fstr.a' '$(BUILD_ROOT)/catboost/libs/fstr/calc_fstr.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/fstr/compare_documents.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/fstr/feature_str.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/fstr/output_fstr.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/fstr/partial_dependence.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/fstr/shap_exact.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/fstr/shap_interaction_values.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/fstr/shap_prepared_trees.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/fstr/shap_values.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/fstr/util.cpp.pic.o'
 
 $(BUILD_ROOT)/catboost/libs/fstr/calc_fstr.cpp.pic.o\
         ::\
@@ -7827,6 +7828,21 @@ $(BUILD_ROOT)/catboost/libs/fstr/shap_interaction_values.cpp.pic.o\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/libs/fstr'
 	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/catboost/libs/fstr/shap_interaction_values.cpp.pic.o' '$(SOURCE_ROOT)/catboost/libs/fstr/shap_interaction_values.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libf2c' '-I$(SOURCE_ROOT)/contrib/libs/protobuf' '-I$(SOURCE_ROOT)/contrib/libs/protobuf/google/protobuf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/catboost/libs/fstr/shap_prepared_trees.cpp.pic.o\
+        ::\
+        $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/summary.pb.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/tensor.pb.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/tensor_shape.pb.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/types.pb.h\
+        $(SOURCE_ROOT)/catboost/libs/fstr/shap_prepared_trees.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/catboost/libs/fstr'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/catboost/libs/fstr/shap_prepared_trees.cpp.pic.o' '$(SOURCE_ROOT)/catboost/libs/fstr/shap_prepared_trees.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libf2c' '-I$(SOURCE_ROOT)/contrib/libs/protobuf' '-I$(SOURCE_ROOT)/contrib/libs/protobuf/google/protobuf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
 
 $(BUILD_ROOT)/catboost/libs/fstr/shap_values.cpp.pic.o\
         ::\
@@ -39537,6 +39553,7 @@ clean\
 	rm -f '$(BUILD_ROOT)/catboost/libs/fstr/partial_dependence.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/fstr/shap_exact.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/fstr/shap_interaction_values.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/catboost/libs/fstr/shap_prepared_trees.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/fstr/shap_values.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/fstr/util.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/gpu_config/maybe_have_cuda/liblibs-gpu_config-maybe_have_cuda.a' '$(BUILD_ROOT)/catboost/libs/gpu_config/maybe_have_cuda/liblibs-gpu_config-maybe_have_cuda.a.mf'
