@@ -8420,7 +8420,6 @@ $(BUILD_ROOT)/catboost/libs/metrics/libcatboost-libs-metrics.a\
         $(BUILD_ROOT)/catboost/libs/metrics/classification_utils.cpp.pic.o\
         $(BUILD_ROOT)/catboost/libs/metrics/dcg.cpp.pic.o\
         $(BUILD_ROOT)/catboost/libs/metrics/description_utils.cpp.pic.o\
-        $(BUILD_ROOT)/catboost/libs/metrics/enums.h_serialized.cpp.pic.o\
         $(BUILD_ROOT)/catboost/libs/metrics/hinge_loss.cpp.pic.o\
         $(BUILD_ROOT)/catboost/libs/metrics/kappa.cpp.pic.o\
         $(BUILD_ROOT)/catboost/libs/metrics/llp.cpp.pic.o\
@@ -8434,7 +8433,7 @@ $(BUILD_ROOT)/catboost/libs/metrics/libcatboost-libs-metrics.a\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/libs/metrics'
 	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name catboost-libs-metrics -o catboost/libs/metrics/libcatboost-libs-metrics.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/catboost/libs/metrics/libcatboost-libs-metrics.a' '$(BUILD_ROOT)/catboost/libs/metrics/auc.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/auc_mu.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/balanced_accuracy.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/brier_score.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/classification_utils.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/dcg.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/description_utils.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/hinge_loss.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/kappa.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/llp.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/metric.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/optimal_const_for_loss.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/pfound.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/precision_recall_at_k.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/sample.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/caching_metric.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/enums.h_serialized.cpp.pic.o'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/catboost/libs/metrics/libcatboost-libs-metrics.a' '$(BUILD_ROOT)/catboost/libs/metrics/auc.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/auc_mu.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/balanced_accuracy.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/brier_score.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/classification_utils.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/dcg.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/description_utils.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/hinge_loss.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/kappa.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/llp.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/metric.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/optimal_const_for_loss.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/pfound.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/precision_recall_at_k.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/sample.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/caching_metric.cpp.pic.o'
 
 $(BUILD_ROOT)/catboost/libs/metrics/auc.cpp.pic.o\
         ::\
@@ -8491,21 +8490,6 @@ $(BUILD_ROOT)/catboost/libs/metrics/description_utils.cpp.pic.o\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/libs/metrics'
 	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/catboost/libs/metrics/description_utils.cpp.pic.o' '$(SOURCE_ROOT)/catboost/libs/metrics/description_utils.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libf2c' '-I$(SOURCE_ROOT)/contrib/libs/protobuf' '-I$(SOURCE_ROOT)/contrib/libs/protobuf/src' '-I$(SOURCE_ROOT)/contrib/libs/protobuf/google/protobuf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/catboost/libs/metrics/enums.h_serialized.cpp.pic.o\
-        ::\
-        $(BUILD_ROOT)/catboost/libs/metrics/enums.h_serialized.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/catboost/libs/metrics'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/catboost/libs/metrics/enums.h_serialized.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/metrics/enums.h_serialized.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libf2c' '-I$(SOURCE_ROOT)/contrib/libs/protobuf' '-I$(SOURCE_ROOT)/contrib/libs/protobuf/src' '-I$(SOURCE_ROOT)/contrib/libs/protobuf/google/protobuf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/catboost/libs/metrics/enums.h_serialized.cpp\
-        ::\
-        $(BUILD_ROOT)/tools/enum_parser/enum_parser/enum_parser\
-        $(SOURCE_ROOT)/catboost/libs/metrics/enums.h\
-
-	mkdir -p '$(BUILD_ROOT)/catboost/libs/metrics'
-	'$(BUILD_ROOT)/tools/enum_parser/enum_parser/enum_parser' '$(SOURCE_ROOT)/catboost/libs/metrics/enums.h' --include-path catboost/libs/metrics/enums.h --output '$(BUILD_ROOT)/catboost/libs/metrics/enums.h_serialized.cpp'
 
 $(BUILD_ROOT)/catboost/libs/metrics/hinge_loss.cpp.pic.o\
         ::\
@@ -39646,8 +39630,6 @@ clean\
 	rm -f '$(BUILD_ROOT)/catboost/libs/metrics/classification_utils.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/metrics/dcg.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/metrics/description_utils.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/catboost/libs/metrics/enums.h_serialized.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/catboost/libs/metrics/enums.h_serialized.cpp'
 	rm -f '$(BUILD_ROOT)/catboost/libs/metrics/hinge_loss.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/metrics/kappa.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/metrics/llp.cpp.pic.o'
