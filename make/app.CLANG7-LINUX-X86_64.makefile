@@ -33946,13 +33946,13 @@ $(BUILD_ROOT)/tools/triecompiler/triecompiler\
         $(BUILD_ROOT)/library/cpp/colorizer/liblibrary-cpp-colorizer.a\
         $(BUILD_ROOT)/library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a\
         $(BUILD_ROOT)/library/cpp/cpuid_check/cpu_id_check.cpp.o\
+        $(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a\
         $(BUILD_ROOT)/library/cpp/getopt/print.cpp.o\
         $(BUILD_ROOT)/library/cpp/getopt/small/libcpp-getopt-small.a\
         $(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a\
         $(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a\
         $(BUILD_ROOT)/library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a\
         $(BUILD_ROOT)/library/cpp/string_utils/base64/libcpp-string_utils-base64.a\
-        $(BUILD_ROOT)/library/deprecated/mapped_file/liblibrary-deprecated-mapped_file.a\
         $(BUILD_ROOT)/library/overloaded/liblibrary-overloaded.a\
         $(BUILD_ROOT)/library/packers/liblibrary-packers.a\
         $(BUILD_ROOT)/library/svnversion/liblibrary-svnversion.a\
@@ -33967,10 +33967,10 @@ $(BUILD_ROOT)/tools/triecompiler/triecompiler\
         $(SOURCE_ROOT)/build/scripts/link_exe.py\
 
 	mkdir -p '$(BUILD_ROOT)/tools/triecompiler'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name triecompiler -o tools/triecompiler/triecompiler.mf -t PROGRAM -Ya,lics -Ya,peers contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a util/charset/libutil-charset.a contrib/libs/zlib/libcontrib-libs-zlib.a contrib/libs/double-conversion/libcontrib-libs-double-conversion.a util/libyutil.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a library/cpp/colorizer/liblibrary-cpp-colorizer.a library/overloaded/liblibrary-overloaded.a library/cpp/getopt/small/libcpp-getopt-small.a library/svnversion/liblibrary-svnversion.a contrib/libs/base64/avx2/liblibs-base64-avx2.a contrib/libs/base64/ssse3/liblibs-base64-ssse3.a contrib/libs/base64/neon32/liblibs-base64-neon32.a contrib/libs/base64/neon64/liblibs-base64-neon64.a contrib/libs/base64/plain32/liblibs-base64-plain32.a contrib/libs/base64/plain64/liblibs-base64-plain64.a library/cpp/string_utils/base64/libcpp-string_utils-base64.a library/build_info/liblibrary-build_info.a library/packers/liblibrary-packers.a library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a util/draft/libutil-draft.a library/comptrie/liblibrary-comptrie.a library/deprecated/mapped_file/liblibrary-deprecated-mapped_file.a tools/triecompiler/lib/libtools-triecompiler-lib.a
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name triecompiler -o tools/triecompiler/triecompiler.mf -t PROGRAM -Ya,lics -Ya,peers contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a util/charset/libutil-charset.a contrib/libs/zlib/libcontrib-libs-zlib.a contrib/libs/double-conversion/libcontrib-libs-double-conversion.a util/libyutil.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a library/cpp/colorizer/liblibrary-cpp-colorizer.a library/overloaded/liblibrary-overloaded.a library/cpp/getopt/small/libcpp-getopt-small.a library/svnversion/liblibrary-svnversion.a contrib/libs/base64/avx2/liblibs-base64-avx2.a contrib/libs/base64/ssse3/liblibs-base64-ssse3.a contrib/libs/base64/neon32/liblibs-base64-neon32.a contrib/libs/base64/neon64/liblibs-base64-neon64.a contrib/libs/base64/plain32/liblibs-base64-plain32.a contrib/libs/base64/plain64/liblibs-base64-plain64.a library/cpp/string_utils/base64/libcpp-string_utils-base64.a library/build_info/liblibrary-build_info.a library/packers/liblibrary-packers.a library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a util/draft/libutil-draft.a library/comptrie/liblibrary-comptrie.a library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a tools/triecompiler/lib/libtools-triecompiler-lib.a
 	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/vcs_info.py' '$(VCS)/vcs.json' '$(BUILD_ROOT)/tools/triecompiler/__vcs_version__.c' '$(SOURCE_ROOT)/build/scripts/c_templates/svn_interface.c'
 	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/tools/triecompiler/__vcs_version__.c.o' '$(BUILD_ROOT)/tools/triecompiler/__vcs_version__.c' '-I$(SOURCE_ROOT)' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16
-	cd $(BUILD_ROOT) && '$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_exe.py' '$(CXX)' library/cpp/cpuid_check/cpu_id_check.cpp.o library/cpp/getopt/print.cpp.o '$(BUILD_ROOT)/tools/triecompiler/__vcs_version__.c.o' '$(BUILD_ROOT)/tools/triecompiler/main.cpp.o' -o '$(BUILD_ROOT)/tools/triecompiler/triecompiler' -rdynamic --target=x86_64-linux-gnu -Wl,--start-group contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a util/charset/libutil-charset.a contrib/libs/zlib/libcontrib-libs-zlib.a contrib/libs/double-conversion/libcontrib-libs-double-conversion.a util/libyutil.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a library/cpp/colorizer/liblibrary-cpp-colorizer.a library/overloaded/liblibrary-overloaded.a library/cpp/getopt/small/libcpp-getopt-small.a library/svnversion/liblibrary-svnversion.a contrib/libs/base64/avx2/liblibs-base64-avx2.a contrib/libs/base64/ssse3/liblibs-base64-ssse3.a contrib/libs/base64/neon32/liblibs-base64-neon32.a contrib/libs/base64/neon64/liblibs-base64-neon64.a contrib/libs/base64/plain32/liblibs-base64-plain32.a contrib/libs/base64/plain64/liblibs-base64-plain64.a library/cpp/string_utils/base64/libcpp-string_utils-base64.a library/build_info/liblibrary-build_info.a library/packers/liblibrary-packers.a library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a util/draft/libutil-draft.a library/comptrie/liblibrary-comptrie.a library/deprecated/mapped_file/liblibrary-deprecated-mapped_file.a tools/triecompiler/lib/libtools-triecompiler-lib.a -Wl,--end-group -ldl -lrt -Wl,--no-as-needed -lpthread -lrt -ldl -nodefaultlibs -lpthread -lc -lm
+	cd $(BUILD_ROOT) && '$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_exe.py' '$(CXX)' library/cpp/cpuid_check/cpu_id_check.cpp.o library/cpp/getopt/print.cpp.o '$(BUILD_ROOT)/tools/triecompiler/__vcs_version__.c.o' '$(BUILD_ROOT)/tools/triecompiler/main.cpp.o' -o '$(BUILD_ROOT)/tools/triecompiler/triecompiler' -rdynamic --target=x86_64-linux-gnu -Wl,--start-group contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a util/charset/libutil-charset.a contrib/libs/zlib/libcontrib-libs-zlib.a contrib/libs/double-conversion/libcontrib-libs-double-conversion.a util/libyutil.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a library/cpp/colorizer/liblibrary-cpp-colorizer.a library/overloaded/liblibrary-overloaded.a library/cpp/getopt/small/libcpp-getopt-small.a library/svnversion/liblibrary-svnversion.a contrib/libs/base64/avx2/liblibs-base64-avx2.a contrib/libs/base64/ssse3/liblibs-base64-ssse3.a contrib/libs/base64/neon32/liblibs-base64-neon32.a contrib/libs/base64/neon64/liblibs-base64-neon64.a contrib/libs/base64/plain32/liblibs-base64-plain32.a contrib/libs/base64/plain64/liblibs-base64-plain64.a library/cpp/string_utils/base64/libcpp-string_utils-base64.a library/build_info/liblibrary-build_info.a library/packers/liblibrary-packers.a library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a util/draft/libutil-draft.a library/comptrie/liblibrary-comptrie.a library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a tools/triecompiler/lib/libtools-triecompiler-lib.a -Wl,--end-group -ldl -lrt -Wl,--no-as-needed -lpthread -lrt -ldl -nodefaultlibs -lpthread -lc -lm
 
 $(BUILD_ROOT)/library/build_info/liblibrary-build_info.a.mf\
         ::\
@@ -34159,6 +34159,27 @@ $(BUILD_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp.o\
 	mkdir -p '$(BUILD_ROOT)/library/cpp/containers/compact_vector'
 	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp.o' '$(SOURCE_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
 
+$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a.mf\
+        ::\
+        $(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a\
+
+$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a\
+        ::\
+        $(BUILD_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp.o\
+        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
+        $(SOURCE_ROOT)/build/scripts/link_lib.py\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name cpp-deprecated-mapped_file -o library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a.mf -t LIBRARY -Ya,lics -Ya,peers
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar AR '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a' '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp.o'
+
+$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp.o' '$(SOURCE_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
 $(BUILD_ROOT)/library/cpp/getopt/print.cpp.o\
         ::\
         $(SOURCE_ROOT)/library/cpp/getopt/print.cpp\
@@ -34202,27 +34223,6 @@ $(BUILD_ROOT)/library/cpp/on_disk/chunks/writer.cpp.o\
 
 	mkdir -p '$(BUILD_ROOT)/library/cpp/on_disk/chunks'
 	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/on_disk/chunks/writer.cpp.o' '$(SOURCE_ROOT)/library/cpp/on_disk/chunks/writer.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/deprecated/mapped_file/liblibrary-deprecated-mapped_file.a.mf\
-        ::\
-        $(BUILD_ROOT)/library/deprecated/mapped_file/liblibrary-deprecated-mapped_file.a\
-
-$(BUILD_ROOT)/library/deprecated/mapped_file/liblibrary-deprecated-mapped_file.a\
-        ::\
-        $(BUILD_ROOT)/library/deprecated/mapped_file/mapped_file.cpp.o\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/link_lib.py\
-
-	mkdir -p '$(BUILD_ROOT)/library/deprecated/mapped_file'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name library-deprecated-mapped_file -o library/deprecated/mapped_file/liblibrary-deprecated-mapped_file.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar AR '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/deprecated/mapped_file/liblibrary-deprecated-mapped_file.a' '$(BUILD_ROOT)/library/deprecated/mapped_file/mapped_file.cpp.o'
-
-$(BUILD_ROOT)/library/deprecated/mapped_file/mapped_file.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/library/deprecated/mapped_file/mapped_file.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/deprecated/mapped_file'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/deprecated/mapped_file/mapped_file.cpp.o' '$(SOURCE_ROOT)/library/deprecated/mapped_file/mapped_file.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
 
 $(BUILD_ROOT)/library/packers/liblibrary-packers.a.mf\
         ::\
@@ -39953,13 +39953,13 @@ clean\
 	rm -f '$(BUILD_ROOT)/library/comptrie/writeable_node.cpp.o'
 	rm -f '$(BUILD_ROOT)/library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a' '$(BUILD_ROOT)/library/cpp/containers/compact_vector/libcpp-containers-compact_vector.a.mf'
 	rm -f '$(BUILD_ROOT)/library/cpp/containers/compact_vector/compact_vector.cpp.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a' '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/libcpp-deprecated-mapped_file.a.mf'
+	rm -f '$(BUILD_ROOT)/library/cpp/deprecated/mapped_file/mapped_file.cpp.o'
 	rm -f '$(BUILD_ROOT)/library/cpp/getopt/print.cpp.o'
 	rm -f '$(BUILD_ROOT)/library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a' '$(BUILD_ROOT)/library/cpp/on_disk/chunks/libcpp-on_disk-chunks.a.mf'
 	rm -f '$(BUILD_ROOT)/library/cpp/on_disk/chunks/chunked_helpers.cpp.o'
 	rm -f '$(BUILD_ROOT)/library/cpp/on_disk/chunks/reader.cpp.o'
 	rm -f '$(BUILD_ROOT)/library/cpp/on_disk/chunks/writer.cpp.o'
-	rm -f '$(BUILD_ROOT)/library/deprecated/mapped_file/liblibrary-deprecated-mapped_file.a' '$(BUILD_ROOT)/library/deprecated/mapped_file/liblibrary-deprecated-mapped_file.a.mf'
-	rm -f '$(BUILD_ROOT)/library/deprecated/mapped_file/mapped_file.cpp.o'
 	rm -f '$(BUILD_ROOT)/library/packers/liblibrary-packers.a' '$(BUILD_ROOT)/library/packers/liblibrary-packers.a.mf'
 	rm -f '$(BUILD_ROOT)/library/packers/packers.cpp.o'
 	rm -f '$(BUILD_ROOT)/library/packers/proto_packer.cpp.o'
