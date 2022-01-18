@@ -69,11 +69,11 @@ struct TStripImpl {
         const size_t oldLen = e - b;
 
         if (stripBeg) {
-            StripRangeBegin(b, e, criterion);
+            StripRangeBegin(b, e, std::forward<TStripCriterion>(criterion));
         }
 
         if (stripEnd) {
-            StripRangeEnd(b, e, criterion);
+            StripRangeEnd(b, e, std::forward<TStripCriterion>(criterion));
         }
 
         const size_t newLen = e - b;
@@ -85,7 +85,7 @@ struct TStripImpl {
         auto b = from.begin();
         auto e = from.end();
 
-        if (StripRange(b, e, criterion)) {
+        if (StripRange(b, e, std::forward<TStripCriterion>(criterion))) {
             to = T(b, e - b);
 
             return true;
@@ -99,7 +99,7 @@ struct TStripImpl {
     template <class T, class TStripCriterion>
     static inline T StripString(const T& from, TStripCriterion&& criterion) {
         T ret;
-        StripString(from, ret, criterion);
+        StripString(from, ret, std::forward<TStripCriterion>(criterion));
         return ret;
     }
 
@@ -111,7 +111,7 @@ struct TStripImpl {
 
 template <class It, class TStripCriterion>
 inline bool StripRange(It& b, It& e, TStripCriterion&& criterion) noexcept {
-    return TStripImpl<true, true>::StripRange(b, e, criterion);
+    return TStripImpl<true, true>::StripRange(b, e, std::forward<TStripCriterion>(criterion));
 }
 
 template <class It>
@@ -123,7 +123,7 @@ template <class It, class TStripCriterion>
 inline bool Strip(It& b, size_t& len, TStripCriterion&& criterion) noexcept {
     It e = b + len;
 
-    if (StripRange(b, e, criterion)) {
+    if (StripRange(b, e, std::forward<TStripCriterion>(criterion))) {
         len = e - b;
 
         return true;
@@ -139,7 +139,7 @@ inline bool Strip(It& b, size_t& len) noexcept {
 
 template <class T, class TStripCriterion>
 static inline bool StripString(const T& from, T& to, TStripCriterion&& criterion) {
-    return TStripImpl<true, true>::StripString(from, to, criterion);
+    return TStripImpl<true, true>::StripString(from, to, std::forward<TStripCriterion>(criterion));
 }
 
 template <class T>
@@ -149,7 +149,7 @@ static inline bool StripString(const T& from, T& to) {
 
 template <class T, class TStripCriterion>
 static inline T StripString(const T& from, TStripCriterion&& criterion) {
-    return TStripImpl<true, true>::StripString(from, criterion);
+    return TStripImpl<true, true>::StripString(from, std::forward<TStripCriterion>(criterion));
 }
 
 template <class T>
@@ -169,12 +169,12 @@ static inline T StripStringRight(const T& from) {
 
 template <class T, class TStripCriterion>
 static inline T StripStringLeft(const T& from, TStripCriterion&& criterion) {
-    return TStripImpl<true, false>::StripString(from, criterion);
+    return TStripImpl<true, false>::StripString(from, std::forward<TStripCriterion>(criterion));
 }
 
 template <class T, class TStripCriterion>
 static inline T StripStringRight(const T& from, TStripCriterion&& criterion) {
-    return TStripImpl<false, true>::StripString(from, criterion);
+    return TStripImpl<false, true>::StripString(from, std::forward<TStripCriterion>(criterion));
 }
 
 /// Copies the given string removing leading and trailing spaces.
@@ -182,8 +182,19 @@ static inline bool Strip(const TString& from, TString& to) {
     return StripString(from, to);
 }
 
+// deprecated version, use Strip instead
+static inline bool strip(const TString& from, TString& to) {
+    return StripString(from, to);
+}
+
 /// Removes leading and trailing spaces from the string.
-inline TString& StripInPlace(TString& s) {
+inline TString& Strip(TString& s) {
+    Strip(s, s);
+    return s;
+}
+
+// deprecated version, use Strip(TString& s) instead
+inline TString& strip(TString& s) {
     Strip(s, s);
     return s;
 }
@@ -194,6 +205,12 @@ inline TString Strip(const TString& s) {
     TString ret = s;
     Strip(ret, ret);
     return ret;
+}
+
+// deprecated version, use TString Strip(const TString& s) instead
+inline TString strip(const TString& s) Y_WARN_UNUSED_RESULT;
+inline TString strip(const TString& s) {
+    return Strip(s);
 }
 
 template <class TChar, class TWhitespaceFunc>
@@ -232,18 +249,31 @@ bool CollapseImpl(const TStringType& from, TStringType& to, size_t maxLen, const
 
 bool Collapse(const TString& from, TString& to, size_t maxLen = 0);
 
+// deprecated version, use Collapse instead
+inline bool collapse(const TString& from, TString& to, size_t maxLen = 0) {
+    return Collapse(from, to, maxLen);
+}
+
 /// Replaces several consequtive space symbols with one (processing is limited to maxLen bytes)
-inline TString& CollapseInPlace(TString& s, size_t maxLen = 0) {
+inline TString& Collapse(TString& s, size_t maxLen = 0) {
+    Collapse(s, s, maxLen);
+    return s;
+}
+// deprecated version, use Collapse instead
+inline TString& collapse(TString& s, size_t maxLen = 0) {
     Collapse(s, s, maxLen);
     return s;
 }
 
 /// Replaces several consequtive space symbols with one (processing is limited to maxLen bytes)
-inline TString Collapse(const TString& s, size_t maxLen = 0) Y_WARN_UNUSED_RESULT;
-inline TString Collapse(const TString& s, size_t maxLen) {
+inline TString Collapse(const TString& s, size_t maxLen = 0) {
     TString ret;
     Collapse(s, ret, maxLen);
     return ret;
+}
+// deprecated version, use Collapse instead
+inline TString collapse(const TString& s, size_t maxLen = 0) {
+    return Collapse(s, maxLen);
 }
 
 void CollapseText(const TString& from, TString& to, size_t maxLen);

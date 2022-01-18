@@ -20,6 +20,8 @@ public:
     /// @param[in] value - значение параметра.
     THttpInputHeader(TString name, TString value);
 
+    ~THttpInputHeader();
+
     /// Возвращает имя параметра.
     inline const TString& Name() const noexcept {
         return Name_;
@@ -35,7 +37,7 @@ public:
 
     /// Возвращает строку "имя параметра: значение".
     inline TString ToString() const {
-        return Name_ + TStringBuf(": ") + Value_;
+        return Name_ + AsStringBuf(": ") + Value_;
     }
 
 private:
@@ -45,15 +47,15 @@ private:
 
 /// Контейнер для хранения HTTP-заголовков
 class THttpHeaders {
-    using THeaders = TDeque<THttpInputHeader>;
+    typedef TDeque<THttpInputHeader> THeaders;
 
 public:
-    using TConstIterator = THeaders::const_iterator;
+    typedef THeaders::const_iterator TConstIterator;
 
-    THttpHeaders() = default;
-
+    THttpHeaders();
     /// Добавляет каждую строку из потока в контейнер, считая ее правильным заголовком.
     THttpHeaders(IInputStream* stream);
+    ~THttpHeaders();
 
     /// Стандартный итератор.
     inline TConstIterator Begin() const noexcept {
@@ -93,11 +95,6 @@ public:
     /// c таким же параметром. В противном случае, заменяет существующий
     /// заголовок на новый.
     void AddOrReplaceHeader(const THttpInputHeader& header);
-
-    template <typename ValueType>
-    void AddOrReplaceHeader(TString name, const ValueType& value) {
-        AddOrReplaceHeader(THttpInputHeader(std::move(name), ToString(value)));
-    }
 
     // Проверяет, есть ли такой заголовок
     bool HasHeader(TStringBuf header) const;

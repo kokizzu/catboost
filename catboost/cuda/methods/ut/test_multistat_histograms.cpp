@@ -1,4 +1,4 @@
-#include <library/cpp/testing/unittest/registar.h>
+#include <library/unittest/registar.h>
 
 #include <catboost/cuda/cuda_lib/cuda_buffer_helpers/all_reduce.h>
 #include <catboost/cuda/data/binarizations_manager.h>
@@ -157,7 +157,7 @@ Y_UNIT_TEST_SUITE(TPointwiseMultiStatHistogramTest) {
                             dataSet.GetFeatures(),
                             subsets.Target.StatsToAggregate,
                             subsets.Target.Indices,
-                            subsets.Partitions.AsConstBuf(),
+                            subsets.Partitions,
                             subsets.Leaves.size(),
                             &refStats);
             }
@@ -168,7 +168,7 @@ Y_UNIT_TEST_SUITE(TPointwiseMultiStatHistogramTest) {
                             dataSet.GetPermutationFeatures(),
                             subsets.Target.StatsToAggregate,
                             subsets.Target.Indices,
-                            subsets.Partitions.AsConstBuf(),
+                            subsets.Partitions,
                             subsets.Leaves.size(),
                             &refStats);
             }

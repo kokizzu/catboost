@@ -14,7 +14,7 @@
 #include <catboost/private/libs/algo_helpers/online_predictor.h>
 #include <catboost/private/libs/options/catboost_options.h>
 
-#include <library/cpp/threading/local_executor/local_executor.h>
+#include <library/threading/local_executor/local_executor.h>
 
 
 template <typename TStep>
@@ -33,7 +33,7 @@ void CalcLeafValuesMulti(
     int objectsInLeafCount,
     NCatboostOptions::TLossDescription metricDescriptions,
     TRestorableFastRng64* rng,
-    NPar::ILocalExecutor* localExecutor,
+    NPar::TLocalExecutor* localExecutor,
     TVector<TStep>* sumLeafDeltas,
     TVector<TVector<double>>* approx
 ) {
@@ -79,23 +79,13 @@ void CalcLeafValuesMulti(
         );
 
         if (params.BoostingOptions->Langevin) {
-            if (estimationMethod == ELeavesEstimation::Gradient) {
-                AddLangevinNoiseToLeafDerivativesSum(
-                    params.BoostingOptions->DiffusionTemperature,
-                    params.BoostingOptions->LearningRate,
-                    ScaleL2Reg(l2Regularizer, sumWeight, learnSampleCount),
-                    rng->GenRand(),
-                    &leafDers
-                );
-            } else if (estimationMethod == ELeavesEstimation::Newton) {
-                AddLangevinNoiseToLeafNewtonSum(
-                    params.BoostingOptions->DiffusionTemperature,
-                    params.BoostingOptions->LearningRate,
-                    ScaleL2Reg(l2Regularizer, sumWeight, learnSampleCount),
-                    rng->GenRand(),
-                    &leafDers
-                );
-            }
+            AddLangevinNoiseToLeafDerivativesSum(
+                params.BoostingOptions->DiffusionTemperature,
+                params.BoostingOptions->LearningRate,
+                ScaleL2Reg(l2Regularizer, sumWeight, learnSampleCount),
+                rng->GenRand(),
+                &leafDers
+            );
         }
 
         CalcLeafDeltasMulti(

@@ -1,6 +1,6 @@
-Metadata-Version: 2.1
+Metadata-Version: 2.0
 Name: pytz
-Version: 2021.3
+Version: 2020.1
 Summary: World timezone definitions, modern and historical
 Home-page: http://pythonhosted.org/pytz
 Author: Stuart Bishop
@@ -23,15 +23,13 @@ Classifier: Programming Language :: Python :: 2.5
 Classifier: Programming Language :: Python :: 2.6
 Classifier: Programming Language :: Python :: 2.7
 Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.0
 Classifier: Programming Language :: Python :: 3.1
 Classifier: Programming Language :: Python :: 3.2
 Classifier: Programming Language :: Python :: 3.3
 Classifier: Programming Language :: Python :: 3.4
 Classifier: Programming Language :: Python :: 3.5
 Classifier: Programming Language :: Python :: 3.6
-Classifier: Programming Language :: Python :: 3.7
-Classifier: Programming Language :: Python :: 3.8
-Classifier: Programming Language :: Python :: 3.9
 Classifier: Topic :: Software Development :: Libraries :: Python Modules
 
 pytz - World Timezone Definitions for Python
@@ -237,8 +235,8 @@ during DST transition ambiguous periods to resolve that ambiguity.
 
 >>> print(tz.utcoffset(normal, is_dst=False))
 -1 day, 21:30:00
->>> tz.dst(normal, is_dst=False).seconds
-3600
+>>> tz.dst(normal, is_dst=False)
+datetime.timedelta(0, 3600)
 >>> tz.tzname(normal, is_dst=False)
 'NDT'
 

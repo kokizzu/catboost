@@ -4,7 +4,7 @@
 #include <catboost/libs/metrics/metric_holder.h>
 #include <catboost/private/libs/data_types/query.h>
 #include <catboost/private/libs/options/restrictions.h>
-#include <library/cpp/threading/local_executor/local_executor.h>
+#include <library/threading/local_executor/local_executor.h>
 
 #include <util/generic/array_ref.h>
 
@@ -17,5 +17,5 @@ TMetricHolder EvalErrorsWithLeaves(
     TConstArrayRef<float> weight,
     TConstArrayRef<TQueryInfo> queriesInfo,
     const IMetric& error,
-    NPar::ILocalExecutor* localExecutor
+    NPar::TLocalExecutor* localExecutor
 );

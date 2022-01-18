@@ -35,7 +35,7 @@ Types:
 
     ptrdiff_t
     size_t
-    max_align_t // C++11
+    max_align_t
     nullptr_t
 
 */
@@ -48,7 +48,6 @@ Types:
 
 #ifdef _LIBCPP_COMPILER_MSVC
 #include _LIBCPP_UCRT_INCLUDE(stddef.h)
-typedef double max_align_t;
 #else
 #include_next <stddef.h>
 #endif
@@ -60,6 +59,12 @@ extern "C++" {
 using std::nullptr_t;
 }
 
+// Re-use the compiler's <stddef.h> max_align_t where possible.
+#if !defined(__CLANG_MAX_ALIGN_T_DEFINED) && !defined(_GCC_MAX_ALIGN_T) && \
+    !defined(__DEFINED_max_align_t) && !defined(_LIBCPP_HAS_MUSL_LIBC)
+typedef long double max_align_t;
 #endif
 
-#endif // _LIBCPP_STDDEF_H
+#endif
+
+#endif  // _LIBCPP_STDDEF_H

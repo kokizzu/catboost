@@ -1,27 +1,13 @@
 #include "reduce.cuh"
 #include "fill.cuh"
 #include "kernel_helpers.cuh"
-#include <library/cpp/cuda/wrappers/arch.cuh>
-
-#include <library/cpp/cuda/wrappers/cub_include.h>
-
-#include _CUB_INCLUDE(cub/device/device_reduce.cuh)
-#include _CUB_INCLUDE(cub/device/device_segmented_reduce.cuh)
+#include <contrib/libs/cub/cub/device/device_reduce.cuh>
+#include <library/cuda/wrappers/arch.cuh>
+#include <contrib/libs/cub/cub/device/device_segmented_reduce.cuh>
 
 
 namespace NKernel {
 
-    /**
-    * \brief Default sum functor
-    */
-    struct L1Sum
-    {
-        /// Boolean sum operator, returns <tt>|a| + |b|</tt>
-        __host__ __device__ __forceinline__ float operator()(const float &a, const float &b) const
-        {
-            return fabs(a) + fabs(b);
-        }
-    };
 
     //current cub segmented reduce sucks on small segments problems
     //LINE_SIZE should be leq 32
@@ -156,13 +142,6 @@ namespace NKernel {
                                                  T(),
                                                  stream);
             }
-            case EOperatorType::L1Sum: {
-                return cub::DeviceReduce::Reduce(context.TempStorage, context.TempStorageSize,
-                                                 input, output, size,
-                                                 L1Sum(),
-                                                 T(),
-                                                 stream);
-            }
             default: {
                 return cudaErrorNotYetImplemented;
             }
@@ -206,15 +185,6 @@ namespace NKernel {
                                                       size,
                                                       stream);
             }
-            case EOperatorType::L1Sum: {
-                return cub::DeviceReduce::ReduceByKey(context.TempStorage, context.TempStorageSize,
-                                                      keys, outKeys,
-                                                      input, output,
-                                                      outputSize,
-                                                      L1Sum(),
-                                                      size,
-                                                      stream);
-            }
             default: {
                 return cudaErrorNotYetImplemented;
             }
@@ -252,7 +222,7 @@ namespace NKernel {
                         const ui32 numBlocks = CeilDivide(numSegments, segmentsPerBlock);
 
                         SegmentedReduceWarpPartPerSegmentImpl<T, blockSize, lineSize> << < min(numBlocks, (ui32)TArchProps::MaxBlockCount()), blockSize, 0, stream >> >
-                                (input, beginOffsets, endOffsets, numSegments, output, numBlocks);
+                                                                                                                    (input, beginOffsets, endOffsets, numSegments, output, numBlocks);
 
                     } else if (meanSize <= 4) {
                         const ui32 lineSize = 4;
@@ -268,7 +238,7 @@ namespace NKernel {
                         const ui32 segmentsPerBlock = blockSize / lineSize;
                         const ui32 numBlocks = CeilDivide(numSegments, segmentsPerBlock);
                         SegmentedReduceWarpPartPerSegmentImpl<T, blockSize, lineSize> << < min(numBlocks, (ui32)TArchProps::MaxBlockCount()), blockSize, 0, stream >> >
-                                (input, beginOffsets, endOffsets, numSegments, output, numBlocks);
+                                                                                                                (input, beginOffsets, endOffsets, numSegments, output, numBlocks);
 
                     } else if (meanSize <= 16) {
                         const ui32 lineSize = 16;
@@ -276,7 +246,7 @@ namespace NKernel {
                         const ui32 segmentsPerBlock = blockSize / lineSize;
                         const ui32 numBlocks = CeilDivide(numSegments, segmentsPerBlock);
                         SegmentedReduceWarpPartPerSegmentImpl<T, blockSize, lineSize> << < min(numBlocks, (ui32)TArchProps::MaxBlockCount()), blockSize, 0, stream >> >
-                                (input, beginOffsets, endOffsets, numSegments, output, numBlocks);
+                                                                                                                (input, beginOffsets, endOffsets, numSegments, output, numBlocks);
                     } else if (meanSize <= 256) {
                         const ui32 lineSize = 32;
                         const ui32 blockSize = 256;
@@ -320,15 +290,6 @@ namespace NKernel {
                                                               numSegments,
                                                               beginOffsets, endOffsets,
                                                               cub::Min(),
-                                                              T(),
-                                                              stream);
-                }
-                case EOperatorType::L1Sum: {
-                    return cub::DeviceSegmentedReduce::Reduce(context.TempStorage, context.TempStorageSize,
-                                                              input, output,
-                                                              numSegments,
-                                                              beginOffsets, endOffsets,
-                                                              L1Sum(),
                                                               T(),
                                                               stream);
                 }

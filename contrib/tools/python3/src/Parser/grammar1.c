@@ -2,18 +2,31 @@
 /* Grammar subroutines needed by parser */
 
 #include "Python.h"
+#include "pgenheaders.h"
 #include "grammar.h"
 #include "token.h"
 
 /* Return the DFA for the given type */
 
-const dfa *
+dfa *
 PyGrammar_FindDFA(grammar *g, int type)
 {
+    dfa *d;
+#if 1
     /* Massive speed-up */
-    const dfa *d = &g->g_dfa[type - NT_OFFSET];
+    d = &g->g_dfa[type - NT_OFFSET];
     assert(d->d_type == type);
     return d;
+#else
+    /* Old, slow version */
+    int i;
+
+    for (i = g->g_ndfas, d = g->g_dfa; --i >= 0; d++) {
+        if (d->d_type == type)
+            return d;
+    }
+    Py_UNREACHABLE();
+#endif
 }
 
 const char *
@@ -41,7 +54,7 @@ PyGrammar_LabelRepr(label *lb)
         }
     }
     else {
-        Py_FatalError("invalid grammar label");
+        Py_FatalError("invalid label");
         return NULL;
     }
 }

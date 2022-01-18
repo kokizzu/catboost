@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2020 Stefan Krah. All rights reserved.
+ * Copyright (c) 2008-2016 Stefan Krah. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,21 +27,18 @@
 
 
 #include "mpdecimal.h"
-
-#include <assert.h>
-#include <limits.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <limits.h>
+#include <math.h>
 #include "basearith.h"
 #include "bits.h"
-#include "constants.h"
 #include "convolute.h"
 #include "crt.h"
 #include "mpalloc.h"
 #include "typearith.h"
+#include "umodarith.h"
 
 #ifdef PPRO
   #if defined(_MSC_VER)
@@ -64,7 +61,7 @@
 
 #if defined(_MSC_VER)
   #define ALWAYS_INLINE __forceinline
-#elif defined(__IBMC__) || defined(LEGACY_COMPILER)
+#elif defined(LEGACY_COMPILER)
   #define ALWAYS_INLINE
   #undef inline
   #define inline
@@ -244,7 +241,7 @@ mpd_lsd(mpd_uint_t word)
 }
 
 /* Coefficient size needed to store 'digits' */
-mpd_ssize_t
+ALWAYS_INLINE mpd_ssize_t
 mpd_digits_to_size(mpd_ssize_t digits)
 {
     mpd_ssize_t q, r;
@@ -263,9 +260,8 @@ mpd_exp_digits(mpd_ssize_t exp)
 
 /* Canonical */
 ALWAYS_INLINE int
-mpd_iscanonical(const mpd_t *dec)
+mpd_iscanonical(const mpd_t *dec UNUSED)
 {
-    (void)dec;
     return 1;
 }
 
@@ -514,28 +510,6 @@ mpd_qresize(mpd_t *result, mpd_ssize_t nwords, uint32_t *status)
     }
 
     return mpd_realloc_dyn(result, nwords, status);
-}
-
-/* Same as mpd_qresize, but do not set the result no NaN on failure. */
-static ALWAYS_INLINE int
-mpd_qresize_cxx(mpd_t *result, mpd_ssize_t nwords)
-{
-    assert(!mpd_isconst_data(result)); /* illegal operation for a const */
-    assert(!mpd_isshared_data(result)); /* illegal operation for a shared */
-    assert(MPD_MINALLOC <= result->alloc);
-
-    nwords = (nwords <= MPD_MINALLOC) ? MPD_MINALLOC : nwords;
-    if (nwords == result->alloc) {
-        return 1;
-    }
-    if (mpd_isstatic_data(result)) {
-        if (nwords > result->alloc) {
-            return mpd_switch_to_dyn_cxx(result, nwords);
-        }
-        return 1;
-    }
-
-    return mpd_realloc_dyn_cxx(result, nwords);
 }
 
 /* Same as mpd_qresize, but the complete coefficient (including the old
@@ -1218,7 +1192,7 @@ _c32setu64(mpd_t *result, uint64_t u, uint8_t sign, uint32_t *status)
         result->data[i] = w[i];
     }
 
-    mpd_set_flags(result, sign);
+    mpd_set_sign(result, sign);
     result->exp = 0;
     result->len = len;
     mpd_setdigits(result);
@@ -1270,26 +1244,6 @@ mpd_qset_i64(mpd_t *result, int64_t a, const mpd_context_t *ctx,
 #endif
 }
 
-/* quietly set a decimal from an int64_t, use a maxcontext for conversion */
-void
-mpd_qset_i64_exact(mpd_t *result, int64_t a, uint32_t *status)
-{
-    mpd_context_t maxcontext;
-
-    mpd_maxcontext(&maxcontext);
-#ifdef CONFIG_64
-    mpd_qset_ssize(result, a, &maxcontext, status);
-#else
-    _c32_qset_i64(result, a, &maxcontext, status);
-#endif
-
-    if (*status & (MPD_Inexact|MPD_Rounded|MPD_Clamped)) {
-        /* we want exact results */
-        mpd_seterror(result, MPD_Invalid_operation, status);
-    }
-    *status &= MPD_Errors;
-}
-
 /* quietly set a decimal from a uint64_t */
 void
 mpd_qset_u64(mpd_t *result, uint64_t a, const mpd_context_t *ctx,
@@ -1301,27 +1255,8 @@ mpd_qset_u64(mpd_t *result, uint64_t a, const mpd_context_t *ctx,
     _c32_qset_u64(result, a, ctx, status);
 #endif
 }
-
-/* quietly set a decimal from a uint64_t, use a maxcontext for conversion */
-void
-mpd_qset_u64_exact(mpd_t *result, uint64_t a, uint32_t *status)
-{
-    mpd_context_t maxcontext;
-
-    mpd_maxcontext(&maxcontext);
-#ifdef CONFIG_64
-    mpd_qset_uint(result, a, &maxcontext, status);
-#else
-    _c32_qset_u64(result, a, &maxcontext, status);
-#endif
-
-    if (*status & (MPD_Inexact|MPD_Rounded|MPD_Clamped)) {
-        /* we want exact results */
-        mpd_seterror(result, MPD_Invalid_operation, status);
-    }
-    *status &= MPD_Errors;
-}
 #endif /* !LEGACY_COMPILER */
+
 
 /*
  * Quietly get an mpd_uint_t from a decimal. Assumes
@@ -1410,13 +1345,11 @@ mpd_qabs_uint(const mpd_t *a, uint32_t *status)
 mpd_ssize_t
 mpd_qget_ssize(const mpd_t *a, uint32_t *status)
 {
-    uint32_t workstatus = 0;
     mpd_uint_t u;
     int isneg;
 
-    u = mpd_qabs_uint(a, &workstatus);
-    if (workstatus&MPD_Invalid_operation) {
-        *status |= workstatus;
+    u = mpd_qabs_uint(a, status);
+    if (*status&MPD_Invalid_operation) {
         return MPD_SSIZE_MAX;
     }
 
@@ -1536,11 +1469,9 @@ mpd_qget_i64(const mpd_t *a, uint32_t *status)
 uint32_t
 mpd_qget_u32(const mpd_t *a, uint32_t *status)
 {
-    uint32_t workstatus = 0;
-    uint64_t x = mpd_qget_uint(a, &workstatus);
+    uint64_t x = mpd_qget_uint(a, status);
 
-    if (workstatus&MPD_Invalid_operation) {
-        *status |= workstatus;
+    if (*status&MPD_Invalid_operation) {
         return UINT32_MAX;
     }
     if (x > UINT32_MAX) {
@@ -1555,11 +1486,9 @@ mpd_qget_u32(const mpd_t *a, uint32_t *status)
 int32_t
 mpd_qget_i32(const mpd_t *a, uint32_t *status)
 {
-    uint32_t workstatus = 0;
-    int64_t x = mpd_qget_ssize(a, &workstatus);
+    int64_t x = mpd_qget_ssize(a, status);
 
-    if (workstatus&MPD_Invalid_operation) {
-        *status |= workstatus;
+    if (*status&MPD_Invalid_operation) {
         return INT32_MAX;
     }
     if (x < INT32_MIN || x > INT32_MAX) {
@@ -1575,20 +1504,14 @@ mpd_qget_i32(const mpd_t *a, uint32_t *status)
 uint64_t
 mpd_qget_u64(const mpd_t *a, uint32_t *status)
 {
-    uint32_t workstatus = 0;
-    uint64_t x = _c32_qget_u64(1, a, &workstatus);
-    *status |= workstatus;
-    return x;
+    return _c32_qget_u64(1, a, status);
 }
 
 /* quietly get an int64_t from a decimal */
 int64_t
 mpd_qget_i64(const mpd_t *a, uint32_t *status)
 {
-    uint32_t workstatus = 0;
-    int64_t x = _c32_qget_i64(a, &workstatus);
-    *status |= workstatus;
-    return x;
+    return _c32_qget_i64(a, status);
 }
 #endif
 
@@ -2002,25 +1925,6 @@ mpd_qcopy(mpd_t *result, const mpd_t *a, uint32_t *status)
     if (result == a) return 1;
 
     if (!mpd_qresize(result, a->len, status)) {
-        return 0;
-    }
-
-    mpd_copy_flags(result, a);
-    result->exp = a->exp;
-    result->digits = a->digits;
-    result->len = a->len;
-    memcpy(result->data, a->data, a->len * (sizeof *result->data));
-
-    return 1;
-}
-
-/* Same as mpd_qcopy, but do not set the result to NaN on failure. */
-int
-mpd_qcopy_cxx(mpd_t *result, const mpd_t *a)
-{
-    if (result == a) return 1;
-
-    if (!mpd_qresize_cxx(result, a->len)) {
         return 0;
     }
 
@@ -3876,31 +3780,11 @@ void
 mpd_qdiv(mpd_t *q, const mpd_t *a, const mpd_t *b,
          const mpd_context_t *ctx, uint32_t *status)
 {
-    MPD_NEW_STATIC(aa,0,0,0,0);
-    MPD_NEW_STATIC(bb,0,0,0,0);
-    uint32_t xstatus = 0;
+    _mpd_qdiv(SET_IDEAL_EXP, q, a, b, ctx, status);
 
-    if (q == a) {
-        if (!mpd_qcopy(&aa, a, status)) {
-            mpd_seterror(q, MPD_Malloc_error, status);
-            goto out;
-        }
-        a = &aa;
-    }
-
-    if (q == b) {
-        if (!mpd_qcopy(&bb, b, status)) {
-            mpd_seterror(q, MPD_Malloc_error, status);
-            goto out;
-        }
-        b = &bb;
-    }
-
-    _mpd_qdiv(SET_IDEAL_EXP, q, a, b, ctx, &xstatus);
-
-    if (xstatus & (MPD_Malloc_error|MPD_Division_impossible)) {
+    if (*status & MPD_Malloc_error) {
         /* Inexact quotients (the usual case) fill the entire context precision,
-         * which can lead to the above errors for very high precisions. Retry
+         * which can lead to malloc() failures for very high precisions. Retry
          * the operation with a lower precision in case the result is exact.
          *
          * We need an upper bound for the number of digits of a_coeff / b_coeff
@@ -3915,33 +3799,25 @@ mpd_qdiv(mpd_t *q, const mpd_t *a, const mpd_t *b,
          * We arrive at a total upper bound:
          *
          *   maxdigits(a_coeff') + maxdigits(1 / b_coeff') <=
-         *   log10(a_coeff) + log2(b_coeff) =
-         *   log10(a_coeff) + log10(b_coeff) / log10(2) <=
+         *   a->digits + log2(b_coeff) =
+         *   a->digits + log10(b_coeff) / log10(2) <=
          *   a->digits + b->digits * 4;
          */
+        uint32_t workstatus = 0;
         mpd_context_t workctx = *ctx;
-        uint32_t ystatus = 0;
-
         workctx.prec = a->digits + b->digits * 4;
         if (workctx.prec >= ctx->prec) {
-            *status |= (xstatus&MPD_Errors);
-            goto out;  /* No point in retrying, keep the original error. */
+            return;  /* No point in retrying, keep the original error. */
         }
 
-        _mpd_qdiv(SET_IDEAL_EXP, q, a, b, &workctx, &ystatus);
-        if (ystatus != 0) {
-            ystatus = *status | ((ystatus|xstatus)&MPD_Errors);
-            mpd_seterror(q, ystatus, status);
+        _mpd_qdiv(SET_IDEAL_EXP, q, a, b, &workctx, &workstatus);
+        if (workstatus == 0) { /* The result is exact, unrounded, normal etc. */
+            *status = 0;
+            return;
         }
-    }
-    else {
-        *status |= xstatus;
-    }
 
-
-out:
-    mpd_del(&aa);
-    mpd_del(&bb);
+        mpd_seterror(q, *status, status);
+    }
 }
 
 /* Internal function. */
@@ -4031,7 +3907,6 @@ _mpd_qdivmod(mpd_t *q, mpd_t *r, const mpd_t *a, const mpd_t *b,
     }
 
     if (b->len == 1) {
-        assert(b->data[0] != 0); /* annotation for scan-build */
         if (a->len == 1) {
             _mpd_div_word(&q->data[0], &r->data[0], a->data[0], b->data[0]);
         }
@@ -6376,11 +6251,9 @@ _mpd_qpow_int(mpd_t *result, const mpd_t *base, const mpd_t *exp,
     workctx.round = MPD_ROUND_HALF_EVEN;
     workctx.clamp = 0;
     if (mpd_isnegative(exp)) {
-        uint32_t workstatus = 0;
         workctx.prec += 1;
-        mpd_qdiv(&tbase, &one, base, &workctx, &workstatus);
-        *status |= workstatus;
-        if (workstatus&MPD_Errors) {
+        mpd_qdiv(&tbase, &one, base, &workctx, status);
+        if (*status&MPD_Errors) {
             mpd_setspecial(result, MPD_POS, MPD_NAN);
             goto finish;
         }
@@ -7115,8 +6988,6 @@ mpd_qrem_near(mpd_t *r, const mpd_t *a, const mpd_t *b,
     mpd_ssize_t expdiff, qdigits;
     int cmp, isodd, allnine;
 
-    assert(r != NULL); /* annotation for scan-build */
-
     if (mpd_isspecial(a) || mpd_isspecial(b)) {
         if (mpd_qcheck_nans(r, a, b, ctx, status)) {
             return;
@@ -7347,11 +7218,6 @@ void
 mpd_qtrunc(mpd_t *result, const mpd_t *a, const mpd_context_t *ctx,
            uint32_t *status)
 {
-    if (mpd_isspecial(a)) {
-        mpd_seterror(result, MPD_Invalid_operation, status);
-        return;
-    }
-
     (void)_mpd_qround_to_integral(TO_INT_TRUNC, result, a, ctx, status);
 }
 
@@ -7360,12 +7226,6 @@ mpd_qfloor(mpd_t *result, const mpd_t *a, const mpd_context_t *ctx,
            uint32_t *status)
 {
     mpd_context_t workctx = *ctx;
-
-    if (mpd_isspecial(a)) {
-        mpd_seterror(result, MPD_Invalid_operation, status);
-        return;
-    }
-
     workctx.round = MPD_ROUND_FLOOR;
     (void)_mpd_qround_to_integral(TO_INT_SILENT, result, a,
                                   &workctx, status);
@@ -7376,12 +7236,6 @@ mpd_qceil(mpd_t *result, const mpd_t *a, const mpd_context_t *ctx,
           uint32_t *status)
 {
     mpd_context_t workctx = *ctx;
-
-    if (mpd_isspecial(a)) {
-        mpd_seterror(result, MPD_Invalid_operation, status);
-        return;
-    }
-
     workctx.round = MPD_ROUND_CEILING;
     (void)_mpd_qround_to_integral(TO_INT_SILENT, result, a,
                                   &workctx, status);
@@ -8023,20 +7877,9 @@ void
 mpd_qsqrt(mpd_t *result, const mpd_t *a, const mpd_context_t *ctx,
           uint32_t *status)
 {
-    MPD_NEW_STATIC(aa,0,0,0,0);
-    uint32_t xstatus = 0;
+    _mpd_qsqrt(result, a, ctx, status);
 
-    if (result == a) {
-        if (!mpd_qcopy(&aa, a, status)) {
-            mpd_seterror(result, MPD_Malloc_error, status);
-            goto out;
-        }
-        a = &aa;
-    }
-
-    _mpd_qsqrt(result, a, ctx, &xstatus);
-
-    if (xstatus & (MPD_Malloc_error|MPD_Division_impossible)) {
+    if (*status & (MPD_Malloc_error|MPD_Division_impossible)) {
         /* The above conditions can occur at very high context precisions
          * if intermediate values get too large. Retry the operation with
          * a lower context precision in case the result is exact.
@@ -8046,27 +7889,22 @@ mpd_qsqrt(mpd_t *result, const mpd_t *a, const mpd_context_t *ctx,
          *
          * NOTE: sqrt(40e9) = 2.0e+5 /\ digits(40e9) = digits(2.0e+5) = 2
          */
-        uint32_t ystatus = 0;
+        uint32_t workstatus = 0;
         mpd_context_t workctx = *ctx;
-
         workctx.prec = a->digits;
+
         if (workctx.prec >= ctx->prec) {
-            *status |= (xstatus|MPD_Errors);
-            goto out; /* No point in repeating this, keep the original error. */
+            return; /* No point in repeating this, keep the original error. */
         }
 
-        _mpd_qsqrt(result, a, &workctx, &ystatus);
-        if (ystatus != 0) {
-            ystatus = *status | ((xstatus|ystatus)&MPD_Errors);
-            mpd_seterror(result, ystatus, status);
+        _mpd_qsqrt(result, a, &workctx, &workstatus);
+        if (workstatus == 0) {
+            *status = 0;
+            return;
         }
-    }
-    else {
-        *status |= xstatus;
-    }
 
-out:
-    mpd_del(&aa);
+        mpd_seterror(result, *status, status);
+    }
 }
 
 
@@ -8080,7 +7918,6 @@ mpd_sizeinbase(const mpd_t *a, uint32_t base)
 {
     double x;
     size_t digits;
-    double upper_bound;
 
     assert(mpd_isinteger(a));
     assert(base >= 2);
@@ -8097,14 +7934,10 @@ mpd_sizeinbase(const mpd_t *a, uint32_t base)
     if (digits > 2711437152599294ULL) {
         return SIZE_MAX;
     }
-
-    upper_bound = (double)((1ULL<<53)-1);
-#else
-    upper_bound = (double)(SIZE_MAX-1);
 #endif
 
     x = (double)digits / log10(base);
-    return (x > upper_bound) ? SIZE_MAX : (size_t)x + 1;
+    return (x > SIZE_MAX-1) ? SIZE_MAX : (size_t)x + 1;
 }
 
 /* Space needed to import a base 'base' integer of length 'srclen'. */
@@ -8112,7 +7945,6 @@ static mpd_ssize_t
 _mpd_importsize(size_t srclen, uint32_t base)
 {
     double x;
-    double upper_bound;
 
     assert(srclen > 0);
     assert(base >= 2);
@@ -8121,15 +7953,10 @@ _mpd_importsize(size_t srclen, uint32_t base)
     if (srclen > (1ULL<<53)) {
         return MPD_SSIZE_MAX;
     }
-
-    assert((1ULL<<53) <= MPD_MAXIMPORT);
-    upper_bound = (double)((1ULL<<53)-1);
-#else
-    upper_bound = MPD_MAXIMPORT-1;
 #endif
 
     x = (double)srclen * (log10(base)/MPD_RDIGITS);
-    return (x > upper_bound) ? MPD_SSIZE_MAX : (mpd_ssize_t)x + 1;
+    return (x >= MPD_MAXIMPORT) ? MPD_SSIZE_MAX : (mpd_ssize_t)x + 1;
 }
 
 static uint8_t
@@ -8656,3 +8483,6 @@ mpd_qimport_u32(mpd_t *result,
     mpd_qresize(result, result->len, status);
     mpd_qfinalize(result, ctx, status);
 }
+
+
+

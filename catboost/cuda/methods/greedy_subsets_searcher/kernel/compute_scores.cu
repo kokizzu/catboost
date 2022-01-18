@@ -1,15 +1,12 @@
 #include "compute_scores.cuh"
 
-#include <library/cpp/cuda/wrappers/arch.cuh>
-
+#include <catboost/cuda/methods/kernel/score_calcers.cuh>
 #include <catboost/cuda/cuda_util/kernel/instructions.cuh>
 #include <catboost/cuda/cuda_util/kernel/random_gen.cuh>
 #include <catboost/cuda/cuda_util/kernel/kernel_helpers.cuh>
 #include <catboost/cuda/cuda_util/kernel/fill.cuh>
-#include <library/cpp/cuda/wrappers/cub_include.h>
-#include <catboost/cuda/methods/kernel/score_calcers.cuh>
-
-#include _CUB_INCLUDE(cub/block/block_reduce.cuh)
+#include <library/cuda/wrappers/arch.cuh>
+#include <contrib/libs/cub/cub/block/block_reduce.cuh>
 
 #include <cmath>
 #include <exception>
@@ -51,7 +48,6 @@ namespace NKernel {
               class TScoreCalcer>
     __global__ void ComputeOptimalSplits(const TCBinFeature* bf,
                                          ui32 binFeatureCount,
-                                         const float* binFeaturesWeights, ui32 binFeaturesWeightsCount,
                                          const float* histograms,
                                          const double* partStats, int statCount,
                                          const ui32* partIds, int pCount,
@@ -122,10 +118,8 @@ namespace NKernel {
                 }
             }
 
-            float score = calcer.GetScore();
+            const float score = calcer.GetScore();
 
-            ui32 featureId = bf[binFeatureId].FeatureId;
-            score *= __ldg(binFeaturesWeights + featureId);
 
             if (score < bestScore) {
                 bestScore = score;
@@ -141,7 +135,6 @@ namespace NKernel {
 
 
     void ComputeOptimalSplits(const TCBinFeature* binaryFeatures, ui32 binaryFeatureCount,
-                              const float* binFeaturesWeights, ui32 binFeaturesWeightsCount,
                               const float* histograms,
                               const double* partStats, int statCount,
                               const ui32* partIds, int partBlockSize, int partBlockCount,
@@ -162,7 +155,7 @@ namespace NKernel {
         numBlocks.z = 1;
 
         #define RUN() \
-        ComputeOptimalSplits<blockSize, TScoreCalcer> << < numBlocks, blockSize, 0, stream >> > (binaryFeatures, binaryFeatureCount, binFeaturesWeights, binFeaturesWeightsCount, histograms, partStats,  statCount, partIds, partBlockSize, restPartIds, restPartCount, multiclassOptimization, scoreCalcer, result);
+        ComputeOptimalSplits<blockSize, TScoreCalcer> << < numBlocks, blockSize, 0, stream >> > (binaryFeatures, binaryFeatureCount, histograms, partStats,  statCount, partIds, partBlockSize, restPartIds, restPartCount, multiclassOptimization, scoreCalcer, result);
 
 
         switch (scoreFunction)

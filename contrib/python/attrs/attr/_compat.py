@@ -19,23 +19,13 @@ else:
 
 
 if PY2:
-    from collections import Mapping, Sequence
-
     from UserDict import IterableUserDict
+    from collections import Mapping, Sequence
 
     # We 'bundle' isclass instead of using inspect as importing inspect is
     # fairly expensive (order of 10-15 ms for a modern machine in 2016)
     def isclass(klass):
         return isinstance(klass, (type, types.ClassType))
-
-    def new_class(name, bases, kwds, exec_body):
-        """
-        A minimal stub of types.new_class that we need for make_class.
-        """
-        ns = {}
-        exec_body(ns)
-
-        return type(name, bases, ns)
 
     # TYPE is used in exceptions, repr(int) is different on Python 2 and 3.
     TYPE = "type"
@@ -100,7 +90,7 @@ if PY2:
         res.data.update(d)  # We blocked update, so we have to do it like this.
         return res
 
-    def just_warn(*args, **kw):  # pragma: no cover
+    def just_warn(*args, **kw):  # pragma: nocover
         """
         We only warn on Python 3 because we are not aware of any concrete
         consequences of not setting the cell on Python 2.
@@ -131,8 +121,6 @@ else:  # Python 3 and later.
     def iteritems(d):
         return d.items()
 
-    new_class = types.new_class
-
     def metadata_proxy(d):
         return types.MappingProxyType(dict(d))
 
@@ -143,7 +131,7 @@ def make_set_closure_cell():
     """
     # pypy makes this easy. (It also supports the logic below, but
     # why not do the easy/fast thing?)
-    if PYPY:
+    if PYPY:  # pragma: no cover
 
         def set_closure_cell(cell, value):
             cell.__setstate__((value,))

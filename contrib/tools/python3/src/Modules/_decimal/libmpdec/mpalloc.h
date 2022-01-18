@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2020 Stefan Krah. All rights reserved.
+ * Copyright (c) 2008-2016 Stefan Krah. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,11 @@
  */
 
 
-#ifndef LIBMPDEC_MPALLOC_H_
-#define LIBMPDEC_MPALLOC_H_
+#ifndef MPALLOC_H
+#define MPALLOC_H
 
 
 #include "mpdecimal.h"
-
-#include <stdint.h>
 
 
 /* Internal header file: all symbols have local scope in the DSO */
@@ -43,11 +41,11 @@ int mpd_switch_to_dyn(mpd_t *result, mpd_ssize_t size, uint32_t *status);
 int mpd_switch_to_dyn_zero(mpd_t *result, mpd_ssize_t size, uint32_t *status);
 int mpd_realloc_dyn(mpd_t *result, mpd_ssize_t size, uint32_t *status);
 
-int mpd_switch_to_dyn_cxx(mpd_t *result, mpd_ssize_t size);
-int mpd_realloc_dyn_cxx(mpd_t *result, mpd_ssize_t size);
-
 
 MPD_PRAGMA(MPD_HIDE_SYMBOLS_END) /* restore previous scope rules */
 
 
-#endif /* LIBMPDEC_MPALLOC_H_ */
+#endif
+
+
+

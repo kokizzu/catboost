@@ -59,8 +59,6 @@ int pysqlite_statement_create(pysqlite_Statement* self, pysqlite_Connection* con
     self->st = NULL;
     self->in_use = 0;
 
-    assert(PyUnicode_Check(sql));
-
     sql_cstr = PyUnicode_AsUTF8AndSize(sql, &sql_cstr_len);
     if (sql_cstr == NULL) {
         rc = PYSQLITE_SQL_WRONG_TYPE;
@@ -227,9 +225,6 @@ void pysqlite_statement_bind_parameters(pysqlite_Statement* self, PyObject* para
             num_params = PyList_GET_SIZE(parameters);
         } else {
             num_params = PySequence_Size(parameters);
-            if (num_params == -1) {
-                return;
-            }
         }
         if (num_params != num_params_needed) {
             PyErr_Format(pysqlite_ProgrammingError,
@@ -241,9 +236,9 @@ void pysqlite_statement_bind_parameters(pysqlite_Statement* self, PyObject* para
         for (i = 0; i < num_params; i++) {
             if (PyTuple_CheckExact(parameters)) {
                 current_param = PyTuple_GET_ITEM(parameters, i);
-                Py_INCREF(current_param);
+                Py_XINCREF(current_param);
             } else if (PyList_CheckExact(parameters)) {
-                current_param = PyList_GetItem(parameters, i);
+                current_param = PyList_GET_ITEM(parameters, i);
                 Py_XINCREF(current_param);
             } else {
                 current_param = PySequence_GetItem(parameters, i);
@@ -255,10 +250,12 @@ void pysqlite_statement_bind_parameters(pysqlite_Statement* self, PyObject* para
             if (!_need_adapt(current_param)) {
                 adapted = current_param;
             } else {
-                adapted = pysqlite_microprotocols_adapt(current_param, (PyObject*)&pysqlite_PrepareProtocolType, current_param);
-                Py_DECREF(current_param);
-                if (!adapted) {
-                    return;
+                adapted = pysqlite_microprotocols_adapt(current_param, (PyObject*)&pysqlite_PrepareProtocolType, NULL);
+                if (adapted) {
+                    Py_DECREF(current_param);
+                } else {
+                    PyErr_Clear();
+                    adapted = current_param;
                 }
             }
 
@@ -275,7 +272,6 @@ void pysqlite_statement_bind_parameters(pysqlite_Statement* self, PyObject* para
     } else if (PyDict_Check(parameters)) {
         /* parameters passed as dictionary */
         for (i = 1; i <= num_params_needed; i++) {
-            PyObject *binding_name_obj;
             Py_BEGIN_ALLOW_THREADS
             binding_name = sqlite3_bind_parameter_name(self->st, i);
             Py_END_ALLOW_THREADS
@@ -285,31 +281,26 @@ void pysqlite_statement_bind_parameters(pysqlite_Statement* self, PyObject* para
             }
 
             binding_name++; /* skip first char (the colon) */
-            binding_name_obj = PyUnicode_FromString(binding_name);
-            if (!binding_name_obj) {
-                return;
-            }
             if (PyDict_CheckExact(parameters)) {
-                current_param = PyDict_GetItemWithError(parameters, binding_name_obj);
+                current_param = PyDict_GetItemString(parameters, binding_name);
                 Py_XINCREF(current_param);
             } else {
-                current_param = PyObject_GetItem(parameters, binding_name_obj);
+                current_param = PyMapping_GetItemString(parameters, binding_name);
             }
-            Py_DECREF(binding_name_obj);
             if (!current_param) {
-                if (!PyErr_Occurred() || PyErr_ExceptionMatches(PyExc_LookupError)) {
-                    PyErr_Format(pysqlite_ProgrammingError, "You did not supply a value for binding %d.", i);
-                }
+                PyErr_Format(pysqlite_ProgrammingError, "You did not supply a value for binding %d.", i);
                 return;
             }
 
             if (!_need_adapt(current_param)) {
                 adapted = current_param;
             } else {
-                adapted = pysqlite_microprotocols_adapt(current_param, (PyObject*)&pysqlite_PrepareProtocolType, current_param);
-                Py_DECREF(current_param);
-                if (!adapted) {
-                    return;
+                adapted = pysqlite_microprotocols_adapt(current_param, (PyObject*)&pysqlite_PrepareProtocolType, NULL);
+                if (adapted) {
+                    Py_DECREF(current_param);
+                } else {
+                    PyErr_Clear();
+                    adapted = current_param;
                 }
             }
 
@@ -464,10 +455,10 @@ PyTypeObject pysqlite_StatementType = {
         sizeof(pysqlite_Statement),                     /* tp_basicsize */
         0,                                              /* tp_itemsize */
         (destructor)pysqlite_statement_dealloc,         /* tp_dealloc */
-        0,                                              /* tp_vectorcall_offset */
+        0,                                              /* tp_print */
         0,                                              /* tp_getattr */
         0,                                              /* tp_setattr */
-        0,                                              /* tp_as_async */
+        0,                                              /* tp_reserved */
         0,                                              /* tp_repr */
         0,                                              /* tp_as_number */
         0,                                              /* tp_as_sequence */

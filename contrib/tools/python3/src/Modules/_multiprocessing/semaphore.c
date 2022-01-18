@@ -268,8 +268,11 @@ static PyObject *
 semlock_acquire(SemLockObject *self, PyObject *args, PyObject *kwds)
 {
     int blocking = 1, res, err = 0;
+    double timeout;
     PyObject *timeout_obj = Py_None;
     struct timespec deadline = {0};
+    struct timeval now;
+    long sec, nsec;
 
     static char *kwlist[] = {"block", "timeout", NULL};
 
@@ -282,23 +285,19 @@ semlock_acquire(SemLockObject *self, PyObject *args, PyObject *kwds)
         Py_RETURN_TRUE;
     }
 
-    int use_deadline = (timeout_obj != Py_None);
-    if (use_deadline) {
-        double timeout = PyFloat_AsDouble(timeout_obj);
-        if (PyErr_Occurred()) {
+    if (timeout_obj != Py_None) {
+        timeout = PyFloat_AsDouble(timeout_obj);
+        if (PyErr_Occurred())
             return NULL;
-        }
-        if (timeout < 0.0) {
+        if (timeout < 0.0)
             timeout = 0.0;
-        }
 
-        struct timeval now;
         if (gettimeofday(&now, NULL) < 0) {
             PyErr_SetFromErrno(PyExc_OSError);
             return NULL;
         }
-        long sec = (long) timeout;
-        long nsec = (long) (1e9 * (timeout - sec) + 0.5);
+        sec = (long) timeout;
+        nsec = (long) (1e9 * (timeout - sec) + 0.5);
         deadline.tv_sec = now.tv_sec + sec;
         deadline.tv_nsec = now.tv_usec * 1000 + nsec;
         deadline.tv_sec += (deadline.tv_nsec / 1000000000);
@@ -316,7 +315,7 @@ semlock_acquire(SemLockObject *self, PyObject *args, PyObject *kwds)
         /* Couldn't acquire immediately, need to block */
         do {
             Py_BEGIN_ALLOW_THREADS
-            if (!use_deadline) {
+            if (timeout_obj == Py_None) {
                 res = sem_wait(self->handle);
             }
             else {
@@ -522,20 +521,20 @@ semlock_dealloc(SemLockObject* self)
 }
 
 static PyObject *
-semlock_count(SemLockObject *self, PyObject *Py_UNUSED(ignored))
+semlock_count(SemLockObject *self)
 {
     return PyLong_FromLong((long)self->count);
 }
 
 static PyObject *
-semlock_ismine(SemLockObject *self, PyObject *Py_UNUSED(ignored))
+semlock_ismine(SemLockObject *self)
 {
     /* only makes sense for a lock */
     return PyBool_FromLong(ISMINE(self));
 }
 
 static PyObject *
-semlock_getvalue(SemLockObject *self, PyObject *Py_UNUSED(ignored))
+semlock_getvalue(SemLockObject *self)
 {
 #ifdef HAVE_BROKEN_SEM_GETVALUE
     PyErr_SetNone(PyExc_NotImplementedError);
@@ -553,7 +552,7 @@ semlock_getvalue(SemLockObject *self, PyObject *Py_UNUSED(ignored))
 }
 
 static PyObject *
-semlock_iszero(SemLockObject *self, PyObject *Py_UNUSED(ignored))
+semlock_iszero(SemLockObject *self)
 {
 #ifdef HAVE_BROKEN_SEM_GETVALUE
     if (sem_trywait(self->handle) < 0) {
@@ -574,7 +573,7 @@ semlock_iszero(SemLockObject *self, PyObject *Py_UNUSED(ignored))
 }
 
 static PyObject *
-semlock_afterfork(SemLockObject *self, PyObject *Py_UNUSED(ignored))
+semlock_afterfork(SemLockObject *self)
 {
     self->count = 0;
     Py_RETURN_NONE;
@@ -585,11 +584,11 @@ semlock_afterfork(SemLockObject *self, PyObject *Py_UNUSED(ignored))
  */
 
 static PyMethodDef semlock_methods[] = {
-    {"acquire", (PyCFunction)(void(*)(void))semlock_acquire, METH_VARARGS | METH_KEYWORDS,
+    {"acquire", (PyCFunction)semlock_acquire, METH_VARARGS | METH_KEYWORDS,
      "acquire the semaphore/lock"},
     {"release", (PyCFunction)semlock_release, METH_NOARGS,
      "release the semaphore/lock"},
-    {"__enter__", (PyCFunction)(void(*)(void))semlock_acquire, METH_VARARGS | METH_KEYWORDS,
+    {"__enter__", (PyCFunction)semlock_acquire, METH_VARARGS | METH_KEYWORDS,
      "enter the semaphore/lock"},
     {"__exit__", (PyCFunction)semlock_release, METH_VARARGS,
      "exit the semaphore/lock"},
@@ -634,10 +633,10 @@ PyTypeObject _PyMp_SemLockType = {
     /* tp_basicsize      */ sizeof(SemLockObject),
     /* tp_itemsize       */ 0,
     /* tp_dealloc        */ (destructor)semlock_dealloc,
-    /* tp_vectorcall_offset */ 0,
+    /* tp_print          */ 0,
     /* tp_getattr        */ 0,
     /* tp_setattr        */ 0,
-    /* tp_as_async       */ 0,
+    /* tp_reserved       */ 0,
     /* tp_repr           */ 0,
     /* tp_as_number      */ 0,
     /* tp_as_sequence    */ 0,

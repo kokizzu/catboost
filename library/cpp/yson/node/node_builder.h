@@ -2,7 +2,7 @@
 
 #include "node.h"
 
-#include <library/cpp/json/json_reader.h>
+#include <library/json/json_reader.h>
 
 #include <library/cpp/yson/consumer.h>
 
@@ -13,12 +13,12 @@ namespace NYT {
 ////////////////////////////////////////////////////////////////////////////////
 
 class TNodeBuilder
-    : public ::NYson::TYsonConsumerBase
+    : public TYsonConsumerBase
 {
 public:
     TNodeBuilder(TNode* node);
 
-    void OnStringScalar(TStringBuf) override;
+    void OnStringScalar(const TStringBuf&) override;
     void OnInt64Scalar(i64) override;
     void OnUint64Scalar(ui64) override;
     void OnDoubleScalar(double) override;
@@ -28,7 +28,7 @@ public:
     void OnListItem() override;
     void OnEndList() override;
     void OnBeginMap() override;
-    void OnKeyedItem(TStringBuf) override;
+    void OnKeyedItem(const TStringBuf&) override;
     void OnEndMap() override;
     void OnBeginAttributes() override;
     void OnEndAttributes() override;

@@ -10,7 +10,6 @@ PEERDIR(
 
 ADDINCL(
     contrib/tools/python3/src/Include
-    contrib/tools/python3/src/Include/internal
     contrib/tools/python3/src/Modules
     contrib/tools/python3/src/Modules/_decimal/libmpdec
     contrib/tools/python3/src/PC
@@ -19,10 +18,6 @@ ADDINCL(
 CFLAGS(
     -DPy_BUILD_CORE
 )
-
-IF (CLANG_CL)
-    CFLAGS(-Wno-invalid-token-paste)
-ENDIF()
 
 IF (OS_DARWIN)
     LDFLAGS(
@@ -34,10 +29,6 @@ ELSEIF (OS_WINDOWS)
         Mincore.lib
         Shlwapi.lib
         Winmm.lib
-    )
-
-    CFLAGS(
-        -DPY3_DLLNAME="L\"python3\""
     )
 
     DISABLE(MSVC_INLINE_OPTIMIZED)
@@ -65,6 +56,7 @@ SRCS(
     Modules/posixmodule.c
     Modules/signalmodule.c
     Modules/timemodule.c
+    Modules/zipimport.c
     Objects/abstract.c
     Objects/accu.c
     Objects/boolobject.c
@@ -85,9 +77,7 @@ SRCS(
     Objects/floatobject.c
     Objects/frameobject.c
     Objects/funcobject.c
-    Objects/genericaliasobject.c
     Objects/genobject.c
-    Objects/interpreteridobject.c
     Objects/iterobject.c
     Objects/listobject.c
     Objects/longobject.c
@@ -98,7 +88,6 @@ SRCS(
     Objects/object.c
     Objects/obmalloc.c
     Objects/odictobject.c
-    Objects/picklebufobject.c
     Objects/rangeobject.c
     Objects/setobject.c
     Objects/sliceobject.c
@@ -109,17 +98,18 @@ SRCS(
     Objects/unicodeobject.c
     Objects/weakrefobject.c
     Parser/acceler.c
+    Parser/bitset.c
+    Parser/firstsets.c
+    Parser/grammar.c
     Parser/grammar1.c
     Parser/listnode.c
+    Parser/metagrammar.c
     Parser/myreadline.c
     Parser/node.c
     Parser/parser.c
     Parser/parsetok.c
-    Parser/pegen/parse.c
-    Parser/pegen/parse_string.c
-    Parser/pegen/peg_api.c
-    Parser/pegen/pegen.c
-    Parser/token.c
+    Parser/pgen.c
+    Parser/printgrammar.c
     Parser/tokenizer.c
     Python/Python-ast.c
     Python/_warnings.c
@@ -149,17 +139,14 @@ SRCS(
     Python/getversion.c
     Python/graminit.c
     Python/hamt.c
-    Python/hashtable.c
     Python/import.c
     Python/importdl.c
-    Python/initconfig.c
     Python/marshal.c
     Python/modsupport.c
     Python/mysnprintf.c
     Python/mystrtoul.c
     Python/pathconfig.c
     Python/peephole.c
-    Python/preconfig.c
     Python/pyarena.c
     Python/pyctype.c
     Python/pyfpe.c
@@ -179,19 +166,19 @@ SRCS(
     Python/traceback.c
 )
 
-SUPPRESSIONS(
-    tsan.supp
+IF (OS_WINDOWS) SRCS(
+    PC/WinMain.c
+    PC/dl_nt.c
+    PC/getpathp.c
+    PC/invalid_parameter_handler.c
+    PC/msvcrtmodule.c
+    PC/winreg.c
+    PC/winsound.c
 )
+ENDIF()
 
 IF (OS_WINDOWS)
     SRCS(
-        PC/WinMain.c
-        PC/dl_nt.c
-        PC/getpathp.c
-        PC/invalid_parameter_handler.c
-        PC/msvcrtmodule.c
-        PC/winreg.c
-        PC/winsound.c
         Python/dynload_win.c
     )
 ELSE()

@@ -38,7 +38,7 @@ pictures can easily be drawn.
 ----- turtle.py
 
 This module is an extended reimplementation of turtle.py from the
-Python standard distribution up to Python 2.5. (See: https://www.python.org)
+Python standard distribution up to Python 2.5. (See: http://www.python.org)
 
 It tries to keep the merits of turtle.py and to be (nearly) 100%
 compatible with it. This means in the first place to enable the
@@ -258,7 +258,6 @@ class Vec2D(tuple):
     def __rmul__(self, other):
         if isinstance(other, int) or isinstance(other, float):
             return Vec2D(self[0]*other, self[1]*other)
-        return NotImplemented
     def __sub__(self, other):
         return Vec2D(self[0]-other[0], self[1]-other[1])
     def __neg__(self):
@@ -464,18 +463,20 @@ class TurtleScreenBase(object):
        a corresponding TurtleScreenBase class has to be implemented.
     """
 
-    def _blankimage(self):
+    @staticmethod
+    def _blankimage():
         """return a blank image object
         """
-        img = TK.PhotoImage(width=1, height=1, master=self.cv)
+        img = TK.PhotoImage(width=1, height=1)
         img.blank()
         return img
 
-    def _image(self, filename):
+    @staticmethod
+    def _image(filename):
         """return an image object containing the
         imagedata from a gif-file named filename.
         """
-        return TK.PhotoImage(file=filename, master=self.cv)
+        return TK.PhotoImage(file=filename)
 
     def __init__(self, cv):
         self.cv = cv
@@ -809,7 +810,7 @@ class TurtleScreenBase(object):
         >>> screen.mainloop()
 
         """
-        self.cv.tk.mainloop()
+        TK.mainloop()
 
     def textinput(self, title, prompt):
         """Pop up a dialog window for input of a string.
@@ -824,7 +825,7 @@ class TurtleScreenBase(object):
         >>> screen.textinput("NIM", "Name of first player:")
 
         """
-        return simpledialog.askstring(title, prompt, parent=self.cv)
+        return simpledialog.askstring(title, prompt)
 
     def numinput(self, title, prompt, default=None, minval=None, maxval=None):
         """Pop up a dialog window for input of a number.
@@ -832,7 +833,7 @@ class TurtleScreenBase(object):
         Arguments: title is the title of the dialog window,
         prompt is a text mostly describing what numerical information to input.
         default: default value
-        minval: minimum value for input
+        minval: minimum value for imput
         maxval: maximum value for input
 
         The number input must be in the range minval .. maxval if these are
@@ -845,8 +846,7 @@ class TurtleScreenBase(object):
 
         """
         return simpledialog.askfloat(title, prompt, initialvalue=default,
-                                     minvalue=minval, maxvalue=maxval,
-                                     parent=self.cv)
+                                     minvalue=minval, maxvalue=maxval)
 
 
 ##############################################################################
@@ -964,8 +964,6 @@ class TurtleScreen(TurtleScreenBase):
 
     def __init__(self, cv, mode=_CFG["mode"],
                  colormode=_CFG["colormode"], delay=_CFG["delay"]):
-        TurtleScreenBase.__init__(self, cv)
-
         self._shapes = {
                    "arrow" : Shape("polygon", ((-10,0), (10,0), (0,10))),
                   "turtle" : Shape("polygon", ((0,16), (-2,14), (-1,10), (-4,7),
@@ -989,6 +987,7 @@ class TurtleScreen(TurtleScreenBase):
 
         self._bgpics = {"nopic" : ""}
 
+        TurtleScreenBase.__init__(self, cv)
         self._mode = mode
         self._delayvalue = delay
         self._colormode = _CFG["colormode"]
@@ -1645,7 +1644,7 @@ class TNavigator(object):
         Argument:
         distance -- a number
 
-        Move the turtle backward by distance, opposite to the direction the
+        Move the turtle backward by distance ,opposite to the direction the
         turtle is headed. Do not change the turtle's heading.
 
         Example (for a Turtle instance named turtle):
@@ -2877,8 +2876,7 @@ class RawTurtle(TPen, TNavigator):
         between the orientation of the turtleshape and the heading of the
         turtle (its direction of movement).
 
-        (Incorrectly marked as deprecated since Python 3.1, it is really
-        settiltangle that is deprecated.)
+        Deprecated since Python 3.1
 
         Examples (for a Turtle instance named turtle):
         >>> turtle.shape("circle")

@@ -15,9 +15,9 @@
 #include <util/datetime/base.h>
 #include <util/generic/buffer.h>
 
-using THttpHeadersContainer = THashMap<TString, TString, TCIOps, TCIOps>;
-
 class TBaseServerRequestData {
+    typedef THashMap<TString, TString, TCIOps, TCIOps> HeaderInHash;
+
 public:
     TBaseServerRequestData(SOCKET s = INVALID_SOCKET);
     TBaseServerRequestData(const char* qs, SOCKET s = INVALID_SOCKET);
@@ -58,9 +58,9 @@ public:
     void AppendQueryString(const char* str, size_t length);
     const char* RemoteAddr() const;
     void SetRemoteAddr(TStringBuf addr);
-    const char* HeaderIn(TStringBuf key) const;
+    const char* HeaderIn(const char* key) const;
 
-    const THttpHeadersContainer& HeadersIn() const {
+    const HeaderInHash& HeadersIn() const {
         return HeadersIn_;
     }
 
@@ -95,7 +95,7 @@ private:
     char* Search;
     size_t SearchLength; // length of Search
     TStringBuf OrigSearch;
-    THttpHeadersContainer HeadersIn_;
+    HeaderInHash HeadersIn_;
     mutable char AddrData[INET6_ADDRSTRLEN];
     SOCKET Socket;
     ui64 BeginTime;

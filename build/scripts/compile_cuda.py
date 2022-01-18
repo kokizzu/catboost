@@ -52,8 +52,6 @@ def main():
         '-fcoverage-mapping',
         '/Zc:inline',  # disable unreferenced functions (kernel registrators) remove
         '-Wno-c++17-extensions',
-        '-flto',
-        '-faligned-allocation',
     ]
 
     if skip_nocxxinc:

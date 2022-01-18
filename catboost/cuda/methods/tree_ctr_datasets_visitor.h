@@ -27,9 +27,7 @@ namespace NCatboostCuda {
         void Accept(const TTreeCtrDataSet& ctrDataSet,
                     const TMirrorBuffer<const TPartitionStatistics>& partStats,
                     const TMirrorBuffer<ui32>& ctrDataSetInverseIndices,
-                    const TMirrorBuffer<ui32>& subsetDocs,
-                    ui32 maxUniqueValues,
-                    float modelSizeReg);
+                    const TMirrorBuffer<ui32>& subsetDocs);
 
         TBestSplitProperties CreateBestSplitProperties();
 

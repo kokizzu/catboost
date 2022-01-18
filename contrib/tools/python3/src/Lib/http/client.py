@@ -70,7 +70,6 @@ Req-sent-unread-response       _CS_REQ_SENT       <response_class>
 
 import email.parser
 import email.message
-import errno
 import http
 import io
 import re
@@ -151,10 +150,6 @@ _contains_disallowed_url_pchar_re = re.compile('[\x00-\x20\x7f]')
 #  _is_allowed_url_pchars_re = re.compile(r"^[/!$&'()*+,;=:@%a-zA-Z0-9._~-]+$")
 # We are more lenient for assumed real world compatibility purposes.
 
-# These characters are not allowed within HTTP method names
-# to prevent http header injection.
-_contains_disallowed_method_pchar_re = re.compile('[\x00-\x1f]')
-
 # We always set the Content-Length header for these methods because some
 # servers will otherwise respond with a 411
 _METHODS_EXPECTING_BODY = {'PATCH', 'POST', 'PUT'}
@@ -205,11 +200,15 @@ class HTTPMessage(email.message.Message):
                 lst.append(line)
         return lst
 
-def _read_headers(fp):
-    """Reads potential header lines into a list from a file pointer.
+def parse_headers(fp, _class=HTTPMessage):
+    """Parses only RFC2822 headers from a file pointer.
 
-    Length of line is limited by _MAXLINE, and number of
-    headers is limited by _MAXHEADERS.
+    email Parser wants to see strings rather than bytes.
+    But a TextIOWrapper around self.rfile would buffer too many bytes
+    from the stream, bytes which we later need to read as bytes.
+    So we read the correct bytes here, as bytes, for email Parser
+    to parse.
+
     """
     headers = []
     while True:
@@ -221,19 +220,6 @@ def _read_headers(fp):
             raise HTTPException("got more than %d headers" % _MAXHEADERS)
         if line in (b'\r\n', b'\n', b''):
             break
-    return headers
-
-def parse_headers(fp, _class=HTTPMessage):
-    """Parses only RFC2822 headers from a file pointer.
-
-    email Parser wants to see strings rather than bytes.
-    But a TextIOWrapper around self.rfile would buffer too many bytes
-    from the stream, bytes which we later need to read as bytes.
-    So we read the correct bytes here, as bytes, for email Parser
-    to parse.
-
-    """
-    headers = _read_headers(fp)
     hstring = b''.join(headers).decode('iso-8859-1')
     return email.parser.Parser(_class=_class).parsestr(hstring)
 
@@ -321,10 +307,15 @@ class HTTPResponse(io.BufferedIOBase):
             if status != CONTINUE:
                 break
             # skip the header from the 100 response
-            skipped_headers = _read_headers(self.fp)
-            if self.debuglevel > 0:
-                print("headers:", skipped_headers)
-            del skipped_headers
+            while True:
+                skip = self.fp.readline(_MAXLINE + 1)
+                if len(skip) > _MAXLINE:
+                    raise LineTooLong("header line")
+                skip = skip.strip()
+                if not skip:
+                    break
+                if self.debuglevel > 0:
+                    print("header:", skip)
 
         self.code = self.status = status
         self.reason = reason.strip()
@@ -357,6 +348,9 @@ class HTTPResponse(io.BufferedIOBase):
         # NOTE: RFC 2616, S4.4, #3 says we ignore this if tr_enc is "chunked"
         self.length = None
         length = self.headers.get("content-length")
+
+         # are we using the chunked-style of transfer encoding?
+        tr_enc = self.headers.get("transfer-encoding")
         if length and not self.chunked:
             try:
                 self.length = int(length)
@@ -856,8 +850,6 @@ class HTTPConnection:
 
         (self.host, self.port) = self._get_hostport(host, port)
 
-        self._validate_host(self.host)
-
         # This is stored as an instance variable to allow unit
         # tests to replace it with a suitable mockup
         self._create_connection = socket.create_connection
@@ -870,7 +862,7 @@ class HTTPConnection:
         the endpoint passed to `set_tunnel`. This done by sending an HTTP
         CONNECT request to the proxy server when the connection is established.
 
-        This method must be called before the HTTP connection has been
+        This method must be called before the HTML connection has been
         established.
 
         The headers argument should be a mapping of extra HTTP headers to send
@@ -910,24 +902,23 @@ class HTTPConnection:
         self.debuglevel = level
 
     def _tunnel(self):
-        connect = b"CONNECT %s:%d HTTP/1.0\r\n" % (
-            self._tunnel_host.encode("ascii"), self._tunnel_port)
-        headers = [connect]
+        connect_str = "CONNECT %s:%d HTTP/1.0\r\n" % (self._tunnel_host,
+            self._tunnel_port)
+        connect_bytes = connect_str.encode("ascii")
+        self.send(connect_bytes)
         for header, value in self._tunnel_headers.items():
-            headers.append(f"{header}: {value}\r\n".encode("latin-1"))
-        headers.append(b"\r\n")
-        # Making a single send() call instead of one per line encourages
-        # the host OS to use a more optimal packet size instead of
-        # potentially emitting a series of small packets.
-        self.send(b"".join(headers))
-        del headers
+            header_str = "%s: %s\r\n" % (header, value)
+            header_bytes = header_str.encode("latin-1")
+            self.send(header_bytes)
+        self.send(b'\r\n')
 
         response = self.response_class(self.sock, method=self._method)
         (version, code, message) = response._read_status()
 
         if code != http.HTTPStatus.OK:
             self.close()
-            raise OSError(f"Tunnel connection failed: {code} {message.strip()}")
+            raise OSError("Tunnel connection failed: %d %s" % (code,
+                                                               message.strip()))
         while True:
             line = response.fp.readline(_MAXLINE + 1)
             if len(line) > _MAXLINE:
@@ -945,12 +936,7 @@ class HTTPConnection:
         """Connect to the host and port specified in __init__."""
         self.sock = self._create_connection(
             (self.host,self.port), self.timeout, self.source_address)
-        # Might fail in OSs that don't implement TCP_NODELAY
-        try:
-             self.sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-        except OSError as e:
-            if e.errno != errno.ENOPROTOOPT:
-                raise
+        self.sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
 
         if self._tunnel_host:
             self._tunnel()
@@ -1121,8 +1107,6 @@ class HTTPConnection:
         else:
             raise CannotSendRequest(self.__state)
 
-        self._validate_method(method)
-
         # Save the method for use later in the response phase
         self._method = method
 
@@ -1213,29 +1197,12 @@ class HTTPConnection:
         # ASCII also helps prevent CVE-2019-9740.
         return request.encode('ascii')
 
-    def _validate_method(self, method):
-        """Validate a method name for putrequest."""
-        # prevent http header injection
-        match = _contains_disallowed_method_pchar_re.search(method)
-        if match:
-            raise ValueError(
-                    f"method can't contain control characters. {method!r} "
-                    f"(found at least {match.group()!r})")
-
     def _validate_path(self, url):
         """Validate a url for putrequest."""
         # Prevent CVE-2019-9740.
         match = _contains_disallowed_url_pchar_re.search(url)
         if match:
             raise InvalidURL(f"URL can't contain control characters. {url!r} "
-                             f"(found at least {match.group()!r})")
-
-    def _validate_host(self, host):
-        """Validate a host so it doesn't contain control characters."""
-        # Prevent CVE-2019-18348.
-        match = _contains_disallowed_url_pchar_re.search(host)
-        if match:
-            raise InvalidURL(f"URL can't contain control characters. {host!r} "
                              f"(found at least {match.group()!r})")
 
     def putheader(self, header, *values):
@@ -1490,7 +1457,8 @@ class IncompleteRead(HTTPException):
             e = ''
         return '%s(%i bytes read%s)' % (self.__class__.__name__,
                                         len(self.partial), e)
-    __str__ = object.__str__
+    def __str__(self):
+        return repr(self)
 
 class ImproperConnectionState(HTTPException):
     pass

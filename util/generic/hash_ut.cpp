@@ -2,8 +2,7 @@
 #include "vector.h"
 #include "hash_set.h"
 
-#include <library/cpp/testing/common/probe.h>
-#include <library/cpp/testing/unittest/registar.h>
+#include <library/unittest/registar.h>
 
 #include <utility>
 #include <util/str_stl.h>
@@ -28,7 +27,6 @@ class THashTest: public TTestBase {
     UNIT_TEST(TestHMSetSize);
     UNIT_TEST(TestHMSet1);
     UNIT_TEST(TestHMSetEqualityOperator);
-    UNIT_TEST(TestHMSetEmplace);
     UNIT_TEST(TestInsertErase);
     UNIT_TEST(TestResizeOnInsertSmartPtrBug)
     UNIT_TEST(TestEmpty);
@@ -79,7 +77,6 @@ protected:
     void TestHMSetSize();
     void TestHMSet1();
     void TestHMSetEqualityOperator();
-    void TestHMSetEmplace();
     void TestInsertErase();
     void TestResizeOnInsertSmartPtrBug();
     void TestEmpty();
@@ -160,9 +157,6 @@ void THashTest::TestHMapConstructorsAndAssignments() {
     UNIT_ASSERT_VALUES_EQUAL(2, c4.at("two"));
     UNIT_ASSERT_VALUES_EQUAL(3, c4.at("three"));
     UNIT_ASSERT_VALUES_EQUAL(4, c4.at("four"));
-
-    // non-existent values must be zero-initialized
-    UNIT_ASSERT_VALUES_EQUAL(c1["nonexistent"], 0);
 }
 
 void THashTest::TestHMap1() {
@@ -554,56 +548,6 @@ void THashTest::TestHMSetEqualityOperator() {
     UNIT_ASSERT(!(c3 == base));
 }
 
-void THashTest::TestHMSetEmplace() {
-    class TKey: public NTesting::TProbe {
-    public:
-        TKey(NTesting::TProbeState* state, int key)
-            : TProbe(state)
-            , Key_(key)
-        {
-        }
-
-        operator size_t() const {
-            return THash<int>()(Key_);
-        }
-
-        bool operator==(const TKey& other) const {
-            return Key_ == other.Key_;
-        }
-
-    private:
-        int Key_;
-    };
-
-    NTesting::TProbeState state;
-
-    {
-        THashMultiSet<TKey> c;
-        c.emplace(&state, 1);
-        c.emplace(&state, 1);
-        c.emplace(&state, 2);
-
-        UNIT_ASSERT_EQUAL(state.CopyAssignments, 0);
-        UNIT_ASSERT_EQUAL(state.MoveAssignments, 0);
-        UNIT_ASSERT_EQUAL(state.Constructors, 3);
-        UNIT_ASSERT_EQUAL(state.MoveConstructors, 0);
-
-        UNIT_ASSERT_EQUAL(c.count(TKey(&state, 1)), 2);
-        UNIT_ASSERT_EQUAL(c.count(TKey(&state, 2)), 1);
-        UNIT_ASSERT_EQUAL(c.count(TKey(&state, 3)), 0);
-
-        UNIT_ASSERT_EQUAL(state.Constructors, 6);
-        UNIT_ASSERT_EQUAL(state.Destructors, 3);
-    }
-
-    UNIT_ASSERT_EQUAL(state.CopyAssignments, 0);
-    UNIT_ASSERT_EQUAL(state.MoveAssignments, 0);
-    UNIT_ASSERT_EQUAL(state.CopyConstructors, 0);
-    UNIT_ASSERT_EQUAL(state.MoveConstructors, 0);
-    UNIT_ASSERT_EQUAL(state.Constructors, 6);
-    UNIT_ASSERT_EQUAL(state.Destructors, 6);
-}
-
 void THashTest::TestInsertErase() {
     using hmap = THashMap<TString, size_t, THash<TString>, TEqualTo<TString>>;
     using val_type = hmap::value_type;
@@ -739,21 +683,18 @@ void THashTest::TestInvariants() {
     UNIT_ASSERT_VALUES_EQUAL(set.size(), 1000);
 
     int count0 = 0;
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 1000; i++)
         count0 += (set.find(i) != set.end()) ? 1 : 0;
-    }
     UNIT_ASSERT_VALUES_EQUAL(count0, 1000);
 
     int count1 = 0;
-    for (auto pos = set.begin(); pos != set.end(); pos++) {
+    for (auto pos = set.begin(); pos != set.end(); pos++)
         ++count1;
-    }
     UNIT_ASSERT_VALUES_EQUAL(count1, 1000);
 
     int count2 = 0;
-    for (const int& value : set) {
+    for (const int& value : set)
         count2 += (reference_set.find(value) != reference_set.end()) ? 1 : 0;
-    }
     UNIT_ASSERT_VALUES_EQUAL(count2, 1000);
 }
 
@@ -768,9 +709,8 @@ struct TAllocatorCounters {
         std::allocator<char> allocator;
 
         /* Release whatever was (intentionally) leaked. */
-        for (const auto& chunk : Chunks) {
+        for (const auto& chunk : Chunks)
             allocator.deallocate(static_cast<char*>(chunk.first), chunk.second);
-        }
     }
 
     size_t Allocations;
@@ -783,6 +723,7 @@ class TCountingAllocator: public std::allocator<T> {
     using base_type = std::allocator<T>;
 
 public:
+    using pointer = typename base_type::pointer;
     using size_type = typename base_type::size_type;
 
     template <class Other>
@@ -791,44 +732,44 @@ public:
     };
 
     TCountingAllocator()
-        : Counters_(nullptr)
+        : Counters(nullptr)
     {
     }
 
     TCountingAllocator(TAllocatorCounters* counters)
-        : Counters_(counters)
+        : Counters(counters)
     {
         Y_ASSERT(counters);
     }
 
     template <class Other>
     TCountingAllocator(const TCountingAllocator<Other>& other)
-        : Counters_(other.Counters)
+        : Counters(other.Counters)
     {
     }
 
-    T* allocate(size_type n) {
-        auto result = base_type::allocate(n);
+    pointer allocate(size_type n, const void* hint = nullptr) {
+        pointer result = base_type::allocate(n, hint);
 
-        if (Counters_) {
-            ++Counters_->Allocations;
-            Counters_->Chunks.emplace(result, n * sizeof(T));
+        if (Counters) {
+            ++Counters->Allocations;
+            Counters->Chunks.insert(std::make_pair(result, n * sizeof(T)));
         }
 
         return result;
     }
 
-    void deallocate(T* p, size_type n) {
-        if (Counters_) {
-            ++Counters_->Deallocations;
-            Counters_->Chunks.erase(std::make_pair(p, n * sizeof(T)));
+    void deallocate(pointer p, size_type n) {
+        if (Counters) {
+            ++Counters->Deallocations;
+            Counters->Chunks.erase(std::make_pair(p, n * sizeof(T)));
         }
 
         base_type::deallocate(p, n);
     }
 
 private:
-    TAllocatorCounters* Counters_;
+    TAllocatorCounters* Counters;
 };
 
 void THashTest::TestAllocation() {
@@ -852,9 +793,8 @@ void THashTest::TestAllocation() {
         int_set set3(set0);
         UNIT_ASSERT_VALUES_EQUAL(counters.Allocations, 2); /* Copying from an empty set with allocated buckets should not trigger allocations. */
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 1000; i++)
             set0.insert(i);
-        }
         size_t allocations = counters.Allocations;
         set0.clear();
         UNIT_ASSERT_VALUES_EQUAL(counters.Allocations, allocations); /* clear() should not trigger allocations. */
@@ -918,11 +858,7 @@ void THashTest::TestTryEmplace() {
     static unsigned counter = 0u;
 
     struct TCountConstruct {
-        explicit TCountConstruct(int v)
-            : value(v)
-        {
-            ++counter;
-        }
+        explicit TCountConstruct(int v) : value(v) { ++counter; }
         TCountConstruct(const TCountConstruct&) = delete;
         int value;
     };
@@ -947,15 +883,8 @@ void THashTest::TestTryEmplaceCopyKey() {
     static unsigned counter = 0u;
 
     struct TCountCopy {
-        explicit TCountCopy(int i)
-            : Value(i)
-        {
-        }
-        TCountCopy(const TCountCopy& other)
-            : Value(other.Value)
-        {
-            ++counter;
-        }
+        explicit TCountCopy(int i) : Value(i) {}
+        TCountCopy(const TCountCopy& other) : Value(other.Value) { ++counter; }
 
         operator int() const {
             return Value;
@@ -1087,18 +1016,16 @@ void THashTest::TestReleaseNodes() {
     using TIntSet = THashSet<int, THash<int>, TEqualTo<int>, TCountingAllocator<int>>;
 
     TIntSet set(&counters);
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
         set.insert(i);
-    }
     UNIT_ASSERT_VALUES_EQUAL(counters.Allocations, 4);
 
     set.release_nodes();
     UNIT_ASSERT_VALUES_EQUAL(counters.Allocations, 4);
     UNIT_ASSERT_VALUES_EQUAL(set.size(), 0);
 
-    for (int i = 10; i < 13; i++) {
+    for (int i = 10; i < 13; i++)
         set.insert(i);
-    }
     UNIT_ASSERT_VALUES_EQUAL(counters.Allocations, 7);
     UNIT_ASSERT(set.contains(10));
     UNIT_ASSERT(!set.contains(0));
@@ -1143,7 +1070,7 @@ void THashTest::TestAt() {
 
     char key[] = {11, 12, 0, 1, 2, 11, 0};
     TEST_AT_THROWN_EXCEPTION(TString, TString, char*, key, "\\x0B\\x0C");
-    TEST_AT_THROWN_EXCEPTION(TString, TString, TStringBuf, TStringBuf(key, sizeof(key) - 1), "\\x0B\\x0C\\0\\1\\2\\x0B");
+    TEST_AT_THROWN_EXCEPTION(TString, TString, TStringBuf, AsStringBuf(key), "\\x0B\\x0C\\0\\1\\2\\x0B");
 
 #undef TEST_AT_THROWN_EXCEPTION
 }
@@ -1264,7 +1191,7 @@ void THashTest::TestTupleHash() {
     * for example
     */
     struct A {
-        A Foo(const std::tuple<A, float>& v) {
+        A foo(const std::tuple<A, float>& v) {
             return std::get<A>(v);
         }
     };

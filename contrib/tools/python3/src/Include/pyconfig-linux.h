@@ -9,17 +9,9 @@
 /* Define if building universal (internal helper macro) */
 /* #undef AC_APPLE_UNIVERSAL_BUILD */
 
-/* BUILD_GNU_TYPE + AIX_BUILDDATE are used to construct the PEP425 tag of the
-   build system. */
-/* #undef AIX_BUILDDATE */
-
 /* Define for AIX if your compiler is a genuine IBM xlC/xlC_r and you want
    support for AIX C++ shared extension modules. */
 /* #undef AIX_GENUINE_CPLUSPLUS */
-
-/* Alternative SOABI used in debug build to load C extensions built in release
-   mode */
-/* #undef ALT_SOABI */
 
 /* The Android API level. */
 /* #undef ANDROID_API_LEVEL */
@@ -39,15 +31,15 @@
 /* Define if --enable-ipv6 is specified */
 #define ENABLE_IPV6 1
 
-/* Define to 1 if your system stores words within floats with the most
-   significant word first */
-/* #undef FLOAT_WORDS_BIGENDIAN */
-
 /* Define if flock needs to be linked with bsd library. */
 /* #undef FLOCK_NEEDS_LIBBSD */
 
 /* Define if getpgrp() must be called as getpgrp(0). */
 /* #undef GETPGRP_HAVE_ARG */
+
+/* Define if gettimeofday() does not have second (timezone) argument This is
+   the case on Motorola V4 (R40V4.2) */
+/* #undef GETTIMEOFDAY_NO_TZ */
 
 /* Define to 1 if you have the `accept4' function. */
 #define HAVE_ACCEPT4 1
@@ -148,9 +140,6 @@
 
 /* Define to 1 if you have the `copysign' function. */
 #define HAVE_COPYSIGN 1
-
-/* Define to 1 if you have the `copy_file_range' function. */
-/* #undef HAVE_COPY_FILE_RANGE */
 
 /* Define to 1 if you have the <crypt.h> header file. */
 #define HAVE_CRYPT_H 1
@@ -306,12 +295,6 @@
 /* Define to 1 if you have the `execv' function. */
 #define HAVE_EXECV 1
 
-/* Define to 1 if you have the `explicit_bzero' function. */
-/* #undef HAVE_EXPLICIT_BZERO */
-
-/* Define to 1 if you have the `explicit_memset' function. */
-/* #undef HAVE_EXPLICIT_MEMSET */
-
 /* Define to 1 if you have the `expm1' function. */
 #define HAVE_EXPM1 1
 
@@ -341,9 +324,6 @@
 
 /* Define to 1 if you have the `fdopendir' function. */
 #define HAVE_FDOPENDIR 1
-
-/* Define to 1 if you have the `fdwalk' function. */
-/* #undef HAVE_FDWALK */
 
 /* Define to 1 if you have the `fexecve' function. */
 #define HAVE_FEXECVE 1
@@ -413,9 +393,7 @@
 
 /* Define if we can use gcc inline assembler to get and set x87 control word
    */
-#if defined(__x86_64__) || defined(__i386__)
 #define HAVE_GCC_ASM_FOR_X87 1
-#endif
 
 /* Define if your compiler provides __uint128_t */
 #define HAVE_GCC_UINT128_T 1
@@ -428,12 +406,6 @@
 
 /* Define to 1 if you have the `getentropy' function. */
 /* #undef HAVE_GETENTROPY */
-
-/* Define to 1 if you have the `getgrgid_r' function. */
-#define HAVE_GETGRGID_R 1
-
-/* Define to 1 if you have the `getgrnam_r' function. */
-#define HAVE_GETGRNAM_R 1
 
 /* Define to 1 if you have the `getgrouplist' function. */
 #define HAVE_GETGROUPLIST 1
@@ -489,12 +461,6 @@
 /* Define to 1 if you have the `getpwent' function. */
 #define HAVE_GETPWENT 1
 
-/* Define to 1 if you have the `getpwnam_r' function. */
-#define HAVE_GETPWNAM_R 1
-
-/* Define to 1 if you have the `getpwuid_r' function. */
-#define HAVE_GETPWUID_R 1
-
 /* Define to 1 if the getrandom() function is available */
 /* #undef HAVE_GETRANDOM */
 
@@ -515,6 +481,9 @@
 
 /* Define to 1 if you have the `getspnam' function. */
 #define HAVE_GETSPNAM 1
+
+/* Define to 1 if you have the `gettimeofday' function. */
+#define HAVE_GETTIMEOFDAY 1
 
 /* Define to 1 if you have the `getwd' function. */
 #define HAVE_GETWD 1
@@ -572,9 +541,9 @@
 #define HAVE_LANGINFO_H 1
 
 /* Defined to enable large file support when an off_t is bigger than a long
-   and long long is at least as big as an off_t. You may need to add some
-   flags for configuration and compilation to enable this mode. (For Solaris
-   and Linux, the necessary defines are already defined.) */
+   and long long is available and at least as big as an off_t. You may need to
+   add some flags for configuration and compilation to enable this mode. (For
+   Solaris and Linux, the necessary defines are already defined.) */
 /* #undef HAVE_LARGEFILE_SUPPORT */
 
 /* Define to 1 if you have the 'lchflags' function. */
@@ -602,7 +571,7 @@
 #define HAVE_LIBINTL_H 1
 
 /* Define if you have the readline library (-lreadline). */
-/* #undef HAVE_LIBREADLINE */
+#define HAVE_LIBREADLINE 1
 
 /* Define to 1 if you have the `resolv' library (-lresolv). */
 /* #undef HAVE_LIBRESOLV */
@@ -625,26 +594,14 @@
 /* Define to 1 if you have the <linux/can.h> header file. */
 #define HAVE_LINUX_CAN_H 1
 
-/* Define to 1 if you have the <linux/can/j1939.h> header file. */
-#define HAVE_LINUX_CAN_J1939_H 1
-
 /* Define if compiling using Linux 3.6 or later. */
-#define HAVE_LINUX_CAN_RAW_FD_FRAMES 1
+/* #undef HAVE_LINUX_CAN_RAW_FD_FRAMES */
 
 /* Define to 1 if you have the <linux/can/raw.h> header file. */
 #define HAVE_LINUX_CAN_RAW_H 1
 
-/* Define if compiling using Linux 4.1 or later. */
-#define HAVE_LINUX_CAN_RAW_JOIN_FILTERS 1
-
-/* Define to 1 if you have the <linux/memfd.h> header file. */
-#define HAVE_LINUX_MEMFD_H 1
-
 /* Define to 1 if you have the <linux/netlink.h> header file. */
 #define HAVE_LINUX_NETLINK_H 1
-
-/* Define to 1 if you have the <linux/qrtr.h> header file. */
-#define HAVE_LINUX_QRTR_H 1
 
 /* Define to 1 if you have the <linux/random.h> header file. */
 #define HAVE_LINUX_RANDOM_H 1
@@ -653,10 +610,7 @@
 #define HAVE_LINUX_TIPC_H 1
 
 /* Define to 1 if you have the <linux/vm_sockets.h> header file. */
-#define HAVE_LINUX_VM_SOCKETS_H 1
-
-/* Define to 1 if you have the <linux/wait.h> header file. */
-#define HAVE_LINUX_WAIT_H 1
+/* #undef HAVE_LINUX_VM_SOCKETS_H */
 
 /* Define to 1 if you have the `lockf' function. */
 #define HAVE_LOCKF 1
@@ -667,7 +621,7 @@
 /* Define to 1 if you have the `log2' function. */
 #define HAVE_LOG2 1
 
-/* Define to 1 if the system has the type `long double'. */
+/* Define this if you have the type long double. */
 #define HAVE_LONG_DOUBLE 1
 
 /* Define to 1 if you have the `lstat' function. */
@@ -676,17 +630,11 @@
 /* Define to 1 if you have the `lutimes' function. */
 #define HAVE_LUTIMES 1
 
-/* Define to 1 if you have the `madvise' function. */
-#define HAVE_MADVISE 1
-
 /* Define this if you have the makedev macro. */
 #define HAVE_MAKEDEV 1
 
 /* Define to 1 if you have the `mbrtowc' function. */
 #define HAVE_MBRTOWC 1
-
-/* Define if you have the 'memfd_create' function. */
-/* #undef HAVE_MEMFD_CREATE */
 
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
@@ -766,9 +714,6 @@
 /* Define to 1 if you have the `posix_spawn' function. */
 #define HAVE_POSIX_SPAWN 1
 
-/* Define to 1 if you have the `posix_spawnp' function. */
-#define HAVE_POSIX_SPAWNP 1
-
 /* Define to 1 if you have the `pread' function. */
 #define HAVE_PREAD 1
 
@@ -781,17 +726,11 @@
 /* Define if you have the 'prlimit' functions. */
 #define HAVE_PRLIMIT 1
 
-/* Define if you have the '_dyld_shared_cache_contains_path' function. */
-/* #undef HAVE_DYLD_SHARED_CACHE_CONTAINS_PATH */
-
 /* Define to 1 if you have the <process.h> header file. */
 /* #undef HAVE_PROCESS_H */
 
 /* Define if your compiler supports function prototype */
 #define HAVE_PROTOTYPES 1
-
-/* Define to 1 if you have the `pthread_condattr_setclock' function. */
-#define HAVE_PTHREAD_CONDATTR_SETCLOCK 1
 
 /* Defined for Solaris 2.6 bug in pthread header. */
 /* #undef HAVE_PTHREAD_DESTRUCTOR */
@@ -813,6 +752,9 @@
 
 /* Define to 1 if you have the <pty.h> header file. */
 #define HAVE_PTY_H 1
+
+/* Define to 1 if you have the `putenv' function. */
+#define HAVE_PUTENV 1
 
 /* Define to 1 if you have the `pwrite' function. */
 #define HAVE_PWRITE 1
@@ -839,34 +781,31 @@
 #define HAVE_RENAMEAT 1
 
 /* Define if readline supports append_history */
-/* #undef HAVE_RL_APPEND_HISTORY */
+#define HAVE_RL_APPEND_HISTORY 1
 
 /* Define if you can turn off readline's signal handling. */
-/* #undef HAVE_RL_CATCH_SIGNAL */
+#define HAVE_RL_CATCH_SIGNAL 1
 
 /* Define if you have readline 2.2 */
-/* #undef HAVE_RL_COMPLETION_APPEND_CHARACTER */
+#define HAVE_RL_COMPLETION_APPEND_CHARACTER 1
 
 /* Define if you have readline 4.0 */
-/* #undef HAVE_RL_COMPLETION_DISPLAY_MATCHES_HOOK */
+#define HAVE_RL_COMPLETION_DISPLAY_MATCHES_HOOK 1
 
 /* Define if you have readline 4.2 */
-/* #undef HAVE_RL_COMPLETION_MATCHES */
+#define HAVE_RL_COMPLETION_MATCHES 1
 
 /* Define if you have rl_completion_suppress_append */
-/* #undef HAVE_RL_COMPLETION_SUPPRESS_APPEND */
+#define HAVE_RL_COMPLETION_SUPPRESS_APPEND 1
 
 /* Define if you have readline 4.0 */
-/* #undef HAVE_RL_PRE_INPUT_HOOK */
+#define HAVE_RL_PRE_INPUT_HOOK 1
 
 /* Define if you have readline 4.0 */
-/* #undef HAVE_RL_RESIZE_TERMINAL */
+#define HAVE_RL_RESIZE_TERMINAL 1
 
 /* Define to 1 if you have the `round' function. */
 #define HAVE_ROUND 1
-
-/* Define to 1 if you have the `rtpSpawn' function. */
-/* #undef HAVE_RTPSPAWN */
 
 /* Define to 1 if you have the `sched_get_priority_max' function. */
 #define HAVE_SCHED_GET_PRIORITY_MAX 1
@@ -955,20 +894,11 @@
 /* Define to 1 if you have the <shadow.h> header file. */
 #define HAVE_SHADOW_H 1
 
-/* Define to 1 if you have the `shm_open' function. */
-#define HAVE_SHM_OPEN 1
-
-/* Define to 1 if you have the `shm_unlink' function. */
-#define HAVE_SHM_UNLINK 1
-
 /* Define to 1 if you have the `sigaction' function. */
 #define HAVE_SIGACTION 1
 
 /* Define to 1 if you have the `sigaltstack' function. */
 #define HAVE_SIGALTSTACK 1
-
-/* Define to 1 if you have the `sigfillset' function. */
-#define HAVE_SIGFILLSET 1
 
 /* Define to 1 if `si_band' is a member of `siginfo_t'. */
 #define HAVE_SIGINFO_T_SI_BAND 1
@@ -1034,8 +964,8 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #define HAVE_STDLIB_H 1
 
-/* Has stdatomic.h with atomic_int and atomic_uintptr_t */
-#define HAVE_STD_ATOMIC 1
+/* Has stdatomic.h with atomic_int */
+/* #undef HAVE_STD_ATOMIC */
 
 /* Define to 1 if you have the `strdup' function. */
 #define HAVE_STRDUP 1
@@ -1053,10 +983,7 @@
 /* #undef HAVE_STRLCPY */
 
 /* Define to 1 if you have the <stropts.h> header file. */
-/* #undef HAVE_STROPTS_H */
-
-/* Define to 1 if you have the `strsignal' function. */
-#define HAVE_STRSIGNAL 1
+#define HAVE_STROPTS_H 1
 
 /* Define to 1 if `pw_gecos' is a member of `struct passwd'. */
 #define HAVE_STRUCT_PASSWD_PW_GECOS 1
@@ -1137,14 +1064,8 @@
 /* Define to 1 if you have the <sys/lock.h> header file. */
 /* #undef HAVE_SYS_LOCK_H */
 
-/* Define to 1 if you have the <sys/memfd.h> header file. */
-/* #undef HAVE_SYS_MEMFD_H */
-
 /* Define to 1 if you have the <sys/mkdev.h> header file. */
 /* #undef HAVE_SYS_MKDEV_H */
-
-/* Define to 1 if you have the <sys/mman.h> header file. */
-#define HAVE_SYS_MMAN_H 1
 
 /* Define to 1 if you have the <sys/modem.h> header file. */
 /* #undef HAVE_SYS_MODEM_H */
@@ -1272,6 +1193,9 @@
 /* Define to 1 if you have the `unlinkat' function. */
 #define HAVE_UNLINKAT 1
 
+/* Define to 1 if you have the `unsetenv' function. */
+#define HAVE_UNSETENV 1
+
 /* Define if you have a useable wchar_t type defined in wchar.h; useable means
    wchar_t must be an unsigned type with at least 16 bits. (see
    Include/unicodeobject.h). */
@@ -1347,6 +1271,9 @@
 /* Define to 1 if you have the `_getpty' function. */
 /* #undef HAVE__GETPTY */
 
+/* Define if log1p(-0.) is 0. rather than -0. */
+/* #undef LOG1P_DROPS_ZERO_SIGN */
+
 /* Define to 1 if `major', `minor', and `makedev' are declared in <mkdev.h>.
    */
 /* #undef MAJOR_IN_MKDEV */
@@ -1388,9 +1315,6 @@
 /* Define as the preferred size in bits of long digits */
 /* #undef PYLONG_BITS_IN_DIGIT */
 
-/* enabled builtin hash modules */
-/* #undef PY_BUILTIN_HASHLIB_HASHES */
-
 /* Define if you want to coerce the C locale to a UTF-8 based locale */
 #define PY_COERCE_C_LOCALE 1
 
@@ -1414,17 +1338,11 @@
    externally defined: 0 */
 /* #undef Py_HASH_ALGORITHM */
 
-/* Define if you want to enable tracing references for debugging purpose */
-/* #undef Py_TRACE_REFS */
-
 /* assume C89 semantics that RETSIGTYPE is always void */
 #define RETSIGTYPE void
 
 /* Define if setpgrp() must be called as setpgrp(0, 0). */
 /* #undef SETPGRP_HAVE_ARG */
-
-/* Define to 1 if you must link with -lrt for shm_open(). */
-#define SHM_NEEDS_LIBRT 1
 
 /* Define if i>>j for signed int i does not extend the sign bit when i < 0 */
 /* #undef SIGNED_RIGHT_SHIFT_ZERO_FILLS */
@@ -1492,6 +1410,9 @@
    (which you can't on SCO ODT 3.0). */
 #define SYS_SELECT_WITH_SYS_TIME 1
 
+/* Define if tanh(-0.) is -0., or if platform doesn't have signed zeros */
+#define TANH_PRESERVES_ZERO_SIGN 1
+
 /* Library needed by timemodule.c: librt may be needed for clock_gettime() */
 /* #undef TIMEMODULE_LIB */
 
@@ -1528,10 +1449,6 @@
 
 /* Define if WINDOW in curses.h offers a field _flags. */
 #define WINDOW_HAS_FLAGS 1
-
-/* Define if you want build the _decimal module using a coroutine-local rather
-   than a thread-local context */
-#define WITH_DECIMAL_CONTEXTVAR 1
 
 /* Define if you want documentation strings in extension modules */
 #define WITH_DOC_STRINGS 1

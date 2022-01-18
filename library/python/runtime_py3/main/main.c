@@ -1,15 +1,12 @@
 #include <Python.h>
-#include <contrib/tools/python3/src/Include/internal/pycore_runtime.h>  // _PyRuntime_Initialize()
 
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h>
 
 void Py_InitArgcArgv(int argc, wchar_t **argv);
-char* GetPyMain();
 
 static const char* env_entry_point = "Y_PYTHON_ENTRY_POINT";
-static const char* env_bytes_warning = "Y_PYTHON_BYTES_WARNING";
 
 #ifdef _MSC_VER
 extern char** environ;
@@ -74,11 +71,6 @@ static int RunModule(const char *modname)
 }
 
 static int pymain(int argc, char** argv) {
-    PyStatus status = _PyRuntime_Initialize();
-    if (PyStatus_Exception(status)) {
-        Py_ExitStatusException(status);
-    }
-
     int i, sts = 1;
     char* oldloc = NULL;
     wchar_t** argv_copy = NULL;
@@ -95,15 +87,6 @@ static int pymain(int argc, char** argv) {
         }
     }
 
-    PyConfig config;
-    PyConfig_InitPythonConfig(&config);
-    config.pathconfig_warnings = 0;   /* Suppress errors from getpath.c */
-
-    const char* bytes_warning = getenv(env_bytes_warning);
-    if (bytes_warning) {
-        config.bytes_warning = atoi(bytes_warning);
-    }
-
     oldloc = _PyMem_RawStrdup(setlocale(LC_ALL, NULL));
     if (!oldloc) {
         fprintf(stderr, "out of memory\n");
@@ -116,7 +99,7 @@ static int pymain(int argc, char** argv) {
         argv_copy2[i] = argv_copy[i];
         if (!argv_copy[i]) {
             fprintf(stderr, "Unable to decode the command line argument #%i\n",
-                            i + 1);
+                    i + 1);
             argc = i;
             goto error;
         }
@@ -125,40 +108,20 @@ static int pymain(int argc, char** argv) {
     PyMem_RawFree(oldloc);
     oldloc = NULL;
 
-    if (argc >= 1)
-        Py_SetProgramName(argv_copy[0]);
-
-    status = Py_InitializeFromConfig(&config);
-    PyConfig_Clear(&config);
-    if (PyStatus_Exception(status)) {
-        Py_ExitStatusException(status);
-    }
-
     const char* entry_point = getenv(env_entry_point);
-    if (entry_point) {
-        entry_point_copy = strdup(entry_point);
-        if (!entry_point_copy) {
-            fprintf(stderr, "out of memory\n");
-            goto error;
-        }
-    } else {
-        entry_point_copy = GetPyMain();
-    }
-
-    if (entry_point_copy == NULL) {
-        fprintf(stderr, "No entry point, did you forget PY_MAIN?\n");
-        goto error;
-    }
-
-    if (entry_point_copy && !strcmp(entry_point_copy, ":main")) {
+    if (entry_point && !strcmp(entry_point, ":main")) {
         unsetenv(env_entry_point);
-        sts = Py_Main(argc, argv_copy);
-        free(entry_point_copy);
-        return sts;
+        return Py_Main(argc, argv_copy);
     }
 
     Py_InitArgcArgv(argc, argv_copy);
+    if (argc >= 1)
+        Py_SetProgramName(argv_copy[0]);
+    Py_Initialize();
+
     PySys_SetArgv(argc, argv_copy);
+
+    PyObject* py_main = NULL;
 
     {
         PyObject* module = PyImport_ImportModule("library.python.runtime_py3.entry_points");
@@ -173,6 +136,37 @@ static int pymain(int argc, char** argv) {
             }
             Py_DECREF(module);
         }
+    }
+
+    if (entry_point == NULL) {
+        PyObject* res = PyImport_ImportModule("__res");
+        if (res == NULL) {
+            PyErr_Clear();
+        } else {
+            py_main = PyObject_CallMethod(res, "find", "y", "PY_MAIN");
+
+            if (py_main == NULL) {
+                PyErr_Clear();
+            } else {
+                if (PyBytes_Check(py_main)) {
+                    entry_point = PyBytes_AsString(py_main);
+                }
+            }
+
+            Py_DECREF(res);
+        }
+    }
+
+    if (entry_point == NULL) {
+        fprintf(stderr, "No entry point, did you forget PY_MAIN?\n");
+        goto error;
+    }
+
+    entry_point_copy = strdup(entry_point);
+    Py_XDECREF(py_main);
+    if (!entry_point_copy) {
+        fprintf(stderr, "out of memory\n");
+        goto error;
     }
 
     const char* module_name = entry_point_copy;

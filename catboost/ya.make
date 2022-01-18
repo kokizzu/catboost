@@ -1,6 +1,6 @@
 
 
-IF (SANITIZER_TYPE != "undefined")  # XXX
+IF (NOT SANITIZER_TYPE STREQUAL "undefined")  # XXX
 
 RECURSE(
     R-package
@@ -11,12 +11,10 @@ RECURSE(
     private
     pytest
     python-package
-    spark
     tools
-    docs
 )
 
-IF (NOT OPENSOURCE)
+IF (NOT CATBOOST_OPENSOURCE)
 RECURSE(
     
 )

@@ -4,7 +4,6 @@ GENERATE_ENUM_SERIALIZATION(node.h)
 
 PEERDIR(
     library/cpp/yson
-    library/cpp/yson/json
 )
 
 

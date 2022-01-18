@@ -3,9 +3,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning, module="_pytest.assertion.rewrite")
-
 import ast
 import errno
 import imp

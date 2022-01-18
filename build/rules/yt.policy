@@ -1,6 +1,3 @@
-ALLOW yt -> yt/yt/server
+ALLOW yt -> yt/19_4/yt/server
 
-DENY .* -> yt/yt/server
-
-ALLOW mapreduce/yt/experiments -> mapreduce/yt/experiments
-DENY .* -> mapreduce/yt/experiments
+DENY .* -> yt/19_4/yt/server

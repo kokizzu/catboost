@@ -8,9 +8,6 @@ import json
 import argparse
 import errno
 
-import process_command_files as pcf
-import process_whole_archive_option as pwa
-
 
 procs = []
 build_kekeke = 45
@@ -359,56 +356,32 @@ def make_full_path_arg(arg, bld_root, short_root):
         return os.path.join(short_root, arg)
     return arg
 
-def fix_path(p):
+
+def run_main():
     topdirs = ['/%s/' % d for d in os.listdir('/')]
+
     def abs_path_start(path, pos):
         if pos < 0:
             return False
         return pos == 0 or path[pos - 1] == ':'
 
-    pp = None
-    for pr in topdirs:
-        pp2 = p.find(pr)
-        if abs_path_start(p, pp2) and (pp is None or pp > pp2):
-            pp = pp2
-    if pp is not None:
-        return p[:pp] + 'Z:' + p[pp:].replace('/', '\\')
-    if p.startswith('/Fo'):
-        return '/Fo' + p[3:].replace('/', '\\')
-    return p
+    def fix_path(p):
+        pp = None
 
-def process_free_args(args, wine, bld_root, mode):
-    whole_archive_prefix = '/WHOLEARCHIVE:'
-    short_names = {}
-    winepath = os.path.join(os.path.dirname(wine), 'winepath')
-    short_names[bld_root] = trim_path(bld_root, winepath)
-    # Slow for no benefit.
-    # arc_root = args.arcadia_root
-    # short_names[arc_root] = trim_path(arc_root, winepath)
+        for pr in topdirs:
+            pp2 = p.find(pr)
 
-    free_args, wa_peers, wa_libs = pwa.get_whole_archive_peers_and_libs(pcf.skip_markers(args))
+            if abs_path_start(p, pp2) and (pp is None or pp > pp2):
+                pp = pp2
 
-    process_link = lambda x: make_full_path_arg(x, bld_root, short_names[bld_root]) if mode in ('link', 'lib') else x
-    def process_arg(arg):
-        with_wa_prefix = arg.startswith(whole_archive_prefix)
-        prefix = whole_archive_prefix if with_wa_prefix else ''
-        without_prefix_arg = arg[len(prefix):]
-        return prefix + fix_path(process_link(downsize_path(without_prefix_arg, short_names)))
+        if pp is not None:
+            return p[:pp] + 'Z:' + p[pp:].replace('/', '\\')
 
-    result = []
-    for arg in free_args:
-        if pcf.is_cmdfile_arg(arg):
-            cmd_file_path = pcf.cmdfile_path(arg)
-            cf_args = pcf.read_from_command_file(cmd_file_path)
-            with open(cmd_file_path, 'w') as afile:
-                for cf_arg in cf_args:
-                    afile.write(process_arg(cf_arg) + "\n")
-            result.append(arg)
-        else:
-            result.append(process_arg(arg))
-    return pwa.ProcessWholeArchiveOption('WINDOWS', wa_peers, wa_libs).construct_cmd(result)
+        if p.startswith('/Fo'):
+            return '/Fo' + p[3:].replace('/', '\\')
 
-def run_main():
+        return p
+
     parser = argparse.ArgumentParser()
     parser.add_argument('wine', action='store')
     parser.add_argument('-v', action='store', dest='version', default='120')
@@ -418,7 +391,6 @@ def run_main():
     parser.add_argument('arcadia_build_root', action='store')
     parser.add_argument('binary', action='store')
     parser.add_argument('free_args', nargs=argparse.REMAINDER)
-    # By now just unpack. Ideally we should fix path and pack arguments back into command file
     args = parser.parse_args()
 
     wine = args.wine
@@ -426,8 +398,8 @@ def run_main():
     binary = args.binary
     version = args.version
     incl_paths = args.incl_paths
-    bld_root = args.arcadia_build_root
     free_args = args.free_args
+    bld_root = args.arcadia_build_root
 
     wine_dir = os.path.dirname(os.path.dirname(wine))
     bin_dir = os.path.dirname(binary)
@@ -451,7 +423,16 @@ def run_main():
     env['LIB'] = fix_path(tc_dir + '/VC/lib/amd64')
     env['LD_LIBRARY_PATH'] = ':'.join(wine_dir + d for d in ['/lib', '/lib64', '/lib64/wine'])
 
-    cmd = [binary] + process_free_args(free_args, wine, bld_root, mode)
+    short_names = {}
+    winepath = os.path.join(os.path.dirname(wine), 'winepath')
+    short_names[bld_root] = trim_path(bld_root, winepath)
+    # Slow for no benefit.
+    # arc_root = args.arcadia_root
+    # short_names[arc_root] = trim_path(arc_root, winepath)
+
+    process_link = lambda x: make_full_path_arg(x, bld_root, short_names[bld_root]) if mode in ('link', 'lib') else x
+
+    cmd = [binary] + [fix_path(process_link(downsize_path(x, short_names))) for x in free_args]
 
     for x in ('/NOLOGO', '/nologo', '/FD'):
         try:

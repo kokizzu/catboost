@@ -4,7 +4,7 @@
 
 #include "features.h"
 
-#include <library/cpp/object_factory/object_factory.h>
+#include <library/object_factory/object_factory.h>
 
 #include <util/generic/array_ref.h>
 #include <util/generic/maybe.h>
@@ -17,7 +17,6 @@ namespace NCB {  // split due to CUDA-compiler inability to parse nested namespa
             TMaybe<TVector<ui32>> FloatFeatureIndexes;
             TMaybe<TVector<ui32>> CatFeatureIndexes;
             TMaybe<TVector<ui32>> TextFeatureIndexes;
-            TMaybe<TVector<ui32>> EmbeddingFeatureIndexes;
             TMaybe<TVector<ui32>> FlatIndexes;
         public:
             inline TFeaturePosition GetRemappedPosition(const TFloatFeature& feature) const {
@@ -44,19 +43,8 @@ namespace NCB {  // split due to CUDA-compiler inability to parse nested namespa
 
             inline TFeaturePosition GetRemappedPosition(const TTextFeature& feature) const {
                 TFeaturePosition position = feature.Position;
-                if (EmbeddingFeatureIndexes.Defined()) {
+                if (TextFeatureIndexes.Defined()) {
                     position.Index = TextFeatureIndexes->at(position.Index);
-                }
-                if (FlatIndexes.Defined()) {
-                    position.FlatIndex = FlatIndexes->at(position.FlatIndex);
-                }
-                return position;
-            }
-
-            inline TFeaturePosition GetRemappedPosition(const TEmbeddingFeature& feature) const {
-                TFeaturePosition position = feature.Position;
-                if (EmbeddingFeatureIndexes.Defined()) {
-                    position.Index = EmbeddingFeatureIndexes->at(position.Index);
                 }
                 if (FlatIndexes.Defined()) {
                     position.FlatIndex = FlatIndexes->at(position.FlatIndex);
@@ -87,7 +75,6 @@ namespace NCB {  // split due to CUDA-compiler inability to parse nested namespa
                 {
                 case EPredictionType::RawFormulaVal:
                 case EPredictionType::Exponent:
-                case EPredictionType::RMSEWithUncertainty:
                 case EPredictionType::Probability:
                     return TVector<double>(docCount * GetApproxDimension());
                 case EPredictionType::Class:
@@ -172,16 +159,6 @@ namespace NCB {  // split due to CUDA-compiler inability to parse nested namespa
                 const TFeatureLayout* featureInfo = nullptr
             ) const = 0;
 
-            virtual void CalcWithHashedCatAndText(
-                TConstArrayRef<TConstArrayRef<float>> floatFeatures,
-                TConstArrayRef<TConstArrayRef<int>> catFeatures,
-                TConstArrayRef<TConstArrayRef<TStringBuf>> textFeatures,
-                size_t treeStart,
-                size_t treeEnd,
-                TArrayRef<double> results,
-                const TFeatureLayout* featureInfo = nullptr
-            ) const = 0;
-
             virtual void Calc(
                 TConstArrayRef<TConstArrayRef<float>> floatFeatures,
                 TConstArrayRef<TConstArrayRef<TStringBuf>> catFeatures,
@@ -200,16 +177,6 @@ namespace NCB {  // split due to CUDA-compiler inability to parse nested namespa
                 TArrayRef<double> results,
                 const TFeatureLayout* featureInfo = nullptr
             ) const = 0;
-
-            void Calc(
-                    TConstArrayRef<TConstArrayRef<float>> floatFeatures,
-                    TConstArrayRef<TConstArrayRef<TStringBuf>> catFeatures,
-                    TConstArrayRef<TConstArrayRef<TStringBuf>> textFeatures,
-                    TArrayRef<double> results,
-                    const TFeatureLayout* featureInfo = nullptr
-            ) const {
-                Calc(floatFeatures, catFeatures, textFeatures, 0, GetTreeCount(), results, featureInfo);
-            }
 
             template <typename TCatFeatureType>
             void Calc(
@@ -227,12 +194,11 @@ namespace NCB {  // split due to CUDA-compiler inability to parse nested namespa
                 TArrayRef<double> results,
                 const TFeatureLayout* featureInfo = nullptr
             ) const {
-                TVector<TVector<TStringBuf>> catFeatureString(Reserve(catFeatures.size()));
-                for (const auto& objCatFeature : catFeatures) {
-                    catFeatureString.emplace_back(TVector<TStringBuf>{objCatFeature.begin(), objCatFeature.end()});
-                }
                 TVector<TConstArrayRef<float>> floatRefs(floatFeatures.begin(), floatFeatures.end());
-                TVector<TConstArrayRef<TStringBuf>> catFeatureStringRefs(catFeatureString.begin(), catFeatureString.end());
+                TVector<TConstArrayRef<TStringBuf>> catFeatureStringRefs(Reserve(catFeatures.size()));
+                for (const auto& objCatFeature : catFeatures) {
+                    catFeatureStringRefs.emplace_back(TVector<TStringBuf>{objCatFeature.begin(), objCatFeature.end()});
+                }
                 Calc<TStringBuf>(floatRefs, catFeatureStringRefs, results, featureInfo);
             }
 
@@ -267,18 +233,10 @@ namespace NCB {  // split due to CUDA-compiler inability to parse nested namespa
                 size_t treeEnd,
                 TArrayRef<TCalcerIndexType> indexes
             ) const = 0;
-
-	    virtual void Quantize(
-                TConstArrayRef<TConstArrayRef<float>> features,
-                IQuantizedData* quantizedData
-            ) const = 0;
         };
 
         using TEvaluationBackendFactory = NObjectFactory::TParametrizedObjectFactory<IModelEvaluator, EFormulaEvaluatorType, const TFullModel&>;
 
         TModelEvaluatorPtr CreateEvaluator(EFormulaEvaluatorType formualEvaluatorType, const TFullModel& model);
-
-        // We HAVE TO make pointer referencing registrators to make linker understand we really need them.
-        extern void* CPUEvaluationBackendRegistratorPointer;
     }
 }

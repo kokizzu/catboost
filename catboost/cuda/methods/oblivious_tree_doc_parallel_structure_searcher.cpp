@@ -1,12 +1,8 @@
 #include "oblivious_tree_doc_parallel_structure_searcher.h"
-
-#include "helpers.h"
 #include "pointwise_scores_calcer.h"
 #include "random_score_helper.h"
-#include "update_feature_weights.h"
-
+#include "helpers.h"
 #include <catboost/cuda/cuda_lib/cuda_buffer_helpers/all_reduce.h>
-#include <catboost/cuda/methods/langevin_utils.h>
 
 namespace NCatboostCuda {
     TObliviousTreeModel
@@ -35,13 +31,13 @@ namespace NCatboostCuda {
         TScoreCalcerPtr simpleCtrScoreCalcer;
 
         if (dataSet.HasFeatures()) {
-            featuresScoreCalcer = MakeHolder<TScoreCalcer>(dataSet.GetFeatures(),
+            featuresScoreCalcer = new TScoreCalcer(dataSet.GetFeatures(),
                                                    TreeConfig,
                                                    1,
                                                    true);
         }
         if (dataSet.HasPermutationDependentFeatures()) {
-            simpleCtrScoreCalcer = MakeHolder<TScoreCalcer>(dataSet.GetPermutationFeatures(),
+            simpleCtrScoreCalcer = new TScoreCalcer(dataSet.GetPermutationFeatures(),
                                                     TreeConfig,
                                                     1,
                                                     true);
@@ -51,8 +47,6 @@ namespace NCatboostCuda {
         TVector<float> leaves;
         TVector<double> weights;
         auto& profiler = NCudaLib::GetCudaManager().GetProfiler();
-
-        TMirrorBuffer<float> featureWeights;
 
         for (ui32 depth = 0; depth < TreeConfig.MaxDepth; ++depth) {
             {
@@ -64,8 +58,6 @@ namespace NCatboostCuda {
             NCudaLib::AllReduceThroughMaster(partitionsStatsStriped, reducedPartStats);
             //all reduce through master will implicitly sync
             //                manager.WaitComplete();
-
-            UpdateFeatureWeightsForBestSplits(FeaturesManager, TreeConfig.ModelSizeReg, featureWeights);
 
             TBinarySplit bestSplit;
             {
@@ -82,14 +74,12 @@ namespace NCatboostCuda {
                 }
                 {
                     if (featuresScoreCalcer) {
-                        featuresScoreCalcer->ComputeOptimalSplit(reducedPartStats.AsConstBuf(),
-                                                                 featureWeights.AsConstBuf(),
+                        featuresScoreCalcer->ComputeOptimalSplit(reducedPartStats,
                                                                  scoreStdDevMult,
                                                                  random.NextUniformL());
                     }
                     if (simpleCtrScoreCalcer) {
-                        simpleCtrScoreCalcer->ComputeOptimalSplit(reducedPartStats.AsConstBuf(),
-                                                                  featureWeights.AsConstBuf(),
+                        simpleCtrScoreCalcer->ComputeOptimalSplit(reducedPartStats,
                                                                   scoreStdDevMult,
                                                                   random.NextUniformL());
                     }
@@ -114,9 +104,6 @@ namespace NCatboostCuda {
 
             bestSplit = ToSplit(FeaturesManager, bestSplitProp);
             PrintBestScore(FeaturesManager, bestSplit, bestSplitProp.Score, depth);
-            if (FeaturesManager.IsCtr(bestSplitProp.FeatureId)) {
-                FeaturesManager.AddUsedCtr(bestSplitProp.FeatureId);
-            }
 
             const bool needLeavesEstimation = TreeConfig.LeavesEstimationMethod == ELeavesEstimation::Simple;
 
@@ -206,14 +193,6 @@ namespace NCatboostCuda {
                                          target->WeightedTarget,
                                          target->Weights,
                                          *indices);
-
-            if (BoostingOptions.Langevin) {
-                auto &seeds = Random.GetGpuSeeds<NCudaLib::TStripeMapping>();
-                AddLangevinNoise(seeds,
-                                 &(target->WeightedTarget),
-                                 BoostingOptions.DiffusionTemperature,
-                                 BoostingOptions.LearningRate);
-            }
         }
     }
 }

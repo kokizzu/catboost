@@ -1,6 +1,14 @@
 RECURSE(
     libs
-    python
-    restricted
     tools
+    python
+    deprecated
 )
+
+
+IF (YMAKE)
+    RECURSE(
+    
+)
+ENDIF ()
+

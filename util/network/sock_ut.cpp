@@ -1,6 +1,6 @@
 #include "sock.h"
 
-#include <library/cpp/testing/unittest/registar.h>
+#include <library/unittest/registar.h>
 #include <library/cpp/threading/future/legacy_future.h>
 
 #include <util/system/fs.h>
@@ -165,4 +165,4 @@ Y_UNIT_TEST_SUITE(TSocketTest) {
         NFs::Remove(localServerSockName);
     }
 
-}
+} // unittest

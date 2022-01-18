@@ -229,7 +229,6 @@ namespace NKernelHost {
         TCudaBufferPtr<const ui32> QueryOffsets;
         ui32 QueryOffsetsBias;
         float LambdaReg;
-        float Beta;
 
         TCudaBufferPtr<const float> Relevs;
         TCudaBufferPtr<const float> Weights;
@@ -243,7 +242,7 @@ namespace NKernelHost {
     public:
         using TKernelContext = NKernel::TQuerySoftMaxContext;
         Y_SAVELOAD_DEFINE(Relevs, Weights, Predictions,
-                          QueryOffsets, QuerySizes, QueryOffsetsBias, LambdaReg, Beta,
+                          QueryOffsets, QuerySizes, QueryOffsetsBias,
                           Indices, FunctionValue,
                           Der, Der2);
 
@@ -263,7 +262,6 @@ namespace NKernelHost {
                             TCudaBufferPtr<const ui32> queryOffsets,
                             ui32 queryOffsetsBias,
                             float lambdaReg,
-                            float beta,
                             TCudaBufferPtr<const float> relevs,
                             TCudaBufferPtr<const float> weights,
                             TCudaBufferPtr<const float> predictions,
@@ -275,7 +273,6 @@ namespace NKernelHost {
             , QueryOffsets(queryOffsets)
             , QueryOffsetsBias(queryOffsetsBias)
             , LambdaReg(lambdaReg)
-            , Beta(beta)
             , Relevs(relevs)
             , Weights(weights)
             , Predictions(predictions)
@@ -322,7 +319,6 @@ namespace NKernelHost {
                                            context.QueryApprox.Get(),
                                            Indices.Get(),
                                            context.ApproxExp.Get(),
-                                           Beta,
                                            stream.GetStream());
             NKernel::ComputeGroupSums(context.ApproxExp.Get(),
                                       QueryOffsets.Get(),
@@ -337,7 +333,6 @@ namespace NKernelHost {
                                              context.ApproxExp.Get(),
                                              context.Qids.Get(),
                                              LambdaReg,
-                                             Beta,
                                              static_cast<ui32>(Predictions.Size()),
                                              context.QueryApprox.Get(),
                                              context.QuerySumWeightedTargets.Get(),
@@ -487,7 +482,7 @@ namespace NKernelHost {
 
     public:
         using TKernelContext = NKernel::TPairLogitContext;
-        Y_SAVELOAD_DEFINE(Pairs, PairWeights, QueryOffsetsBias, Predictions, Indices, FunctionValue, Der, Der2);
+        Y_SAVELOAD_DEFINE(Pairs, PairWeights, Predictions, Indices, FunctionValue, Der, Der2);
 
         THolder<TKernelContext> PrepareContext(IMemoryManager& memoryManager) const {
             auto context = MakeHolder<TKernelContext>();
@@ -886,7 +881,6 @@ inline void ApproximateQuerySoftMax(const TCudaBuffer<const ui32, TMapping>& que
                                     const TCudaBuffer<const ui32, TMapping>& queryOffsets,
                                     NCudaLib::TDistributedObject<ui32> offsetsBias,
                                     float lambdaReg,
-                                    float beta,
                                     const TCudaBuffer<const float, TMapping>& target,
                                     const TCudaBuffer<const float, TMapping>& weights,
                                     const TCudaBuffer<const float, TMapping>& point,
@@ -898,7 +892,7 @@ inline void ApproximateQuerySoftMax(const TCudaBuffer<const ui32, TMapping>& que
     using TKernel = NKernelHost::TQuerySoftMaxKernel;
     LaunchKernels<TKernel>(target.NonEmptyDevices(), stream,
                            querySizes, queryOffsets, offsetsBias,
-                           lambdaReg, beta, target, weights, point,
+                           lambdaReg, target, weights, point,
                            indices,
                            score, weightedDer, weightedDer2);
 }

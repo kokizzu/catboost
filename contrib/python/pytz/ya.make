@@ -1,16 +1,14 @@
+
+
 PY23_LIBRARY()
 
-
-
-VERSION(2021.3)
+VERSION(2020.1)
 
 LICENSE(MIT)
 
 PEERDIR(
     contrib/python/setuptools
 )
-
-NO_LINT()
 
 PY_SRCS(
     TOP_LEVEL
@@ -570,7 +568,6 @@ RESOURCE_FILES(
     pytz/zoneinfo/Pacific/Guam
     pytz/zoneinfo/Pacific/Honolulu
     pytz/zoneinfo/Pacific/Johnston
-    pytz/zoneinfo/Pacific/Kanton
     pytz/zoneinfo/Pacific/Kiritimati
     pytz/zoneinfo/Pacific/Kosrae
     pytz/zoneinfo/Pacific/Kwajalein
@@ -623,10 +620,13 @@ RESOURCE_FILES(
     pytz/zoneinfo/Zulu
     pytz/zoneinfo/iso3166.tab
     pytz/zoneinfo/leapseconds
+    pytz/zoneinfo/posixrules
     pytz/zoneinfo/tzdata.zi
     pytz/zoneinfo/zone.tab
     pytz/zoneinfo/zone1970.tab
 )
+
+NO_LINT()
 
 END()
 

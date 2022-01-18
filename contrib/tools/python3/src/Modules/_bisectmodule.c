@@ -6,16 +6,9 @@ Converted to C by Dmitry Vasiliev (dima at hlabs.spb.ru).
 #define PY_SSIZE_T_CLEAN
 #include "Python.h"
 
-/*[clinic input]
-module _bisect
-[clinic start generated code]*/
-/*[clinic end generated code: output=da39a3ee5e6b4b0d input=4d56a2b2033b462b]*/
-
-#include "clinic/_bisectmodule.c.h"
-
 _Py_IDENTIFIER(insert);
 
-static inline Py_ssize_t
+static Py_ssize_t
 internal_bisect_right(PyObject *list, PyObject *item, Py_ssize_t lo, Py_ssize_t hi)
 {
     PyObject *litem;
@@ -51,63 +44,56 @@ internal_bisect_right(PyObject *list, PyObject *item, Py_ssize_t lo, Py_ssize_t 
     return lo;
 }
 
-/*[clinic input]
-_bisect.bisect_right -> Py_ssize_t
-
-    a: object
-    x: object
-    lo: Py_ssize_t = 0
-    hi: Py_ssize_t(c_default='-1', accept={int, NoneType}) = None
-
-Return the index where to insert item x in list a, assuming a is sorted.
-
-The return value i is such that all e in a[:i] have e <= x, and all e in
-a[i:] have e > x.  So if x already appears in the list, i points just
-beyond the rightmost x already there
-
-Optional args lo (default 0) and hi (default len(a)) bound the
-slice of a to be searched.
-[clinic start generated code]*/
-
-static Py_ssize_t
-_bisect_bisect_right_impl(PyObject *module, PyObject *a, PyObject *x,
-                          Py_ssize_t lo, Py_ssize_t hi)
-/*[clinic end generated code: output=419e150cf1d2a235 input=e72212b282c83375]*/
-{
-    return internal_bisect_right(a, x, lo, hi);
-}
-
-/*[clinic input]
-_bisect.insort_right
-
-    a: object
-    x: object
-    lo: Py_ssize_t = 0
-    hi: Py_ssize_t(c_default='-1', accept={int, NoneType}) = None
-
-Insert item x in list a, and keep it sorted assuming a is sorted.
-
-If x is already in a, insert it to the right of the rightmost x.
-
-Optional args lo (default 0) and hi (default len(a)) bound the
-slice of a to be searched.
-[clinic start generated code]*/
-
 static PyObject *
-_bisect_insort_right_impl(PyObject *module, PyObject *a, PyObject *x,
-                          Py_ssize_t lo, Py_ssize_t hi)
-/*[clinic end generated code: output=c2caa3d4cd02035a input=d1c45bfa68182669]*/
+bisect_right(PyObject *self, PyObject *args, PyObject *kw)
 {
-    PyObject *result;
-    Py_ssize_t index = internal_bisect_right(a, x, lo, hi);
+    PyObject *list, *item;
+    Py_ssize_t lo = 0;
+    Py_ssize_t hi = -1;
+    Py_ssize_t index;
+    static char *keywords[] = {"a", "x", "lo", "hi", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kw, "OO|nn:bisect_right",
+        keywords, &list, &item, &lo, &hi))
+        return NULL;
+    index = internal_bisect_right(list, item, lo, hi);
     if (index < 0)
         return NULL;
-    if (PyList_CheckExact(a)) {
-        if (PyList_Insert(a, index, x) < 0)
+    return PyLong_FromSsize_t(index);
+}
+
+PyDoc_STRVAR(bisect_right_doc,
+"bisect_right(a, x[, lo[, hi]]) -> index\n\
+\n\
+Return the index where to insert item x in list a, assuming a is sorted.\n\
+\n\
+The return value i is such that all e in a[:i] have e <= x, and all e in\n\
+a[i:] have e > x.  So if x already appears in the list, i points just\n\
+beyond the rightmost x already there\n\
+\n\
+Optional args lo (default 0) and hi (default len(a)) bound the\n\
+slice of a to be searched.\n");
+
+static PyObject *
+insort_right(PyObject *self, PyObject *args, PyObject *kw)
+{
+    PyObject *list, *item, *result;
+    Py_ssize_t lo = 0;
+    Py_ssize_t hi = -1;
+    Py_ssize_t index;
+    static char *keywords[] = {"a", "x", "lo", "hi", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kw, "OO|nn:insort_right",
+        keywords, &list, &item, &lo, &hi))
+        return NULL;
+    index = internal_bisect_right(list, item, lo, hi);
+    if (index < 0)
+        return NULL;
+    if (PyList_CheckExact(list)) {
+        if (PyList_Insert(list, index, item) < 0)
             return NULL;
-    }
-    else {
-        result = _PyObject_CallMethodId(a, &PyId_insert, "nO", index, x);
+    } else {
+        result = _PyObject_CallMethodId(list, &PyId_insert, "nO", index, item);
         if (result == NULL)
             return NULL;
         Py_DECREF(result);
@@ -116,7 +102,17 @@ _bisect_insort_right_impl(PyObject *module, PyObject *a, PyObject *x,
     Py_RETURN_NONE;
 }
 
-static inline Py_ssize_t
+PyDoc_STRVAR(insort_right_doc,
+"insort_right(a, x[, lo[, hi]])\n\
+\n\
+Insert item x in list a, and keep it sorted assuming a is sorted.\n\
+\n\
+If x is already in a, insert it to the right of the rightmost x.\n\
+\n\
+Optional args lo (default 0) and hi (default len(a)) bound the\n\
+slice of a to be searched.\n");
+
+static Py_ssize_t
 internal_bisect_left(PyObject *list, PyObject *item, Py_ssize_t lo, Py_ssize_t hi)
 {
     PyObject *litem;
@@ -152,64 +148,56 @@ internal_bisect_left(PyObject *list, PyObject *item, Py_ssize_t lo, Py_ssize_t h
     return lo;
 }
 
-
-/*[clinic input]
-_bisect.bisect_left -> Py_ssize_t
-
-    a: object
-    x: object
-    lo: Py_ssize_t = 0
-    hi: Py_ssize_t(c_default='-1', accept={int, NoneType}) = None
-
-Return the index where to insert item x in list a, assuming a is sorted.
-
-The return value i is such that all e in a[:i] have e < x, and all e in
-a[i:] have e >= x.  So if x already appears in the list, i points just
-before the leftmost x already there.
-
-Optional args lo (default 0) and hi (default len(a)) bound the
-slice of a to be searched.
-[clinic start generated code]*/
-
-static Py_ssize_t
-_bisect_bisect_left_impl(PyObject *module, PyObject *a, PyObject *x,
-                         Py_ssize_t lo, Py_ssize_t hi)
-/*[clinic end generated code: output=af82168bc2856f24 input=2bd90f34afe5609f]*/
-{
-    return internal_bisect_left(a, x, lo, hi);
-}
-
-
-/*[clinic input]
-_bisect.insort_left
-
-    a: object
-    x: object
-    lo: Py_ssize_t = 0
-    hi: Py_ssize_t(c_default='-1', accept={int, NoneType}) = None
-
-Insert item x in list a, and keep it sorted assuming a is sorted.
-
-If x is already in a, insert it to the left of the leftmost x.
-
-Optional args lo (default 0) and hi (default len(a)) bound the
-slice of a to be searched.
-[clinic start generated code]*/
-
 static PyObject *
-_bisect_insort_left_impl(PyObject *module, PyObject *a, PyObject *x,
-                         Py_ssize_t lo, Py_ssize_t hi)
-/*[clinic end generated code: output=9e8356c0844a182b input=bc4583308bce00cc]*/
+bisect_left(PyObject *self, PyObject *args, PyObject *kw)
 {
-    PyObject *result;
-    Py_ssize_t index = internal_bisect_left(a, x, lo, hi);
+    PyObject *list, *item;
+    Py_ssize_t lo = 0;
+    Py_ssize_t hi = -1;
+    Py_ssize_t index;
+    static char *keywords[] = {"a", "x", "lo", "hi", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kw, "OO|nn:bisect_left",
+        keywords, &list, &item, &lo, &hi))
+        return NULL;
+    index = internal_bisect_left(list, item, lo, hi);
     if (index < 0)
         return NULL;
-    if (PyList_CheckExact(a)) {
-        if (PyList_Insert(a, index, x) < 0)
+    return PyLong_FromSsize_t(index);
+}
+
+PyDoc_STRVAR(bisect_left_doc,
+"bisect_left(a, x[, lo[, hi]]) -> index\n\
+\n\
+Return the index where to insert item x in list a, assuming a is sorted.\n\
+\n\
+The return value i is such that all e in a[:i] have e < x, and all e in\n\
+a[i:] have e >= x.  So if x already appears in the list, i points just\n\
+before the leftmost x already there.\n\
+\n\
+Optional args lo (default 0) and hi (default len(a)) bound the\n\
+slice of a to be searched.\n");
+
+static PyObject *
+insort_left(PyObject *self, PyObject *args, PyObject *kw)
+{
+    PyObject *list, *item, *result;
+    Py_ssize_t lo = 0;
+    Py_ssize_t hi = -1;
+    Py_ssize_t index;
+    static char *keywords[] = {"a", "x", "lo", "hi", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kw, "OO|nn:insort_left",
+        keywords, &list, &item, &lo, &hi))
+        return NULL;
+    index = internal_bisect_left(list, item, lo, hi);
+    if (index < 0)
+        return NULL;
+    if (PyList_CheckExact(list)) {
+        if (PyList_Insert(list, index, item) < 0)
             return NULL;
     } else {
-        result = _PyObject_CallMethodId(a, &PyId_insert, "nO", index, x);
+        result = _PyObject_CallMethodId(list, &PyId_insert, "nO", index, item);
         if (result == NULL)
             return NULL;
         Py_DECREF(result);
@@ -218,11 +206,25 @@ _bisect_insort_left_impl(PyObject *module, PyObject *a, PyObject *x,
     Py_RETURN_NONE;
 }
 
+PyDoc_STRVAR(insort_left_doc,
+"insort_left(a, x[, lo[, hi]])\n\
+\n\
+Insert item x in list a, and keep it sorted assuming a is sorted.\n\
+\n\
+If x is already in a, insert it to the left of the leftmost x.\n\
+\n\
+Optional args lo (default 0) and hi (default len(a)) bound the\n\
+slice of a to be searched.\n");
+
 static PyMethodDef bisect_methods[] = {
-    _BISECT_BISECT_RIGHT_METHODDEF
-    _BISECT_INSORT_RIGHT_METHODDEF
-    _BISECT_BISECT_LEFT_METHODDEF
-    _BISECT_INSORT_LEFT_METHODDEF
+    {"bisect_right", (PyCFunction)bisect_right,
+        METH_VARARGS|METH_KEYWORDS, bisect_right_doc},
+    {"insort_right", (PyCFunction)insort_right,
+        METH_VARARGS|METH_KEYWORDS, insort_right_doc},
+    {"bisect_left", (PyCFunction)bisect_left,
+        METH_VARARGS|METH_KEYWORDS, bisect_left_doc},
+    {"insort_left", (PyCFunction)insort_left,
+        METH_VARARGS|METH_KEYWORDS, insort_left_doc},
     {NULL, NULL} /* sentinel */
 };
 

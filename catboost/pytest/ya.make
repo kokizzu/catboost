@@ -1,6 +1,6 @@
 
 
-PY3TEST()
+PYTEST()
 
 TEST_SRCS(
     conftest.py
@@ -29,7 +29,6 @@ PEERDIR(
     catboost/pytest/lib
     catboost/python-package/lib
     contrib/python/numpy
-    contrib/python/pandas
 )
 
 DEPENDS(
@@ -40,7 +39,7 @@ DATA(
     arcadia/catboost/pytest/data
 )
 
-IF (OPENSOURCE AND AUTOCHECK)
+IF (CATBOOST_OPENSOURCE AND AUTOCHECK)
     INCLUDE(${ARCADIA_ROOT}/catboost//oss/checks/check_deps.inc)
 ENDIF()
 

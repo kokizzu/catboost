@@ -1,6 +1,6 @@
 #include <library/cpp/containers/flat_hash/lib/probings.h>
 
-#include <library/cpp/testing/unittest/registar.h>
+#include <library/unittest/registar.h>
 
 using namespace NFlatHash;
 
@@ -11,7 +11,7 @@ namespace {
         }
     };
 
-    constexpr TDummySizeFitter SIZE_FITTER;
+    constexpr static TDummySizeFitter SIZE_FITTER;
 
     auto atLeast13 = [](size_t idx) { return idx >= 13; };
 }

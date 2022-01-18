@@ -1,7 +1,6 @@
 LIBRARY(yutil)
 
 
-SUBSCRIBER(g:util-subscribers)
 
 NEED_CHECK()
 
@@ -15,9 +14,14 @@ PEERDIR(
     contrib/libs/double-conversion
 )
 
-PEERDIR(
-    contrib/libs/libc_compat
-)
+IF (OS_ANDROID)
+    PEERDIR(
+        contrib/libs/android_ifaddrs
+    )
+    ADDINCL(
+        contrib/libs/android_ifaddrs
+    )
+ENDIF()
 
 # datetime
 JOIN_SRCS(
@@ -65,7 +69,6 @@ JOIN_SRCS(
     folder/dirut.cpp
     folder/filelist.cpp
     folder/fts.cpp
-    folder/fwd.cpp
     folder/iterator.cpp
     folder/path.cpp
     folder/pathsplit.cpp
@@ -92,6 +95,7 @@ JOIN_SRCS(
     generic/bt_exception.cpp
     generic/buffer.cpp
     generic/cast.cpp
+    generic/chartraits.cpp
     generic/deque.cpp
     generic/explicit_type.cpp
     generic/fastqueue.cpp
@@ -115,7 +119,6 @@ JOIN_SRCS(
     generic/mem_copy.cpp
     generic/noncopyable.cpp
     generic/object_counter.cpp
-    generic/overloaded.cpp
     generic/ptr.cpp
     generic/queue.cpp
     generic/refcount.cpp
@@ -129,6 +132,7 @@ JOIN_SRCS(
     generic/strfcpy.cpp
     generic/string.cpp
     generic/typelist.cpp
+    generic/type_name.cpp
     generic/typetraits.cpp
     generic/utility.cpp
     generic/va_args.cpp
@@ -163,6 +167,7 @@ JOIN_SRCS(
     network/interface.cpp
     network/iovec.cpp
     network/ip.cpp
+    network/netloss.cpp
     network/nonblock.cpp
     network/pair.cpp
     network/poller.cpp
@@ -228,7 +233,6 @@ JOIN_SRCS(
     string/hex.cpp
     string/join.cpp
     string/printf.cpp
-    string/reverse.cpp
     string/split.cpp
     string/strip.cpp
     string/strspn.cpp
@@ -242,23 +246,22 @@ IF (ARCH_ARM)
     CFLAGS(-D_FORTIFY_SOURCE=0)
 ENDIF()
 
-IF (TSTRING_IS_STD_STRING)
-    CFLAGS(GLOBAL -DTSTRING_IS_STD_STRING)
-ENDIF()
-
 JOIN_SRCS(
     all_system_1.cpp
     system/atexit.cpp
     system/backtrace.cpp
     system/compat.cpp
+    system/compiler.cpp
     system/condvar.cpp
     system/context.cpp
     system/daemon.cpp
     system/datetime.cpp
     system/defaults.c
+    system/demangle.cpp
     system/direct_io.cpp
     system/dynlib.cpp
     system/env.cpp
+    system/err.cpp
     system/error.cpp
     system/event.cpp
     system/execpath.cpp
@@ -275,10 +278,6 @@ JOIN_SRCS(
     system/hp_timer.cpp
     system/info.cpp
 )
-
-IF (OS_WINDOWS)
-    SRCS(system/err.cpp)
-ENDIF()
 
 JOIN_SRCS(
     all_system_2.cpp
@@ -317,15 +316,12 @@ JOIN_SRCS(
     system/thread.cpp
     system/tls.cpp
     system/types.cpp
-    system/type_name.cpp
     system/unaligned_mem.cpp
     system/user.cpp
     system/utime.cpp
     system/yassert.cpp
     system/yield.cpp
 )
-
-SRC(system/compiler.cpp -fno-lto)
 
 IF (OS_WINDOWS)
     SRCS(
@@ -362,6 +358,9 @@ IF (MUSL)
         contrib/libs/linuxvdso
     )
 ELSE()
+    SRCS(
+        system/strlcpy.c
+    )
     IF (OS_LINUX OR SUN OR CYGWIN OR OS_WINDOWS)
         SRCS(
             system/mktemp_system.cpp
@@ -381,7 +380,3 @@ JOIN_SRCS(
 )
 
 END()
-
-RECURSE_FOR_TESTS(
-    tests/ut
-)

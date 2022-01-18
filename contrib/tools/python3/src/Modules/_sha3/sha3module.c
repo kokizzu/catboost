@@ -40,7 +40,7 @@
 #elif PY_BIG_ENDIAN
   /* opt64 is not yet supported on big endian platforms */
   #define KeccakOpt 32
-#elif SIZEOF_VOID_P == 8
+#elif SIZEOF_VOID_P == 8 && defined(PY_UINT64_T)
   /* opt64 works only on little-endian 64bit platforms with unsigned int64 */
   #define KeccakOpt 64
 #else
@@ -48,9 +48,9 @@
   #define KeccakOpt 32
 #endif
 
-#if KeccakOpt == 64
+#if KeccakOpt == 64 && defined(PY_UINT64_T)
   /* 64bit platforms with unsigned int64 */
-  typedef uint64_t UINT64;
+  typedef PY_UINT64_T UINT64;
   typedef unsigned char UINT8;
 #endif
 
@@ -62,11 +62,6 @@
 #endif
 #if PY_BIG_ENDIAN
 #define PLATFORM_BYTE_ORDER IS_BIG_ENDIAN
-#endif
-
-/* Prevent bus errors on platforms requiring aligned accesses such ARM. */
-#if HAVE_ALIGNED_REQUIRED && !defined(NO_MISALIGNED_ACCESSES)
-#define NO_MISALIGNED_ACCESSES
 #endif
 
 /* mangle names */
@@ -174,24 +169,21 @@ newSHA3object(PyTypeObject *type)
     return newobj;
 }
 
-/*[clinic input]
-@classmethod
-_sha3.sha3_224.__new__ as py_sha3_new
-    data: object(c_default="NULL") = b''
-    /
-    *
-    usedforsecurity: bool = True
-
-Return a new BLAKE2b hash object.
-[clinic start generated code]*/
 
 static PyObject *
-py_sha3_new_impl(PyTypeObject *type, PyObject *data, int usedforsecurity)
-/*[clinic end generated code: output=90409addc5d5e8b0 input=bcfcdf2e4368347a]*/
+py_sha3_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 {
     SHA3object *self = NULL;
     Py_buffer buf = {NULL, NULL};
     HashReturn res;
+    PyObject *data = NULL;
+
+    if (!_PyArg_NoKeywords(_PyType_Name(type), kwargs)) {
+        return NULL;
+    }
+    if (!PyArg_UnpackTuple(args, _PyType_Name(type), 0, 1, &data)) {
+        return NULL;
+    }
 
     self = newSHA3object(type);
     if (self == NULL) {
@@ -501,10 +493,10 @@ static PyGetSetDef SHA3_getseters[] = {
         0,                  /* tp_itemsize */ \
         /*  methods  */ \
         (destructor)SHA3_dealloc, /* tp_dealloc */ \
-        0,                  /* tp_vectorcall_offset */ \
+        0,                  /* tp_print */ \
         0,                  /* tp_getattr */ \
         0,                  /* tp_setattr */ \
-        0,                  /* tp_as_async */ \
+        0,                  /* tp_reserved */ \
         0,                  /* tp_repr */ \
         0,                  /* tp_as_number */ \
         0,                  /* tp_as_sequence */ \
@@ -537,22 +529,22 @@ static PyGetSetDef SHA3_getseters[] = {
     }
 
 PyDoc_STRVAR(sha3_224__doc__,
-"sha3_224([data], *, usedforsecurity=True) -> SHA3 object\n\
+"sha3_224([data]) -> SHA3 object\n\
 \n\
 Return a new SHA3 hash object with a hashbit length of 28 bytes.");
 
 PyDoc_STRVAR(sha3_256__doc__,
-"sha3_256([data], *, usedforsecurity=True) -> SHA3 object\n\
+"sha3_256([data]) -> SHA3 object\n\
 \n\
 Return a new SHA3 hash object with a hashbit length of 32 bytes.");
 
 PyDoc_STRVAR(sha3_384__doc__,
-"sha3_384([data], *, usedforsecurity=True) -> SHA3 object\n\
+"sha3_384([data]) -> SHA3 object\n\
 \n\
 Return a new SHA3 hash object with a hashbit length of 48 bytes.");
 
 PyDoc_STRVAR(sha3_512__doc__,
-"sha3_512([data], *, usedforsecurity=True) -> SHA3 object\n\
+"sha3_512([data]) -> SHA3 object\n\
 \n\
 Return a new SHA3 hash object with a hashbit length of 64 bytes.");
 
@@ -563,22 +555,22 @@ SHA3_TYPE(SHA3_512type, "_sha3.sha3_512", sha3_512__doc__, SHA3_methods);
 
 #ifdef PY_WITH_KECCAK
 PyDoc_STRVAR(keccak_224__doc__,
-"keccak_224([data], *, usedforsecurity=True) -> Keccak object\n\
+"keccak_224([data]) -> Keccak object\n\
 \n\
 Return a new Keccak hash object with a hashbit length of 28 bytes.");
 
 PyDoc_STRVAR(keccak_256__doc__,
-"keccak_256([data], *, usedforsecurity=True) -> Keccak object\n\
+"keccak_256([data]) -> Keccak object\n\
 \n\
 Return a new Keccak hash object with a hashbit length of 32 bytes.");
 
 PyDoc_STRVAR(keccak_384__doc__,
-"keccak_384([data], *, usedforsecurity=True) -> Keccak object\n\
+"keccak_384([data]) -> Keccak object\n\
 \n\
 Return a new Keccak hash object with a hashbit length of 48 bytes.");
 
 PyDoc_STRVAR(keccak_512__doc__,
-"keccak_512([data], *, usedforsecurity=True) -> Keccak object\n\
+"keccak_512([data]) -> Keccak object\n\
 \n\
 Return a new Keccak hash object with a hashbit length of 64 bytes.");
 
@@ -590,13 +582,18 @@ SHA3_TYPE(Keccak_512type, "_sha3.keccak_512", keccak_512__doc__, SHA3_methods);
 
 
 static PyObject *
-_SHAKE_digest(SHA3object *self, unsigned long digestlen, int hex)
+_SHAKE_digest(SHA3object *self, PyObject *digestlen_obj, int hex)
 {
+    unsigned long digestlen;
     unsigned char *digest = NULL;
     SHA3_state temp;
     int res;
     PyObject *result = NULL;
 
+    digestlen = PyLong_AsUnsignedLong(digestlen_obj);
+    if (digestlen == (unsigned long) -1 && PyErr_Occurred()) {
+        return NULL;
+    }
     if (digestlen >= (1 << 29)) {
         PyErr_SetString(PyExc_ValueError, "length is too large");
         return NULL;
@@ -640,15 +637,15 @@ _SHAKE_digest(SHA3object *self, unsigned long digestlen, int hex)
 /*[clinic input]
 _sha3.shake_128.digest
 
-    length: unsigned_long
+    length: object
     /
 
 Return the digest value as a bytes object.
 [clinic start generated code]*/
 
 static PyObject *
-_sha3_shake_128_digest_impl(SHA3object *self, unsigned long length)
-/*[clinic end generated code: output=2313605e2f87bb8f input=418ef6a36d2e6082]*/
+_sha3_shake_128_digest(SHA3object *self, PyObject *length)
+/*[clinic end generated code: output=eaa80b6299142396 input=c579eb109f6227d2]*/
 {
     return _SHAKE_digest(self, length, 0);
 }
@@ -657,15 +654,15 @@ _sha3_shake_128_digest_impl(SHA3object *self, unsigned long length)
 /*[clinic input]
 _sha3.shake_128.hexdigest
 
-    length: unsigned_long
+    length: object
     /
 
 Return the digest value as a string of hexadecimal digits.
 [clinic start generated code]*/
 
 static PyObject *
-_sha3_shake_128_hexdigest_impl(SHA3object *self, unsigned long length)
-/*[clinic end generated code: output=bf8e2f1e490944a8 input=69fb29b0926ae321]*/
+_sha3_shake_128_hexdigest(SHA3object *self, PyObject *length)
+/*[clinic end generated code: output=4752f90e53c8bf2a input=a82694ea83865f5a]*/
 {
     return _SHAKE_digest(self, length, 1);
 }
@@ -680,12 +677,12 @@ static PyMethodDef SHAKE_methods[] = {
 };
 
 PyDoc_STRVAR(shake_128__doc__,
-"shake_128([data], *, usedforsecurity=True) -> SHAKE object\n\
+"shake_128([data]) -> SHAKE object\n\
 \n\
 Return a new SHAKE hash object.");
 
 PyDoc_STRVAR(shake_256__doc__,
-"shake_256([data], *, usedforsecurity=True) -> SHAKE object\n\
+"shake_256([data]) -> SHAKE object\n\
 \n\
 Return a new SHAKE hash object.");
 
@@ -718,7 +715,7 @@ PyInit__sha3(void)
 
 #define init_sha3type(name, type)     \
     do {                              \
-        Py_SET_TYPE(type, &PyType_Type); \
+        Py_TYPE(type) = &PyType_Type; \
         if (PyType_Ready(type) < 0) { \
             goto error;               \
         }                             \

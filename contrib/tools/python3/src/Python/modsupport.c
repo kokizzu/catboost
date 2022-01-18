@@ -2,7 +2,6 @@
 /* Module support implementation */
 
 #include "Python.h"
-#include "pycore_abstract.h"   // _PyIndex_Check()
 
 #define FLAG_SIZE_T 1
 typedef double va_double;
@@ -21,7 +20,7 @@ _Py_convert_optional_to_ssize_t(PyObject *obj, void *result)
     if (obj == Py_None) {
         return 1;
     }
-    else if (_PyIndex_Check(obj)) {
+    else if (PyIndex_Check(obj)) {
         limit = PyNumber_AsSsize_t(obj, PyExc_OverflowError);
         if (limit == -1 && PyErr_Occurred()) {
             return 0;
@@ -343,13 +342,8 @@ do_mkvalue(const char **p_format, va_list *p_va, int flags)
                 ++*p_format;
                 if (flags & FLAG_SIZE_T)
                     n = va_arg(*p_va, Py_ssize_t);
-                else {
+                else
                     n = va_arg(*p_va, int);
-                    if (PyErr_WarnEx(PyExc_DeprecationWarning,
-                                "PY_SSIZE_T_CLEAN will be required for '#' formats", 1)) {
-                        return NULL;
-                    }
-                }
             }
             else
                 n = -1;
@@ -396,13 +390,8 @@ do_mkvalue(const char **p_format, va_list *p_va, int flags)
                 ++*p_format;
                 if (flags & FLAG_SIZE_T)
                     n = va_arg(*p_va, Py_ssize_t);
-                else {
+                else
                     n = va_arg(*p_va, int);
-                    if (PyErr_WarnEx(PyExc_DeprecationWarning,
-                                "PY_SSIZE_T_CLEAN will be required for '#' formats", 1)) {
-                        return NULL;
-                    }
-                }
             }
             else
                 n = -1;
@@ -434,13 +423,8 @@ do_mkvalue(const char **p_format, va_list *p_va, int flags)
                 ++*p_format;
                 if (flags & FLAG_SIZE_T)
                     n = va_arg(*p_va, Py_ssize_t);
-                else {
+                else
                     n = va_arg(*p_va, int);
-                    if (PyErr_WarnEx(PyExc_DeprecationWarning,
-                                "PY_SSIZE_T_CLEAN will be required for '#' formats", 1)) {
-                        return NULL;
-                    }
-                }
             }
             else
                 n = -1;
@@ -619,9 +603,6 @@ va_build_stack(PyObject **small_stack, Py_ssize_t small_stack_len,
     va_end(lva);
 
     if (res < 0) {
-        if (stack != small_stack) {
-            PyMem_Free(stack);
-        }
         return NULL;
     }
 
@@ -681,23 +662,4 @@ PyModule_AddStringConstant(PyObject *m, const char *name, const char *value)
         return 0;
     Py_DECREF(o);
     return -1;
-}
-
-int
-PyModule_AddType(PyObject *module, PyTypeObject *type)
-{
-    if (PyType_Ready(type) < 0) {
-        return -1;
-    }
-
-    const char *name = _PyType_Name(type);
-    assert(name != NULL);
-
-    Py_INCREF(type);
-    if (PyModule_AddObject(module, name, (PyObject *)type) < 0) {
-        Py_DECREF(type);
-        return -1;
-    }
-
-    return 0;
 }

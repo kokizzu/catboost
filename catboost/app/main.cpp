@@ -8,7 +8,7 @@
 #include <catboost/libs/logging/logging.h>
 
 #include <library/cpp/getopt/small/modchooser.h>
-#include <library/cpp/svnversion/svnversion.h>
+#include <library/svnversion/svnversion.h>
 
 #include <util/generic/ptr.h>
 #include <util/stream/output.h>
@@ -18,11 +18,11 @@
 static int mode_calc(int argc, const char** argv) {
     THolder<NCB::IModeCalcImplementation> modeCalcImplementaion;
     if (NCB::TModeCalcImplementationFactory::Has(NCB::EImplementationType::YandexSpecific)) {
-        modeCalcImplementaion.Reset(NCB::TModeCalcImplementationFactory::Construct(NCB::EImplementationType::YandexSpecific));
+        modeCalcImplementaion = NCB::TModeCalcImplementationFactory::Construct(NCB::EImplementationType::YandexSpecific);
     } else {
         CB_ENSURE(NCB::TModeCalcImplementationFactory::Has(NCB::EImplementationType::OpenSource),
             "Mode calc implementation factory should have open source implementation");
-        modeCalcImplementaion.Reset(NCB::TModeCalcImplementationFactory::Construct(NCB::EImplementationType::OpenSource));
+        modeCalcImplementaion = NCB::TModeCalcImplementationFactory::Construct(NCB::EImplementationType::OpenSource);
     }
     return modeCalcImplementaion->mode_calc(argc, argv);
 }
@@ -30,11 +30,11 @@ static int mode_calc(int argc, const char** argv) {
 static int mode_fstr(int argc, const char** argv) {
     THolder<NCB::IModeFstrImplementation> modeFstrImplementaion;
     if (NCB::TModeFstrImplementationFactory::Has(NCB::EImplementationType::YandexSpecific)) {
-        modeFstrImplementaion.Reset(NCB::TModeFstrImplementationFactory::Construct(NCB::EImplementationType::YandexSpecific));
+        modeFstrImplementaion = NCB::TModeFstrImplementationFactory::Construct(NCB::EImplementationType::YandexSpecific);
     } else {
         CB_ENSURE(NCB::TModeFstrImplementationFactory::Has(NCB::EImplementationType::OpenSource),
             "Mode fstr implementation factory should have open source implementation");
-        modeFstrImplementaion.Reset(NCB::TModeFstrImplementationFactory::Construct(NCB::EImplementationType::OpenSource));
+        modeFstrImplementaion = NCB::TModeFstrImplementationFactory::Construct(NCB::EImplementationType::OpenSource);
     }
     return modeFstrImplementaion->mode_fstr(argc, argv);
 }
@@ -42,11 +42,11 @@ static int mode_fstr(int argc, const char** argv) {
 static int mode_normalize_model(int argc, const char** argv) {
     THolder<NCB::IModeNormalizeModelImplementation> impl;
     if (NCB::TModeNormalizeModelImplementationFactory::Has(NCB::EImplementationType::YandexSpecific)) {
-        impl.Reset(NCB::TModeNormalizeModelImplementationFactory::Construct(NCB::EImplementationType::YandexSpecific));
+        impl = NCB::TModeNormalizeModelImplementationFactory::Construct(NCB::EImplementationType::YandexSpecific);
     } else {
         CB_ENSURE(NCB::TModeNormalizeModelImplementationFactory::Has(NCB::EImplementationType::OpenSource),
             "Missing normalize-model implementation");
-        impl.Reset(NCB::TModeNormalizeModelImplementationFactory::Construct(NCB::EImplementationType::OpenSource));
+        impl = NCB::TModeNormalizeModelImplementationFactory::Construct(NCB::EImplementationType::OpenSource);
     }
     return impl->mode_normalize_model(argc, argv);
 }
@@ -69,8 +69,6 @@ int main(int argc, const char* argv[]) {
         modChooser.AddMode("roc", mode_roc, "evaluate data for roc curve");
         modChooser.AddMode("model-based-eval", mode_model_based_eval, "model-based eval");
         modChooser.AddMode("normalize-model", mode_normalize_model, "normalize model on a pool");
-        modChooser.AddMode("select-features", mode_select_features, "select most important features");
-        modChooser.AddMode("dump-options", mode_dump_options, "dump training options");
         modChooser.DisableSvnRevisionOption();
         modChooser.SetVersionHandler(PrintProgramSvnVersion);
         return modChooser.Run(argc, argv);

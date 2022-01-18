@@ -30,14 +30,10 @@ inline void Shuffle(TRandIter begin, TRandIterEnd end, TRandGen&& gen) {
 
 template <typename TRange>
 inline void ShuffleRange(TRange& range) {
-    auto b = range.begin();
-
-    Shuffle(b, range.end());
+    Shuffle(range.begin(), range.end());
 }
 
 template <typename TRange, typename TRandGen>
 inline void ShuffleRange(TRange& range, TRandGen&& gen) {
-    auto b = range.begin();
-
-    Shuffle(b, range.end(), gen);
+    Shuffle(range.begin(), range.end(), gen);
 }

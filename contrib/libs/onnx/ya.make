@@ -1,29 +1,17 @@
 LIBRARY()
 
-LICENSE(
-    MIT AND
-    NCSA
-)
-
-VERSION(1.3.0)
-
-LICENSE_TEXTS(.yandex_meta/licenses.list.txt)
 
 
+LICENSE(MIT)
 
-CFLAGS(
-    -DONNX_ML=1
-    -DONNX_NAMESPACE=onnx
-)
+CFLAGS(-DONNX_ML=1 -DONNX_NAMESPACE=onnx)
 
 PEERDIR(
     contrib/libs/onnx/proto
     contrib/libs/protobuf
 )
 
-ADDINCL(
-    contrib/libs/onnx
-)
+ADDINCL(contrib/libs/onnx)
 
 SRCDIR(contrib/libs/onnx/onnx)
 

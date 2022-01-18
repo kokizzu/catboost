@@ -1,22 +1,18 @@
 #include "doc_parallel_leaves_estimator.h"
 
-void NCatboostCuda::TDocParallelLeavesEstimator::Estimate(ui32 taskId, NPar::ILocalExecutor* localExecutor) {
+void NCatboostCuda::TDocParallelLeavesEstimator::Estimate(ui32 taskId, NPar::TLocalExecutor* localExecutor) {
     auto& task = Tasks.at(taskId);
     auto derCalcer = CreateDerCalcer(task);
+
+    TNewtonLikeWalker newtonLikeWalker(*derCalcer,
+                                       LeavesEstimationConfig.Iterations,
+                                       LeavesEstimationConfig.BacktrackingType);
 
     TVector<float> point;
     TVector<double> weights;
 
     point.resize(task.Model->BinCount() * task.Model->OutputDim());
-    if (this->LeavesEstimationConfig.LeavesEstimationMethod == ELeavesEstimation::Exact) {
-        point = derCalcer->EstimateExact();
-    } else {
-        TNewtonLikeWalker newtonLikeWalker(*derCalcer,
-                                           LeavesEstimationConfig.Iterations,
-                                           LeavesEstimationConfig.BacktrackingType);
-        point = newtonLikeWalker.Estimate(point, localExecutor);
-    }
-
+    point = newtonLikeWalker.Estimate(point, localExecutor);
     derCalcer->WriteWeights(&weights);
     Y_VERIFY(task.Model->BinCount() == weights.size());
 
@@ -50,6 +46,5 @@ THolder<NCatboostCuda::ILeavesEstimationOracle> NCatboostCuda::TDocParallelLeave
     return task.DerCalcerFactory->Create(LeavesEstimationConfig,
                                          task.Cursor.ConstCopyView(),
                                          std::move(bins),
-                                         binCount,
-                                         Random);
+                                         binCount);
 }

@@ -47,13 +47,7 @@ _sre_ascii_iscased(PyObject *module, PyObject *arg)
     int character;
     int _return_value;
 
-    if (PyFloat_Check(arg)) {
-        PyErr_SetString(PyExc_TypeError,
-                        "integer argument expected, got float" );
-        goto exit;
-    }
-    character = _PyLong_AsInt(arg);
-    if (character == -1 && PyErr_Occurred()) {
+    if (!PyArg_Parse(arg, "i:ascii_iscased", &character)) {
         goto exit;
     }
     _return_value = _sre_ascii_iscased_impl(module, character);
@@ -84,13 +78,7 @@ _sre_unicode_iscased(PyObject *module, PyObject *arg)
     int character;
     int _return_value;
 
-    if (PyFloat_Check(arg)) {
-        PyErr_SetString(PyExc_TypeError,
-                        "integer argument expected, got float" );
-        goto exit;
-    }
-    character = _PyLong_AsInt(arg);
-    if (character == -1 && PyErr_Occurred()) {
+    if (!PyArg_Parse(arg, "i:unicode_iscased", &character)) {
         goto exit;
     }
     _return_value = _sre_unicode_iscased_impl(module, character);
@@ -121,13 +109,7 @@ _sre_ascii_tolower(PyObject *module, PyObject *arg)
     int character;
     int _return_value;
 
-    if (PyFloat_Check(arg)) {
-        PyErr_SetString(PyExc_TypeError,
-                        "integer argument expected, got float" );
-        goto exit;
-    }
-    character = _PyLong_AsInt(arg);
-    if (character == -1 && PyErr_Occurred()) {
+    if (!PyArg_Parse(arg, "i:ascii_tolower", &character)) {
         goto exit;
     }
     _return_value = _sre_ascii_tolower_impl(module, character);
@@ -158,13 +140,7 @@ _sre_unicode_tolower(PyObject *module, PyObject *arg)
     int character;
     int _return_value;
 
-    if (PyFloat_Check(arg)) {
-        PyErr_SetString(PyExc_TypeError,
-                        "integer argument expected, got float" );
-        goto exit;
-    }
-    character = _PyLong_AsInt(arg);
-    if (character == -1 && PyErr_Occurred()) {
+    if (!PyArg_Parse(arg, "i:unicode_tolower", &character)) {
         goto exit;
     }
     _return_value = _sre_unicode_tolower_impl(module, character);
@@ -184,7 +160,7 @@ PyDoc_STRVAR(_sre_SRE_Pattern_match__doc__,
 "Matches zero or more characters at the beginning of the string.");
 
 #define _SRE_SRE_PATTERN_MATCH_METHODDEF    \
-    {"match", (PyCFunction)(void(*)(void))_sre_SRE_Pattern_match, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_match__doc__},
+    {"match", (PyCFunction)_sre_SRE_Pattern_match, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_match__doc__},
 
 static PyObject *
 _sre_SRE_Pattern_match_impl(PatternObject *self, PyObject *string,
@@ -195,61 +171,15 @@ _sre_SRE_Pattern_match(PatternObject *self, PyObject *const *args, Py_ssize_t na
 {
     PyObject *return_value = NULL;
     static const char * const _keywords[] = {"string", "pos", "endpos", NULL};
-    static _PyArg_Parser _parser = {NULL, _keywords, "match", 0};
-    PyObject *argsbuf[3];
-    Py_ssize_t noptargs = nargs + (kwnames ? PyTuple_GET_SIZE(kwnames) : 0) - 1;
+    static _PyArg_Parser _parser = {"O|nn:match", _keywords, 0};
     PyObject *string;
     Py_ssize_t pos = 0;
     Py_ssize_t endpos = PY_SSIZE_T_MAX;
 
-    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 1, 3, 0, argsbuf);
-    if (!args) {
+    if (!_PyArg_ParseStackAndKeywords(args, nargs, kwnames, &_parser,
+        &string, &pos, &endpos)) {
         goto exit;
     }
-    string = args[0];
-    if (!noptargs) {
-        goto skip_optional_pos;
-    }
-    if (args[1]) {
-        if (PyFloat_Check(args[1])) {
-            PyErr_SetString(PyExc_TypeError,
-                            "integer argument expected, got float" );
-            goto exit;
-        }
-        {
-            Py_ssize_t ival = -1;
-            PyObject *iobj = PyNumber_Index(args[1]);
-            if (iobj != NULL) {
-                ival = PyLong_AsSsize_t(iobj);
-                Py_DECREF(iobj);
-            }
-            if (ival == -1 && PyErr_Occurred()) {
-                goto exit;
-            }
-            pos = ival;
-        }
-        if (!--noptargs) {
-            goto skip_optional_pos;
-        }
-    }
-    if (PyFloat_Check(args[2])) {
-        PyErr_SetString(PyExc_TypeError,
-                        "integer argument expected, got float" );
-        goto exit;
-    }
-    {
-        Py_ssize_t ival = -1;
-        PyObject *iobj = PyNumber_Index(args[2]);
-        if (iobj != NULL) {
-            ival = PyLong_AsSsize_t(iobj);
-            Py_DECREF(iobj);
-        }
-        if (ival == -1 && PyErr_Occurred()) {
-            goto exit;
-        }
-        endpos = ival;
-    }
-skip_optional_pos:
     return_value = _sre_SRE_Pattern_match_impl(self, string, pos, endpos);
 
 exit:
@@ -263,7 +193,7 @@ PyDoc_STRVAR(_sre_SRE_Pattern_fullmatch__doc__,
 "Matches against all of the string.");
 
 #define _SRE_SRE_PATTERN_FULLMATCH_METHODDEF    \
-    {"fullmatch", (PyCFunction)(void(*)(void))_sre_SRE_Pattern_fullmatch, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_fullmatch__doc__},
+    {"fullmatch", (PyCFunction)_sre_SRE_Pattern_fullmatch, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_fullmatch__doc__},
 
 static PyObject *
 _sre_SRE_Pattern_fullmatch_impl(PatternObject *self, PyObject *string,
@@ -274,61 +204,15 @@ _sre_SRE_Pattern_fullmatch(PatternObject *self, PyObject *const *args, Py_ssize_
 {
     PyObject *return_value = NULL;
     static const char * const _keywords[] = {"string", "pos", "endpos", NULL};
-    static _PyArg_Parser _parser = {NULL, _keywords, "fullmatch", 0};
-    PyObject *argsbuf[3];
-    Py_ssize_t noptargs = nargs + (kwnames ? PyTuple_GET_SIZE(kwnames) : 0) - 1;
+    static _PyArg_Parser _parser = {"O|nn:fullmatch", _keywords, 0};
     PyObject *string;
     Py_ssize_t pos = 0;
     Py_ssize_t endpos = PY_SSIZE_T_MAX;
 
-    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 1, 3, 0, argsbuf);
-    if (!args) {
+    if (!_PyArg_ParseStackAndKeywords(args, nargs, kwnames, &_parser,
+        &string, &pos, &endpos)) {
         goto exit;
     }
-    string = args[0];
-    if (!noptargs) {
-        goto skip_optional_pos;
-    }
-    if (args[1]) {
-        if (PyFloat_Check(args[1])) {
-            PyErr_SetString(PyExc_TypeError,
-                            "integer argument expected, got float" );
-            goto exit;
-        }
-        {
-            Py_ssize_t ival = -1;
-            PyObject *iobj = PyNumber_Index(args[1]);
-            if (iobj != NULL) {
-                ival = PyLong_AsSsize_t(iobj);
-                Py_DECREF(iobj);
-            }
-            if (ival == -1 && PyErr_Occurred()) {
-                goto exit;
-            }
-            pos = ival;
-        }
-        if (!--noptargs) {
-            goto skip_optional_pos;
-        }
-    }
-    if (PyFloat_Check(args[2])) {
-        PyErr_SetString(PyExc_TypeError,
-                        "integer argument expected, got float" );
-        goto exit;
-    }
-    {
-        Py_ssize_t ival = -1;
-        PyObject *iobj = PyNumber_Index(args[2]);
-        if (iobj != NULL) {
-            ival = PyLong_AsSsize_t(iobj);
-            Py_DECREF(iobj);
-        }
-        if (ival == -1 && PyErr_Occurred()) {
-            goto exit;
-        }
-        endpos = ival;
-    }
-skip_optional_pos:
     return_value = _sre_SRE_Pattern_fullmatch_impl(self, string, pos, endpos);
 
 exit:
@@ -344,7 +228,7 @@ PyDoc_STRVAR(_sre_SRE_Pattern_search__doc__,
 "Return None if no position in the string matches.");
 
 #define _SRE_SRE_PATTERN_SEARCH_METHODDEF    \
-    {"search", (PyCFunction)(void(*)(void))_sre_SRE_Pattern_search, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_search__doc__},
+    {"search", (PyCFunction)_sre_SRE_Pattern_search, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_search__doc__},
 
 static PyObject *
 _sre_SRE_Pattern_search_impl(PatternObject *self, PyObject *string,
@@ -355,61 +239,15 @@ _sre_SRE_Pattern_search(PatternObject *self, PyObject *const *args, Py_ssize_t n
 {
     PyObject *return_value = NULL;
     static const char * const _keywords[] = {"string", "pos", "endpos", NULL};
-    static _PyArg_Parser _parser = {NULL, _keywords, "search", 0};
-    PyObject *argsbuf[3];
-    Py_ssize_t noptargs = nargs + (kwnames ? PyTuple_GET_SIZE(kwnames) : 0) - 1;
+    static _PyArg_Parser _parser = {"O|nn:search", _keywords, 0};
     PyObject *string;
     Py_ssize_t pos = 0;
     Py_ssize_t endpos = PY_SSIZE_T_MAX;
 
-    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 1, 3, 0, argsbuf);
-    if (!args) {
+    if (!_PyArg_ParseStackAndKeywords(args, nargs, kwnames, &_parser,
+        &string, &pos, &endpos)) {
         goto exit;
     }
-    string = args[0];
-    if (!noptargs) {
-        goto skip_optional_pos;
-    }
-    if (args[1]) {
-        if (PyFloat_Check(args[1])) {
-            PyErr_SetString(PyExc_TypeError,
-                            "integer argument expected, got float" );
-            goto exit;
-        }
-        {
-            Py_ssize_t ival = -1;
-            PyObject *iobj = PyNumber_Index(args[1]);
-            if (iobj != NULL) {
-                ival = PyLong_AsSsize_t(iobj);
-                Py_DECREF(iobj);
-            }
-            if (ival == -1 && PyErr_Occurred()) {
-                goto exit;
-            }
-            pos = ival;
-        }
-        if (!--noptargs) {
-            goto skip_optional_pos;
-        }
-    }
-    if (PyFloat_Check(args[2])) {
-        PyErr_SetString(PyExc_TypeError,
-                        "integer argument expected, got float" );
-        goto exit;
-    }
-    {
-        Py_ssize_t ival = -1;
-        PyObject *iobj = PyNumber_Index(args[2]);
-        if (iobj != NULL) {
-            ival = PyLong_AsSsize_t(iobj);
-            Py_DECREF(iobj);
-        }
-        if (ival == -1 && PyErr_Occurred()) {
-            goto exit;
-        }
-        endpos = ival;
-    }
-skip_optional_pos:
     return_value = _sre_SRE_Pattern_search_impl(self, string, pos, endpos);
 
 exit:
@@ -423,7 +261,7 @@ PyDoc_STRVAR(_sre_SRE_Pattern_findall__doc__,
 "Return a list of all non-overlapping matches of pattern in string.");
 
 #define _SRE_SRE_PATTERN_FINDALL_METHODDEF    \
-    {"findall", (PyCFunction)(void(*)(void))_sre_SRE_Pattern_findall, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_findall__doc__},
+    {"findall", (PyCFunction)_sre_SRE_Pattern_findall, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_findall__doc__},
 
 static PyObject *
 _sre_SRE_Pattern_findall_impl(PatternObject *self, PyObject *string,
@@ -434,61 +272,15 @@ _sre_SRE_Pattern_findall(PatternObject *self, PyObject *const *args, Py_ssize_t 
 {
     PyObject *return_value = NULL;
     static const char * const _keywords[] = {"string", "pos", "endpos", NULL};
-    static _PyArg_Parser _parser = {NULL, _keywords, "findall", 0};
-    PyObject *argsbuf[3];
-    Py_ssize_t noptargs = nargs + (kwnames ? PyTuple_GET_SIZE(kwnames) : 0) - 1;
+    static _PyArg_Parser _parser = {"O|nn:findall", _keywords, 0};
     PyObject *string;
     Py_ssize_t pos = 0;
     Py_ssize_t endpos = PY_SSIZE_T_MAX;
 
-    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 1, 3, 0, argsbuf);
-    if (!args) {
+    if (!_PyArg_ParseStackAndKeywords(args, nargs, kwnames, &_parser,
+        &string, &pos, &endpos)) {
         goto exit;
     }
-    string = args[0];
-    if (!noptargs) {
-        goto skip_optional_pos;
-    }
-    if (args[1]) {
-        if (PyFloat_Check(args[1])) {
-            PyErr_SetString(PyExc_TypeError,
-                            "integer argument expected, got float" );
-            goto exit;
-        }
-        {
-            Py_ssize_t ival = -1;
-            PyObject *iobj = PyNumber_Index(args[1]);
-            if (iobj != NULL) {
-                ival = PyLong_AsSsize_t(iobj);
-                Py_DECREF(iobj);
-            }
-            if (ival == -1 && PyErr_Occurred()) {
-                goto exit;
-            }
-            pos = ival;
-        }
-        if (!--noptargs) {
-            goto skip_optional_pos;
-        }
-    }
-    if (PyFloat_Check(args[2])) {
-        PyErr_SetString(PyExc_TypeError,
-                        "integer argument expected, got float" );
-        goto exit;
-    }
-    {
-        Py_ssize_t ival = -1;
-        PyObject *iobj = PyNumber_Index(args[2]);
-        if (iobj != NULL) {
-            ival = PyLong_AsSsize_t(iobj);
-            Py_DECREF(iobj);
-        }
-        if (ival == -1 && PyErr_Occurred()) {
-            goto exit;
-        }
-        endpos = ival;
-    }
-skip_optional_pos:
     return_value = _sre_SRE_Pattern_findall_impl(self, string, pos, endpos);
 
 exit:
@@ -504,7 +296,7 @@ PyDoc_STRVAR(_sre_SRE_Pattern_finditer__doc__,
 "For each match, the iterator returns a match object.");
 
 #define _SRE_SRE_PATTERN_FINDITER_METHODDEF    \
-    {"finditer", (PyCFunction)(void(*)(void))_sre_SRE_Pattern_finditer, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_finditer__doc__},
+    {"finditer", (PyCFunction)_sre_SRE_Pattern_finditer, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_finditer__doc__},
 
 static PyObject *
 _sre_SRE_Pattern_finditer_impl(PatternObject *self, PyObject *string,
@@ -515,61 +307,15 @@ _sre_SRE_Pattern_finditer(PatternObject *self, PyObject *const *args, Py_ssize_t
 {
     PyObject *return_value = NULL;
     static const char * const _keywords[] = {"string", "pos", "endpos", NULL};
-    static _PyArg_Parser _parser = {NULL, _keywords, "finditer", 0};
-    PyObject *argsbuf[3];
-    Py_ssize_t noptargs = nargs + (kwnames ? PyTuple_GET_SIZE(kwnames) : 0) - 1;
+    static _PyArg_Parser _parser = {"O|nn:finditer", _keywords, 0};
     PyObject *string;
     Py_ssize_t pos = 0;
     Py_ssize_t endpos = PY_SSIZE_T_MAX;
 
-    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 1, 3, 0, argsbuf);
-    if (!args) {
+    if (!_PyArg_ParseStackAndKeywords(args, nargs, kwnames, &_parser,
+        &string, &pos, &endpos)) {
         goto exit;
     }
-    string = args[0];
-    if (!noptargs) {
-        goto skip_optional_pos;
-    }
-    if (args[1]) {
-        if (PyFloat_Check(args[1])) {
-            PyErr_SetString(PyExc_TypeError,
-                            "integer argument expected, got float" );
-            goto exit;
-        }
-        {
-            Py_ssize_t ival = -1;
-            PyObject *iobj = PyNumber_Index(args[1]);
-            if (iobj != NULL) {
-                ival = PyLong_AsSsize_t(iobj);
-                Py_DECREF(iobj);
-            }
-            if (ival == -1 && PyErr_Occurred()) {
-                goto exit;
-            }
-            pos = ival;
-        }
-        if (!--noptargs) {
-            goto skip_optional_pos;
-        }
-    }
-    if (PyFloat_Check(args[2])) {
-        PyErr_SetString(PyExc_TypeError,
-                        "integer argument expected, got float" );
-        goto exit;
-    }
-    {
-        Py_ssize_t ival = -1;
-        PyObject *iobj = PyNumber_Index(args[2]);
-        if (iobj != NULL) {
-            ival = PyLong_AsSsize_t(iobj);
-            Py_DECREF(iobj);
-        }
-        if (ival == -1 && PyErr_Occurred()) {
-            goto exit;
-        }
-        endpos = ival;
-    }
-skip_optional_pos:
     return_value = _sre_SRE_Pattern_finditer_impl(self, string, pos, endpos);
 
 exit:
@@ -582,7 +328,7 @@ PyDoc_STRVAR(_sre_SRE_Pattern_scanner__doc__,
 "\n");
 
 #define _SRE_SRE_PATTERN_SCANNER_METHODDEF    \
-    {"scanner", (PyCFunction)(void(*)(void))_sre_SRE_Pattern_scanner, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_scanner__doc__},
+    {"scanner", (PyCFunction)_sre_SRE_Pattern_scanner, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_scanner__doc__},
 
 static PyObject *
 _sre_SRE_Pattern_scanner_impl(PatternObject *self, PyObject *string,
@@ -593,61 +339,15 @@ _sre_SRE_Pattern_scanner(PatternObject *self, PyObject *const *args, Py_ssize_t 
 {
     PyObject *return_value = NULL;
     static const char * const _keywords[] = {"string", "pos", "endpos", NULL};
-    static _PyArg_Parser _parser = {NULL, _keywords, "scanner", 0};
-    PyObject *argsbuf[3];
-    Py_ssize_t noptargs = nargs + (kwnames ? PyTuple_GET_SIZE(kwnames) : 0) - 1;
+    static _PyArg_Parser _parser = {"O|nn:scanner", _keywords, 0};
     PyObject *string;
     Py_ssize_t pos = 0;
     Py_ssize_t endpos = PY_SSIZE_T_MAX;
 
-    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 1, 3, 0, argsbuf);
-    if (!args) {
+    if (!_PyArg_ParseStackAndKeywords(args, nargs, kwnames, &_parser,
+        &string, &pos, &endpos)) {
         goto exit;
     }
-    string = args[0];
-    if (!noptargs) {
-        goto skip_optional_pos;
-    }
-    if (args[1]) {
-        if (PyFloat_Check(args[1])) {
-            PyErr_SetString(PyExc_TypeError,
-                            "integer argument expected, got float" );
-            goto exit;
-        }
-        {
-            Py_ssize_t ival = -1;
-            PyObject *iobj = PyNumber_Index(args[1]);
-            if (iobj != NULL) {
-                ival = PyLong_AsSsize_t(iobj);
-                Py_DECREF(iobj);
-            }
-            if (ival == -1 && PyErr_Occurred()) {
-                goto exit;
-            }
-            pos = ival;
-        }
-        if (!--noptargs) {
-            goto skip_optional_pos;
-        }
-    }
-    if (PyFloat_Check(args[2])) {
-        PyErr_SetString(PyExc_TypeError,
-                        "integer argument expected, got float" );
-        goto exit;
-    }
-    {
-        Py_ssize_t ival = -1;
-        PyObject *iobj = PyNumber_Index(args[2]);
-        if (iobj != NULL) {
-            ival = PyLong_AsSsize_t(iobj);
-            Py_DECREF(iobj);
-        }
-        if (ival == -1 && PyErr_Occurred()) {
-            goto exit;
-        }
-        endpos = ival;
-    }
-skip_optional_pos:
     return_value = _sre_SRE_Pattern_scanner_impl(self, string, pos, endpos);
 
 exit:
@@ -661,7 +361,7 @@ PyDoc_STRVAR(_sre_SRE_Pattern_split__doc__,
 "Split string by the occurrences of pattern.");
 
 #define _SRE_SRE_PATTERN_SPLIT_METHODDEF    \
-    {"split", (PyCFunction)(void(*)(void))_sre_SRE_Pattern_split, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_split__doc__},
+    {"split", (PyCFunction)_sre_SRE_Pattern_split, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_split__doc__},
 
 static PyObject *
 _sre_SRE_Pattern_split_impl(PatternObject *self, PyObject *string,
@@ -672,38 +372,14 @@ _sre_SRE_Pattern_split(PatternObject *self, PyObject *const *args, Py_ssize_t na
 {
     PyObject *return_value = NULL;
     static const char * const _keywords[] = {"string", "maxsplit", NULL};
-    static _PyArg_Parser _parser = {NULL, _keywords, "split", 0};
-    PyObject *argsbuf[2];
-    Py_ssize_t noptargs = nargs + (kwnames ? PyTuple_GET_SIZE(kwnames) : 0) - 1;
+    static _PyArg_Parser _parser = {"O|n:split", _keywords, 0};
     PyObject *string;
     Py_ssize_t maxsplit = 0;
 
-    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 1, 2, 0, argsbuf);
-    if (!args) {
+    if (!_PyArg_ParseStackAndKeywords(args, nargs, kwnames, &_parser,
+        &string, &maxsplit)) {
         goto exit;
     }
-    string = args[0];
-    if (!noptargs) {
-        goto skip_optional_pos;
-    }
-    if (PyFloat_Check(args[1])) {
-        PyErr_SetString(PyExc_TypeError,
-                        "integer argument expected, got float" );
-        goto exit;
-    }
-    {
-        Py_ssize_t ival = -1;
-        PyObject *iobj = PyNumber_Index(args[1]);
-        if (iobj != NULL) {
-            ival = PyLong_AsSsize_t(iobj);
-            Py_DECREF(iobj);
-        }
-        if (ival == -1 && PyErr_Occurred()) {
-            goto exit;
-        }
-        maxsplit = ival;
-    }
-skip_optional_pos:
     return_value = _sre_SRE_Pattern_split_impl(self, string, maxsplit);
 
 exit:
@@ -717,7 +393,7 @@ PyDoc_STRVAR(_sre_SRE_Pattern_sub__doc__,
 "Return the string obtained by replacing the leftmost non-overlapping occurrences of pattern in string by the replacement repl.");
 
 #define _SRE_SRE_PATTERN_SUB_METHODDEF    \
-    {"sub", (PyCFunction)(void(*)(void))_sre_SRE_Pattern_sub, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_sub__doc__},
+    {"sub", (PyCFunction)_sre_SRE_Pattern_sub, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_sub__doc__},
 
 static PyObject *
 _sre_SRE_Pattern_sub_impl(PatternObject *self, PyObject *repl,
@@ -728,40 +404,15 @@ _sre_SRE_Pattern_sub(PatternObject *self, PyObject *const *args, Py_ssize_t narg
 {
     PyObject *return_value = NULL;
     static const char * const _keywords[] = {"repl", "string", "count", NULL};
-    static _PyArg_Parser _parser = {NULL, _keywords, "sub", 0};
-    PyObject *argsbuf[3];
-    Py_ssize_t noptargs = nargs + (kwnames ? PyTuple_GET_SIZE(kwnames) : 0) - 2;
+    static _PyArg_Parser _parser = {"OO|n:sub", _keywords, 0};
     PyObject *repl;
     PyObject *string;
     Py_ssize_t count = 0;
 
-    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 2, 3, 0, argsbuf);
-    if (!args) {
+    if (!_PyArg_ParseStackAndKeywords(args, nargs, kwnames, &_parser,
+        &repl, &string, &count)) {
         goto exit;
     }
-    repl = args[0];
-    string = args[1];
-    if (!noptargs) {
-        goto skip_optional_pos;
-    }
-    if (PyFloat_Check(args[2])) {
-        PyErr_SetString(PyExc_TypeError,
-                        "integer argument expected, got float" );
-        goto exit;
-    }
-    {
-        Py_ssize_t ival = -1;
-        PyObject *iobj = PyNumber_Index(args[2]);
-        if (iobj != NULL) {
-            ival = PyLong_AsSsize_t(iobj);
-            Py_DECREF(iobj);
-        }
-        if (ival == -1 && PyErr_Occurred()) {
-            goto exit;
-        }
-        count = ival;
-    }
-skip_optional_pos:
     return_value = _sre_SRE_Pattern_sub_impl(self, repl, string, count);
 
 exit:
@@ -775,7 +426,7 @@ PyDoc_STRVAR(_sre_SRE_Pattern_subn__doc__,
 "Return the tuple (new_string, number_of_subs_made) found by replacing the leftmost non-overlapping occurrences of pattern with the replacement repl.");
 
 #define _SRE_SRE_PATTERN_SUBN_METHODDEF    \
-    {"subn", (PyCFunction)(void(*)(void))_sre_SRE_Pattern_subn, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_subn__doc__},
+    {"subn", (PyCFunction)_sre_SRE_Pattern_subn, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Pattern_subn__doc__},
 
 static PyObject *
 _sre_SRE_Pattern_subn_impl(PatternObject *self, PyObject *repl,
@@ -786,40 +437,15 @@ _sre_SRE_Pattern_subn(PatternObject *self, PyObject *const *args, Py_ssize_t nar
 {
     PyObject *return_value = NULL;
     static const char * const _keywords[] = {"repl", "string", "count", NULL};
-    static _PyArg_Parser _parser = {NULL, _keywords, "subn", 0};
-    PyObject *argsbuf[3];
-    Py_ssize_t noptargs = nargs + (kwnames ? PyTuple_GET_SIZE(kwnames) : 0) - 2;
+    static _PyArg_Parser _parser = {"OO|n:subn", _keywords, 0};
     PyObject *repl;
     PyObject *string;
     Py_ssize_t count = 0;
 
-    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 2, 3, 0, argsbuf);
-    if (!args) {
+    if (!_PyArg_ParseStackAndKeywords(args, nargs, kwnames, &_parser,
+        &repl, &string, &count)) {
         goto exit;
     }
-    repl = args[0];
-    string = args[1];
-    if (!noptargs) {
-        goto skip_optional_pos;
-    }
-    if (PyFloat_Check(args[2])) {
-        PyErr_SetString(PyExc_TypeError,
-                        "integer argument expected, got float" );
-        goto exit;
-    }
-    {
-        Py_ssize_t ival = -1;
-        PyObject *iobj = PyNumber_Index(args[2]);
-        if (iobj != NULL) {
-            ival = PyLong_AsSsize_t(iobj);
-            Py_DECREF(iobj);
-        }
-        if (ival == -1 && PyErr_Occurred()) {
-            goto exit;
-        }
-        count = ival;
-    }
-skip_optional_pos:
     return_value = _sre_SRE_Pattern_subn_impl(self, repl, string, count);
 
 exit:
@@ -858,7 +484,7 @@ PyDoc_STRVAR(_sre_compile__doc__,
 "\n");
 
 #define _SRE_COMPILE_METHODDEF    \
-    {"compile", (PyCFunction)(void(*)(void))_sre_compile, METH_FASTCALL|METH_KEYWORDS, _sre_compile__doc__},
+    {"compile", (PyCFunction)_sre_compile, METH_FASTCALL|METH_KEYWORDS, _sre_compile__doc__},
 
 static PyObject *
 _sre_compile_impl(PyObject *module, PyObject *pattern, int flags,
@@ -870,8 +496,7 @@ _sre_compile(PyObject *module, PyObject *const *args, Py_ssize_t nargs, PyObject
 {
     PyObject *return_value = NULL;
     static const char * const _keywords[] = {"pattern", "flags", "code", "groups", "groupindex", "indexgroup", NULL};
-    static _PyArg_Parser _parser = {NULL, _keywords, "compile", 0};
-    PyObject *argsbuf[6];
+    static _PyArg_Parser _parser = {"OiO!nO!O!:compile", _keywords, 0};
     PyObject *pattern;
     int flags;
     PyObject *code;
@@ -879,52 +504,10 @@ _sre_compile(PyObject *module, PyObject *const *args, Py_ssize_t nargs, PyObject
     PyObject *groupindex;
     PyObject *indexgroup;
 
-    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 6, 6, 0, argsbuf);
-    if (!args) {
+    if (!_PyArg_ParseStackAndKeywords(args, nargs, kwnames, &_parser,
+        &pattern, &flags, &PyList_Type, &code, &groups, &PyDict_Type, &groupindex, &PyTuple_Type, &indexgroup)) {
         goto exit;
     }
-    pattern = args[0];
-    if (PyFloat_Check(args[1])) {
-        PyErr_SetString(PyExc_TypeError,
-                        "integer argument expected, got float" );
-        goto exit;
-    }
-    flags = _PyLong_AsInt(args[1]);
-    if (flags == -1 && PyErr_Occurred()) {
-        goto exit;
-    }
-    if (!PyList_Check(args[2])) {
-        _PyArg_BadArgument("compile", "argument 'code'", "list", args[2]);
-        goto exit;
-    }
-    code = args[2];
-    if (PyFloat_Check(args[3])) {
-        PyErr_SetString(PyExc_TypeError,
-                        "integer argument expected, got float" );
-        goto exit;
-    }
-    {
-        Py_ssize_t ival = -1;
-        PyObject *iobj = PyNumber_Index(args[3]);
-        if (iobj != NULL) {
-            ival = PyLong_AsSsize_t(iobj);
-            Py_DECREF(iobj);
-        }
-        if (ival == -1 && PyErr_Occurred()) {
-            goto exit;
-        }
-        groups = ival;
-    }
-    if (!PyDict_Check(args[4])) {
-        _PyArg_BadArgument("compile", "argument 'groupindex'", "dict", args[4]);
-        goto exit;
-    }
-    groupindex = args[4];
-    if (!PyTuple_Check(args[5])) {
-        _PyArg_BadArgument("compile", "argument 'indexgroup'", "tuple", args[5]);
-        goto exit;
-    }
-    indexgroup = args[5];
     return_value = _sre_compile_impl(module, pattern, flags, code, groups, groupindex, indexgroup);
 
 exit:
@@ -938,7 +521,7 @@ PyDoc_STRVAR(_sre_SRE_Match_expand__doc__,
 "Return the string obtained by doing backslash substitution on the string template, as done by the sub() method.");
 
 #define _SRE_SRE_MATCH_EXPAND_METHODDEF    \
-    {"expand", (PyCFunction)(void(*)(void))_sre_SRE_Match_expand, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Match_expand__doc__},
+    {"expand", (PyCFunction)_sre_SRE_Match_expand, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Match_expand__doc__},
 
 static PyObject *
 _sre_SRE_Match_expand_impl(MatchObject *self, PyObject *template);
@@ -948,15 +531,13 @@ _sre_SRE_Match_expand(MatchObject *self, PyObject *const *args, Py_ssize_t nargs
 {
     PyObject *return_value = NULL;
     static const char * const _keywords[] = {"template", NULL};
-    static _PyArg_Parser _parser = {NULL, _keywords, "expand", 0};
-    PyObject *argsbuf[1];
+    static _PyArg_Parser _parser = {"O:expand", _keywords, 0};
     PyObject *template;
 
-    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 1, 1, 0, argsbuf);
-    if (!args) {
+    if (!_PyArg_ParseStackAndKeywords(args, nargs, kwnames, &_parser,
+        &template)) {
         goto exit;
     }
-    template = args[0];
     return_value = _sre_SRE_Match_expand_impl(self, template);
 
 exit:
@@ -973,7 +554,7 @@ PyDoc_STRVAR(_sre_SRE_Match_groups__doc__,
 "    Is used for groups that did not participate in the match.");
 
 #define _SRE_SRE_MATCH_GROUPS_METHODDEF    \
-    {"groups", (PyCFunction)(void(*)(void))_sre_SRE_Match_groups, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Match_groups__doc__},
+    {"groups", (PyCFunction)_sre_SRE_Match_groups, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Match_groups__doc__},
 
 static PyObject *
 _sre_SRE_Match_groups_impl(MatchObject *self, PyObject *default_value);
@@ -983,20 +564,13 @@ _sre_SRE_Match_groups(MatchObject *self, PyObject *const *args, Py_ssize_t nargs
 {
     PyObject *return_value = NULL;
     static const char * const _keywords[] = {"default", NULL};
-    static _PyArg_Parser _parser = {NULL, _keywords, "groups", 0};
-    PyObject *argsbuf[1];
-    Py_ssize_t noptargs = nargs + (kwnames ? PyTuple_GET_SIZE(kwnames) : 0) - 0;
+    static _PyArg_Parser _parser = {"|O:groups", _keywords, 0};
     PyObject *default_value = Py_None;
 
-    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 0, 1, 0, argsbuf);
-    if (!args) {
+    if (!_PyArg_ParseStackAndKeywords(args, nargs, kwnames, &_parser,
+        &default_value)) {
         goto exit;
     }
-    if (!noptargs) {
-        goto skip_optional_pos;
-    }
-    default_value = args[0];
-skip_optional_pos:
     return_value = _sre_SRE_Match_groups_impl(self, default_value);
 
 exit:
@@ -1013,7 +587,7 @@ PyDoc_STRVAR(_sre_SRE_Match_groupdict__doc__,
 "    Is used for groups that did not participate in the match.");
 
 #define _SRE_SRE_MATCH_GROUPDICT_METHODDEF    \
-    {"groupdict", (PyCFunction)(void(*)(void))_sre_SRE_Match_groupdict, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Match_groupdict__doc__},
+    {"groupdict", (PyCFunction)_sre_SRE_Match_groupdict, METH_FASTCALL|METH_KEYWORDS, _sre_SRE_Match_groupdict__doc__},
 
 static PyObject *
 _sre_SRE_Match_groupdict_impl(MatchObject *self, PyObject *default_value);
@@ -1023,20 +597,13 @@ _sre_SRE_Match_groupdict(MatchObject *self, PyObject *const *args, Py_ssize_t na
 {
     PyObject *return_value = NULL;
     static const char * const _keywords[] = {"default", NULL};
-    static _PyArg_Parser _parser = {NULL, _keywords, "groupdict", 0};
-    PyObject *argsbuf[1];
-    Py_ssize_t noptargs = nargs + (kwnames ? PyTuple_GET_SIZE(kwnames) : 0) - 0;
+    static _PyArg_Parser _parser = {"|O:groupdict", _keywords, 0};
     PyObject *default_value = Py_None;
 
-    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 0, 1, 0, argsbuf);
-    if (!args) {
+    if (!_PyArg_ParseStackAndKeywords(args, nargs, kwnames, &_parser,
+        &default_value)) {
         goto exit;
     }
-    if (!noptargs) {
-        goto skip_optional_pos;
-    }
-    default_value = args[0];
-skip_optional_pos:
     return_value = _sre_SRE_Match_groupdict_impl(self, default_value);
 
 exit:
@@ -1050,7 +617,7 @@ PyDoc_STRVAR(_sre_SRE_Match_start__doc__,
 "Return index of the start of the substring matched by group.");
 
 #define _SRE_SRE_MATCH_START_METHODDEF    \
-    {"start", (PyCFunction)(void(*)(void))_sre_SRE_Match_start, METH_FASTCALL, _sre_SRE_Match_start__doc__},
+    {"start", (PyCFunction)_sre_SRE_Match_start, METH_FASTCALL, _sre_SRE_Match_start__doc__},
 
 static Py_ssize_t
 _sre_SRE_Match_start_impl(MatchObject *self, PyObject *group);
@@ -1062,14 +629,11 @@ _sre_SRE_Match_start(MatchObject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *group = NULL;
     Py_ssize_t _return_value;
 
-    if (!_PyArg_CheckPositional("start", nargs, 0, 1)) {
+    if (!_PyArg_UnpackStack(args, nargs, "start",
+        0, 1,
+        &group)) {
         goto exit;
     }
-    if (nargs < 1) {
-        goto skip_optional;
-    }
-    group = args[0];
-skip_optional:
     _return_value = _sre_SRE_Match_start_impl(self, group);
     if ((_return_value == -1) && PyErr_Occurred()) {
         goto exit;
@@ -1087,7 +651,7 @@ PyDoc_STRVAR(_sre_SRE_Match_end__doc__,
 "Return index of the end of the substring matched by group.");
 
 #define _SRE_SRE_MATCH_END_METHODDEF    \
-    {"end", (PyCFunction)(void(*)(void))_sre_SRE_Match_end, METH_FASTCALL, _sre_SRE_Match_end__doc__},
+    {"end", (PyCFunction)_sre_SRE_Match_end, METH_FASTCALL, _sre_SRE_Match_end__doc__},
 
 static Py_ssize_t
 _sre_SRE_Match_end_impl(MatchObject *self, PyObject *group);
@@ -1099,14 +663,11 @@ _sre_SRE_Match_end(MatchObject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *group = NULL;
     Py_ssize_t _return_value;
 
-    if (!_PyArg_CheckPositional("end", nargs, 0, 1)) {
+    if (!_PyArg_UnpackStack(args, nargs, "end",
+        0, 1,
+        &group)) {
         goto exit;
     }
-    if (nargs < 1) {
-        goto skip_optional;
-    }
-    group = args[0];
-skip_optional:
     _return_value = _sre_SRE_Match_end_impl(self, group);
     if ((_return_value == -1) && PyErr_Occurred()) {
         goto exit;
@@ -1124,7 +685,7 @@ PyDoc_STRVAR(_sre_SRE_Match_span__doc__,
 "For match object m, return the 2-tuple (m.start(group), m.end(group)).");
 
 #define _SRE_SRE_MATCH_SPAN_METHODDEF    \
-    {"span", (PyCFunction)(void(*)(void))_sre_SRE_Match_span, METH_FASTCALL, _sre_SRE_Match_span__doc__},
+    {"span", (PyCFunction)_sre_SRE_Match_span, METH_FASTCALL, _sre_SRE_Match_span__doc__},
 
 static PyObject *
 _sre_SRE_Match_span_impl(MatchObject *self, PyObject *group);
@@ -1135,14 +696,11 @@ _sre_SRE_Match_span(MatchObject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     PyObject *group = NULL;
 
-    if (!_PyArg_CheckPositional("span", nargs, 0, 1)) {
+    if (!_PyArg_UnpackStack(args, nargs, "span",
+        0, 1,
+        &group)) {
         goto exit;
     }
-    if (nargs < 1) {
-        goto skip_optional;
-    }
-    group = args[0];
-skip_optional:
     return_value = _sre_SRE_Match_span_impl(self, group);
 
 exit:
@@ -1207,4 +765,4 @@ _sre_SRE_Scanner_search(ScannerObject *self, PyObject *Py_UNUSED(ignored))
 {
     return _sre_SRE_Scanner_search_impl(self);
 }
-/*[clinic end generated code: output=1adeddce58ae284c input=a9049054013a1b77]*/
+/*[clinic end generated code: output=4b807104b65c1e0e input=a9049054013a1b77]*/

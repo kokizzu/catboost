@@ -1,5 +1,4 @@
 #include "atexit.h"
-#include "atomic.h"
 #include "yassert.h"
 #include "spinlock.h"
 #include "thread.h"
@@ -77,30 +76,28 @@ namespace {
     };
 
     static TAtomic atExitLock = 0;
-    static TAtExit* volatile atExitPtr = nullptr;
+    static TAtExit* atExit = nullptr;
     alignas(TAtExit) static char atExitMem[sizeof(TAtExit)];
 
     static void OnExit() {
-        if (TAtExit* const atExit = AtomicGet(atExitPtr)) {
+        if (atExit) {
             atExit->Finish();
             atExit->~TAtExit();
-            AtomicSet(atExitPtr, nullptr);
+            atExit = nullptr;
         }
     }
 
     static inline TAtExit* Instance() {
-        if (TAtExit* const atExit = AtomicGet(atExitPtr)) {
-            return atExit;
-        }
-        with_lock (atExitLock) {
-            if (TAtExit* const atExit = AtomicGet(atExitPtr)) {
-                return atExit;
+        if (!atExit) {
+            with_lock (atExitLock) {
+                if (!atExit) {
+                    atexit(OnExit);
+                    atExit = new (atExitMem) TAtExit;
+                }
             }
-            atexit(OnExit);
-            TAtExit* const atExit = new (atExitMem) TAtExit;
-            AtomicSet(atExitPtr, atExit);
-            return atExit;
         }
+
+        return atExit;
     }
 }
 
@@ -109,10 +106,10 @@ void ManualRunAtExitFinalizers() {
 }
 
 bool ExitStarted() {
-    if (TAtExit* const atExit = AtomicGet(atExitPtr)) {
-        return atExit->FinishStarted();
+    if (!atExit) {
+        return false;
     }
-    return false;
+    return atExit->FinishStarted();
 }
 
 void AtExit(TAtExitFunc func, void* ctx, size_t priority) {

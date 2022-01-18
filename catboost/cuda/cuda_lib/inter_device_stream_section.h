@@ -155,11 +155,11 @@ namespace NCudaLib {
                 }
                 state = Current[handle].Get();
             }
-            return THolder<TStreamSection>(new TStreamSection(handle,
+            return new TStreamSection(handle,
                                       state->NotReadyToEnter,
                                       state->NotReadyToLeave,
                                       stream,
-                                      *this));
+                                      *this);
         }
 
         ui64 NextUid() {

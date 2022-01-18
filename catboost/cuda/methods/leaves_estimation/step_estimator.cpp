@@ -71,13 +71,13 @@ namespace NCatboostCuda {
                                                 const TVector<float>& moveDirection) {
         switch (type) {
             case ELeavesEstimationStepBacktracking::No: {
-                return MakeHolder<TSkipStepEstimation>();
+                return new TSkipStepEstimation;
             }
             case ELeavesEstimationStepBacktracking::AnyImprovement: {
-                return MakeHolder<TSimpleStepEstimator>(currentPoint);
+                return new TSimpleStepEstimator(currentPoint);
             }
             case ELeavesEstimationStepBacktracking::Armijo: {
-                return MakeHolder<TArmijoStepEstimation>(currentPoint, gradientAtPoint, moveDirection);
+                return new TArmijoStepEstimation(currentPoint, gradientAtPoint, moveDirection);
             }
             default: {
                 ythrow TCatBoostException() << "Unknown step estimator type " << type;

@@ -15,6 +15,8 @@ import urllib2
 
 import retry
 
+INFRASTRUCTURE_ERROR = 12
+
 
 def make_user_agent():
     return 'fetch_from: {host}'.format(host=socket.gethostname())
@@ -28,7 +30,6 @@ def add_common_arguments(parser):
     parser.add_argument('--rename', action='append', default=[], metavar='FILE', help='rename FILE to the corresponding output')
     parser.add_argument('--executable', action='store_true', help='make outputs executable')
     parser.add_argument('--log-path')
-    parser.add_argument('-v', '--verbose', action='store_true', default=os.environ.get('YA_VERBOSE_FETCHER'), help='increase stderr verbosity')
     parser.add_argument('outputs', nargs='*', default=[])
 
 
@@ -105,8 +106,6 @@ def setup_logging(args, base_name):
     args.abs_log_path = os.path.abspath(log_file_name)
     makedirs(os.path.dirname(args.abs_log_path))
     logging.basicConfig(filename=args.abs_log_path, level=logging.DEBUG)
-    if args.verbose:
-        logging.getLogger().addHandler(logging.StreamHandler(sys.stderr))
 
 
 def is_temporary(e):
@@ -114,15 +113,7 @@ def is_temporary(e):
     def is_broken(e):
         return isinstance(e, urllib2.HTTPError) and e.code in (410, 404)
 
-    if is_broken(e):
-        return False
-
-    if isinstance(e, (BadChecksumFetchError, IncompleteFetchError, urllib2.URLError, socket.error)):
-        return True
-
-    import error
-
-    return error.is_temporary_error(e)
+    return not is_broken(e) and isinstance(e, (BadChecksumFetchError, IncompleteFetchError, urllib2.URLError, socket.timeout, socket.error))
 
 
 def uniq_string_generator(size=6, chars=string.ascii_lowercase + string.digits):
@@ -146,7 +137,7 @@ def report_to_snowden(value):
     try:
         inner()
     except Exception as e:
-        logging.warning('report_to_snowden failed: %s', e)
+        logging.error(e)
 
 
 def copy_stream(read, *writers, **kwargs):
@@ -205,7 +196,7 @@ def size_printer(display_name, size):
     return printer
 
 
-def fetch_url(url, unpack, resource_file_name, expected_md5=None, expected_sha1=None, tries=10, writers=None):
+def fetch_url(url, unpack, resource_file_name, expected_md5=None, expected_sha1=None, tries=10):
     logging.info('Downloading from url %s name %s and expected md5 %s', url, resource_file_name, expected_md5)
     tmp_file_name = uniq_string_generator()
 
@@ -217,14 +208,7 @@ def fetch_url(url, unpack, resource_file_name, expected_md5=None, expected_sha1=
     real_sha1 = hashlib.sha1()
 
     with open(tmp_file_name, 'wb') as fp:
-        copy_stream(
-            req.read,
-            fp.write,
-            real_md5.update,
-            real_sha1.update,
-            size_printer(resource_file_name, expected_file_size),
-            *([] if writers is None else writers)
-        )
+        copy_stream(req.read, fp.write, real_md5.update, real_sha1.update, size_printer(resource_file_name, expected_file_size))
 
     real_md5 = real_md5.hexdigest()
     real_file_size = os.path.getsize(tmp_file_name)

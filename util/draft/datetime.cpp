@@ -1,5 +1,6 @@
 #include "datetime.h"
 
+#include <util/str_stl.h>
 #include <util/ysaveload.h>
 
 #include <util/system/atomic.h>
@@ -127,22 +128,21 @@ namespace NDatetime {
     }
 
     TSimpleTM& TSimpleTM::Add(EField f, i32 amount) {
-        if (!amount) {
+        if (!amount)
             return *this;
-        }
 
         switch (f) {
             default:
                 return *this;
             case F_DAY:
                 amount *= 24;
-                [[fallthrough]];
+            /* no break */
             case F_HOUR:
                 amount *= 60;
-                [[fallthrough]];
+            /* no break */
             case F_MIN:
                 amount *= 60;
-                [[fallthrough]];
+            /* no break */
             case F_SEC: {
                 return *this = New(AsTimeT() + amount, GMTOff, IsDst);
             }
@@ -151,9 +151,8 @@ namespace NDatetime {
                 y = ::Min<i32>(Max<i32>(y, 0), 255 /*max year*/);
 
                 // YDay may correspond to different MDay if it's March or greater and the years have different leap status
-                if (Mon > 1) {
+                if (Mon > 1)
                     YDay += (i32)LeapYearAD(RealYear()) - (i32)LeapYearAD(RealYear());
-                }
 
                 Year = y;
                 IsLeap = LeapYearAD(RealYear());

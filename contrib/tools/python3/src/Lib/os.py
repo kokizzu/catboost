@@ -28,8 +28,6 @@ import stat as st
 
 from _collections_abc import _check_methods
 
-GenericAlias = type(list[int])
-
 _names = sys.builtin_module_names
 
 # Note:  more names are added to __all__ later.
@@ -332,16 +330,13 @@ def walk(top, topdown=True, onerror=None, followlinks=False):
     from os.path import join, getsize
     for root, dirs, files in os.walk('python/Lib/email'):
         print(root, "consumes", end="")
-        print(sum(getsize(join(root, name)) for name in files), end="")
+        print(sum([getsize(join(root, name)) for name in files]), end="")
         print("bytes in", len(files), "non-directory files")
         if 'CVS' in dirs:
             dirs.remove('CVS')  # don't visit CVS directories
 
     """
-    sys.audit("os.walk", top, topdown, onerror, followlinks)
-    return _walk(fspath(top), topdown, onerror, followlinks)
-
-def _walk(top, topdown, onerror, followlinks):
+    top = fspath(top)
     dirs = []
     nondirs = []
     walk_dirs = []
@@ -415,11 +410,11 @@ def _walk(top, topdown, onerror, followlinks):
             # the caller can replace the directory entry during the "yield"
             # above.
             if followlinks or not islink(new_path):
-                yield from _walk(new_path, topdown, onerror, followlinks)
+                yield from walk(new_path, topdown, onerror, followlinks)
     else:
         # Recurse into sub-directories
         for new_path in walk_dirs:
-            yield from _walk(new_path, topdown, onerror, followlinks)
+            yield from walk(new_path, topdown, onerror, followlinks)
         # Yield after recursion if going bottom up
         yield top, dirs, nondirs
 
@@ -454,13 +449,12 @@ if {open, stat} <= supports_dir_fd and {scandir, stat} <= supports_fd:
         import os
         for root, dirs, files, rootfd in os.fwalk('python/Lib/email'):
             print(root, "consumes", end="")
-            print(sum(os.stat(name, dir_fd=rootfd).st_size for name in files),
+            print(sum([os.stat(name, dir_fd=rootfd).st_size for name in files]),
                   end="")
             print("bytes in", len(files), "non-directory files")
             if 'CVS' in dirs:
                 dirs.remove('CVS')  # don't visit CVS directories
         """
-        sys.audit("os.fwalk", top, topdown, onerror, follow_symlinks, dir_fd)
         if not isinstance(top, int) or not hasattr(top, '__index__'):
             top = fspath(top)
         # Note: To guard against symlink races, we use the standard
@@ -533,6 +527,12 @@ if {open, stat} <= supports_dir_fd and {scandir, stat} <= supports_fd:
             yield toppath, dirs, nondirs, topfd
 
     __all__.append("fwalk")
+
+# Make sure os.environ exists, at least
+try:
+    environ
+except NameError:
+    environ = {}
 
 def execl(file, *args):
     """execl(file, *args)
@@ -660,15 +660,17 @@ def get_exec_path(env=None):
     return path_list.split(pathsep)
 
 
-# Change environ to automatically call putenv() and unsetenv()
-from _collections_abc import MutableMapping, Mapping
+# Change environ to automatically call putenv(), unsetenv if they exist.
+from _collections_abc import MutableMapping
 
 class _Environ(MutableMapping):
-    def __init__(self, data, encodekey, decodekey, encodevalue, decodevalue):
+    def __init__(self, data, encodekey, decodekey, encodevalue, decodevalue, putenv, unsetenv):
         self.encodekey = encodekey
         self.decodekey = decodekey
         self.encodevalue = encodevalue
         self.decodevalue = decodevalue
+        self.putenv = putenv
+        self.unsetenv = unsetenv
         self._data = data
 
     def __getitem__(self, key):
@@ -682,12 +684,12 @@ class _Environ(MutableMapping):
     def __setitem__(self, key, value):
         key = self.encodekey(key)
         value = self.encodevalue(value)
-        putenv(key, value)
+        self.putenv(key, value)
         self._data[key] = value
 
     def __delitem__(self, key):
         encodedkey = self.encodekey(key)
-        unsetenv(encodedkey)
+        self.unsetenv(encodedkey)
         try:
             del self._data[encodedkey]
         except KeyError:
@@ -716,23 +718,21 @@ class _Environ(MutableMapping):
             self[key] = value
         return self[key]
 
-    def __ior__(self, other):
-        self.update(other)
-        return self
+try:
+    _putenv = putenv
+except NameError:
+    _putenv = lambda key, value: None
+else:
+    if "putenv" not in __all__:
+        __all__.append("putenv")
 
-    def __or__(self, other):
-        if not isinstance(other, Mapping):
-            return NotImplemented
-        new = dict(self)
-        new.update(other)
-        return new
-
-    def __ror__(self, other):
-        if not isinstance(other, Mapping):
-            return NotImplemented
-        new = dict(other)
-        new.update(self)
-        return new
+try:
+    _unsetenv = unsetenv
+except NameError:
+    _unsetenv = lambda key: _putenv(key, "")
+else:
+    if "unsetenv" not in __all__:
+        __all__.append("unsetenv")
 
 def _createenviron():
     if name == 'nt':
@@ -761,7 +761,8 @@ def _createenviron():
         data = environ
     return _Environ(data,
         encodekey, decode,
-        encode, decode)
+        encode, decode,
+        _putenv, _unsetenv)
 
 # unicode environ
 environ = _createenviron()
@@ -786,7 +787,8 @@ if supports_bytes_environ:
     # bytes environ
     environb = _Environ(environ._data,
         _check_bytes, bytes,
-        _check_bytes, bytes)
+        _check_bytes, bytes,
+        _putenv, _unsetenv)
     del _check_bytes
 
     def getenvb(key, default=None):
@@ -866,8 +868,12 @@ if _exists("fork") and not _exists("spawnv") and _exists("execv"):
                 wpid, sts = waitpid(pid, 0)
                 if WIFSTOPPED(sts):
                     continue
-
-                return waitstatus_to_exitcode(sts)
+                elif WIFSIGNALED(sts):
+                    return -WTERMSIG(sts)
+                elif WIFEXITED(sts):
+                    return WEXITSTATUS(sts)
+                else:
+                    raise OSError("Not stopped, signaled or exited???")
 
     def spawnv(mode, file, args):
         """spawnv(mode, file, args) -> integer
@@ -1075,42 +1081,3 @@ class PathLike(abc.ABC):
         if cls is PathLike:
             return _check_methods(subclass, '__fspath__')
         return NotImplemented
-
-    __class_getitem__ = classmethod(GenericAlias)
-
-
-if name == 'nt':
-    class _AddedDllDirectory:
-        def __init__(self, path, cookie, remove_dll_directory):
-            self.path = path
-            self._cookie = cookie
-            self._remove_dll_directory = remove_dll_directory
-        def close(self):
-            self._remove_dll_directory(self._cookie)
-            self.path = None
-        def __enter__(self):
-            return self
-        def __exit__(self, *args):
-            self.close()
-        def __repr__(self):
-            if self.path:
-                return "<AddedDllDirectory({!r})>".format(self.path)
-            return "<AddedDllDirectory()>"
-
-    def add_dll_directory(path):
-        """Add a path to the DLL search path.
-
-        This search path is used when resolving dependencies for imported
-        extension modules (the module itself is resolved through sys.path),
-        and also by ctypes.
-
-        Remove the directory by calling close() on the returned object or
-        using it in a with statement.
-        """
-        import nt
-        cookie = nt._add_dll_directory(path)
-        return _AddedDllDirectory(
-            path,
-            cookie,
-            nt._remove_dll_directory
-        )

@@ -112,7 +112,6 @@ TVector<double> EvalMetricsForUtils(
     const TString& metricName,
     const TVector<float>& weight,
     const TVector<TGroupId>& groupId,
-    const TVector<float>& groupWeight,
     const TVector<TSubgroupId>& subgroupId,
     const TVector<TPair>& pairs,
     int threadCount
@@ -126,7 +125,7 @@ TVector<double> EvalMetricsForUtils(
             metric->UseWeights.SetDefaultValue(true);
         }
     }
-    NCB::TObjectsGrouping objectGrouping = NCB::CreateObjectsGroupingFromGroupIds<TGroupId>(
+    NCB::TObjectsGrouping objectGrouping = NCB::CreateObjectsGroupingFromGroupIds(
         label[0].size(),
         groupId.empty() ? Nothing() : NCB::TMaybeData<TConstArrayRef<TGroupId>>(groupId)
     );
@@ -138,8 +137,8 @@ TVector<double> EvalMetricsForUtils(
         queriesInfo = *NCB::MakeGroupInfos(
             objectGrouping,
             subgroupId.empty() ? Nothing() : NCB::TMaybeData<TConstArrayRef<TSubgroupId>>(subgroupId),
-            groupWeight.empty() ? NCB::TWeights(groupId.size()) : NCB::TWeights(TVector<float>(groupWeight)),
-            TConstArrayRef<TPair>(pairs)
+            NCB::TWeights(groupId.size()),
+            pairs
         ).Get();
     }
     TVector<double> metricResults;
@@ -178,14 +177,13 @@ NJson::TJsonValue GetTrainingOptions(
     NCatboostOptions::PlainJsonToOptions(plainJsonParams, &trainOptionsJson, &outputFilesOptionsJson);
     ConvertParamsToCanonicalFormat(trainDataMetaInfo, &trainOptionsJson);
     NCatboostOptions::TCatBoostOptions catboostOptions(NCatboostOptions::LoadOptions(trainOptionsJson));
-    NCatboostOptions::TOutputFilesOptions outputOptions;
-    outputOptions.UseBestModel.SetDefault(false);
+    NCatboostOptions::TOption<bool> useBestModelOption("use_best_model", false);
     SetDataDependentDefaults(
         trainDataMetaInfo,
         testDataMetaInfo,
         /*continueFromModel*/ false,
         /*learningContinuation*/ false,
-        &outputOptions,
+        &useBestModelOption,
         &catboostOptions
     );
     NJson::TJsonValue catboostOptionsJson;
@@ -193,24 +191,20 @@ NJson::TJsonValue GetTrainingOptions(
     return catboostOptionsJson;
 }
 
-size_t GetNumPairs(const NCB::TDataProvider& dataProvider) {
-    size_t result = 0;
-    const NCB::TMaybeData<NCB::TRawPairsData>& maybePairsData = dataProvider.RawTargetData.GetPairs();
-    if (maybePairsData) {
-        std::visit([&](const auto& pairs) { result = pairs.size(); }, *maybePairsData);
-    }
-    return result;
+NJson::TJsonValue GetPlainJsonWithAllOptions(
+    const TFullModel& model,
+    bool hasCatFeatures,
+    bool hasTextFeatures
+) {
+    NJson::TJsonValue trainOptions = ReadTJsonValue(model.ModelInfo.at("params"));
+    NJson::TJsonValue outputOptions = ReadTJsonValue(model.ModelInfo.at("output_options"));
+    NJson::TJsonValue plainOptions;
+    NCatboostOptions::ConvertOptionsToPlainJson(trainOptions, outputOptions, &plainOptions);
+    CB_ENSURE(!plainOptions.GetMapSafe().empty(), "plainOptions should not be empty.");
+    NJson::TJsonValue cleanedOptions(plainOptions);
+    CB_ENSURE(!cleanedOptions.GetMapSafe().empty(), "problems with copy constructor.");
+    NCatboostOptions::CleanPlainJson(hasCatFeatures, &cleanedOptions, hasTextFeatures);
+    CB_ENSURE(!cleanedOptions.GetMapSafe().empty(), "cleanedOptions should not be empty.");
+    return cleanedOptions;
 }
 
-TConstArrayRef<TPair> GetUngroupedPairs(const NCB::TDataProvider& dataProvider) {
-    TConstArrayRef<TPair> result;
-    const NCB::TMaybeData<NCB::TRawPairsData>& maybePairsData = dataProvider.RawTargetData.GetPairs();
-    if (maybePairsData) {
-        CB_ENSURE(
-            std::holds_alternative<TFlatPairsInfo>(*maybePairsData),
-            "Cannot get ungrouped pairs: pairs data is grouped"
-        );
-        result = std::get<TFlatPairsInfo>(*maybePairsData);
-    }
-    return result;
-}

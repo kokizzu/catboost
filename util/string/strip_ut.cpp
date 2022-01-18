@@ -1,6 +1,6 @@
 #include "strip.h"
 
-#include <library/cpp/testing/unittest/registar.h>
+#include <library/unittest/registar.h>
 
 #include <util/charset/wide.h>
 
@@ -94,15 +94,15 @@ Y_UNIT_TEST_SUITE(TStripStringTest) {
     }
 
     Y_UNIT_TEST(TestWtrokaStrip) {
-        UNIT_ASSERT_EQUAL(StripString(TWtringBuf(u" abc ")), u"abc");
-        UNIT_ASSERT_EQUAL(StripStringLeft(TWtringBuf(u" abc ")), u"abc ");
-        UNIT_ASSERT_EQUAL(StripStringRight(TWtringBuf(u" abc ")), u" abc");
+        UNIT_ASSERT_EQUAL(StripString(AsStringBuf(u" abc ")), u"abc");
+        UNIT_ASSERT_EQUAL(StripStringLeft(AsStringBuf(u" abc ")), u"abc ");
+        UNIT_ASSERT_EQUAL(StripStringRight(AsStringBuf(u" abc ")), u" abc");
     }
 
     Y_UNIT_TEST(TestWtrokaCustomStrip) {
         UNIT_ASSERT_EQUAL(
             StripString(
-                TWtringBuf(u"/abc/"),
+                AsStringBuf(u"/abc/"),
                 EqualsStripAdapter(u'/')),
             u"abc");
     }
@@ -116,12 +116,10 @@ Y_UNIT_TEST_SUITE(TStripStringTest) {
 
         s = TString(" a b c ");
         TString s2 = s;
-        CollapseInPlace(s2);
+        Collapse(s2);
 
         UNIT_ASSERT(s == s2);
-#ifndef TSTRING_IS_STD_STRING
         UNIT_ASSERT(s.c_str() == s2.c_str()); // Collapse() does not change the string at all
-#endif
     }
 
     Y_UNIT_TEST(TestCollapseText) {

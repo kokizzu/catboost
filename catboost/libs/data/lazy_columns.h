@@ -60,14 +60,9 @@ namespace NCB {
             return 0;
         }
 
-        ui32 CalcChecksum(NPar::ILocalExecutor* localExecutor) const override {
-            Y_UNUSED(localExecutor);
-            return 0;
-        }
-
         THolder<IFeatureValuesHolder> CloneWithNewSubsetIndexing(
             const TCloningParams& cloningParams,
-            NPar::ILocalExecutor* localExecutor
+            NPar::TLocalExecutor* localExecutor
         ) const override {
             Y_UNUSED(localExecutor);
             CB_ENSURE_INTERNAL(!cloningParams.MakeConsecutive, "Making consecutive not supported on Lazy columns for now");
@@ -76,10 +71,6 @@ namespace NCB {
                 cloningParams.SubsetIndexing,
                 PoolLoader
             );
-        }
-
-        TPathWithScheme GetPoolPathWithScheme() const {
-            return PoolLoader->GetPoolPathWithScheme();
         }
 
         IDynamicBlockIteratorBasePtr GetBlockIterator(ui32 offset) const override {
@@ -92,10 +83,6 @@ namespace NCB {
 
     private:
         std::shared_ptr<TLoadedColumnData> GetColumnData() const {
-            auto cachedResult = LoadedColumnDataWeakPtr.lock();
-            if (cachedResult) {
-                return cachedResult;
-            }
             with_lock(LoadDataLock) {
                 auto cachedResult = LoadedColumnDataWeakPtr.lock();
                 if (cachedResult) {
@@ -115,8 +102,4 @@ namespace NCB {
         const TFeaturesArraySubsetIndexing* SubsetIndexing;
         TAtomicSharedPtr<IQuantizedPoolLoader> PoolLoader;
     };
-
-    using TLazyQuantizedFloatValuesHolder = TLazyCompressedValuesHolderImpl<IQuantizedFloatValuesHolder>;
-    template <typename IQuantizedValuesHolder>
-    const TLazyQuantizedFloatValuesHolder* CastToLazyQuantizedFloatValuesHolder(const IQuantizedValuesHolder* quantizedFeatureColumn);
 }

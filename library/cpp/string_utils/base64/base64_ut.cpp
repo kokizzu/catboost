@@ -7,7 +7,7 @@
 #include <contrib/libs/base64/plain64/libbase64.h>
 #include <contrib/libs/base64/ssse3/libbase64.h>
 
-#include <library/cpp/testing/unittest/registar.h>
+#include <library/unittest/registar.h>
 
 #include <util/generic/vector.h>
 #include <util/random/fast.h>
@@ -15,8 +15,6 @@
 #include <util/system/platform.h>
 
 #include <array>
-
-using namespace std::string_view_literals;
 
 #define BASE64_UT_DECLARE_BASE64_IMPL(prefix, encFunction, decFunction)                                                        \
     Y_DECLARE_UNUSED                                                                                                           \
@@ -298,7 +296,7 @@ Y_UNIT_TEST_SUITE(TBase64) {
     }
 
     Y_UNIT_TEST(TestAllPossibleOctets) {
-        const TString x("\0\x01\x02\x03\x04\x05\x06\x07\b\t\n\x0B\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F"sv);
+        const TString x(AsStringBuf("\0\x01\x02\x03\x04\x05\x06\x07\b\t\n\x0B\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F"));
         const TString xEnc = "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn8=";
         const TString y = Base64Decode(xEnc);
         const TString yEnc = Base64Encode(x);
@@ -307,7 +305,7 @@ Y_UNIT_TEST_SUITE(TBase64) {
     }
 
     Y_UNIT_TEST(TestTwoPaddingCharacters) {
-        const TString x("a");
+        const TString x(AsStringBuf("a"));
         const TString xEnc = "YQ==";
         const TString y = Base64Decode(xEnc);
         const TString yEnc = Base64Encode(x);
@@ -316,7 +314,7 @@ Y_UNIT_TEST_SUITE(TBase64) {
     }
 
     Y_UNIT_TEST(TestOnePaddingCharacter) {
-        const TString x("aa");
+        const TString x(AsStringBuf("aa"));
         const TString xEnc = "YWE=";
         const TString y = Base64Decode(xEnc);
         const TString yEnc = Base64Encode(x);
@@ -325,7 +323,7 @@ Y_UNIT_TEST_SUITE(TBase64) {
     }
 
     Y_UNIT_TEST(TestNoPaddingCharacters) {
-        const TString x("aaa");
+        const TString x(AsStringBuf("aaa"));
         const TString xEnc = "YWFh";
         const TString y = Base64Decode(xEnc);
         const TString yEnc = Base64Encode(x);
@@ -334,7 +332,7 @@ Y_UNIT_TEST_SUITE(TBase64) {
     }
 
     Y_UNIT_TEST(TestTrailingZero) {
-        const TString x("foo\0"sv);
+        const TString x(AsStringBuf("foo\0"));
         const TString xEnc = "Zm9vAA==";
         const TString y = Base64Decode(xEnc);
         const TString yEnc = Base64Encode(x);
@@ -343,7 +341,7 @@ Y_UNIT_TEST_SUITE(TBase64) {
     }
 
     Y_UNIT_TEST(TestTwoTrailingZeroes) {
-        const TString x("foo\0\0"sv);
+        const TString x(AsStringBuf("foo\0\0"));
         const TString xEnc = "Zm9vAAA=";
         const TString y = Base64Decode(xEnc);
         const TString yEnc = Base64Encode(x);
@@ -352,7 +350,7 @@ Y_UNIT_TEST_SUITE(TBase64) {
     }
 
     Y_UNIT_TEST(TestZero) {
-        const TString x("\0"sv);
+        const TString x(AsStringBuf("\0"));
         const TString xEnc = "AA==";
         const TString y = Base64Decode(xEnc);
         const TString yEnc = Base64Encode(x);
@@ -361,7 +359,7 @@ Y_UNIT_TEST_SUITE(TBase64) {
     }
 
     Y_UNIT_TEST(TestSymbolsAfterZero) {
-        const TString x("\0a"sv);
+        const TString x(AsStringBuf("\0a"));
         const TString xEnc = "AGE=";
         const TString y = Base64Decode(xEnc);
         const TString yEnc = Base64Encode(x);

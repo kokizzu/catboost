@@ -8,7 +8,7 @@
 #include <util/stream/buffer.h>
 #include <util/system/yassert.h>
 
-#include <library/cpp/testing/unittest/registar.h>
+#include <library/unittest/registar.h>
 
 
 using namespace NCB;
@@ -96,7 +96,7 @@ Y_UNIT_TEST_SUITE(Compression) {
 
         {
             TBufferOutput out(buffer);
-            SerializeToArcadiaStream(out, data);
+            SerializeToStream(out, data);
         }
 
         TCompressedArray loadedData;

@@ -1,14 +1,10 @@
 #include "query_cross_entropy.cuh"
-#include <library/cpp/cuda/wrappers/arch.cuh>
-
+#include <cooperative_groups.h>
 #include <catboost/cuda/cuda_lib/kernel/kernel.cuh>
-#include <library/cpp/cuda/wrappers/cub_include.h>
+#include <library/cuda/wrappers/arch.cuh>
 #include <catboost/cuda/cuda_util/kernel/kernel_helpers.cuh>
 #include <catboost/cuda/cuda_util/kernel/fill.cuh>
-#include _CUB_INCLUDE(cub/util_ptx.cuh)
-
-#include <cooperative_groups.h>
-
+#include <contrib/libs/cub/cub/util_ptx.cuh>
 #include <cassert>
 #include <cstdio>
 
@@ -29,11 +25,7 @@ namespace NKernel {
                                                                      const int size,
                                                                      const int* qids,
                                                                      const ui32* qOffsets,
-                                                                     const float* approxScale,
-                                                                     const float defaultScale,
-                                                                     const ui32 approxScaleSize,
                                                                      const bool* isSingleClassFlags,
-                                                                     const ui32* trueClassCount,
                                                                      float* functionValue,
                                                                      float* ders,
                                                                      float* ders2llp,
@@ -58,16 +50,11 @@ namespace NKernel {
             ders2llmax += offset;
         }
 
-        if (trueClassCount) {
-            trueClassCount += offset;
-        }
-
         const float MAX_SHIFT = 20;
         const int tid = threadIdx.x;
 
         const int loadIdx = tid < size ?  offset + tid : 0;
         const bool isSingleClass = tid < size ? isSingleClassFlags[tid] : true;
-        const ui32 trueCount = tid < size && trueClassCount ? trueClassCount[tid] : 0;
         const int tidQid = tid < size ? Ldg(qids + tid) : -1;
         const ui32 queryOffset = tid < size ? Ldg(qOffsets + tidQid) : 0;
 
@@ -75,8 +62,6 @@ namespace NKernel {
         const int localIdx = tid < size ? offset + tid - queryOffset : 0;
 
         const float clazz = tid < size ? Ldg(targets + loadIdx) : 0;
-        const float scale = querySize < approxScaleSize ? approxScale[querySize * approxScaleSize + trueCount]
-            : defaultScale;
         const float cursor = tid < size ? Ldg(values + loadIdx) : 0;
         const float w = tid < size ? Ldg(weights + loadIdx) : 0;
 
@@ -90,7 +75,7 @@ namespace NKernel {
 
         if (!IsSingleClassBlock) {
             {
-                sharedDer[tid] = querySize; // use sharedDer to calc max query size in this block
+                sharedDer[tid] = querySize;
                 __syncthreads();
                 for (int s = BlockSize >> 1; s > 0; s >>= 1) {
                     if (tid < s) {
@@ -98,7 +83,7 @@ namespace NKernel {
                     }
                     __syncthreads();
                 }
-                reduceSize = (1 << int(ceil(log2(sharedDer[0])) - 1)); // sharedDer[0] = max query size in this block
+                reduceSize = (1 << int(ceil(log2(sharedDer[0])) - 1));
                 __syncthreads();
             }
 
@@ -107,7 +92,7 @@ namespace NKernel {
             #pragma unroll
             for (int i = 0; i < 8; ++i) {
 
-                const float tmp = __expf(cursor * scale + bestShift);
+                const float tmp = __expf(cursor + bestShift);
                 const float p = ClipProb((isfinite(1.0f + tmp) ? (tmp / (1.0f + tmp)) : 1.0f));
 
                 sharedDer[tid] = w * (clazz - p);
@@ -121,7 +106,7 @@ namespace NKernel {
                     __syncthreads();
                 }
 
-                midDer = sharedDer[tid - localIdx]; // sum of sharedDer in this thread's query
+                midDer = sharedDer[tid - localIdx];
 
                 if (midDer > 0) {
                     left = bestShift;
@@ -135,7 +120,7 @@ namespace NKernel {
 
             #pragma unroll
             for (int i = 0; i < 5; ++i) {
-                const float tmp = __expf(cursor * scale + bestShift);
+                const float tmp = __expf(cursor + bestShift);
                 const float p = ClipProb(isfinite(1.0f + tmp) ? (tmp / (1.0f + tmp)) : 1.0f);
 
                 __syncthreads();
@@ -174,7 +159,7 @@ namespace NKernel {
             }
         }
 
-        const float shiftedApprox = cursor * scale + bestShift;
+        const float shiftedApprox = cursor + bestShift;
         const float expVal = __expf(cursor);
         const float expShiftedVal = __expf(shiftedApprox);
 
@@ -202,7 +187,7 @@ namespace NKernel {
 
         if (ders && (tid < size)) {
             const float derllp = clazz - prob;
-            const float derllmax = (isSingleClass ? 0 : clazz - shiftedProb) * scale;
+            const float derllmax = isSingleClass ? 0 : clazz - shiftedProb;
             ders[tid] = w * ((1.0f - alpha) * derllp + alpha * derllmax);
         }
 
@@ -210,7 +195,7 @@ namespace NKernel {
             ders2llp[tid] = w * (1.0f - alpha) * prob * (1.0f - prob);
         }
 
-        float der2llmax = (isSingleClass ? 0 : w * alpha * shiftedProb * (1.0f - shiftedProb)) * scale * scale;
+        float der2llmax =  isSingleClass ? 0 : w * alpha * shiftedProb * (1.0f - shiftedProb);
 
         if (ders2llmax && (tid < size)) {
             ders2llmax[tid] = der2llmax;
@@ -253,10 +238,6 @@ namespace NKernel {
                                            const int* qids,
                                            const bool* isSingleClassQueries,
                                            const ui32* qOffsets,
-                                           const float* approxScale,
-                                           const float defaultScale,
-                                           const ui32 approxScaleSize,
-                                           const ui32* trueClassCount,
                                            const int size,
                                            float* functionValue,
                                            float* ders,
@@ -337,9 +318,7 @@ namespace NKernel {
                                              targets, weights, values,\
                                              offset, blockSize,\
                                              qids, qOffsets,\
-                                             approxScale, defaultScale, approxScaleSize,\
                                              isSingleClassQueries,\
-                                             trueClassCount,\
                                              functionValue,\
                                              ders,\
                                              ders2llp,\
@@ -364,10 +343,6 @@ namespace NKernel {
                            const ui32* qids,
                            const bool* isSingleClassQueries,
                            const ui32* qOffsets,
-                           const float* approxScale,
-                           const float defaultScale,
-                           const ui32 approxScaleSize,
-                           const ui32* trueClassCount,
                            const  int docCount,
                            float* functionValue,
                            float* ders,
@@ -389,8 +364,7 @@ namespace NKernel {
         QueryCrossEntropyImpl<blockSize> <<<maxBlocksPerSm * smCount, blockSize, 0, stream>>>(qidCursor, qCount, alpha,
                                                                                              targets, weights, values,
                                                                                             (int*)qids, isSingleClassQueries, qOffsets,
-                                                                                             approxScale, defaultScale, approxScaleSize,
-                                                                                             trueClassCount, docCount,
+                                                                                             docCount,
                                                                                              functionValue,
                                                                                              ders, ders2llp, ders2llmax, groupDers2);
     }
@@ -487,8 +461,7 @@ namespace NKernel {
     template <int BlockSize, int ThreadsPerQuery>
     __global__ void MakeIsSingleClassFlagsImpl(const int* queryOffsets, int queryCount,
                                                const ui32* loadIndices, const float* targets,
-                                               bool* isSingleClassQuery,
-                                               ui32* trueClassCount) {
+                                               bool* isSingleClassQuery) {
 
         int bias = queryCount ? Ldg(queryOffsets) : 0;
 
@@ -498,8 +471,7 @@ namespace NKernel {
         const int localQid = threadIdx.x / ThreadsPerQuery;
         const int qid = blockIdx.x * queriesPerBlock + localQid;
 
-        __shared__ ui32 resultsIsSingle[BlockSize];
-        __shared__ ui32 resultsCount[BlockSize];
+        __shared__ ui32 results[BlockSize];
 
         const int queryOffset = (qid < queryCount) ? (queryOffsets[qid] - bias) : 0;
         const int querySize = (qid < queryCount) ? (queryOffsets[qid + 1] - bias - queryOffset) : 0;
@@ -507,7 +479,6 @@ namespace NKernel {
         const ui32 firstIdx = qid < queryCount ? loadIndices[queryOffset] : 0;
         float firstTarget = Ldg(targets + firstIdx);
         int isSingleClass = 1;
-        ui32 trueCount = 0;
 
         for (int i = workingTile.thread_rank(); i < querySize; i += ThreadsPerQuery) {
             const ui32 loadIdx = loadIndices[queryOffset + i];
@@ -515,25 +486,19 @@ namespace NKernel {
             if (abs(firstTarget - docTarget) > 1e-5f) {
                 isSingleClass = 0;
             }
-            trueCount += docTarget > 0.5;
         }
 
         using TOp = TCudaMultiply<int>;
         isSingleClass = TileReduce<int, ThreadsPerQuery, TOp>(workingTile, isSingleClass);
-        using TAdd = TCudaAdd<ui32>;
-        trueCount = TileReduce<ui32, ThreadsPerQuery, TAdd>(workingTile, trueCount);
 
         if (workingTile.thread_rank() == 0) {
-            resultsIsSingle[localQid] = isSingleClass;
-            resultsCount[localQid] = trueCount;
+            results[localQid] = isSingleClass;
             workingTile.sync();
         }
-        isSingleClass = resultsIsSingle[localQid];
-        trueCount = resultsCount[localQid];
+        isSingleClass = results[localQid];
 
         for (int i = workingTile.thread_rank(); i < querySize; i += ThreadsPerQuery) {
             isSingleClassQuery[queryOffset + i] = isSingleClass == 1;
-            trueClassCount[queryOffset + i] = trueCount;
         }
     }
 
@@ -542,7 +507,6 @@ namespace NKernel {
                                 ui32 queryCount,
                                 double meanQuerySize,
                                 bool* isSingleClassQuery,
-                                ui32* trueClassCount,
                                 TCudaStream stream) {
 
         const int blockSize = 128;
@@ -551,7 +515,7 @@ namespace NKernel {
         #define RUN_KERNEL(threadsPerQuery) \
         const int numBlocks = (queryCount * threadsPerQuery +  blockSize - 1) / blockSize; \
         if (numBlocks > 0) { \
-            MakeIsSingleClassFlagsImpl<blockSize, threadsPerQuery> <<< numBlocks, blockSize, 0, stream >>> ((int*)queryOffsets,  queryCount, loadIndices, targets, isSingleClassQuery, trueClassCount); \
+            MakeIsSingleClassFlagsImpl<blockSize, threadsPerQuery> <<< numBlocks, blockSize, 0, stream >>> ((int*)queryOffsets,  queryCount, loadIndices, targets, isSingleClassQuery); \
         }
 
         if (meanQuerySize < 2) {

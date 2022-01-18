@@ -5,9 +5,7 @@ namespace NCatboostCuda {
     void TTreeCtrDataSetVisitor::Accept(const TTreeCtrDataSet& ctrDataSet,
                                         const TMirrorBuffer<const TPartitionStatistics>& partStats,
                                         const TMirrorBuffer<ui32>& ctrDataSetInverseIndices,
-                                        const TMirrorBuffer<ui32>& subsetDocs,
-                                        ui32 maxUniqueValues,
-                                        float modelSizeReg) {
+                                        const TMirrorBuffer<ui32>& subsetDocs) {
         {
             auto cacheIds = GetCtrsBordersToCacheIds(ctrDataSet.GetCtrs());
             if (cacheIds.size()) {
@@ -17,18 +15,17 @@ namespace NCatboostCuda {
 
         using TScoreCalcer = TScoresCalcerOnCompressedDataSet<TSingleDevLayout>;
         auto& scoreHelper = *ctrDataSet.GetCacheHolder().Cache(ctrDataSet, 0, [&]() -> THolder<TScoreCalcer> {
-            return MakeHolder<TScoreCalcer>(ctrDataSet.GetCompressedDataSet(),
+            return new TScoreCalcer(ctrDataSet.GetCompressedDataSet(),
                                     TreeConfig,
                                     FoldCount);
         });
         const ui32 devId = ctrDataSet.GetDeviceId();
-        const ui64 taskSeed = Seeds[devId] + ctrDataSet.GetBaseTensor().GetHash();
+        const ui64 taskSeed = Seeds[ctrDataSet.GetDeviceId()] + ctrDataSet.GetBaseTensor().GetHash();
 
         scoreHelper.SubmitCompute(Subsets.DeviceView(devId),
                                   subsetDocs.DeviceView(devId));
 
-        scoreHelper.ComputeOptimalSplit(partStats.AsConstBuf(),
-                                        ctrDataSet.GetCtrWeights(maxUniqueValues, modelSizeReg).AsConstBuf(),
+        scoreHelper.ComputeOptimalSplit(partStats,
                                         ScoreStdDev,
                                         taskSeed);
 

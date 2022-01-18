@@ -279,15 +279,12 @@ namespace NKernelHost {
     class TFindOptimalSplitKernel: public TStatelessKernel {
     private:
         TCudaBufferPtr<const TCBinFeature> BinaryFeatures;
-        TCudaBufferPtr<const float> FeatureWeights;
         TCudaBufferPtr<const float> Splits;
         TCudaBufferPtr<const TPartitionStatistics> Parts;
         ui32 FoldCount;
         TCudaBufferPtr<TBestSplitProperties> Result;
         EScoreFunction ScoreFunction;
         double L2;
-        double MetaL2Exponent;
-        double MetaL2Frequency;
         bool Normalize;
         double ScoreStdDev;
         ui64 Seed;
@@ -297,29 +294,23 @@ namespace NKernelHost {
         TFindOptimalSplitKernel() = default;
 
         TFindOptimalSplitKernel(TCudaBufferPtr<const TCBinFeature> binaryFeatures,
-                                TCudaBufferPtr<const float> featureWeights,
                                 TCudaBufferPtr<const float> splits,
                                 TCudaBufferPtr<const TPartitionStatistics> parts,
                                 ui32 foldCount,
                                 TCudaBufferPtr<TBestSplitProperties> result,
                                 EScoreFunction scoreFunction,
                                 double l2,
-                                double metaL2Exponent,
-                                double metaL2Frequency,
                                 bool normalize,
                                 double scoreStdDev,
                                 ui64 seed,
                                 bool gatheredByLeaves)
             : BinaryFeatures(binaryFeatures)
-            , FeatureWeights(featureWeights)
             , Splits(splits)
             , Parts(parts)
             , FoldCount(foldCount)
             , Result(result)
             , ScoreFunction(scoreFunction)
             , L2(l2)
-            , MetaL2Exponent(metaL2Exponent)
-            , MetaL2Frequency(metaL2Frequency)
             , Normalize(normalize)
             , ScoreStdDev(scoreStdDev)
             , Seed(seed)
@@ -327,22 +318,14 @@ namespace NKernelHost {
         {
         }
 
-        Y_SAVELOAD_DEFINE(BinaryFeatures, FeatureWeights, Splits, Parts, FoldCount, Result, ScoreFunction, L2, MetaL2Exponent, MetaL2Frequency, Normalize, ScoreStdDev, Seed, GatheredByLeaves);
+        Y_SAVELOAD_DEFINE(BinaryFeatures, Splits, Parts, FoldCount, Result, ScoreFunction, L2, Normalize, ScoreStdDev, Seed, GatheredByLeaves);
 
         void Run(const TCudaStream& stream) const {
             const ui32 foldBits = NCB::IntLog2(FoldCount);
             const ui32 leavesCount = static_cast<ui32>(Parts.Size() >> foldBits);
             CB_ENSURE(Result.Size());
-
-
-            for (auto feature : BinaryFeatures.Read(stream)) {
-                Y_ASSERT(feature.FeatureId < FeatureWeights.Size());
-            }
-
             NKernel::FindOptimalSplit(BinaryFeatures.Get(),
                                       static_cast<ui32>(BinaryFeatures.Size()),
-                                      FeatureWeights.Get(),
-                                      FeatureWeights.Size(),
                                       Splits.Get(),
                                       Parts.Get(),
                                       leavesCount,
@@ -350,7 +333,7 @@ namespace NKernelHost {
                                       Result.Get(),
                                       static_cast<ui32>(Result.Size()),
                                       ScoreFunction,
-                                      L2, MetaL2Exponent, MetaL2Frequency, Normalize,
+                                      L2, Normalize,
                                       ScoreStdDev,
                                       Seed,
                                       GatheredByLeaves,
@@ -503,17 +486,14 @@ inline void UpdatePartitionStatsWeightsOnly(TCudaBuffer<TPartitionStatistics, TM
     LaunchKernels<TKernel>(partStats.NonEmptyDevices(), stream, (const TCudaBuffer<float, TMapping>*)nullptr, weights, parts, partStats);
 }
 
-template <class TFeaturesMapping, class TFeatureWeightsMapping>
+template <class TFeaturesMapping>
 inline void FindOptimalSplit(const TCudaBuffer<TCBinFeature, TFeaturesMapping>& features,
-                             const TCudaBuffer<const float, TFeatureWeightsMapping>& featureWeights,
                              const TCudaBuffer<float, TFeaturesMapping>& histograms,
                              const TMirrorBuffer<const TPartitionStatistics>& partStats,
                              ui32 foldCount,
                              TCudaBuffer<TBestSplitProperties, TFeaturesMapping>& scores,
                              EScoreFunction scoreFunction,
                              double l2,
-                             double metaL2Exponent,
-                             double metaL2Frequency,
                              bool normalize,
                              double scoreStdDev,
                              ui64 seed,
@@ -523,7 +503,7 @@ inline void FindOptimalSplit(const TCudaBuffer<TCBinFeature, TFeaturesMapping>& 
         CB_ENSURE(!gatheredByLeaves, "Best split search for gathered by leaves splits is not implemented yet");
     }
     using TKernel = NKernelHost::TFindOptimalSplitKernel;
-    LaunchKernels<TKernel>(scores.NonEmptyDevices(), stream, features, featureWeights, histograms, partStats, foldCount, scores, scoreFunction, l2, metaL2Exponent, metaL2Frequency, normalize, scoreStdDev, seed, gatheredByLeaves);
+    LaunchKernels<TKernel>(scores.NonEmptyDevices(), stream, features, histograms, partStats, foldCount, scores, scoreFunction, l2, normalize, scoreStdDev, seed, gatheredByLeaves);
 }
 
 template <class TFeaturesMapping, class TUi32>

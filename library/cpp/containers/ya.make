@@ -2,16 +2,9 @@ RECURSE(
     2d_array
     compact_vector
     compact_vector/ut
-    comptrie
-    comptrie/loader
-    comptrie/loader/ut
-    comptrie/ut
-    comptrie/benchmark
     dense_hash
     dense_hash/dense_hash_benchmark
     dense_hash/ut
-    disjoint_interval_tree
-    disjoint_interval_tree/ut
     flat_hash
     flat_hash/benchmark
     flat_hash/lib
@@ -31,4 +24,5 @@ RECURSE(
     stack_array
     stack_array/ut
     stack_vector
+    stack_vector/ut
 )

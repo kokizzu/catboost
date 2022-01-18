@@ -1,6 +1,6 @@
 #include "zlib.h"
 
-#include <library/cpp/testing/unittest/registar.h>
+#include <library/unittest/registar.h>
 
 #include "file.h"
 #include <util/system/tempfile.h>
@@ -76,8 +76,8 @@ Y_UNIT_TEST_SUITE(TZLibTest) {
     }
 
     Y_UNIT_TEST(Dictionary) {
-        static constexpr TStringBuf data = "<html><body></body></html>";
-        static constexpr TStringBuf dict = "</<html><body>";
+        static constexpr auto data = AsStringBuf("<html><body></body></html>");
+        static constexpr auto dict = AsStringBuf("</<html><body>");
         for (auto type : {ZLib::Raw, ZLib::ZLib}) {
             TStringStream compressed;
             {

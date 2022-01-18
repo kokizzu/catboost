@@ -1,7 +1,6 @@
 #include "greedy_search_helper.h"
 #include <catboost/cuda/methods/helpers.h>
 #include <catboost/cuda/methods/greedy_subsets_searcher/kernel/compute_scores.cuh>
-#include <catboost/cuda/methods/update_feature_weights.h>
 #include <catboost/cuda/targets/weak_objective.h>
 #include <catboost/cuda/cuda_lib/cuda_buffer_helpers/all_reduce.h>
 
@@ -9,7 +8,6 @@ namespace NKernelHost {
     class TComputeOptimalSplitsKernel: public TStatelessKernel {
     private:
         TCudaBufferPtr<const TCBinFeature> BinaryFeatures;
-        TCudaBufferPtr<const float> FeatureWeights;
         TCudaBufferPtr<const float> Histograms;
         TCudaBufferPtr<const double> PartStats;
         TCudaBufferPtr<const ui32> PartIds;
@@ -28,7 +26,6 @@ namespace NKernelHost {
         TComputeOptimalSplitsKernel() = default;
 
         TComputeOptimalSplitsKernel(TCudaBufferPtr<const TCBinFeature> binaryFeatures,
-                                    TCudaBufferPtr<const float> featureWeights,
                                     TCudaBufferPtr<const float> histograms,
                                     TCudaBufferPtr<const double> partStats,
                                     TCudaBufferPtr<const ui32> partIds,
@@ -43,7 +40,6 @@ namespace NKernelHost {
                                     double scoreStdDev,
                                     ui64 seed)
             : BinaryFeatures(binaryFeatures)
-            , FeatureWeights(featureWeights)
             , Histograms(histograms)
             , PartStats(partStats)
             , PartIds(partIds)
@@ -60,7 +56,7 @@ namespace NKernelHost {
         {
         }
 
-        Y_SAVELOAD_DEFINE(BinaryFeatures, FeatureWeights, Histograms, PartStats, PartIds, RestPartIds, NumScoreBlocks, Result, ArgmaxBlockCount,
+        Y_SAVELOAD_DEFINE(BinaryFeatures, Histograms, PartStats, PartIds, RestPartIds, NumScoreBlocks, Result, ArgmaxBlockCount,
                           ScoreFunction, L2, Normalize, ScoreStdDev, Seed, MultiClassOptimization);
 
         void Run(const TCudaStream& stream) const {
@@ -68,7 +64,7 @@ namespace NKernelHost {
             const ui32 partBlockSize = PartIds.Size() / NumScoreBlocks;
             CB_ENSURE(partBlockSize, PartIds.Size() << " " << NumScoreBlocks);
 
-            NKernel::ComputeOptimalSplits(BinaryFeatures.Get(), BinaryFeatures.Size(), FeatureWeights.Get(), FeatureWeights.Size(), Histograms.Get(),
+            NKernel::ComputeOptimalSplits(BinaryFeatures.Get(), BinaryFeatures.Size(), Histograms.Get(),
                                           PartStats.Get(), PartStats.ObjectSize(), PartIds.Get(), partBlockSize,
                                           NumScoreBlocks, RestPartIds.Get(), RestPartIds.Size(), Result.Get(), ArgmaxBlockCount, ScoreFunction, MultiClassOptimization, L2, Normalize,
                                           ScoreStdDev, Seed, stream.GetStream());
@@ -268,7 +264,6 @@ namespace NCudaLib {
     REGISTER_KERNEL(0xA1BCA12, NKernelHost::TComputeTargetVarianceKernel);
     REGISTER_KERNEL(0xA1BCA13, NKernelHost::TComputeOptimalSplitLeafwiseKernel);
     REGISTER_KERNEL(0xA1BCA14, NKernelHost::TComputeOptimalSplitsLeafwiseKernel);
-    REGISTER_KERNEL(0xA1BCA15, NKernelHost::TComputeCurrentTreeScoreKernel);
 
 }
 
@@ -415,7 +410,6 @@ namespace NCatboostCuda {
         AllReduceThroughMaster(subsets->CurrentPartStats(), reducedStats);
 
         if (Options.Policy == EGrowPolicy::SymmetricTree) {
-            UpdateFeatureWeightsForBestSplits(FeaturesManager, Options.ModelSizeReg, subsets->FeatureWeights);
             TMirrorBuffer<ui32> restLeafIds;
             auto leafIds = TMirrorBuffer<ui32>::Create(NCudaLib::TMirrorMapping(leavesToVisit.size()));
             leafIds.Write(leavesToVisit);
@@ -424,7 +418,6 @@ namespace NCatboostCuda {
             LaunchKernels<TKernel>(bestProps.NonEmptyDevices(),
                                    0,
                                    subsets->BinFeatures,
-                                   subsets->FeatureWeights,
                                    subsets->Histograms,
                                    reducedStats,
                                    leafIds,
@@ -504,9 +497,6 @@ namespace NCatboostCuda {
             CB_ENSURE(bestSplits.size() == 1);
             for (const auto& leafId : leavesToVisit) {
                 subsets->Leaves[leafId].UpdateBestSplit(bestSplits[0]);
-            }
-            if (FeaturesManager.IsCtr(bestSplits[0].FeatureId)) {
-                FeaturesManager.AddUsedCtr(bestSplits[0].FeatureId);
             }
         } else {
             CB_ENSURE(bestSplits.size() == leavesToVisit.size(),

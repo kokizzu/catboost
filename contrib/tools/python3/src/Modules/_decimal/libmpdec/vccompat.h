@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2020 Stefan Krah. All rights reserved.
+ * Copyright (c) 2008-2016 Stefan Krah. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,16 +26,14 @@
  */
 
 
-#ifndef LIBMPDEC_VCCOMPAT_H_
-#define LIBMPDEC_VCCOMPAT_H_
+#ifndef VCCOMPAT_H
+#define VCCOMPAT_H
 
 
-/* Visual C fixes: no snprintf ... */
+/* Visual C fixes: no stdint.h, no snprintf ... */
 #ifdef _MSC_VER
-  #ifndef __cplusplus
-    #undef inline
-    #define inline __inline
-  #endif
+  #undef inline
+  #define inline __inline
   #undef random
   #define random rand
   #undef srandom
@@ -53,4 +51,7 @@
 #endif
 
 
-#endif /* LIBMPDEC_VCCOMPAT_H_ */
+#endif /* VCCOMPAT_H */
+
+
+

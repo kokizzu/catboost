@@ -49,13 +49,12 @@ public:
         , CloseStreams(false)
         , ShouldCloseInput(true)
         , InputMode(HANDLE_INHERIT)
-        , OutputMode(HANDLE_STREAM)
-        , ErrorMode(HANDLE_STREAM)
+        , InheritOutput(false)
+        , InheritError(false)
         , InputStream(nullptr)
         , OutputStream(nullptr)
         , ErrorStream(nullptr)
         , Nice(0)
-        , FuncAfterFork(std::function<void()>())
     {
     }
 
@@ -237,17 +236,6 @@ public:
     }
 
     /**
-     * @brief specifies pure function to be called in the child process after fork, before calling execve
-     * @note currently ignored on windows
-     * @param function function to be called after fork
-     * @return self
-    */
-    inline TShellCommandOptions& SetFuncAfterFork(const std::function<void()>& function) {
-        FuncAfterFork = function;
-        return *this;
-    }
-
-    /**
      * @brief create a pipe for child input
      * Write end of the pipe will be accessible via TShellCommand::GetInputHandle
      *
@@ -259,18 +247,6 @@ public:
         return *this;
     }
 
-    inline TShellCommandOptions& PipeOutput() {
-        OutputMode = HANDLE_PIPE;
-        OutputStream = nullptr;
-        return *this;
-    }
-
-    inline TShellCommandOptions& PipeError() {
-        ErrorMode = HANDLE_PIPE;
-        ErrorStream = nullptr;
-        return *this;
-    }
-
     /**
      * @brief set if child should inherit output handle
      *
@@ -279,7 +255,7 @@ public:
      * @return self
      */
     inline TShellCommandOptions& SetInheritOutput(bool inherit) {
-        OutputMode = inherit ? HANDLE_INHERIT : HANDLE_STREAM;
+        InheritOutput = inherit;
         return *this;
     }
 
@@ -291,24 +267,23 @@ public:
      * @return self
      */
     inline TShellCommandOptions& SetInheritError(bool inherit) {
-        ErrorMode = inherit ? HANDLE_INHERIT : HANDLE_STREAM;
+        InheritError = inherit;
         return *this;
     }
 
 public:
-    bool ClearSignalMask = false;
-    bool CloseAllFdsOnExec = false;
-    bool AsyncMode = false;
-    size_t PollDelayMs = 0;
-    bool UseShell = false;
-    bool QuoteArguments = false;
-    bool DetachSession = false;
-    bool CloseStreams = false;
-    bool ShouldCloseInput = false;
-    EHandleMode InputMode = HANDLE_STREAM;
-    EHandleMode OutputMode = HANDLE_STREAM;
-    EHandleMode ErrorMode = HANDLE_STREAM;
-
+    bool ClearSignalMask;
+    bool CloseAllFdsOnExec;
+    bool AsyncMode;
+    size_t PollDelayMs;
+    bool UseShell;
+    bool QuoteArguments;
+    bool DetachSession;
+    bool CloseStreams;
+    bool ShouldCloseInput;
+    EHandleMode InputMode;
+    bool InheritOutput;
+    bool InheritError;
     /// @todo more options
     // bool SearchPath // search exe name in $PATH
     // bool UnicodeConsole
@@ -319,10 +294,9 @@ public:
     IOutputStream* ErrorStream;
     TUserOptions User;
     THashMap<TString, TString> Environment;
-    int Nice = 0;
+    int Nice;
 
     static const size_t DefaultSyncPollDelay = 1000; // ms
-    std::function<void()> FuncAfterFork = {};
 };
 
 /**
@@ -463,11 +437,6 @@ public:
      * @return self
      */
     TShellCommand& CloseInput();
-
-    /**
-     * @brief Get quoted command (for debug/view purposes only!)
-     **/
-    TString GetQuotedCommand() const;
 
 private:
     class TImpl;

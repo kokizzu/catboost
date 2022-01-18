@@ -4,7 +4,7 @@
 
 #include <catboost/private/libs/options/enums.h>
 
-#include <library/cpp/json/json_value.h>
+#include <library/json/json_value.h>
 
 #include <util/generic/fwd.h>
 #include <util/generic/maybe.h>
@@ -16,7 +16,7 @@
 
 
 namespace NPar {
-    class ILocalExecutor;
+    class TLocalExecutor;
 }
 
 
@@ -31,7 +31,7 @@ namespace NCB {
 
         virtual TVector<float> Process(ERawTargetType targetType,
                                        const TRawTarget& rawTarget,
-                                       NPar::ILocalExecutor* localExecutor) = 0;
+                                       NPar::TLocalExecutor* localExecutor) = 0;
 
         // call after all processing
         virtual ui32 GetClassCount() const = 0;
@@ -48,9 +48,7 @@ namespace NCB {
     THolder<ITargetConverter> MakeTargetConverter(bool isRealTarget,
                                                   bool isClass,
                                                   bool isMultiClass,
-                                                  bool isMultiLabel,
                                                   TMaybe<float> targetBorder,
-                                                  size_t targetDim,
                                                   TMaybe<ui32> classCount,
                                                   const TVector<NJson::TJsonValue>& inputClassNames);
 

@@ -1,6 +1,5 @@
 import os
 import sys
-from six import reraise
 
 import py
 
@@ -50,16 +49,9 @@ class DoctestModule(LoadedModule):
         optionflags = _pytest.doctest.get_optionflags(self)
         runner = doctest.DebugRunner(verbose=0, optionflags=optionflags)
 
-        try:
-            for test in finder.find(module, self.name[:-(len(".py"))]):
-                if test.examples:  # skip empty doctests
-                    yield _pytest.doctest.DoctestItem(test.name, self, runner, test)
-        except Exception:
-            import logging
-            logging.exception('DoctestModule failed, probably you can add NO_DOCTESTS() macro to ya.make')
-            etype, exc, tb = sys.exc_info()
-            msg = 'DoctestModule failed, probably you can add NO_DOCTESTS() macro to ya.make'
-            reraise(etype, type(exc)("{}\n{}".format(exc, msg)), tb)
+        for test in finder.find(module, self.name[:-(len(".py"))]):
+            if test.examples:  # skip empty doctests
+                yield _pytest.doctest.DoctestItem(test.name, self, runner, test)
 
 
 # NOTE: Since we are overriding collect method of pytest session, pytest hooks are not invoked during collection.
@@ -73,8 +65,9 @@ def pytest_ignore_collect(module, session, filenames_from_full_filters, accept_f
     test_file_filter = getattr(session.config.option, 'test_file_filter', None)
     if test_file_filter is None:
         return False
-    if module.name != test_file_filter.replace("/", "."):
-        return True
+    for filename in test_file_filter:  # in test_file_filter may be only one filename
+        if module.name != filename.replace("/", "."):
+            return True
     return False
 
 
@@ -101,13 +94,11 @@ class CollectionPlugin(object):
                 if not pytest_ignore_collect(module, session, filenames_filter, accept_filename_predicate):
                     yield module
 
-                if os.environ.get('YA_PYTEST_DISABLE_DOCTEST', 'no') == 'no':
-                    module = DoctestModule(test_module, session=session)
-                    if not pytest_ignore_collect(module, session, filenames_filter, accept_filename_predicate):
-                        yield module
+                module = DoctestModule(test_module, session=session)
+                if not pytest_ignore_collect(module, session, filenames_filter, accept_filename_predicate):
+                    yield module
 
-            if os.environ.get('YA_PYTEST_DISABLE_DOCTEST', 'no') == 'no':
-                for doctest_module in self._doctest_modules:
-                    yield DoctestModule(doctest_module, session=session, namespace=False)
+            for doctest_module in self._doctest_modules:
+                yield DoctestModule(doctest_module, session=session, namespace=False)
 
         session.collect = collect

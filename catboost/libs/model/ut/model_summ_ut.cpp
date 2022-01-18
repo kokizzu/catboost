@@ -3,7 +3,7 @@
 #include <catboost/private/libs/algo/apply.h>
 #include <catboost/libs/train_lib/train_model.h>
 
-#include <library/cpp/testing/unittest/registar.h>
+#include <library/unittest/registar.h>
 
 using namespace std;
 using namespace NCB;
@@ -27,7 +27,6 @@ static void AssertModelSumEqualSliced(TDataProviderPtr dataProvider, bool change
         nullptr,
         Nothing(),
         Nothing(),
-        Nothing(),
         dataProviders,
         Nothing(),
         &learnProgress,
@@ -36,12 +35,12 @@ static void AssertModelSumEqualSliced(TDataProviderPtr dataProvider, bool change
         {&evalResult});
 
     if (changeScale) {
-        bigModel.SetScaleAndBias({0.5, bigModel.GetScaleAndBias().GetBiasRef()});
+        bigModel.SetScaleAndBias({0.5, bigModel.GetScaleAndBias().Bias});
     }
     if (changeBias) {
-        bigModel.SetScaleAndBias({bigModel.GetScaleAndBias().Scale, {0.125}});
+        bigModel.SetScaleAndBias({bigModel.GetScaleAndBias().Scale, 0.125});
     }
-    auto bigResult = ApplyModelMulti(bigModel, *dataProvider);
+    auto bigResult = ApplyModelMulti(bigModel, *(dataProvider->ObjectsData));
     bigModel.ModelTrees.GetMutable()->DropUnusedFeatures();
     TVector<TFullModel> partModels;
     TVector<const TFullModel*> modelPtrs;
@@ -59,7 +58,7 @@ static void AssertModelSumEqualSliced(TDataProviderPtr dataProvider, bool change
         UNIT_ASSERT_EQUAL(*mergedModel.ModelTrees, *bigModel.ModelTrees);
     }
 
-    auto mergedResult = ApplyModelMulti(mergedModel, *dataProvider);
+    auto mergedResult = ApplyModelMulti(mergedModel, *dataProvider->ObjectsData);
     UNIT_ASSERT_VALUES_EQUAL(bigResult.ysize(), mergedResult.ysize());
     for (int idx = 0; idx < bigResult.ysize(); ++idx) {
         if (!changeScale && !changeBias) {

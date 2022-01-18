@@ -1,5 +1,7 @@
-- source_filter: "^contrib(?!/restricted/gstreamer/gst/parse)"
+- source_filter: "^contrib"
   includes:
+    - CL/cl.h
+    - CL/opencl.h
     - port.h
     - types.h
     - stat.h
@@ -35,6 +37,19 @@
   - afxwin.h
   - alpha/builtins.h
   - apr_iconv.h
+  - asio/basic_deadline_timer.hpp
+  - asio/buffer.hpp
+  - asio/deadline_timer.hpp
+  - asio/error_code.hpp
+  - asio/io_service.hpp
+  - asio/ip/host_name.hpp
+  - asio/ip/multicast.hpp
+  - asio/ip/tcp.hpp
+  - asio/ip/udp.hpp
+  - asio/read.hpp
+  - asio/ssl.hpp
+  - asio/time_traits.hpp
+  - asio/write.hpp
   - atheos/atomic.h
   - atheos/semaphore.h
   - atheos/threads.h
@@ -216,7 +231,10 @@
   - forwards.h
   - json_valueiterator.inl
   - value.h
+  - gnulib/printf.h
+  - gobject_probes.h
   - pthread/mit/sys/timers.h
+  - ../src/config.h
   - sljit/sljitLir.c
   - pcre_printint.c
   #ifdef defined(emacs) && CONTRIB && TRASH
@@ -247,12 +265,23 @@
   - BaseTsd.h
   - iphlpapi.h
 
-- source_filter: "^(?!contrib/python/line_profiler/)"
-  includes:
-  - timers.h
-
 - includes:
   - cpu-features.h
+  - cuda.h
+  - cublas.h
+  - cublas_v2.h
+  - cublasLt.h
+  - cuda_runtime.h
+  - cuda_runtime_api.h
+  - cusolverDn.h
+  - cupti.h
+  - curand.h
+  - curand_mtgp32_host.h
+  - curand_mtgp32dc_p_11213.h
+  - cusparse.h
+  - cooperative_groups.h
+  - driver_types.h
+  - nvToolsExt.h
   - cuda/include/cuComplex.h
   - cuda/include/cublas_v2.h
   - cuda/include/cuda.h
@@ -325,7 +354,6 @@
   - sys/mpctl.h
   - sys/mutex.h
   - sys/rwlock.h
-  - sys/semaphore.h
   - sys/smp.h
   - sys/stdint.h
   - sys/systm.h
@@ -333,6 +361,7 @@
   - sys/timespec.h
   - sys/umtx.h
   - sys/uuid.h
+  - timers.h
   - ucred.h
   - varargs.h
   - vm/vm_param.h
@@ -672,7 +701,11 @@
   - tr1/complex
   - tbb/scalable_allocator.h
   - libmemcached/dtrace_probes.h
-  # unknown
+  # CUDA include files, potentially referenced by cv/imgclassifiers/contrib
+  - cuda_fp16.h
+  - curand_kernel.h
+  - host_defines.h
+  - vector_types.h
   - win_stdint.h
   - probes.h
   - thread.h
@@ -697,6 +730,7 @@
   - sys/systeminfo.h
   - sys/vfstab.h
   - sys/vmount.h
+  - libxsmm.h
   - CL/sycl.hpp
   # libpcap files
   - os-proto.h
@@ -789,6 +823,7 @@
   - tr1/functional
   - time64.h
   - extern.h
+  - reentrant.h
   #if defined(__FreeBSD__)
   - _ctype.h
   - alias.h
@@ -797,6 +832,7 @@
   - gelf.h
   - gnuregex.h
   - kafs.h
+  - libelf.h
   - login_cap.h
   - machine/_inttypes.h
   - machine/_stdint.h
@@ -962,11 +998,17 @@
   #endif
   - zend_exceptions.h
   #if MATLAB_MEX_FILE
-  # unknown
+  # ICU
+  # CUDA include files, potentially referenced by cv/imgclassifiers/contrib
+  - cuComplex.h
+  - cuda/extras/CUPTI/include/cupti.h
+  - cufft.h
   - GL/glx.h
   - CL/va_ext.h
   - sys/sysconf.h
+  - npp.h
   - ivx.hpp
+  - cuda_gl_interop.h
   - clAmdBlas.h
   - clAmdFft.h
   - va/va.h
@@ -981,3 +1023,8 @@
   - zone.h
   - netpacket/if_packet.h
   # end libpcap files
+
+- source_filter: "^ml/tensorflow/ytensorflow/cpp"
+  includes:
+  # tensorflow 1.14 header, doesn't exist in current arcadia tensorflow 1.10
+    - tensorflow/core/util/gpu_kernel_helper.h

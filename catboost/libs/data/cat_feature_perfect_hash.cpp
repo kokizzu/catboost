@@ -6,13 +6,13 @@
 
 
 template <>
-void Out<NCB::TCatFeatureUniqueValuesCounts>(IOutputStream& out, TTypeTraits<NCB::TCatFeatureUniqueValuesCounts>::TFuncParam counts) {
+void Out<NCB::TCatFeatureUniqueValuesCounts>(IOutputStream& out, NCB::TCatFeatureUniqueValuesCounts counts) {
     out << counts.OnLearnOnly << ',' << counts.OnAll;
 }
 
 
 template <>
-void Out<NCB::TValueWithCount>(IOutputStream &out, TTypeTraits<NCB::TValueWithCount>::TFuncParam valueWithCount) {
+void Out<NCB::TValueWithCount>(IOutputStream& out, NCB::TValueWithCount valueWithCount) {
     out << "Value="<< valueWithCount.Value << ",Count=" << valueWithCount.Count;
 }
 

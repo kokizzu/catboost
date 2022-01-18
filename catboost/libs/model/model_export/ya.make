@@ -25,7 +25,7 @@ PEERDIR(
     catboost/private/libs/labels
     contrib/libs/coreml
     contrib/libs/onnx
-    library/cpp/resource
+    library/resource
 )
 
 RESOURCE(

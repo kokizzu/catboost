@@ -4,9 +4,7 @@
 #include "iostatus.h"
 #include "poller.h"
 #include "schedule_callback.h"
-#include "stack/stack_common.h"
 #include "trampoline.h"
-#include "custom_time.h"
 
 #include <library/cpp/containers/intrusive_rb_tree/rb_tree.h>
 
@@ -15,7 +13,6 @@
 #include <util/generic/intrlist.h>
 #include <util/datetime/base.h>
 #include <util/generic/maybe.h>
-#include <util/generic/function.h>
 
 
 #define EWAKEDUP 34567
@@ -25,9 +22,6 @@ struct TContRep;
 class TContExecutor;
 class TContPollEvent;
 
-namespace NCoro::NStack {
-    class IAllocator;
-}
 
 class TCont : private TIntrusiveListItem<TCont> {
     struct TJoinWait: public TIntrusiveListItem<TJoinWait> {
@@ -46,10 +40,11 @@ class TCont : private TIntrusiveListItem<TCont> {
 
 private:
     TCont(
-        NCoro::NStack::IAllocator& allocator,
-        uint32_t stackSize,
+        ui32 stackSize,
+        NCoro::TStack::EGuard stackGuard,
         TContExecutor& executor,
-        NCoro::TTrampoline::TFunc func,
+        TContFunc func,
+        void* arg,
         const char* name
     ) noexcept;
 
@@ -99,8 +94,6 @@ public:
 
     void ReSchedule() noexcept;
 
-    void Switch() noexcept;
-
     void SwitchTo(TExceptionSafeContext* ctx) {
         Trampoline_.SwitchTo(ctx);
     }
@@ -121,8 +114,6 @@ private:
     bool Scheduled_ = false;
 };
 
-TCont* RunningCont();
-
 
 template <class Functor>
 static void ContHelperFunc(TCont* cont, void* arg) {
@@ -134,15 +125,6 @@ static void ContHelperMemberFunc(TCont* c, void* arg) {
     ((reinterpret_cast<T*>(arg))->*M)(c);
 }
 
-class IUserEvent
-    : public TIntrusiveListItem<IUserEvent>
-{
-public:
-    virtual ~IUserEvent() = default;
-
-    virtual void Execute() = 0;
-};
-
 /// Central coroutine class.
 /// Note, coroutines are single-threaded, and all methods must be called from the single thread
 class TContExecutor {
@@ -151,12 +133,10 @@ class TContExecutor {
 
 public:
     TContExecutor(
-        uint32_t defaultStackSize,
+        ui32 defaultStackSize,
         THolder<IPollerFace> poller = IPollerFace::Default(),
         NCoro::IScheduleCallback* = nullptr,
-        NCoro::NStack::EGuard stackGuard = NCoro::NStack::EGuard::Canary,
-        TMaybe<NCoro::NStack::TPoolAllocatorSettings> poolSettings = Nothing(),
-        NCoro::ITime* time = nullptr
+        NCoro::TStack::EGuard stackGuard = NCoro::TStack::EGuard::Canary
     );
 
     ~TContExecutor();
@@ -174,6 +154,10 @@ public:
     template <typename T, void (T::*M)(TCont*)>
     void Execute(T* obj) noexcept {
         Execute(ContHelperMemberFunc<T, M>, obj);
+    }
+
+    TExceptionSafeContext* SchedContext() noexcept {
+        return &SchedContext_;
     }
 
     template <class Functor>
@@ -197,12 +181,6 @@ public:
     TCont* Create(
         TContFunc func,
         void* arg,
-        const char* name,
-        TMaybe<ui32> customStackSize = Nothing()
-    ) noexcept;
-
-    TCont* CreateOwned(
-        NCoro::TTrampoline::TFunc func,
         const char* name,
         TMaybe<ui32> customStackSize = Nothing()
     ) noexcept;
@@ -235,8 +213,6 @@ public:
         return TotalConts() - TotalReadyConts();
     }
 
-    NCoro::NStack::TAllocatorStats GetAllocatorStats() const noexcept;
-
     // TODO(velavokr): rename, it is just CancelAll actually
     void Abort() noexcept;
 
@@ -248,25 +224,15 @@ public:
         return FailOnError_;
     }
 
-    void RegisterInWaitQueue(NCoro::TContPollEvent* event) {
-        WaitQueue_.Register(event);
-    }
-
     void ScheduleIoWait(TFdEvent* event) {
-        RegisterInWaitQueue(event);
+        WaitQueue_.Register(event);
         Poller_.Schedule(event);
     }
 
     void ScheduleIoWait(TTimerEvent* event) noexcept {
-        RegisterInWaitQueue(event);
+        WaitQueue_.Register(event);
     }
 
-    void ScheduleUserEvent(IUserEvent* event) {
-        UserEvents_.PushBack(event);
-    }
-
-    void Pause();
-    TInstant Now();
 private:
     void Release(TCont* cont) noexcept;
 
@@ -280,16 +246,18 @@ private:
 
     void ScheduleExecutionNow(TCont* cont) noexcept;
 
+    void Activate(TCont* cont) noexcept;
+
     void DeleteScheduled() noexcept;
 
     void WaitForIO();
 
-    void Poll(TInstant deadline);
+    void ProcessEvents();
 
 private:
     NCoro::IScheduleCallback* const CallbackPtr_ = nullptr;
-    const uint32_t DefaultStackSize_;
-    THolder<NCoro::NStack::IAllocator> StackAllocator_;
+    const ui32 DefaultStackSize_;
+    const NCoro::TStack::EGuard StackGuard_;
 
     TExceptionSafeContext SchedContext_;
 
@@ -298,14 +266,9 @@ private:
     TContList ReadyNext_;
     NCoro::TEventWaitQueue WaitQueue_;
     NCoro::TContPoller Poller_;
-    NCoro::TContPoller::TEvents PollerEvents_;
-    TInstant LastPoll_;
-
-    TIntrusiveList<IUserEvent> UserEvents_;
+    NCoro::TContPoller::TEvents Events_;
 
     size_t Allocated_ = 0;
     TCont* Current_ = nullptr;
     bool FailOnError_ = false;
-    bool Paused_ = false;
-    NCoro::ITime* Time_ = nullptr;
 };

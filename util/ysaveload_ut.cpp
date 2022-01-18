@@ -1,6 +1,6 @@
 #include "ysaveload.h"
 
-#include <library/cpp/testing/unittest/registar.h>
+#include <library/unittest/registar.h>
 
 #include <util/memory/pool.h>
 #include <util/stream/buffer.h>
@@ -411,11 +411,11 @@ private:
         TBufferStream s;
         ::Save(&s, v);
         ::Load(&s, v);
-        UNIT_ASSERT_VALUES_EQUAL(std::get<T>(v), expected);
+        UNIT_ASSERT_VALUES_EQUAL(Get<T>(v), expected);
     }
 
     void TestVariant() {
-        std::variant<int, bool, TString, TVector<char>> v(1);
+        TVariant<int, bool, TString, TVector<char>> v(1);
         TestVariantImpl(v, 42);
         TestVariantImpl(v, true);
         TestVariantImpl(v, TString("foo"));
@@ -425,7 +425,7 @@ private:
         TBufferStream s;
         ::Save(&s, v);
 
-        std::variant<char, bool> v2 = false;
+        TVariant<char, bool> v2 = false;
         UNIT_ASSERT_EXCEPTION(::Load(&s, v2), TLoadEOF);
     }
 };

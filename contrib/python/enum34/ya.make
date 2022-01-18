@@ -1,14 +1,19 @@
 
 
-PY2_LIBRARY() # Backport from Python 3.
+PY_LIBRARY() # Backport from Python 3.
 
-LICENSE(BSD-3-Clause)
+LICENSE(
+    BSD
+)
 
-VERSION(1.1.10)
+VERSION(
+    1.1.6
+)
 
 PY_SRCS(
     TOP_LEVEL
     enum/__init__.py
+    enum/enum.py
 )
 
 RESOURCE_FILES(

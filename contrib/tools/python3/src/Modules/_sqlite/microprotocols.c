@@ -24,6 +24,7 @@
  */
 
 #include <Python.h>
+#include <structmember.h>
 
 #include "cursor.h"
 #include "microprotocols.h"
@@ -74,73 +75,59 @@ pysqlite_microprotocols_add(PyTypeObject *type, PyObject *proto, PyObject *cast)
 PyObject *
 pysqlite_microprotocols_adapt(PyObject *obj, PyObject *proto, PyObject *alt)
 {
-    _Py_IDENTIFIER(__adapt__);
-    _Py_IDENTIFIER(__conform__);
-    PyObject *adapter, *key, *adapted;
+    PyObject *adapter, *key;
 
     /* we don't check for exact type conformance as specified in PEP 246
        because the pysqlite_PrepareProtocolType type is abstract and there is no
        way to get a quotable object to be its instance */
 
     /* look for an adapter in the registry */
-    key = Py_BuildValue("(OO)", (PyObject*)Py_TYPE(obj), proto);
+    key = Py_BuildValue("(OO)", (PyObject*)obj->ob_type, proto);
     if (!key) {
         return NULL;
     }
-    adapter = PyDict_GetItemWithError(psyco_adapters, key);
+    adapter = PyDict_GetItem(psyco_adapters, key);
     Py_DECREF(key);
     if (adapter) {
-        Py_INCREF(adapter);
-        adapted = PyObject_CallOneArg(adapter, obj);
-        Py_DECREF(adapter);
+        PyObject *adapted = PyObject_CallFunctionObjArgs(adapter, obj, NULL);
         return adapted;
     }
-    if (PyErr_Occurred()) {
-        return NULL;
-    }
 
-    /* try to have the protocol adapt this object */
-    if (_PyObject_LookupAttrId(proto, &PyId___adapt__, &adapter) < 0) {
-        return NULL;
-    }
-    if (adapter) {
-        adapted = PyObject_CallOneArg(adapter, obj);
-        Py_DECREF(adapter);
+    /* try to have the protocol adapt this object*/
+    if (PyObject_HasAttrString(proto, "__adapt__")) {
+        _Py_IDENTIFIER(__adapt__);
+        PyObject *adapted = _PyObject_CallMethodId(proto, &PyId___adapt__, "O", obj);
 
-        if (adapted == Py_None) {
-            Py_DECREF(adapted);
+        if (adapted) {
+            if (adapted != Py_None) {
+                return adapted;
+            } else {
+                Py_DECREF(adapted);
+            }
         }
-        else if (adapted || !PyErr_ExceptionMatches(PyExc_TypeError)) {
-            return adapted;
-        }
-        else {
-            PyErr_Clear();
-        }
+
+        if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError))
+            return NULL;
     }
 
     /* and finally try to have the object adapt itself */
-    if (_PyObject_LookupAttrId(obj, &PyId___conform__, &adapter) < 0) {
-        return NULL;
-    }
-    if (adapter) {
-        adapted = PyObject_CallOneArg(adapter, proto);
-        Py_DECREF(adapter);
+    if (PyObject_HasAttrString(obj, "__conform__")) {
+        _Py_IDENTIFIER(__conform__);
+        PyObject *adapted = _PyObject_CallMethodId(obj, &PyId___conform__,"O", proto);
 
-        if (adapted == Py_None) {
-            Py_DECREF(adapted);
+        if (adapted) {
+            if (adapted != Py_None) {
+                return adapted;
+            } else {
+                Py_DECREF(adapted);
+            }
         }
-        else if (adapted || !PyErr_ExceptionMatches(PyExc_TypeError)) {
-            return adapted;
-        }
-        else {
-            PyErr_Clear();
+
+        if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_TypeError)) {
+            return NULL;
         }
     }
 
-    if (alt) {
-        Py_INCREF(alt);
-        return alt;
-    }
     /* else set the right exception and return NULL */
     PyErr_SetString(pysqlite_ProgrammingError, "can't adapt");
     return NULL;

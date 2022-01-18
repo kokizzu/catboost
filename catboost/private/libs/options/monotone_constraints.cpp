@@ -11,7 +11,7 @@ using namespace NCB;
 using namespace NJson;
 using namespace NCatboostOptions;
 
-static constexpr TStringBuf constraintRegex = "0|1|-1";
+static constexpr auto constraintRegex = AsStringBuf("0|1|-1");
 
 static void LeaveOnlyNonTrivialConstraints(TJsonValue* monotoneConstraintsJsonOptions) {
     TJsonValue nonTrivialConstraints(EJsonValueType::JSON_MAP);
@@ -30,6 +30,6 @@ void ConvertMonotoneConstraintsToCanonicalFormat(TJsonValue* catBoostJsonOptions
         return;
     }
     TJsonValue& constraintsRef = treeOptions["monotone_constraints"];
-    ConvertFeatureOptionsToCanonicalFormat<int>(TStringBuf("monotone_constraints"), constraintRegex, &constraintsRef);
+    ConvertFeatureOptionsToCanonicalFormat<int>(AsStringBuf("monotone_constraints"), constraintRegex, &constraintsRef);
     LeaveOnlyNonTrivialConstraints(&constraintsRef);
 }

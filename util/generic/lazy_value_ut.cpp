@@ -1,6 +1,6 @@
 #include "lazy_value.h"
 
-#include <library/cpp/testing/unittest/registar.h>
+#include <library/unittest/registar.h>
 
 Y_UNIT_TEST_SUITE(TLazyValueTestSuite) {
     Y_UNIT_TEST(TestLazyValue) {
@@ -75,7 +75,7 @@ Y_UNIT_TEST_SUITE(TLazyValueTestSuite) {
     Y_UNIT_TEST(TestLazyValueMoveValueInitialization) {
         size_t numCopies = 0;
         TCopyCounter counter{numCopies};
-        TLazyValue<TCopyCounter> value{[v = std::move(counter)]() mutable { return std::move(v); }};
+        TLazyValue<TCopyCounter> value{[v=std::move(counter)]() mutable { return std::move(v); }};
         value.InitDefault();
         UNIT_ASSERT_EQUAL(numCopies, 0);
     }
@@ -83,7 +83,7 @@ Y_UNIT_TEST_SUITE(TLazyValueTestSuite) {
     Y_UNIT_TEST(TestLazyValueCopyValueInitialization) {
         size_t numCopies = 0;
         TCopyCounter counter{numCopies};
-        TLazyValue<TCopyCounter> value{[&counter]() { return counter; }};
+        TLazyValue<TCopyCounter> value{[&counter](){ return counter; }};
         UNIT_ASSERT_EQUAL(numCopies, 0);
         value.InitDefault();
         UNIT_ASSERT_EQUAL(numCopies, 1);
@@ -94,16 +94,16 @@ Y_UNIT_TEST_SUITE(TLazyValueTestSuite) {
         static size_t CountParseDataCalled;
 
         TValueProvider()
-            : Data_([&] { return this->ParseData(); })
+            : Data([&] { return this->ParseData(); })
         {
         }
 
         const TString& GetData() const {
-            return *Data_;
+            return *Data;
         }
 
     private:
-        TLazyValue<TString> Data_;
+        TLazyValue<TString> Data;
 
         TString ParseData() {
             CountParseDataCalled++;

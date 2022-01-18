@@ -25,9 +25,9 @@ static void CalcLeafDer(
     ELeavesEstimation estimationMethod,
     TArrayRef<TDers> weightedDers,
     TSum* leafDer,
-    NPar::ILocalExecutor* localExecutor
+    NPar::TLocalExecutor* localExecutor
 ) {
-    NPar::ILocalExecutor::TExecRangeParams blockParams(0, objectsCount);
+    NPar::TLocalExecutor::TExecRangeParams blockParams(0, objectsCount);
     blockParams.SetBlockCount(CB_THREAD_LIMIT);
 
     TVector<TDers> blockBucketDers(
@@ -147,14 +147,14 @@ static void UpdateApproxDeltas(
     bool storeExpApprox,
     int docCount,
     double leafDelta,
-    NPar::ILocalExecutor* localExecutor,
+    NPar::TLocalExecutor* localExecutor,
     TArrayRef<double> deltas
 ) {
     if (storeExpApprox) {
         leafDelta = fast_exp(leafDelta);
     }
 
-    NPar::ILocalExecutor::TExecRangeParams blockParams(0, docCount);
+    NPar::TLocalExecutor::TExecRangeParams blockParams(0, docCount);
     blockParams.SetBlockSize(1000);
     const auto getUpdateApproxBlockLambda = [&](auto boolConst) -> std::function<void(int)> {
         return [=](int blockIdx) {
@@ -186,7 +186,7 @@ static void CalcExactLeafDeltas(
     for (int i = 0; i < objectsCount; i++) {
         samples[i] = labels[i] - approxes[i];
     }
-    leafDelta = *NCB::CalcOneDimensionalOptimumConstApprox(lossDescription, samples, weights);
+    leafDelta = *NCB::CalcOptimumConstApprox(lossDescription, samples, weights);
 }
 
 static void CalcLeafValuesSimple(
@@ -194,7 +194,7 @@ static void CalcLeafValuesSimple(
     const NCatboostOptions::TCatBoostOptions& params,
     TLeafStatistics* statistics,
     TArrayRef<TDers> weightedDers,
-    NPar::ILocalExecutor* localExecutor
+    NPar::TLocalExecutor* localExecutor
 ) {
     Y_ASSERT(error.GetErrorType() == EErrorType::PerObjectError);
     const auto& learnerOptions = params.ObliviousTreeOptions.Get();
@@ -309,7 +309,7 @@ void CalcLeafValues(
     const NCatboostOptions::TCatBoostOptions& params,
     TLeafStatistics* statistics,
     TRestorableFastRng64* rng,
-    NPar::ILocalExecutor* localExecutor,
+    NPar::TLocalExecutor* localExecutor,
     TArrayRef<TDers> weightedDers
 ) {
     Y_ASSERT(error.GetErrorType() == EErrorType::PerObjectError);
@@ -322,8 +322,8 @@ void CalcLeafValues(
         return;
     }
 
-    const bool isMultiTarget = dynamic_cast<const TMultiDerCalcer*>(&error) != nullptr;
-    if (statistics->GetApproxDimension() == 1 && !isMultiTarget) {
+    const bool isMultiRegression = dynamic_cast<const TMultiDerCalcer*>(&error) != nullptr;
+    if (statistics->GetApproxDimension() == 1 && !isMultiRegression) {
         CalcLeafValuesSimple(
             error,
             params,

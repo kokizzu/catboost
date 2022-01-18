@@ -1,13 +1,12 @@
 #include "yeti_rank_pointwise.cuh"
 #include "radix_sort_block.cuh"
 #include <catboost/cuda/cuda_lib/kernel/kernel.cuh>
-#include <library/cpp/cuda/wrappers/arch.cuh>
-#include <library/cpp/cuda/wrappers/cub_include.h>
+#include <library/cuda/wrappers/arch.cuh>
 #include <catboost/cuda/cuda_util/kernel/kernel_helpers.cuh>
 #include <catboost/cuda/cuda_util/kernel/fill.cuh>
 #include <catboost/cuda/cuda_util/kernel/random_gen.cuh>
 #include <catboost/cuda/cuda_util/kernel/scan.cuh>
-#include _CUB_INCLUDE(cub/block/block_radix_sort.cuh)
+#include <contrib/libs/cub/cub/block/block_radix_sort.cuh>
 
 namespace NKernel
 {

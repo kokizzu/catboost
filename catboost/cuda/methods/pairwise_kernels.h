@@ -170,7 +170,7 @@ namespace NKernelHost {
         }
     };
 
-    class TCholeskySolverKernel: public TKernelBase<NKernel::TCholeskySolverContext> {
+    class TCholeskySolverKernel: public TStatelessKernel {
     private:
         TCudaBufferPtr<float> Matrices;
         TCudaBufferPtr<float> Solutions;
@@ -188,12 +188,9 @@ namespace NKernelHost {
         {
         }
 
-        using TKernelContext = NKernel::TCholeskySolverContext;
-        THolder<TKernelContext> PrepareContext(IMemoryManager& manager) const;
-
         Y_SAVELOAD_DEFINE(Matrices, Solutions, SolutionsSlice, RemoveLast);
 
-        void Run(const TCudaStream& stream, TKernelContext&) const;
+        void Run(const TCudaStream& stream) const;
     };
 
     class TCalcScoresKernel: public TStatelessKernel {

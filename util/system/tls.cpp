@@ -9,7 +9,7 @@
 #include <util/generic/vector.h>
 
 #if defined(_unix_)
-    #include <pthread.h>
+#include <pthread.h>
 #endif
 
 using namespace NTls;
@@ -242,8 +242,6 @@ TKey::TKey(TDtor dtor)
     : Impl_(new TImpl(dtor))
 {
 }
-
-TKey::TKey(TKey&&) noexcept = default;
 
 TKey::~TKey() = default;
 

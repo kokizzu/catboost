@@ -14,7 +14,7 @@
 #include <catboost/private/libs/algo_helpers/langevin_utils.h>
 #include <catboost/private/libs/algo_helpers/online_predictor.h>
 
-#include <library/cpp/threading/local_executor/local_executor.h>
+#include <library/threading/local_executor/local_executor.h>
 
 void CalcApproxDeltaMulti(
     const TFold& fold,
@@ -93,7 +93,7 @@ void CalcApproxDeltaMulti(
         TVector<double> curDer(approxDimension);
         THessianInfo curDer2(approxDimension * useHessian, error.GetHessianType());
 
-        auto updateApproxesImpl = [&](auto useHessian, auto isMultiTarget, auto useWeights) {
+        auto updateApproxesImpl = [&](auto useHessian, auto isMultiRegression, auto useWeights) {
             for (int docIdx = bt.BodyFinish; docIdx < bt.TailFinish; ++docIdx) {
                 const double w = useWeights ? weight[docIdx] : 1;
                 for (auto dim : xrange(approxDimension)) {
@@ -105,7 +105,7 @@ void CalcApproxDeltaMulti(
                 }
                 TSumMulti& curLeafDers = leafDers[indices[docIdx]];
                 if (useHessian) {
-                    if (isMultiTarget) {
+                    if (isMultiRegression) {
                         multiError->CalcDers(curApprox, curTarget, w, &curDer, &curDer2);
                     } else {
                         error.CalcDersMulti(curApprox, target[0][docIdx], w, &curDer, &curDer2);
@@ -114,7 +114,7 @@ void CalcApproxDeltaMulti(
                     CalcDeltaNewtonMulti(curLeafDers, l2Regularizer, bt.BodySumWeight, bt.BodyFinish, &curDelta);
                 } else {
                     Y_ASSERT(estimationMethod == ELeavesEstimation::Gradient);
-                    if (isMultiTarget) {
+                    if (isMultiRegression) {
                         multiError->CalcDers(curApprox, curTarget, w, &curDer, /*der2*/nullptr);
                     } else {
                         error.CalcDersMulti(curApprox, target[0][docIdx], w, &curDer, /*der2*/nullptr);
@@ -128,7 +128,7 @@ void CalcApproxDeltaMulti(
             }
         };
 
-        DispatchGenericLambda(updateApproxesImpl, useHessian, /*isMultiTarget*/multiError != nullptr, !weight.empty());
+        DispatchGenericLambda(updateApproxesImpl, useHessian, /*isMultiRegression*/multiError != nullptr, !weight.empty());
     };
 
     bool haveBacktrackingObjective;

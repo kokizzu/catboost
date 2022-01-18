@@ -6,11 +6,10 @@
 namespace NCB {
 
     THolder<ILineDataReader> GetLineDataReader(const TPathWithScheme& pathWithScheme,
-                                               const TDsvFormatOptions& format,
-                                               bool keepLineOrder)
+                                               const TDsvFormatOptions& format)
     {
         return GetProcessor<ILineDataReader, TLineDataReaderArgs>(
-            pathWithScheme, TLineDataReaderArgs{pathWithScheme, format, keepLineOrder}
+            pathWithScheme, TLineDataReaderArgs{pathWithScheme, format}
         );
     }
 

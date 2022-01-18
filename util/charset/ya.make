@@ -1,13 +1,8 @@
 LIBRARY()
 
 
-SUBSCRIBER(g:util-subscribers)
 
 NO_UTIL()
-
-IF (TSTRING_IS_STD_STRING)
-    CFLAGS(GLOBAL -DTSTRING_IS_STD_STRING)
-ENDIF()
 
 JOIN_SRCS(
     all_charset.cpp
@@ -29,7 +24,3 @@ ELSE()
 ENDIF()
 
 END()
-
-RECURSE_FOR_TESTS(
-    ut
-)

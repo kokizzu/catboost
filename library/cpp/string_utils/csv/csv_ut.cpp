@@ -1,5 +1,5 @@
 #include "csv.h"
-#include <library/cpp/testing/unittest/registar.h>
+#include <library/unittest/registar.h>
 
 namespace NCsvFormat {
     Y_UNIT_TEST_SUITE(CSVSplit) {

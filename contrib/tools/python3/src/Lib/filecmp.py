@@ -13,7 +13,6 @@ Functions:
 import os
 import stat
 from itertools import filterfalse
-from types import GenericAlias
 
 __all__ = ['clear_cache', 'cmp', 'dircmp', 'cmpfiles', 'DEFAULT_IGNORES']
 
@@ -36,9 +35,8 @@ def cmp(f1, f2, shallow=True):
 
     f2 -- Second file name
 
-    shallow -- treat files as identical if their stat signatures (type, size,
-               mtime) are identical. Otherwise, files are considered different
-               if their sizes or contents differ.  [default: True]
+    shallow -- Just check stat signature (do not read the files).
+               defaults to True.
 
     Return value:
 
@@ -158,12 +156,12 @@ class dircmp:
             ok = 1
             try:
                 a_stat = os.stat(a_path)
-            except OSError:
+            except OSError as why:
                 # print('Can\'t stat', a_path, ':', why.args[1])
                 ok = 0
             try:
                 b_stat = os.stat(b_path)
-            except OSError:
+            except OSError as why:
                 # print('Can\'t stat', b_path, ':', why.args[1])
                 ok = 0
 
@@ -248,9 +246,6 @@ class dircmp:
             raise AttributeError(attr)
         self.methodmap[attr](self)
         return getattr(self, attr)
-
-    __class_getitem__ = classmethod(GenericAlias)
-
 
 def cmpfiles(a, b, common, shallow=True):
     """Compare common files in two directories.

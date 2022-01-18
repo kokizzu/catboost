@@ -1,12 +1,12 @@
 #include "atomic.h"
 
-#include <library/cpp/testing/unittest/registar.h>
+#include <library/unittest/registar.h>
 
 #include <util/generic/ylimits.h>
 
 template <typename TAtomic>
 class TAtomicTest
-    : public TTestBase {
+   : public TTestBase {
     UNIT_TEST_SUITE(TAtomicTest);
     UNIT_TEST(TestAtomicInc1)
     UNIT_TEST(TestAtomicInc2)
@@ -205,11 +205,11 @@ struct TChooser<T1, T1, T2> {
 template <typename T1>
 struct TChooser<T1, T1, T1> {};
 
-    #if defined(__IOS__) && defined(_32_)
+#if defined(__IOS__) && defined(_32_)
 using TAltAtomic = int;
-    #else
+#else
 using TAltAtomic = volatile TChooser<TAtomicBase, long, long long>::TdType;
-    #endif
+#endif
 
 class TTTest: public TAtomicTest<TAltAtomic> {
 public:

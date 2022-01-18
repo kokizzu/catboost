@@ -4,11 +4,10 @@
 #include "binarization_options.h"
 #include "plain_options_helper.h"
 #include "text_processing_options.h"
-#include "embedding_processing_options.h"
 
 #include <catboost/libs/logging/logging.h>
 
-#include <library/cpp/json/json_value.h>
+#include <library/json/json_value.h>
 
 #include <util/generic/strbuf.h>
 #include <util/string/builder.h>
@@ -245,8 +244,7 @@ static Y_NO_INLINE void DeleteSeenOption(NJson::TJsonValue* options, const TStri
 void NCatboostOptions::PlainJsonToOptions(
     const NJson::TJsonValue& plainOptions,
     NJson::TJsonValue* options,
-    NJson::TJsonValue* outputOptions,
-    NJson::TJsonValue* featuresSelectOptions
+    NJson::TJsonValue* outputOptions
 ) {
     ValidatePlainOptionsConsistency(plainOptions);
     TSet<TString> seenKeys;
@@ -264,10 +262,6 @@ void NCatboostOptions::PlainJsonToOptions(
     if (plainOptions.Has("eval_metric")) {
         trainOptions["metrics"]["eval_metric"] = LossDescriptionToJson(plainOptions["eval_metric"].GetStringSafe());
         seenKeys.insert("eval_metric");
-    }
-
-    if (plainOptions.Has("callbacks")) {
-        seenKeys.insert("callbacks");
     }
 
     if (plainOptions.Has("custom_metric") || plainOptions.Has("custom_loss")) {
@@ -334,7 +328,6 @@ void NCatboostOptions::PlainJsonToOptions(
     CopyOption(plainOptions, "model_shrink_rate", &boostingOptionsRef, &seenKeys);
     CopyOption(plainOptions, "model_shrink_mode", &boostingOptionsRef, &seenKeys);
     CopyOption(plainOptions, "langevin", &boostingOptionsRef, &seenKeys);
-    CopyOption(plainOptions, "posterior_sampling", &boostingOptionsRef, &seenKeys);
     CopyOption(plainOptions, "diffusion_temperature", &boostingOptionsRef, &seenKeys);
 
     auto& odConfig = boostingOptionsRef["od_config"];
@@ -351,8 +344,6 @@ void NCatboostOptions::PlainJsonToOptions(
     CopyOption(plainOptions, "leaf_estimation_backtracking", &treeOptions, &seenKeys);
     CopyOption(plainOptions, "depth", &treeOptions, &seenKeys);
     CopyOption(plainOptions, "l2_leaf_reg", &treeOptions, &seenKeys);
-    CopyOption(plainOptions, "meta_l2_exponent", &treeOptions, &seenKeys);
-    CopyOption(plainOptions, "meta_l2_frequency", &treeOptions, &seenKeys);
     CopyOption(plainOptions, "bayesian_matrix_reg", &treeOptions, &seenKeys);
     CopyOption(plainOptions, "model_size_reg", &treeOptions, &seenKeys);
     CopyOption(plainOptions, "dev_score_calc_obj_block_size", &treeOptions, &seenKeys);
@@ -439,10 +430,8 @@ void NCatboostOptions::PlainJsonToOptions(
     CopyOption(plainOptions, "classes_count", &dataProcessingOptions, &seenKeys);
     CopyOption(plainOptions, "class_names", &dataProcessingOptions, &seenKeys);
     CopyOption(plainOptions, "class_weights", &dataProcessingOptions, &seenKeys);
-    CopyOption(plainOptions, "auto_class_weights", &dataProcessingOptions, &seenKeys);
     CopyOption(plainOptions, "dev_default_value_fraction_for_sparse", &dataProcessingOptions, &seenKeys);
     CopyOption(plainOptions, "dev_sparse_array_indexing", &dataProcessingOptions, &seenKeys);
-    CopyOption(plainOptions, "force_unit_auto_pair_weights", &dataProcessingOptions, &seenKeys);
     CopyOption(plainOptions, "gpu_cat_features_storage", &dataProcessingOptions, &seenKeys);
     CopyOption(plainOptions, "dev_leafwise_scoring", &dataProcessingOptions, &seenKeys);
     CopyOption(plainOptions, "dev_group_features", &dataProcessingOptions, &seenKeys);
@@ -459,9 +448,6 @@ void NCatboostOptions::PlainJsonToOptions(
     auto& textProcessingOptions = dataProcessingOptions["text_processing_options"];
     ParseTextProcessingOptionsFromPlainJson(plainOptions, &textProcessingOptions, &seenKeys);
 
-    auto& embeddingProcessingOptions = dataProcessingOptions["embedding_processing_options"];
-    ParseEmbeddingProcessingOptionsFromPlainJson(plainOptions, &embeddingProcessingOptions, &seenKeys);
-
     //system
     auto& systemOptions = trainOptions["system_options"];
     systemOptions.SetType(NJson::JSON_MAP);
@@ -477,8 +463,6 @@ void NCatboostOptions::PlainJsonToOptions(
     CopyOption(plainOptions, "node_port", &systemOptions, &seenKeys);
     CopyOption(plainOptions, "file_with_hosts", &systemOptions, &seenKeys);
 
-    //pool metainfo
-    CopyOption(plainOptions, "pool_metainfo_options", &trainOptions, &seenKeys);
 
     //rest
     CopyOption(plainOptions, "random_seed", &trainOptions, &seenKeys);
@@ -486,16 +470,6 @@ void NCatboostOptions::PlainJsonToOptions(
     CopyOption(plainOptions, "detailed_profile", &trainOptions, &seenKeys);
     CopyOption(plainOptions, "task_type", &trainOptions, &seenKeys);
     CopyOption(plainOptions, "metadata", &trainOptions, &seenKeys);
-
-    if (featuresSelectOptions) {
-        CopyOption(plainOptions, "features_for_select", featuresSelectOptions, &seenKeys);
-        CopyOption(plainOptions, "num_features_to_select", featuresSelectOptions, &seenKeys);
-        CopyOption(plainOptions, "features_selection_steps", featuresSelectOptions, &seenKeys);
-        CopyOption(plainOptions, "train_final_model", featuresSelectOptions, &seenKeys);
-        CopyOption(plainOptions, "features_selection_result_path", featuresSelectOptions, &seenKeys);
-        CopyOption(plainOptions, "features_selection_algorithm", featuresSelectOptions, &seenKeys);
-        CopyOption(plainOptions, "shap_calc_type", featuresSelectOptions, &seenKeys);
-    }
 
     for (const auto& [optionName, optionValue] : plainOptions.GetMapSafe()) {
         if (!seenKeys.contains(optionName)) {
@@ -629,9 +603,6 @@ void NCatboostOptions::ConvertOptionsToPlainJson(
         CopyOption(boostingOptionsRef, "langevin", &plainOptionsJson, &seenKeys);
         DeleteSeenOption(&optionsCopyBoosting, "langevin");
 
-        CopyOption(boostingOptionsRef, "posterior_sampling", &plainOptionsJson, &seenKeys);
-        DeleteSeenOption(&optionsCopyBoosting, "posterior_sampling");
-
         CopyOption(boostingOptionsRef, "diffusion_temperature", &plainOptionsJson, &seenKeys);
         DeleteSeenOption(&optionsCopyBoosting, "diffusion_temperature");
 
@@ -673,12 +644,6 @@ void NCatboostOptions::ConvertOptionsToPlainJson(
 
         CopyOption(treeOptions, "l2_leaf_reg", &plainOptionsJson, &seenKeys);
         DeleteSeenOption(&optionsCopyTree, "l2_leaf_reg");
-
-        CopyOption(treeOptions, "meta_l2_exponent", &plainOptionsJson, &seenKeys);
-        DeleteSeenOption(&optionsCopyTree, "meta_l2_exponent");
-
-        CopyOption(treeOptions, "meta_l2_frequency", &plainOptionsJson, &seenKeys);
-        DeleteSeenOption(&optionsCopyTree, "meta_l2_frequency");
 
         CopyOption(treeOptions, "bayesian_matrix_reg", &plainOptionsJson, &seenKeys);
         DeleteSeenOption(&optionsCopyTree, "bayesian_matrix_reg");
@@ -871,9 +836,6 @@ void NCatboostOptions::ConvertOptionsToPlainJson(
         CopyOption(dataProcessingOptions, "class_weights", &plainOptionsJson, &seenKeys);
         DeleteSeenOption(&optionsCopyDataProcessing, "class_weights");
 
-        CopyOption(dataProcessingOptions, "auto_class_weights", &plainOptionsJson, &seenKeys);
-        DeleteSeenOption(&optionsCopyDataProcessing, "auto_class_weights");
-
         CopyOption(dataProcessingOptions, "dev_default_value_fraction_for_sparse", &plainOptionsJson, &seenKeys);
         DeleteSeenOption(&optionsCopyDataProcessing, "dev_default_value_fraction_for_sparse");
 
@@ -887,18 +849,11 @@ void NCatboostOptions::ConvertOptionsToPlainJson(
         seenKeys.insert("text_processing_options");
         DeleteSeenOption(&optionsCopyDataProcessing, "text_processing_options");
 
-        SaveEmbeddingProcessingOptionsToPlainJson(dataProcessingOptions["embedding_processing_options"], &plainOptionsJson);
-        seenKeys.insert("embedding_processing_options");
-        DeleteSeenOption(&optionsCopyDataProcessing, "embedding_processing_options");
-
         CopyOption(dataProcessingOptions, "dev_leafwise_scoring", &plainOptionsJson, &seenKeys);
         DeleteSeenOption(&optionsCopyDataProcessing, "dev_leafwise_scoring");
 
         CopyOption(dataProcessingOptions, "dev_group_features", &plainOptionsJson, &seenKeys);
         DeleteSeenOption(&optionsCopyDataProcessing, "dev_group_features");
-
-        CopyOption(dataProcessingOptions, "force_unit_auto_pair_weights", &plainOptionsJson, &seenKeys);
-        DeleteSeenOption(&optionsCopyDataProcessing, "force_unit_auto_pair_weights");
 
         ConcatenatePerFloatFeatureQuantizationOptions(
             dataProcessingOptions,
@@ -967,10 +922,6 @@ void NCatboostOptions::ConvertOptionsToPlainJson(
         DeleteSeenOption(&optionsCopy, "system_options");
     }
 
-    // pool metainfo
-    CopyOption(options, "pool_metainfo_options", &plainOptionsJson, &seenKeys);
-    DeleteSeenOption(&optionsCopy, "pool_metainfo_options");
-
     // rest
     CopyOption(options, "random_seed", &plainOptionsJson, &seenKeys);
     DeleteSeenOption(&optionsCopy, "random_seed");
@@ -994,8 +945,7 @@ void NCatboostOptions::ConvertOptionsToPlainJson(
 void NCatboostOptions::CleanPlainJson(
     bool hasCatFeatures,
     NJson::TJsonValue* plainOptionsJsonEfficient,
-    bool hasTextFeatures,
-    bool hasEmbeddingFeatures
+    bool hasTextFeatures
 ) {
 
     CB_ENSURE(!plainOptionsJsonEfficient->GetMapSafe().empty(), "plainOptionsJsonEfficient should not be empty");
@@ -1053,12 +1003,6 @@ void NCatboostOptions::CleanPlainJson(
         DeleteSeenOption(plainOptionsJsonEfficient, "feature_calcers");
         DeleteSeenOption(plainOptionsJsonEfficient, "text_processing");
     }
-
-    if (!hasEmbeddingFeatures) {
-        DeleteSeenOption(plainOptionsJsonEfficient, "embedding_calcers");
-        DeleteSeenOption(plainOptionsJsonEfficient, "embedding_processing");
-    }
-
     TVector<TStringBuf> keysToDelete;
     auto& map = plainOptionsJsonEfficient->GetMapSafe();
     for (const auto& [key, value] : map) {

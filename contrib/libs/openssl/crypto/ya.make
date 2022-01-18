@@ -1,19 +1,15 @@
 LIBRARY()
 
 LICENSE(
-    Apache-2.0 AND
-    BSD-2-Clause AND
-    BSD-3-Clause AND
-    BSD-Source-Code AND
-    CC0-1.0 AND
-    OpenSSL AND
-    Public-Domain AND
-    Snprintf
+    OpenSSL
+    SSLeay
 )
 
-LICENSE_TEXTS(.yandex_meta/licenses.list.txt)
 
 
+NO_COMPILER_WARNINGS()
+
+NO_UTIL()
 
 PEERDIR(
     contrib/libs/zlib
@@ -24,16 +20,19 @@ ADDINCL(
     contrib/libs/openssl/crypto
     contrib/libs/openssl/crypto/ec/curve448
     contrib/libs/openssl/crypto/ec/curve448/arch_32
+    contrib/libs/openssl/crypto/include
     contrib/libs/openssl/crypto/modes
     contrib/libs/openssl/include
+    contrib/libs/zlib
+    GLOBAL contrib/libs/openssl/include
 )
 
 IF (OS_LINUX)
     IF (ARCH_ARM64)
         SET(LINUX_ARM64 yes)
-    ELSEIF (ARCH_ARM7)
+    ELSEIF(ARCH_ARM7)
         SET(LINUX_ARMV7 yes)
-    ELSEIF (ARCH_X86_64)
+    ELSEIF(ARCH_X86_64)
         SET(LINUX_X86_64 yes)
     ENDIF()
 ENDIF()
@@ -41,11 +40,11 @@ ENDIF()
 IF (OS_IOS)
     IF (ARCH_ARM64)
         SET(IOS_ARM64 yes)
-    ELSEIF (ARCH_ARM7)
+    ELSEIF(ARCH_ARM7)
         SET(IOS_ARMV7 yes)
-    ELSEIF (ARCH_X86_64)
+    ELSEIF(ARCH_X86_64)
         SET(IOS_X86_64 yes)
-    ELSEIF (ARCH_I386)
+    ELSEIF(ARCH_I386)
         SET(IOS_I386 yes)
     ENDIF()
 ENDIF()
@@ -53,55 +52,27 @@ ENDIF()
 IF (OS_ANDROID)
     IF (ARCH_ARM64)
         SET(ANDROID_ARM64 yes)
-    ELSEIF (ARCH_ARM7)
+    ELSEIF(ARCH_ARM7)
         SET(ANDROID_ARMV7 yes)
-    ELSEIF (ARCH_X86_64)
+    ELSEIF(ARCH_X86_64)
         SET(ANDROID_X86_64 yes)
-    ELSEIF (ARCH_I686)
+    ELSEIF(ARCH_I686)
         SET(ANDROID_I686 yes)
     ENDIF()
 ENDIF()
 
-IF (OS_WINDOWS)
-    IF (ARCH_X86_64)
-        SET(WINDOWS_X86_64 yes)
-    ELSEIF (ARCH_I686)
-        SET(WINDOWS_I686 yes)
-    ENDIF()
-ENDIF()
-
-IF (OS_DARWIN AND ARCH_ARM64)
-    SET(DARWIN_ARM64 yes)
-ENDIF()
-
-NO_COMPILER_WARNINGS()
-
-NO_RUNTIME()
-
 CFLAGS(
+    -DDSO_NONE
+    -DECP_NISTZ256_ASM
     -DOPENSSL_BN_ASM_MONT
     -DOPENSSL_CPUID_OBJ
+    -DPOLY1305_ASM
     -DSHA1_ASM
     -DSHA256_ASM
     -DSHA512_ASM
-    -DZLIB
 )
 
-IF (NOT IOS_ARM64 AND NOT DARWIN_ARM64)
-    CFLAGS(
-        -DDSO_NONE
-        -DAESNI_ASM
-    )
-ENDIF()
-
-IF (NOT WINDOWS_I686)
-    CFLAGS(
-        -DECP_NISTZ256_ASM
-        -DPOLY1305_ASM
-    )
-ENDIF()
-
-IF (NOT IOS_I386 AND NOT ANDROID_I686 AND NOT WINDOWS_I686)
+IF (NOT IOS_I386 AND NOT ANDROID_I686)
     CFLAGS(
         -DKECCAK1600_ASM
     )
@@ -128,15 +99,14 @@ IF (OS_DARWIN AND ARCH_X86_64 OR OS_LINUX AND ARCH_X86_64 OR OS_WINDOWS AND ARCH
         -DOPENSSL_BN_ASM_GF2m
         -DOPENSSL_BN_ASM_MONT5
         -DOPENSSL_IA32_SSE2
+        -DPADLOCK_ASM
         -DRC4_ASM
         -DX25519_ASM
     )
 ENDIF()
 
 IF (OS_LINUX AND ARCH_AARCH64 OR OS_LINUX AND ARCH_X86_64)
-    CFLAGS(
-        -DOPENSSL_USE_NODELETE
-    )
+    CFLAGS(-DOPENSSL_USE_NODELETE)
 ENDIF()
 
 IF (OS_DARWIN AND ARCH_X86_64)
@@ -145,27 +115,10 @@ IF (OS_DARWIN AND ARCH_X86_64)
     )
 ENDIF()
 
-IF (OS_DARWIN AND ARCH_ARM64)
+IF (OS_WINDOWS AND ARCH_X86_64)
     CFLAGS(
-        -DL_ENDIAN
-        -DOPENSSL_PIC
-        -D_REENTRANT
-    )
-ENDIF()
-
-IF (OS_WINDOWS)
-    IF (ARCH_X86_64)
-        CFLAGS(
-            -DENGINESDIR="\"C:\\\\Program\ Files\\\\OpenSSL\\\\lib\\\\engines-1_1\""
-            -DOPENSSLDIR="\"C:\\\\Program\ Files\\\\Common\ Files\\\\SSL\""
-        )
-    ELSEIF (ARCH_I386)
-        CFLAGS(
-            -DENGINESDIR="\"C:\\\\Program\ Files\ \(x86\)\\\\OpenSSL\\\\lib\\\\engines-1_1\""
-            -DOPENSSLDIR="\"C:\\\\Program\ Files\ \(x86\)\\\\Common\ Files\\\\SSL\""
-        )
-    ENDIF()
-    CFLAGS(
+        -DENGINESDIR="\"C:\\\\Program\ Files\\\\OpenSSL\\\\lib\\\\engines-1_1\""
+        -DOPENSSLDIR="\"C:\\\\Program\ Files\\\\Common\ Files\\\\SSL\""
         -DOPENSSL_SYS_WIN32
         -DUNICODE
         -DWIN32_LEAN_AND_MEAN
@@ -176,34 +129,29 @@ IF (OS_WINDOWS)
     )
 ENDIF()
 
-IF (SANITIZER_TYPE == memory)
-    CFLAGS(
-        -DPURIFY
-    )
+IF (SANITIZER_TYPE STREQUAL memory)
+    CFLAGS(-DPURIFY)
 ENDIF()
 
 IF (MUSL)
-    CFLAGS(
-        -DOPENSSL_NO_ASYNC
-    )
+    CFLAGS(-DOPENSSL_NO_ASYNC)
 ENDIF()
 
 IF (ARCH_TYPE_32)
-    CFLAGS(
-        -DOPENSSL_NO_EC_NISTP_64_GCC_128
-    )
+    CFLAGS(-DOPENSSL_NO_EC_NISTP_64_GCC_128)
 ENDIF()
 
 IF (ARCH_X86_64 AND NOT MSVC)
-    SET_APPEND(
-        SFLAGS
-        -mavx512bw
-        -mavx512ifma
-        -mavx512vl
+    SET_APPEND(SFLAGS -mavx512bw -mavx512ifma -mavx512vl)
+ENDIF()
+
+IF (OS_WINDOWS AND ARCH_X86_64)
+    LDFLAGS(
+        ws2_32.lib
     )
 ENDIF()
 
-IF (OS_WINDOWS)
+IF(OS_WINDOWS)
     SET_COMPILE_OUTPUTS_MODIFIERS(NOREL)
 ENDIF()
 
@@ -485,6 +433,7 @@ SRCS(
     ec/ecp_nistp256.c
     ec/ecp_nistp521.c
     ec/ecp_nistputil.c
+    ec/ecp_nistz256.c
     ec/ecp_oct.c
     ec/ecp_smpl.c
     ec/ecx_meth.c
@@ -809,12 +758,6 @@ SRCS(
     x509v3/v3err.c
 )
 
-IF (NOT WINDOWS_I686)
-    SRCS(
-        ec/ecp_nistz256.c
-    )
-ENDIF()
-
 IF (NOT IOS_ARM64 AND NOT IOS_ARMV7)
     SRCS(
         engine/eng_all.c
@@ -841,14 +784,12 @@ IF (NOT IOS_ARM64 AND NOT IOS_ARMV7)
         engine/tb_rsa.c
     )
 ENDIF()
-
 IF (NOT IOS_ARMV7 AND NOT ANDROID_ARMV7 AND NOT LINUX_ARMV7)
     SRCS(
         aes/aes_core.c
     )
 ENDIF()
-
-IF (NOT IOS_I386 AND NOT ANDROID_I686 AND NOT WINDOWS_I686)
+IF (NOT IOS_I386 AND NOT ANDROID_I686)
     SRCS(
         bf/bf_enc.c
         camellia/cmll_misc.c
@@ -908,40 +849,14 @@ IF (OS_DARWIN AND ARCH_X86_64)
     )
 ENDIF()
 
-IF (OS_DARWIN AND ARCH_ARM64)
-    SRCS(
-        ../asm/darwin-arm64/crypto/sha/keccak1600-armv8.S
-        ../asm/darwin-arm64/crypto/sha/sha512-armv8.S
-        ../asm/darwin-arm64/crypto/sha/sha1-armv8.S
-        ../asm/darwin-arm64/crypto/sha/sha256-armv8.S
-        ../asm/darwin-arm64/crypto/poly1305/poly1305-armv8.S
-        ../asm/darwin-arm64/crypto/ec/ecp_nistz256-armv8.S
-        ../asm/darwin-arm64/crypto/chacha/chacha-armv8.S
-        ../asm/darwin-arm64/crypto/bn/armv8-mont.S
-        ../asm/darwin-arm64/crypto/arm64cpuid.S
-        ../asm/darwin-arm64/crypto/aes/aesv8-armx.S
-        ../asm/darwin-arm64/crypto/aes/vpaes-armv8.S
-        ../asm/darwin-arm64/crypto/modes/ghashv8-armx.S
-        armcap.c
-        bn/bn_asm.c
-        camellia/camellia.c
-        camellia/cmll_cbc.c
-        dso/dso_dlfcn.c
-        rc4/rc4_enc.c
-        rc4/rc4_skey.c
-        whrlpool/wp_block.c
-    )
-ENDIF()
-
 IF (OS_LINUX AND ARCH_ARM7)
     IF (CLANG)
-        # XXX: This is a workarond for 'out of range immediate fixup value'
+        # XXX: This is a workarond for 'out of range immediate fixup value' 
         # error with clang integrated assembler:
         # https://github.com/openssl/openssl/issues/7878
-        CFLAGS(
-            -mno-thumb
-        )
+        CFLAGS(-mno-thumb)
     ENDIF()
+
     CFLAGS(
         -DOPENSSL_PIC
         -DOPENSSL_BN_ASM_GF2m
@@ -1006,6 +921,7 @@ IF (OS_LINUX AND ARCH_PPC64LE)
         ../asm/ppc64le/crypto/aes/vpaes-ppc.s
         ../asm/ppc64le/crypto/bn/bn-ppc.s
         ../asm/ppc64le/crypto/bn/ppc-mont.s
+        ../asm/ppc64le/crypto/bn/ppc64-mont.s
         ../asm/ppc64le/crypto/chacha/chacha-ppc.s
         ../asm/ppc64le/crypto/ec/ecp_nistz256-ppc64.s
         ../asm/ppc64le/crypto/ec/x25519-ppc64.s
@@ -1063,65 +979,34 @@ ENDIF()
 
 IF (OS_WINDOWS AND ARCH_X86_64)
     SRCS(
-        ../asm/windows/crypto/aes/aesni-mb-x86_64.masm
-        ../asm/windows/crypto/aes/aesni-sha1-x86_64.masm
-        ../asm/windows/crypto/aes/aesni-sha256-x86_64.masm
-        ../asm/windows/crypto/aes/aesni-x86_64.masm
-        ../asm/windows/crypto/aes/vpaes-x86_64.masm
-        ../asm/windows/crypto/bn/rsaz-avx2.masm
-        ../asm/windows/crypto/bn/rsaz-x86_64.masm
-        ../asm/windows/crypto/bn/x86_64-gf2m.masm
-        ../asm/windows/crypto/bn/x86_64-mont.masm
-        ../asm/windows/crypto/bn/x86_64-mont5.masm
-        ../asm/windows/crypto/camellia/cmll-x86_64.masm
-        ../asm/windows/crypto/chacha/chacha-x86_64.masm
-        ../asm/windows/crypto/ec/ecp_nistz256-x86_64.masm
-        ../asm/windows/crypto/ec/x25519-x86_64.masm
-        ../asm/windows/crypto/md5/md5-x86_64.masm
-        ../asm/windows/crypto/modes/aesni-gcm-x86_64.masm
-        ../asm/windows/crypto/modes/ghash-x86_64.masm
-        ../asm/windows/crypto/poly1305/poly1305-x86_64.masm
-        ../asm/windows/crypto/rc4/rc4-md5-x86_64.masm
-        ../asm/windows/crypto/rc4/rc4-x86_64.masm
-        ../asm/windows/crypto/sha/keccak1600-x86_64.masm
-        ../asm/windows/crypto/sha/sha1-mb-x86_64.masm
-        ../asm/windows/crypto/sha/sha1-x86_64.masm
-        ../asm/windows/crypto/sha/sha256-mb-x86_64.masm
-        ../asm/windows/crypto/sha/sha256-x86_64.masm
-        ../asm/windows/crypto/sha/sha512-x86_64.masm
-        ../asm/windows/crypto/whrlpool/wp-x86_64.masm
-        ../asm/windows/crypto/uplink-x86_64.masm
-        ../asm/windows/crypto/x86_64cpuid.masm
-    )
-ENDIF()
-
-IF (OS_WINDOWS AND ARCH_I386)
-    CFLAGS(
-        -DGHASH_ASM
-        -DOPENSSL_BN_ASM_GF2m
-        -DRC4_ASM
-        -DMD5_ASM
-    )
-    SRCS(
-        ../asm/windows/crypto/aes/aesni-x86.masm
-        ../asm/windows/crypto/aes/vpaes-x86.masm
-        ../asm/windows/crypto/bn/x86-gf2m.masm
-        ../asm/windows/crypto/bn/x86-mont.masm
-        ../asm/windows/crypto/camellia/cmll-x86.masm
-        ../asm/windows/crypto/chacha/chacha-x86.masm
-        ../asm/windows/crypto/md5/md5-586.masm
-        ../asm/windows/crypto/modes/ghash-x86.masm
-        ../asm/windows/crypto/rc4/rc4-586.masm
-        ../asm/windows/crypto/sha/sha1-586.masm
-        ../asm/windows/crypto/sha/sha256-586.masm
-        ../asm/windows/crypto/sha/sha512-586.masm
-        ../asm/windows/crypto/x86cpuid.masm
-        bf/bf_enc.c
-        bn/bn_asm.c
-        des/des_enc.c
-        des/fcrypt_b.c
-        sha/keccak1600.c
-        whrlpool/wp_block.c
+        ../asm/windows/crypto/aes/aesni-mb-x86_64.asm
+        ../asm/windows/crypto/aes/aesni-sha1-x86_64.asm
+        ../asm/windows/crypto/aes/aesni-sha256-x86_64.asm
+        ../asm/windows/crypto/aes/aesni-x86_64.asm
+        ../asm/windows/crypto/aes/vpaes-x86_64.asm
+        ../asm/windows/crypto/bn/rsaz-avx2.asm
+        ../asm/windows/crypto/bn/rsaz-x86_64.asm
+        ../asm/windows/crypto/bn/x86_64-gf2m.asm
+        ../asm/windows/crypto/bn/x86_64-mont.asm
+        ../asm/windows/crypto/bn/x86_64-mont5.asm
+        ../asm/windows/crypto/camellia/cmll-x86_64.asm
+        ../asm/windows/crypto/chacha/chacha-x86_64.asm
+        ../asm/windows/crypto/ec/ecp_nistz256-x86_64.asm
+        ../asm/windows/crypto/ec/x25519-x86_64.asm
+        ../asm/windows/crypto/md5/md5-x86_64.asm
+        ../asm/windows/crypto/modes/aesni-gcm-x86_64.asm
+        ../asm/windows/crypto/modes/ghash-x86_64.asm
+        ../asm/windows/crypto/poly1305/poly1305-x86_64.asm
+        ../asm/windows/crypto/rc4/rc4-md5-x86_64.asm
+        ../asm/windows/crypto/rc4/rc4-x86_64.asm
+        ../asm/windows/crypto/sha/keccak1600-x86_64.asm
+        ../asm/windows/crypto/sha/sha1-mb-x86_64.asm
+        ../asm/windows/crypto/sha/sha1-x86_64.asm
+        ../asm/windows/crypto/sha/sha256-mb-x86_64.asm
+        ../asm/windows/crypto/sha/sha256-x86_64.asm
+        ../asm/windows/crypto/sha/sha512-x86_64.asm
+        ../asm/windows/crypto/whrlpool/wp-x86_64.asm
+        ../asm/windows/crypto/x86_64cpuid.asm
     )
 ENDIF()
 
@@ -1298,6 +1183,7 @@ IF (OS_ANDROID AND ARCH_X86_64)
         -DMD5_ASM
         -DGHASH_ASM
         -DX25519_ASM
+        -D__ANDROID_API__=21
     )
     SRCS(
         ../asm/android/x86_64/crypto/ec/x25519-x86_64.s
@@ -1346,6 +1232,7 @@ IF (OS_ANDROID AND ARCH_I686)
         -DRMD160_ASM
         -DWHIRLPOOL_ASM
         -DGHASH_ASM
+        -D__ANDROID_API__=15
     )
     SRCS(
         ../asm/android/i686/crypto/ec/ecp_nistz256-x86.s
@@ -1378,20 +1265,13 @@ IF (OS_ANDROID AND ARCH_I686)
 ENDIF()
 
 IF (OS_ANDROID AND ARCH_ARM7)
-    IF (CLANG)
-        # XXX: This is a workarond for 'out of range immediate fixup value'
-        # error with clang integrated assembler:
-        # https://github.com/openssl/openssl/issues/7878
-        CFLAGS(
-            -mno-thumb
-        )
-    ENDIF()
     CFLAGS(
         -DOPENSSL_PIC
         -DOPENSSL_BN_ASM_GF2m
         -DAES_ASM
         -DBSAES_ASM
         -DGHASH_ASM
+        -D__ANDROID_API__=15
     )
     SRCS(
         ../asm/android/arm/crypto/ec/ecp_nistz256-armv4.S
@@ -1423,7 +1303,8 @@ ENDIF()
 
 IF (OS_ANDROID AND ARCH_ARM64)
     CFLAGS(
-        -DOPENSSL_PIC
+       -DOPENSSL_PIC
+       -D__ANDROID_API__=21 
     )
     SRCS(
         ../asm/android/arm64/crypto/ec/ecp_nistz256-armv8.S

@@ -4,8 +4,8 @@ LIBRARY()
 
 PEERDIR(
     library/cpp/getopt/small
-    library/cpp/svnversion
-    library/cpp/build_info
+    library/svnversion
+    library/build_info
 )
 
 SRCS(
