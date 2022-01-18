@@ -1,4 +1,4 @@
-UNITTEST_FOR(library/cpp/unittest)
+UNITTEST_FOR(library/cpp/testing/unittest)
 
 
 
