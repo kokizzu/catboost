@@ -1,4 +1,4 @@
-#include <library/resource/resource.h>
+#include <library/cpp/resource/resource.h>
 #include <library/cpp/unittest/registar.h>
 
 Y_UNIT_TEST_SUITE(TestResource) {
