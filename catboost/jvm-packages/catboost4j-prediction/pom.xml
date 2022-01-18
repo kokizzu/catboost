@@ -64,13 +64,15 @@
                         <configuration>
                             <executable>python</executable>
                             <arguments>
-                                <argument>src/native/build_for_maven.py</argument>
+                                <argument>${basedir}/../tools/build_native_for_maven.py</argument>
+                                <argument>${basedir}</argument>
+                                <argument>catboost4j-prediction</argument>
                                 <argument>--build</argument>
                                 <argument>release</argument>
                                 <argument>--no-src-links</argument>
                                 <argument>-DOS_SDK=local</argument>
                                 <argument>-DHAVE_CUDA=no</argument>
-                                <argument>-DUSE_SYSTEM_JDK=yes</argument>
+                                <argument>-DUSE_SYSTEM_JDK=${java.home}</argument>
                                 <argument>-DJAVA_HOME=${java.home}</argument>>
                             </arguments>
                             <workingDirectory>${user.dir}</workingDirectory>
@@ -185,5 +187,11 @@
             <version>1.7.25</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>ai.catboost</groupId>
+            <artifactId>catboost-common</artifactId>
+            <version>0.23.2</version>
+        </dependency> 
     </dependencies>
 </project>
