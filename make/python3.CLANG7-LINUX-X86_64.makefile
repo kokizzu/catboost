@@ -2550,6 +2550,7 @@ $(BUILD_ROOT)/util/libyutil.a\
         $(BUILD_ROOT)/util/_/string/cast.cpp.pic.o\
         $(BUILD_ROOT)/util/_/system/context_x86.o\
         $(BUILD_ROOT)/util/_/system/mktemp_system.cpp.pic.o\
+        $(BUILD_ROOT)/util/_/system/strlcat.c.pic.o\
         $(BUILD_ROOT)/util/_/system/strlcpy.c.pic.o\
         $(BUILD_ROOT)/util/_/system/valgrind.cpp.pic.o\
         $(BUILD_ROOT)/util/all_datetime.cpp.pic.o\
@@ -2570,7 +2571,7 @@ $(BUILD_ROOT)/util/libyutil.a\
 
 	mkdir -p '$(BUILD_ROOT)/util'
 	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name yutil -o util/libyutil.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/util/libyutil.a' '$(BUILD_ROOT)/util/_/digest/city.cpp.pic.o' '$(BUILD_ROOT)/util/_/random/random.cpp.pic.o' '$(BUILD_ROOT)/util/_/string/cast.cpp.pic.o' '$(BUILD_ROOT)/util/_/system/context_x86.o' '$(BUILD_ROOT)/util/_/system/valgrind.cpp.pic.o' '$(BUILD_ROOT)/util/_/system/strlcpy.c.pic.o' '$(BUILD_ROOT)/util/_/system/mktemp_system.cpp.pic.o' '$(BUILD_ROOT)/util/all_datetime.cpp.pic.o' '$(BUILD_ROOT)/util/all_digest.cpp.pic.o' '$(BUILD_ROOT)/util/all_util.cpp.pic.o' '$(BUILD_ROOT)/util/all_folder.cpp.pic.o' '$(BUILD_ROOT)/util/all_generic.cpp.pic.o' '$(BUILD_ROOT)/util/all_memory.cpp.pic.o' '$(BUILD_ROOT)/util/all_network.cpp.pic.o' '$(BUILD_ROOT)/util/all_random.cpp.pic.o' '$(BUILD_ROOT)/util/all_stream.cpp.pic.o' '$(BUILD_ROOT)/util/all_string.cpp.pic.o' '$(BUILD_ROOT)/util/all_system_1.cpp.pic.o' '$(BUILD_ROOT)/util/all_system_2.cpp.pic.o' '$(BUILD_ROOT)/util/all_thread.cpp.pic.o' '$(BUILD_ROOT)/util/_/_/datetime/parser.rl6.cpp.pic.o'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/util/libyutil.a' '$(BUILD_ROOT)/util/_/digest/city.cpp.pic.o' '$(BUILD_ROOT)/util/_/random/random.cpp.pic.o' '$(BUILD_ROOT)/util/_/string/cast.cpp.pic.o' '$(BUILD_ROOT)/util/_/system/context_x86.o' '$(BUILD_ROOT)/util/_/system/valgrind.cpp.pic.o' '$(BUILD_ROOT)/util/_/system/strlcat.c.pic.o' '$(BUILD_ROOT)/util/_/system/strlcpy.c.pic.o' '$(BUILD_ROOT)/util/_/system/mktemp_system.cpp.pic.o' '$(BUILD_ROOT)/util/all_datetime.cpp.pic.o' '$(BUILD_ROOT)/util/all_digest.cpp.pic.o' '$(BUILD_ROOT)/util/all_util.cpp.pic.o' '$(BUILD_ROOT)/util/all_folder.cpp.pic.o' '$(BUILD_ROOT)/util/all_generic.cpp.pic.o' '$(BUILD_ROOT)/util/all_memory.cpp.pic.o' '$(BUILD_ROOT)/util/all_network.cpp.pic.o' '$(BUILD_ROOT)/util/all_random.cpp.pic.o' '$(BUILD_ROOT)/util/all_stream.cpp.pic.o' '$(BUILD_ROOT)/util/all_string.cpp.pic.o' '$(BUILD_ROOT)/util/all_system_1.cpp.pic.o' '$(BUILD_ROOT)/util/all_system_2.cpp.pic.o' '$(BUILD_ROOT)/util/all_thread.cpp.pic.o' '$(BUILD_ROOT)/util/_/_/datetime/parser.rl6.cpp.pic.o'
 
 $(BUILD_ROOT)/util/_/_/datetime/parser.rl6.cpp.pic.o\
         ::\
@@ -3472,6 +3473,13 @@ $(BUILD_ROOT)/util/_/system/mktemp_system.cpp.pic.o\
 
 	mkdir -p '$(BUILD_ROOT)/util/_/system'
 	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/util/_/system/mktemp_system.cpp.pic.o' '$(SOURCE_ROOT)/util/system/mktemp_system.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++1z -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/util/_/system/strlcat.c.pic.o\
+        ::\
+        $(SOURCE_ROOT)/util/system/strlcat.c\
+
+	mkdir -p '$(BUILD_ROOT)/util/_/system'
+	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/util/_/system/strlcat.c.pic.o' '$(SOURCE_ROOT)/util/system/strlcat.c' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC
 
 $(BUILD_ROOT)/util/_/system/strlcpy.c.pic.o\
         ::\
@@ -36431,6 +36439,7 @@ clean\
 	rm -f '$(BUILD_ROOT)/contrib/tools/yasm/_/modules/x86cpu.c.pic.o'
 	rm -f '$(BUILD_ROOT)/contrib/tools/yasm/_/modules/x86regtmod.c.pic.o'
 	rm -f '$(BUILD_ROOT)/util/_/system/mktemp_system.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/util/_/system/strlcat.c.pic.o'
 	rm -f '$(BUILD_ROOT)/util/_/system/strlcpy.c.pic.o'
 	rm -f '$(BUILD_ROOT)/util/_/system/valgrind.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/util/all_datetime.cpp.pic.o'
