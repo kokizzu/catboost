@@ -309,7 +309,7 @@ $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(SOURCE_ROOT)/build/scripts/stdout2stderr.py\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/libs/helpers/flatbuffers'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVQVfcGF0aHEIVS0kUy9jYXRib29zdC9saWJzL2hlbHBlcnMvZmxhdGJ1ZmZlcnMvZ3VpZC5mYnNxCXWFcQpiLg== --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVRBfdXNlcl9leHRyYV9hcmdzcQhdcQlVBV9wYXRocQpVLSRTL2NhdGJvb3N0L2xpYnMvaGVscGVycy9mbGF0YnVmZmVycy9ndWlkLmZic3ELdYVxDGIu --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
 
 $(BUILD_ROOT)/contrib/tools/flatc/flatc.mf\
         ::\
@@ -3502,7 +3502,7 @@ $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fb
         $(SOURCE_ROOT)/build/scripts/stdout2stderr.py\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVQVfcGF0aHEIVUYkUy9jYXRib29zdC9wcml2YXRlL2xpYnMvdGV4dF9mZWF0dXJlcy9mbGF0YnVmZmVycy9mZWF0dXJlX2NhbGNlcnMuZmJzcQl1hXEKYi4= --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVRBfdXNlcl9leHRyYV9hcmdzcQhdcQlVBV9wYXRocQpVRiRTL2NhdGJvb3N0L3ByaXZhdGUvbGlicy90ZXh0X2ZlYXR1cmVzL2ZsYXRidWZmZXJzL2ZlYXR1cmVfY2FsY2Vycy5mYnNxC3WFcQxiLg== --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
 
 $(BUILD_ROOT)/catboost/libs/model/libcatboost-libs-model.a.mf\
         ::\
@@ -3618,7 +3618,7 @@ $(BUILD_ROOT)/catboost/libs/model/flatbuffers/ctr_data.fbs.h\
         $(SOURCE_ROOT)/build/scripts/stdout2stderr.py\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/libs/model/flatbuffers'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVQVfcGF0aHEIVS8kUy9jYXRib29zdC9saWJzL21vZGVsL2ZsYXRidWZmZXJzL2N0cl9kYXRhLmZic3EJdYVxCmIu --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVRBfdXNlcl9leHRyYV9hcmdzcQhdcQlVBV9wYXRocQpVLyRTL2NhdGJvb3N0L2xpYnMvbW9kZWwvZmxhdGJ1ZmZlcnMvY3RyX2RhdGEuZmJzcQt1hXEMYi4= --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
 
 $(BUILD_ROOT)/catboost/libs/model/flatbuffers/features.iter.fbs.h\
 $(BUILD_ROOT)/catboost/libs/model/flatbuffers/features.bfbs\
@@ -3632,7 +3632,7 @@ $(BUILD_ROOT)/catboost/libs/model/flatbuffers/features.fbs.h\
         $(SOURCE_ROOT)/build/scripts/stdout2stderr.py\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/libs/model/flatbuffers'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVQVfcGF0aHEIVS8kUy9jYXRib29zdC9saWJzL21vZGVsL2ZsYXRidWZmZXJzL2ZlYXR1cmVzLmZic3EJdYVxCmIu --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVRBfdXNlcl9leHRyYV9hcmdzcQhdcQlVBV9wYXRocQpVLyRTL2NhdGJvb3N0L2xpYnMvbW9kZWwvZmxhdGJ1ZmZlcnMvZmVhdHVyZXMuZmJzcQt1hXEMYi4= --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
 
 $(BUILD_ROOT)/catboost/libs/model/flatbuffers/model.iter.fbs.h\
 $(BUILD_ROOT)/catboost/libs/model/flatbuffers/model.bfbs\
@@ -3646,7 +3646,7 @@ $(BUILD_ROOT)/catboost/libs/model/flatbuffers/model.fbs.h\
         $(SOURCE_ROOT)/build/scripts/stdout2stderr.py\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/libs/model/flatbuffers'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVQVfcGF0aHEIVSwkUy9jYXRib29zdC9saWJzL21vZGVsL2ZsYXRidWZmZXJzL21vZGVsLmZic3EJdYVxCmIu --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVRBfdXNlcl9leHRyYV9hcmdzcQhdcQlVBV9wYXRocQpVLCRTL2NhdGJvb3N0L2xpYnMvbW9kZWwvZmxhdGJ1ZmZlcnMvbW9kZWwuZmJzcQt1hXEMYi4= --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
 
 $(BUILD_ROOT)/catboost/libs/model/enums.h_serialized.cpp.pic.o\
         ::\
@@ -4317,7 +4317,7 @@ $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/text_processing_co
         $(SOURCE_ROOT)/build/scripts/stdout2stderr.py\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVQVfcGF0aHEIVVEkUy9jYXRib29zdC9wcml2YXRlL2xpYnMvdGV4dF9mZWF0dXJlcy9mbGF0YnVmZmVycy90ZXh0X3Byb2Nlc3NpbmdfY29sbGVjdGlvbi5mYnNxCXWFcQpiLg== --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVRBfdXNlcl9leHRyYV9hcmdzcQhdcQlVBV9wYXRocQpVUSRTL2NhdGJvb3N0L3ByaXZhdGUvbGlicy90ZXh0X2ZlYXR1cmVzL2ZsYXRidWZmZXJzL3RleHRfcHJvY2Vzc2luZ19jb2xsZWN0aW9uLmZic3ELdYVxDGIu --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
 
 $(BUILD_ROOT)/catboost/private/libs/text_features/naive_bayesian.cpp.pic.o\
         ::\
@@ -22371,7 +22371,7 @@ $(BUILD_ROOT)/library/cpp/text_processing/dictionary/idl/dictionary_meta_info.fb
         $(SOURCE_ROOT)/build/scripts/stdout2stderr.py\
 
 	mkdir -p '$(BUILD_ROOT)/library/cpp/text_processing/dictionary/idl'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVQVfcGF0aHEIVUYkUy9saWJyYXJ5L2NwcC90ZXh0X3Byb2Nlc3NpbmcvZGljdGlvbmFyeS9pZGwvZGljdGlvbmFyeV9tZXRhX2luZm8uZmJzcQl1hXEKYi4= --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVRBfdXNlcl9leHRyYV9hcmdzcQhdcQlVBV9wYXRocQpVRiRTL2xpYnJhcnkvY3BwL3RleHRfcHJvY2Vzc2luZy9kaWN0aW9uYXJ5L2lkbC9kaWN0aW9uYXJ5X21ldGFfaW5mby5mYnNxC3WFcQxiLg== --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
 
 $(BUILD_ROOT)/library/cpp/text_processing/dictionary/fbs_helpers.cpp.pic.o\
         ::\
