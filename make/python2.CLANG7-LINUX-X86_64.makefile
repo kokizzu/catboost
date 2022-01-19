@@ -5565,6 +5565,7 @@ $(BUILD_ROOT)/catboost/libs/eval_result/pool_printer.cpp.pic.o\
         $(BUILD_ROOT)/catboost/idl/pool/flat/quantized_chunk_t.fbs.h\
         $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/eval_result/pool_printer.cpp\
 
