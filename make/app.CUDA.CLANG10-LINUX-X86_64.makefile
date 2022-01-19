@@ -35788,7 +35788,7 @@ $(BUILD_ROOT)/contrib/libs/tensorboard/libcontrib-libs-tensorboard.a\
         $(SOURCE_ROOT)/build/scripts/link_lib.py\
 
 	mkdir -p '$(BUILD_ROOT)/contrib/libs/tensorboard'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name contrib-libs-tensorboard -o contrib/libs/tensorboard/libcontrib-libs-tensorboard.a.mf -t LIBRARY -Ya,lics APACHE2 -Ya,peers
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name contrib-libs-tensorboard -o contrib/libs/tensorboard/libcontrib-libs-tensorboard.a.mf -t LIBRARY -Ya,lics Apache-2.0 -Ya,peers
 	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/contrib/libs/tensorboard/libcontrib-libs-tensorboard.a' '$(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.cc.o' '$(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.cc.o' '$(BUILD_ROOT)/contrib/libs/tensorboard/summary.pb.cc.o' '$(BUILD_ROOT)/contrib/libs/tensorboard/tensor.pb.cc.o' '$(BUILD_ROOT)/contrib/libs/tensorboard/tensor_shape.pb.cc.o' '$(BUILD_ROOT)/contrib/libs/tensorboard/types.pb.cc.o'
 
 $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.cc.o\
