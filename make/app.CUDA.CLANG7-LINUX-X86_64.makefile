@@ -10372,6 +10372,12 @@ $(BUILD_ROOT)/catboost/private/libs/algo/full_model_saver.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/summary.pb.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/tensor.pb.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/tensor_shape.pb.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/types.pb.h\
         $(SOURCE_ROOT)/catboost/private/libs/algo/full_model_saver.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/algo'
