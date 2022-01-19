@@ -270,6 +270,7 @@ $(BUILD_ROOT)/catboost/app/catboost\
 
 $(BUILD_ROOT)/catboost/app/main.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
@@ -278,46 +279,51 @@ $(BUILD_ROOT)/catboost/app/main.cpp.o\
 	mkdir -p '$(BUILD_ROOT)/catboost/app'
 	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/catboost/app/main.cpp.o' '$(SOURCE_ROOT)/catboost/app/main.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libc_compat/include/uchar' '-I$(SOURCE_ROOT)/contrib/libs/tbb/include' '-I$(SOURCE_ROOT)/contrib/libs/libf2c' '-I$(SOURCE_ROOT)/contrib/libs/protobuf/src' '-I$(SOURCE_ROOT)/contrib/libs/brotli/include' '-I$(SOURCE_ROOT)/contrib/libs/openssl/include' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -D_SHARED_PTR_H -DCATBOOST_OPENSOURCE=yes -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
 
-$(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.iter.fbs.h\
-$(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.bfbs\
+$(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.cc\
         ::\
-        $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
 
-$(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+$(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         ::\
-        $(BUILD_ROOT)/contrib/tools/flatc/flatc\
-        $(SOURCE_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs\
-        $(SOURCE_ROOT)/build/scripts/stdout2stderr.py\
+        $(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide\
+        $(BUILD_ROOT)/contrib/tools/protoc/protoc\
+        $(SOURCE_ROOT)/catboost/idl/pool/proto/quantization_schema.proto\
 
-	mkdir -p '$(BUILD_ROOT)/catboost/libs/helpers/flatbuffers'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVRBfdXNlcl9leHRyYV9hcmdzcQhdcQlVBV9wYXRocQpVLSRTL2NhdGJvb3N0L2xpYnMvaGVscGVycy9mbGF0YnVmZmVycy9ndWlkLmZic3ELdYVxDGIu --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
+	mkdir -p '$(BUILD_ROOT)/catboost/idl/pool/proto'
+	cd $(SOURCE_ROOT) && '$(BUILD_ROOT)/contrib/tools/protoc/protoc' -I=./ '-I=$(SOURCE_ROOT)/' '-I=$(SOURCE_ROOT)/contrib/libs/protobuf/src' '-I=$(BUILD_ROOT)' '-I=$(SOURCE_ROOT)/contrib/libs/protobuf/src' '--cpp_out=$(BUILD_ROOT)/' '--cpp_styleguide_out=$(BUILD_ROOT)/' '--plugin=protoc-gen-cpp_styleguide=$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide' catboost/idl/pool/proto/quantization_schema.proto
 
-$(BUILD_ROOT)/contrib/tools/flatc/flatc.mf\
+$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide.mf\
         ::\
-        $(BUILD_ROOT)/contrib/tools/flatc/flatc\
+        $(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide\
 
-$(BUILD_ROOT)/contrib/tools/flatc/flatc\
+$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide\
         ::\
         $(BUILD_ROOT)/contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a\
         $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a\
         $(BUILD_ROOT)/contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a\
         $(BUILD_ROOT)/contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a\
-        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a\
-        $(BUILD_ROOT)/contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a\
+        $(BUILD_ROOT)/contrib/libs/double-conversion/libcontrib-libs-double-conversion.a\
+        $(BUILD_ROOT)/contrib/libs/libc_compat/libcontrib-libs-libc_compat.a\
         $(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a\
-        $(BUILD_ROOT)/contrib/tools/flatc/__/__/libs/flatbuffers/src/flatc_main.cpp.o\
+        $(BUILD_ROOT)/contrib/libs/protobuf/libcontrib-libs-protobuf.a\
+        $(BUILD_ROOT)/contrib/libs/protoc/libcontrib-libs-protoc.a\
+        $(BUILD_ROOT)/contrib/libs/zlib/libcontrib-libs-zlib.a\
+        $(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide.cpp.o\
+        $(BUILD_ROOT)/library/cpp/cpuid_check/cpu_id_check.cpp.o\
         $(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a\
         $(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a\
+        $(BUILD_ROOT)/util/charset/libutil-charset.a\
+        $(BUILD_ROOT)/util/libyutil.a\
         $(SOURCE_ROOT)/build/scripts/generate_mf.py\
         $(SOURCE_ROOT)/build/scripts/vcs_info.py\
         $(SOURCE_ROOT)/build/scripts/c_templates/svn_interface.c\
         $(SOURCE_ROOT)/build/scripts/link_exe.py\
 
-	mkdir -p '$(BUILD_ROOT)/contrib/tools/flatc'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name flatc -o contrib/tools/flatc/flatc.mf -t PROGRAM -Ya,lics -Ya,peers contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/vcs_info.py' '$(VCS)/vcs.json' '$(BUILD_ROOT)/contrib/tools/flatc/__vcs_version__.c' '$(SOURCE_ROOT)/build/scripts/c_templates/svn_interface.c'
-	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/tools/flatc/__vcs_version__.c.o' '$(BUILD_ROOT)/contrib/tools/flatc/__vcs_version__.c' '-I$(SOURCE_ROOT)' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16
-	cd $(BUILD_ROOT) && '$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_exe.py' '$(CXX)' '$(BUILD_ROOT)/contrib/tools/flatc/__vcs_version__.c.o' '$(BUILD_ROOT)/contrib/tools/flatc/__/__/libs/flatbuffers/src/flatc_main.cpp.o' -o '$(BUILD_ROOT)/contrib/tools/flatc/flatc' -rdynamic --target=x86_64-linux-gnu -Wl,--start-group contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a -Wl,--end-group -ldl -lrt -Wl,--no-as-needed -lpthread -nodefaultlibs -lpthread -lc -lm
+	mkdir -p '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name cpp_styleguide -o contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide.mf -t PROGRAM -Ya,lics -Ya,peers contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a util/charset/libutil-charset.a contrib/libs/zlib/libcontrib-libs-zlib.a contrib/libs/double-conversion/libcontrib-libs-double-conversion.a contrib/libs/libc_compat/libcontrib-libs-libc_compat.a util/libyutil.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a contrib/libs/protobuf/libcontrib-libs-protobuf.a contrib/libs/protoc/libcontrib-libs-protoc.a
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/vcs_info.py' '$(VCS)/vcs.json' '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/__vcs_version__.c' '$(SOURCE_ROOT)/build/scripts/c_templates/svn_interface.c'
+	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/__vcs_version__.c.o' '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/__vcs_version__.c' '-I$(SOURCE_ROOT)' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -w -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -D_SHARED_PTR_H -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16
+	cd $(BUILD_ROOT) && '$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_exe.py' '$(CXX)' library/cpp/cpuid_check/cpu_id_check.cpp.o '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/__vcs_version__.c.o' '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide.cpp.o' -o '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide' -rdynamic --target=x86_64-linux-gnu -Wl,--start-group contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a util/charset/libutil-charset.a contrib/libs/zlib/libcontrib-libs-zlib.a contrib/libs/double-conversion/libcontrib-libs-double-conversion.a contrib/libs/libc_compat/libcontrib-libs-libc_compat.a util/libyutil.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a contrib/libs/protobuf/libcontrib-libs-protobuf.a contrib/libs/protoc/libcontrib-libs-protoc.a -Wl,--end-group -ldl -lrt -Wl,--no-as-needed -lpthread -lrt -ldl -nodefaultlibs -lpthread -lc -lm
 
 $(BUILD_ROOT)/contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a.mf\
         ::\
@@ -1059,363 +1065,6 @@ $(BUILD_ROOT)/contrib/libs/cxxsupp/libcxxrt/unwind.cc.o\
 	mkdir -p '$(BUILD_ROOT)/contrib/libs/cxxsupp/libcxxrt'
 	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/cxxsupp/libcxxrt/unwind.cc.o' '$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt/unwind.cc' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -w -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Wno-register -DCATBOOST_OPENSOURCE=yes -nostdinc++ -nostdinc++
 
-$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a.mf\
-        ::\
-        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a\
-
-$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a\
-        ::\
-        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/code_generators.cpp.o\
-        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/flatc.cpp.o\
-        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp.cpp.o\
-        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp_yandex_maps_iter.cpp.o\
-        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_fbs.cpp.o\
-        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_general.cpp.o\
-        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_go.cpp.o\
-        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_json_schema.cpp.o\
-        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_python.cpp.o\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/link_lib.py\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name libs-flatbuffers-flatc -o contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a.mf -t LIBRARY -Ya,lics APACHE2 -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/code_generators.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/flatc.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_fbs.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_general.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_python.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_go.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_json_schema.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp_yandex_maps_iter.cpp.o'
-
-$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/code_generators.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/code_generators.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/code_generators.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/code_generators.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/flatc.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/flatc.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/flatc.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/flatc.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_cpp.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_cpp.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp_yandex_maps_iter.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_cpp_yandex_maps_iter.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp_yandex_maps_iter.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_cpp_yandex_maps_iter.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_fbs.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_fbs.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_fbs.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_fbs.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_general.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_general.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_general.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_general.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_go.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_go.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_go.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_go.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_json_schema.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_json_schema.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_json_schema.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_json_schema.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_python.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_python.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_python.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_python.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a.mf\
-        ::\
-        $(BUILD_ROOT)/contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a\
-
-$(BUILD_ROOT)/contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a\
-        ::\
-        $(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_gen_text.cpp.o\
-        $(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_parser.cpp.o\
-        $(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/reflection.cpp.o\
-        $(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/util.cpp.o\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/link_lib.py\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name contrib-libs-flatbuffers -o contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a.mf -t LIBRARY -Ya,lics APACHE2 -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a' '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_parser.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_gen_text.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/reflection.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/util.cpp.o'
-
-$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_gen_text.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_text.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_gen_text.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_text.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_parser.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_parser.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_parser.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_parser.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/reflection.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/reflection.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/reflection.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/reflection.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/util.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/util.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/util.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/util.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a.mf\
-        ::\
-        $(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a\
-
-$(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a\
-        ::\
-        $(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-EHABI.cpp.o\
-        $(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-seh.cpp.o\
-        $(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-sjlj.c.o\
-        $(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1-gcc-ext.c.o\
-        $(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1.c.o\
-        $(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersRestore.S.o\
-        $(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersSave.S.o\
-        $(BUILD_ROOT)/contrib/libs/libunwind/_/src/libunwind.cpp.o\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/link_lib.py\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name contrib-libs-libunwind -o contrib/libs/libunwind/libcontrib-libs-libunwind.a.mf -t LIBRARY -Ya,lics Apache-2.0 -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a' '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-EHABI.cpp.o' '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-seh.cpp.o' '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-sjlj.c.o' '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1-gcc-ext.c.o' '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1.c.o' '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersRestore.S.o' '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersSave.S.o' '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/libunwind.cpp.o'
-
-$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-EHABI.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/libunwind/src/Unwind-EHABI.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind/_/src'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-EHABI.cpp.o' '$(SOURCE_ROOT)/contrib/libs/libunwind/src/Unwind-EHABI.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/libunwind/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_LIBUNWIND_IS_NATIVE_ONLY -fno-exceptions -fno-rtti -funwind-tables -D_libunwind_ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-seh.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/libunwind/src/Unwind-seh.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind/_/src'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-seh.cpp.o' '$(SOURCE_ROOT)/contrib/libs/libunwind/src/Unwind-seh.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/libunwind/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_LIBUNWIND_IS_NATIVE_ONLY -fno-exceptions -fno-rtti -funwind-tables -D_libunwind_ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-sjlj.c.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/libunwind/src/Unwind-sjlj.c\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind/_/src'
-	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-sjlj.c.o' '$(SOURCE_ROOT)/contrib/libs/libunwind/src/Unwind-sjlj.c' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/libunwind/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_LIBUNWIND_IS_NATIVE_ONLY -fno-exceptions -fno-rtti -funwind-tables -D_libunwind_ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16
-
-$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1-gcc-ext.c.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/libunwind/src/UnwindLevel1-gcc-ext.c\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind/_/src'
-	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1-gcc-ext.c.o' '$(SOURCE_ROOT)/contrib/libs/libunwind/src/UnwindLevel1-gcc-ext.c' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/libunwind/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_LIBUNWIND_IS_NATIVE_ONLY -fno-exceptions -fno-rtti -funwind-tables -D_libunwind_ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16
-
-$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1.c.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/libunwind/src/UnwindLevel1.c\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind/_/src'
-	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1.c.o' '$(SOURCE_ROOT)/contrib/libs/libunwind/src/UnwindLevel1.c' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/libunwind/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_LIBUNWIND_IS_NATIVE_ONLY -fno-exceptions -fno-rtti -funwind-tables -D_libunwind_ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16
-
-$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersRestore.S.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/libunwind/src/UnwindRegistersRestore.S\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind/_/src'
-	'$(CC)' --target=x86_64-linux-gnu -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_LIBUNWIND_IS_NATIVE_ONLY -fno-exceptions -fno-rtti -funwind-tables -D_libunwind_ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -c -o '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersRestore.S.o' '$(SOURCE_ROOT)/contrib/libs/libunwind/src/UnwindRegistersRestore.S' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/libunwind/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf'
-
-$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersSave.S.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/libunwind/src/UnwindRegistersSave.S\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind/_/src'
-	'$(CC)' --target=x86_64-linux-gnu -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_LIBUNWIND_IS_NATIVE_ONLY -fno-exceptions -fno-rtti -funwind-tables -D_libunwind_ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -c -o '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersSave.S.o' '$(SOURCE_ROOT)/contrib/libs/libunwind/src/UnwindRegistersSave.S' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/libunwind/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf'
-
-$(BUILD_ROOT)/contrib/libs/libunwind/_/src/libunwind.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/libunwind/src/libunwind.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind/_/src'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/libunwind.cpp.o' '$(SOURCE_ROOT)/contrib/libs/libunwind/src/libunwind.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/libunwind/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_LIBUNWIND_IS_NATIVE_ONLY -fno-exceptions -fno-rtti -funwind-tables -D_libunwind_ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/contrib/tools/flatc/__/__/libs/flatbuffers/src/flatc_main.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/flatc_main.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/tools/flatc/__/__/libs/flatbuffers/src'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/tools/flatc/__/__/libs/flatbuffers/src/flatc_main.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/flatc_main.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a.mf\
-        ::\
-        $(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a\
-
-$(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a\
-        ::\
-        $(BUILD_ROOT)/library/cpp/lfalloc/lf_allocX64.cpp.o\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/link_lib.py\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/lfalloc'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name library-cpp-lfalloc -o library/cpp/lfalloc/liblibrary-cpp-lfalloc.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a' '$(BUILD_ROOT)/library/cpp/lfalloc/lf_allocX64.cpp.o'
-
-$(BUILD_ROOT)/library/cpp/lfalloc/lf_allocX64.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/lfalloc/lf_allocX64.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/lfalloc'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/lfalloc/lf_allocX64.cpp.o' '$(SOURCE_ROOT)/library/cpp/lfalloc/lf_allocX64.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -w -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Wno-register -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a.mf\
-        ::\
-        $(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a\
-
-$(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a\
-        ::\
-        $(BUILD_ROOT)/library/cpp/malloc/api/malloc.cpp.o\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/link_lib.py\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/malloc/api'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name cpp-malloc-api -o library/cpp/malloc/api/libcpp-malloc-api.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a' '$(BUILD_ROOT)/library/cpp/malloc/api/malloc.cpp.o'
-
-$(BUILD_ROOT)/library/cpp/malloc/api/malloc.cpp.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/malloc/api/malloc.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/malloc/api'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/malloc/api/malloc.cpp.o' '$(SOURCE_ROOT)/library/cpp/malloc/api/malloc.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.iter.fbs.h\
-$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.bfbs\
-        ::\
-        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
-
-$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
-        ::\
-        $(BUILD_ROOT)/contrib/tools/flatc/flatc\
-        $(SOURCE_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs\
-        $(SOURCE_ROOT)/build/scripts/stdout2stderr.py\
-
-	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVRBfdXNlcl9leHRyYV9hcmdzcQhdcQlVBV9wYXRocQpVVSRTL2NhdGJvb3N0L3ByaXZhdGUvbGlicy9lbWJlZGRpbmdfZmVhdHVyZXMvZmxhdGJ1ZmZlcnMvZW1iZWRkaW5nX2ZlYXR1cmVfY2FsY2Vycy5mYnNxC3WFcQxiLg== --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
-
-$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.iter.fbs.h\
-$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.bfbs\
-        ::\
-        $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
-
-$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
-        ::\
-        $(BUILD_ROOT)/contrib/tools/flatc/flatc\
-        $(SOURCE_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs\
-        $(SOURCE_ROOT)/build/scripts/stdout2stderr.py\
-
-	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVRBfdXNlcl9leHRyYV9hcmdzcQhdcQlVBV9wYXRocQpVRiRTL2NhdGJvb3N0L3ByaXZhdGUvbGlicy90ZXh0X2ZlYXR1cmVzL2ZsYXRidWZmZXJzL2ZlYXR1cmVfY2FsY2Vycy5mYnNxC3WFcQxiLg== --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
-
-$(BUILD_ROOT)/catboost/app/mode_calc.cpp.o\
-        ::\
-        $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
-        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
-        $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
-        $(SOURCE_ROOT)/catboost/app/mode_calc.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/catboost/app'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/catboost/app/mode_calc.cpp.o' '$(SOURCE_ROOT)/catboost/app/mode_calc.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libc_compat/include/uchar' '-I$(SOURCE_ROOT)/contrib/libs/tbb/include' '-I$(SOURCE_ROOT)/contrib/libs/libf2c' '-I$(SOURCE_ROOT)/contrib/libs/protobuf/src' '-I$(SOURCE_ROOT)/contrib/libs/brotli/include' '-I$(SOURCE_ROOT)/contrib/libs/openssl/include' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -D_SHARED_PTR_H -DCATBOOST_OPENSOURCE=yes -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/catboost/app/mode_eval_feature.cpp.o\
-        ::\
-        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
-        $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
-        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
-        $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
-        $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
-        $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
-        $(BUILD_ROOT)/contrib/libs/tensorboard/summary.pb.h\
-        $(BUILD_ROOT)/contrib/libs/tensorboard/tensor.pb.h\
-        $(BUILD_ROOT)/contrib/libs/tensorboard/tensor_shape.pb.h\
-        $(BUILD_ROOT)/contrib/libs/tensorboard/types.pb.h\
-        $(SOURCE_ROOT)/catboost/app/mode_eval_feature.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/catboost/app'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/catboost/app/mode_eval_feature.cpp.o' '$(SOURCE_ROOT)/catboost/app/mode_eval_feature.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libc_compat/include/uchar' '-I$(SOURCE_ROOT)/contrib/libs/tbb/include' '-I$(SOURCE_ROOT)/contrib/libs/libf2c' '-I$(SOURCE_ROOT)/contrib/libs/protobuf/src' '-I$(SOURCE_ROOT)/contrib/libs/brotli/include' '-I$(SOURCE_ROOT)/contrib/libs/openssl/include' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -D_SHARED_PTR_H -DCATBOOST_OPENSOURCE=yes -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.cc\
-        ::\
-        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
-
-$(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
-        ::\
-        $(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide\
-        $(BUILD_ROOT)/contrib/tools/protoc/protoc\
-        $(SOURCE_ROOT)/catboost/idl/pool/proto/quantization_schema.proto\
-
-	mkdir -p '$(BUILD_ROOT)/catboost/idl/pool/proto'
-	cd $(SOURCE_ROOT) && '$(BUILD_ROOT)/contrib/tools/protoc/protoc' -I=./ '-I=$(SOURCE_ROOT)/' '-I=$(SOURCE_ROOT)/contrib/libs/protobuf/src' '-I=$(BUILD_ROOT)' '-I=$(SOURCE_ROOT)/contrib/libs/protobuf/src' '--cpp_out=$(BUILD_ROOT)/' '--cpp_styleguide_out=$(BUILD_ROOT)/' '--plugin=protoc-gen-cpp_styleguide=$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide' catboost/idl/pool/proto/quantization_schema.proto
-
-$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide.mf\
-        ::\
-        $(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide\
-
-$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide\
-        ::\
-        $(BUILD_ROOT)/contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a\
-        $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a\
-        $(BUILD_ROOT)/contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a\
-        $(BUILD_ROOT)/contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a\
-        $(BUILD_ROOT)/contrib/libs/double-conversion/libcontrib-libs-double-conversion.a\
-        $(BUILD_ROOT)/contrib/libs/libc_compat/libcontrib-libs-libc_compat.a\
-        $(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a\
-        $(BUILD_ROOT)/contrib/libs/protobuf/libcontrib-libs-protobuf.a\
-        $(BUILD_ROOT)/contrib/libs/protoc/libcontrib-libs-protoc.a\
-        $(BUILD_ROOT)/contrib/libs/zlib/libcontrib-libs-zlib.a\
-        $(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide.cpp.o\
-        $(BUILD_ROOT)/library/cpp/cpuid_check/cpu_id_check.cpp.o\
-        $(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a\
-        $(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a\
-        $(BUILD_ROOT)/util/charset/libutil-charset.a\
-        $(BUILD_ROOT)/util/libyutil.a\
-        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
-        $(SOURCE_ROOT)/build/scripts/vcs_info.py\
-        $(SOURCE_ROOT)/build/scripts/c_templates/svn_interface.c\
-        $(SOURCE_ROOT)/build/scripts/link_exe.py\
-
-	mkdir -p '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name cpp_styleguide -o contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide.mf -t PROGRAM -Ya,lics -Ya,peers contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a util/charset/libutil-charset.a contrib/libs/zlib/libcontrib-libs-zlib.a contrib/libs/double-conversion/libcontrib-libs-double-conversion.a contrib/libs/libc_compat/libcontrib-libs-libc_compat.a util/libyutil.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a contrib/libs/protobuf/libcontrib-libs-protobuf.a contrib/libs/protoc/libcontrib-libs-protoc.a
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/vcs_info.py' '$(VCS)/vcs.json' '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/__vcs_version__.c' '$(SOURCE_ROOT)/build/scripts/c_templates/svn_interface.c'
-	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/__vcs_version__.c.o' '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/__vcs_version__.c' '-I$(SOURCE_ROOT)' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -w -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -D_SHARED_PTR_H -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16
-	cd $(BUILD_ROOT) && '$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_exe.py' '$(CXX)' library/cpp/cpuid_check/cpu_id_check.cpp.o '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/__vcs_version__.c.o' '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide.cpp.o' -o '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide' -rdynamic --target=x86_64-linux-gnu -Wl,--start-group contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a util/charset/libutil-charset.a contrib/libs/zlib/libcontrib-libs-zlib.a contrib/libs/double-conversion/libcontrib-libs-double-conversion.a contrib/libs/libc_compat/libcontrib-libs-libc_compat.a util/libyutil.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a contrib/libs/protobuf/libcontrib-libs-protobuf.a contrib/libs/protoc/libcontrib-libs-protoc.a -Wl,--end-group -ldl -lrt -Wl,--no-as-needed -lpthread -lrt -ldl -nodefaultlibs -lpthread -lc -lm
-
 $(BUILD_ROOT)/contrib/libs/double-conversion/libcontrib-libs-double-conversion.a.mf\
         ::\
         $(BUILD_ROOT)/contrib/libs/double-conversion/libcontrib-libs-double-conversion.a\
@@ -1529,6 +1178,83 @@ $(BUILD_ROOT)/contrib/libs/libc_compat/strlcpy.c.o\
 
 	mkdir -p '$(BUILD_ROOT)/contrib/libs/libc_compat'
 	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/libc_compat/strlcpy.c.o' '$(SOURCE_ROOT)/contrib/libs/libc_compat/strlcpy.c' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/libc_compat/include/uchar' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -w -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16
+
+$(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a.mf\
+        ::\
+        $(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a\
+
+$(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a\
+        ::\
+        $(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-EHABI.cpp.o\
+        $(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-seh.cpp.o\
+        $(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-sjlj.c.o\
+        $(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1-gcc-ext.c.o\
+        $(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1.c.o\
+        $(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersRestore.S.o\
+        $(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersSave.S.o\
+        $(BUILD_ROOT)/contrib/libs/libunwind/_/src/libunwind.cpp.o\
+        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
+        $(SOURCE_ROOT)/build/scripts/link_lib.py\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name contrib-libs-libunwind -o contrib/libs/libunwind/libcontrib-libs-libunwind.a.mf -t LIBRARY -Ya,lics Apache-2.0 -Ya,peers
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a' '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-EHABI.cpp.o' '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-seh.cpp.o' '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-sjlj.c.o' '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1-gcc-ext.c.o' '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1.c.o' '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersRestore.S.o' '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersSave.S.o' '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/libunwind.cpp.o'
+
+$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-EHABI.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/libunwind/src/Unwind-EHABI.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind/_/src'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-EHABI.cpp.o' '$(SOURCE_ROOT)/contrib/libs/libunwind/src/Unwind-EHABI.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/libunwind/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_LIBUNWIND_IS_NATIVE_ONLY -fno-exceptions -fno-rtti -funwind-tables -D_libunwind_ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-seh.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/libunwind/src/Unwind-seh.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind/_/src'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-seh.cpp.o' '$(SOURCE_ROOT)/contrib/libs/libunwind/src/Unwind-seh.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/libunwind/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_LIBUNWIND_IS_NATIVE_ONLY -fno-exceptions -fno-rtti -funwind-tables -D_libunwind_ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-sjlj.c.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/libunwind/src/Unwind-sjlj.c\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind/_/src'
+	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-sjlj.c.o' '$(SOURCE_ROOT)/contrib/libs/libunwind/src/Unwind-sjlj.c' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/libunwind/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_LIBUNWIND_IS_NATIVE_ONLY -fno-exceptions -fno-rtti -funwind-tables -D_libunwind_ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16
+
+$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1-gcc-ext.c.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/libunwind/src/UnwindLevel1-gcc-ext.c\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind/_/src'
+	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1-gcc-ext.c.o' '$(SOURCE_ROOT)/contrib/libs/libunwind/src/UnwindLevel1-gcc-ext.c' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/libunwind/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_LIBUNWIND_IS_NATIVE_ONLY -fno-exceptions -fno-rtti -funwind-tables -D_libunwind_ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16
+
+$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1.c.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/libunwind/src/UnwindLevel1.c\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind/_/src'
+	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1.c.o' '$(SOURCE_ROOT)/contrib/libs/libunwind/src/UnwindLevel1.c' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/libunwind/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_LIBUNWIND_IS_NATIVE_ONLY -fno-exceptions -fno-rtti -funwind-tables -D_libunwind_ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16
+
+$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersRestore.S.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/libunwind/src/UnwindRegistersRestore.S\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind/_/src'
+	'$(CC)' --target=x86_64-linux-gnu -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_LIBUNWIND_IS_NATIVE_ONLY -fno-exceptions -fno-rtti -funwind-tables -D_libunwind_ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -c -o '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersRestore.S.o' '$(SOURCE_ROOT)/contrib/libs/libunwind/src/UnwindRegistersRestore.S' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/libunwind/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf'
+
+$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersSave.S.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/libunwind/src/UnwindRegistersSave.S\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind/_/src'
+	'$(CC)' --target=x86_64-linux-gnu -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_LIBUNWIND_IS_NATIVE_ONLY -fno-exceptions -fno-rtti -funwind-tables -D_libunwind_ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -c -o '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersSave.S.o' '$(SOURCE_ROOT)/contrib/libs/libunwind/src/UnwindRegistersSave.S' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/libunwind/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf'
+
+$(BUILD_ROOT)/contrib/libs/libunwind/_/src/libunwind.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/libunwind/src/libunwind.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/libunwind/_/src'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/libunwind.cpp.o' '$(SOURCE_ROOT)/contrib/libs/libunwind/src/libunwind.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/libunwind/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_LIBUNWIND_IS_NATIVE_ONLY -fno-exceptions -fno-rtti -funwind-tables -D_libunwind_ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
 
 $(BUILD_ROOT)/contrib/libs/protobuf/libcontrib-libs-protobuf.a.mf\
         ::\
@@ -3127,6 +2853,48 @@ $(BUILD_ROOT)/library/cpp/cpuid_check/cpu_id_check.cpp.o\
 	mkdir -p '$(BUILD_ROOT)/library/cpp/cpuid_check'
 	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/cpuid_check/cpu_id_check.cpp.o' '$(SOURCE_ROOT)/library/cpp/cpuid_check/cpu_id_check.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libc_compat/include/uchar' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
 
+$(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a.mf\
+        ::\
+        $(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a\
+
+$(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a\
+        ::\
+        $(BUILD_ROOT)/library/cpp/lfalloc/lf_allocX64.cpp.o\
+        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
+        $(SOURCE_ROOT)/build/scripts/link_lib.py\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/lfalloc'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name library-cpp-lfalloc -o library/cpp/lfalloc/liblibrary-cpp-lfalloc.a.mf -t LIBRARY -Ya,lics -Ya,peers
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a' '$(BUILD_ROOT)/library/cpp/lfalloc/lf_allocX64.cpp.o'
+
+$(BUILD_ROOT)/library/cpp/lfalloc/lf_allocX64.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/lfalloc/lf_allocX64.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/lfalloc'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/lfalloc/lf_allocX64.cpp.o' '$(SOURCE_ROOT)/library/cpp/lfalloc/lf_allocX64.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -w -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Wno-register -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a.mf\
+        ::\
+        $(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a\
+
+$(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a\
+        ::\
+        $(BUILD_ROOT)/library/cpp/malloc/api/malloc.cpp.o\
+        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
+        $(SOURCE_ROOT)/build/scripts/link_lib.py\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/malloc/api'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name cpp-malloc-api -o library/cpp/malloc/api/libcpp-malloc-api.a.mf -t LIBRARY -Ya,lics -Ya,peers
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a' '$(BUILD_ROOT)/library/cpp/malloc/api/malloc.cpp.o'
+
+$(BUILD_ROOT)/library/cpp/malloc/api/malloc.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/malloc/api/malloc.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/malloc/api'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/malloc/api/malloc.cpp.o' '$(SOURCE_ROOT)/library/cpp/malloc/api/malloc.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
 $(BUILD_ROOT)/util/charset/libutil-charset.a.mf\
         ::\
         $(BUILD_ROOT)/util/charset/libutil-charset.a\
@@ -4559,6 +4327,240 @@ $(BUILD_ROOT)/contrib/tools/protoc/__/__/libs/protoc/src/google/protobuf/compile
 
 	mkdir -p '$(BUILD_ROOT)/contrib/tools/protoc/__/__/libs/protoc/src/google/protobuf/compiler'
 	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/tools/protoc/__/__/libs/protoc/src/google/protobuf/compiler/main.cc.o' '$(SOURCE_ROOT)/contrib/libs/protoc/src/google/protobuf/compiler/main.cc' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libc_compat/include/uchar' '-I$(SOURCE_ROOT)/contrib/libs/protoc/src' '-I$(SOURCE_ROOT)/contrib/libs/protobuf/src' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -w -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -D_SHARED_PTR_H -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Wno-register -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.iter.fbs.h\
+$(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.bfbs\
+        ::\
+        $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+
+$(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        ::\
+        $(BUILD_ROOT)/contrib/tools/flatc/flatc\
+        $(SOURCE_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs\
+        $(SOURCE_ROOT)/build/scripts/stdout2stderr.py\
+
+	mkdir -p '$(BUILD_ROOT)/catboost/libs/helpers/flatbuffers'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVRBfdXNlcl9leHRyYV9hcmdzcQhdcQlVBV9wYXRocQpVLSRTL2NhdGJvb3N0L2xpYnMvaGVscGVycy9mbGF0YnVmZmVycy9ndWlkLmZic3ELdYVxDGIu --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
+
+$(BUILD_ROOT)/contrib/tools/flatc/flatc.mf\
+        ::\
+        $(BUILD_ROOT)/contrib/tools/flatc/flatc\
+
+$(BUILD_ROOT)/contrib/tools/flatc/flatc\
+        ::\
+        $(BUILD_ROOT)/contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a\
+        $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a\
+        $(BUILD_ROOT)/contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a\
+        $(BUILD_ROOT)/contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a\
+        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a\
+        $(BUILD_ROOT)/contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a\
+        $(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a\
+        $(BUILD_ROOT)/contrib/tools/flatc/__/__/libs/flatbuffers/src/flatc_main.cpp.o\
+        $(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a\
+        $(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a\
+        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
+        $(SOURCE_ROOT)/build/scripts/vcs_info.py\
+        $(SOURCE_ROOT)/build/scripts/c_templates/svn_interface.c\
+        $(SOURCE_ROOT)/build/scripts/link_exe.py\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/tools/flatc'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name flatc -o contrib/tools/flatc/flatc.mf -t PROGRAM -Ya,lics -Ya,peers contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/vcs_info.py' '$(VCS)/vcs.json' '$(BUILD_ROOT)/contrib/tools/flatc/__vcs_version__.c' '$(SOURCE_ROOT)/build/scripts/c_templates/svn_interface.c'
+	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/tools/flatc/__vcs_version__.c.o' '$(BUILD_ROOT)/contrib/tools/flatc/__vcs_version__.c' '-I$(SOURCE_ROOT)' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16
+	cd $(BUILD_ROOT) && '$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_exe.py' '$(CXX)' '$(BUILD_ROOT)/contrib/tools/flatc/__vcs_version__.c.o' '$(BUILD_ROOT)/contrib/tools/flatc/__/__/libs/flatbuffers/src/flatc_main.cpp.o' -o '$(BUILD_ROOT)/contrib/tools/flatc/flatc' -rdynamic --target=x86_64-linux-gnu -Wl,--start-group contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a contrib/libs/libunwind/libcontrib-libs-libunwind.a contrib/libs/cxxsupp/libcxxrt/liblibs-cxxsupp-libcxxrt.a contrib/libs/cxxsupp/libcxx/liblibs-cxxsupp-libcxx.a library/cpp/malloc/api/libcpp-malloc-api.a library/cpp/lfalloc/liblibrary-cpp-lfalloc.a contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a -Wl,--end-group -ldl -lrt -Wl,--no-as-needed -lpthread -nodefaultlibs -lpthread -lc -lm
+
+$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a.mf\
+        ::\
+        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a\
+
+$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a\
+        ::\
+        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/code_generators.cpp.o\
+        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/flatc.cpp.o\
+        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp.cpp.o\
+        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp_yandex_maps_iter.cpp.o\
+        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_fbs.cpp.o\
+        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_general.cpp.o\
+        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_go.cpp.o\
+        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_json_schema.cpp.o\
+        $(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_python.cpp.o\
+        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
+        $(SOURCE_ROOT)/build/scripts/link_lib.py\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name libs-flatbuffers-flatc -o contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a.mf -t LIBRARY -Ya,lics APACHE2 -Ya,peers
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/code_generators.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/flatc.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_fbs.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_general.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_python.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_go.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_json_schema.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp_yandex_maps_iter.cpp.o'
+
+$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/code_generators.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/code_generators.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/code_generators.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/code_generators.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/flatc.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/flatc.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/flatc.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/flatc.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_cpp.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_cpp.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp_yandex_maps_iter.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_cpp_yandex_maps_iter.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp_yandex_maps_iter.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_cpp_yandex_maps_iter.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_fbs.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_fbs.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_fbs.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_fbs.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_general.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_general.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_general.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_general.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_go.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_go.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_go.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_go.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_json_schema.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_json_schema.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_json_schema.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_json_schema.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_python.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_python.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_python.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_python.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a.mf\
+        ::\
+        $(BUILD_ROOT)/contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a\
+
+$(BUILD_ROOT)/contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a\
+        ::\
+        $(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_gen_text.cpp.o\
+        $(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_parser.cpp.o\
+        $(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/reflection.cpp.o\
+        $(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/util.cpp.o\
+        $(SOURCE_ROOT)/build/scripts/generate_mf.py\
+        $(SOURCE_ROOT)/build/scripts/link_lib.py\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name contrib-libs-flatbuffers -o contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a.mf -t LIBRARY -Ya,lics APACHE2 -Ya,peers
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a' '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_parser.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_gen_text.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/reflection.cpp.o' '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/util.cpp.o'
+
+$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_gen_text.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_text.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_gen_text.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_gen_text.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_parser.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_parser.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_parser.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/idl_parser.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/reflection.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/reflection.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/reflection.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/reflection.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/util.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/util.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/util.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/util.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/contrib/tools/flatc/__/__/libs/flatbuffers/src/flatc_main.cpp.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/flatbuffers/src/flatc_main.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/tools/flatc/__/__/libs/flatbuffers/src'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/tools/flatc/__/__/libs/flatbuffers/src/flatc_main.cpp.o' '$(SOURCE_ROOT)/contrib/libs/flatbuffers/src/flatc_main.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/flatbuffers/include' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.iter.fbs.h\
+$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.bfbs\
+        ::\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
+
+$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
+        ::\
+        $(BUILD_ROOT)/contrib/tools/flatc/flatc\
+        $(SOURCE_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs\
+        $(SOURCE_ROOT)/build/scripts/stdout2stderr.py\
+
+	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVRBfdXNlcl9leHRyYV9hcmdzcQhdcQlVBV9wYXRocQpVVSRTL2NhdGJvb3N0L3ByaXZhdGUvbGlicy9lbWJlZGRpbmdfZmVhdHVyZXMvZmxhdGJ1ZmZlcnMvZW1iZWRkaW5nX2ZlYXR1cmVfY2FsY2Vycy5mYnNxC3WFcQxiLg== --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
+
+$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.iter.fbs.h\
+$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.bfbs\
+        ::\
+        $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
+
+$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
+        ::\
+        $(BUILD_ROOT)/contrib/tools/flatc/flatc\
+        $(SOURCE_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs\
+        $(SOURCE_ROOT)/build/scripts/stdout2stderr.py\
+
+	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVRBfdXNlcl9leHRyYV9hcmdzcQhdcQlVBV9wYXRocQpVRiRTL2NhdGJvb3N0L3ByaXZhdGUvbGlicy90ZXh0X2ZlYXR1cmVzL2ZsYXRidWZmZXJzL2ZlYXR1cmVfY2FsY2Vycy5mYnNxC3WFcQxiLg== --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
+
+$(BUILD_ROOT)/catboost/app/mode_calc.cpp.o\
+        ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
+        $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
+        $(SOURCE_ROOT)/catboost/app/mode_calc.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/catboost/app'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/catboost/app/mode_calc.cpp.o' '$(SOURCE_ROOT)/catboost/app/mode_calc.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libc_compat/include/uchar' '-I$(SOURCE_ROOT)/contrib/libs/tbb/include' '-I$(SOURCE_ROOT)/contrib/libs/libf2c' '-I$(SOURCE_ROOT)/contrib/libs/protobuf/src' '-I$(SOURCE_ROOT)/contrib/libs/brotli/include' '-I$(SOURCE_ROOT)/contrib/libs/openssl/include' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -D_SHARED_PTR_H -DCATBOOST_OPENSOURCE=yes -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/catboost/app/mode_eval_feature.cpp.o\
+        ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
+        $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/summary.pb.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/tensor.pb.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/tensor_shape.pb.h\
+        $(BUILD_ROOT)/contrib/libs/tensorboard/types.pb.h\
+        $(SOURCE_ROOT)/catboost/app/mode_eval_feature.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/catboost/app'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/catboost/app/mode_eval_feature.cpp.o' '$(SOURCE_ROOT)/catboost/app/mode_eval_feature.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libc_compat/include/uchar' '-I$(SOURCE_ROOT)/contrib/libs/tbb/include' '-I$(SOURCE_ROOT)/contrib/libs/libf2c' '-I$(SOURCE_ROOT)/contrib/libs/protobuf/src' '-I$(SOURCE_ROOT)/contrib/libs/brotli/include' '-I$(SOURCE_ROOT)/contrib/libs/openssl/include' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -D_SHARED_PTR_H -DCATBOOST_OPENSOURCE=yes -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
 
 $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.cc\
         ::\
@@ -37206,8 +37208,8 @@ clean\
 
 	rm -f '$(BUILD_ROOT)/catboost/app/catboost' '$(BUILD_ROOT)/catboost/app/catboost.mf'
 	rm -f '$(BUILD_ROOT)/catboost/app/main.cpp.o'
-	rm -f '$(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h' '$(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.iter.fbs.h' '$(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.bfbs'
-	rm -f '$(BUILD_ROOT)/contrib/tools/flatc/flatc' '$(BUILD_ROOT)/contrib/tools/flatc/flatc.mf'
+	rm -f '$(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h' '$(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.cc'
+	rm -f '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide' '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide.mf'
 	rm -f '$(BUILD_ROOT)/contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a' '$(BUILD_ROOT)/contrib/libs/cppdemangle/libcontrib-libs-cppdemangle.a.mf'
 	rm -f '$(BUILD_ROOT)/contrib/libs/cppdemangle/cxa_demangle.cpp.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a.mf'
@@ -37298,41 +37300,6 @@ clean\
 	rm -f '$(BUILD_ROOT)/contrib/libs/cxxsupp/libcxxrt/stdexcept.cc.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/cxxsupp/libcxxrt/typeinfo.cc.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/cxxsupp/libcxxrt/unwind.cc.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a.mf'
-	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/code_generators.cpp.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/flatc.cpp.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp.cpp.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp_yandex_maps_iter.cpp.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_fbs.cpp.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_general.cpp.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_go.cpp.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_json_schema.cpp.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_python.cpp.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a' '$(BUILD_ROOT)/contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a.mf'
-	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_gen_text.cpp.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_parser.cpp.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/reflection.cpp.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/util.cpp.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a' '$(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a.mf'
-	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-EHABI.cpp.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-seh.cpp.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-sjlj.c.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1-gcc-ext.c.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1.c.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersRestore.S.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersSave.S.o'
-	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/libunwind.cpp.o'
-	rm -f '$(BUILD_ROOT)/contrib/tools/flatc/__/__/libs/flatbuffers/src/flatc_main.cpp.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a' '$(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a.mf'
-	rm -f '$(BUILD_ROOT)/library/cpp/lfalloc/lf_allocX64.cpp.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a' '$(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a.mf'
-	rm -f '$(BUILD_ROOT)/library/cpp/malloc/api/malloc.cpp.o'
-	rm -f '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.iter.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.bfbs'
-	rm -f '$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.iter.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.bfbs'
-	rm -f '$(BUILD_ROOT)/catboost/app/mode_calc.cpp.o'
-	rm -f '$(BUILD_ROOT)/catboost/app/mode_eval_feature.cpp.o'
-	rm -f '$(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h' '$(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.cc'
-	rm -f '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide' '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide.mf'
 	rm -f '$(BUILD_ROOT)/contrib/libs/double-conversion/libcontrib-libs-double-conversion.a' '$(BUILD_ROOT)/contrib/libs/double-conversion/libcontrib-libs-double-conversion.a.mf'
 	rm -f '$(BUILD_ROOT)/contrib/libs/double-conversion/bignum-dtoa.cc.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/double-conversion/bignum.cc.o'
@@ -37346,6 +37313,15 @@ clean\
 	rm -f '$(BUILD_ROOT)/contrib/libs/libc_compat/string.c.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/libc_compat/strlcat.c.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/libc_compat/strlcpy.c.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a' '$(BUILD_ROOT)/contrib/libs/libunwind/libcontrib-libs-libunwind.a.mf'
+	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-EHABI.cpp.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-seh.cpp.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/Unwind-sjlj.c.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1-gcc-ext.c.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindLevel1.c.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersRestore.S.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/UnwindRegistersSave.S.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/libunwind/_/src/libunwind.cpp.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/protobuf/libcontrib-libs-protobuf.a' '$(BUILD_ROOT)/contrib/libs/protobuf/libcontrib-libs-protobuf.a.mf'
 	rm -f '$(BUILD_ROOT)/contrib/libs/protobuf/_/src/google/protobuf/any.cc.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/protobuf/_/src/google/protobuf/any.pb.cc.o'
@@ -37544,6 +37520,10 @@ clean\
 	rm -f '$(BUILD_ROOT)/contrib/libs/zlib/zutil.c.o'
 	rm -f '$(BUILD_ROOT)/contrib/tools/protoc/plugins/cpp_styleguide/cpp_styleguide.cpp.o'
 	rm -f '$(BUILD_ROOT)/library/cpp/cpuid_check/cpu_id_check.cpp.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a' '$(BUILD_ROOT)/library/cpp/lfalloc/liblibrary-cpp-lfalloc.a.mf'
+	rm -f '$(BUILD_ROOT)/library/cpp/lfalloc/lf_allocX64.cpp.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a' '$(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a.mf'
+	rm -f '$(BUILD_ROOT)/library/cpp/malloc/api/malloc.cpp.o'
 	rm -f '$(BUILD_ROOT)/util/charset/libutil-charset.a' '$(BUILD_ROOT)/util/charset/libutil-charset.a.mf'
 	rm -f '$(BUILD_ROOT)/util/charset/all_charset.cpp.o'
 	rm -f '$(BUILD_ROOT)/util/charset/all_charset.cpp'
@@ -37682,6 +37662,28 @@ clean\
 	rm -f '$(BUILD_ROOT)/util/all_util.cpp'
 	rm -f '$(BUILD_ROOT)/contrib/tools/protoc/protoc' '$(BUILD_ROOT)/contrib/tools/protoc/protoc.mf'
 	rm -f '$(BUILD_ROOT)/contrib/tools/protoc/__/__/libs/protoc/src/google/protobuf/compiler/main.cc.o'
+	rm -f '$(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h' '$(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.iter.fbs.h' '$(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.bfbs'
+	rm -f '$(BUILD_ROOT)/contrib/tools/flatc/flatc' '$(BUILD_ROOT)/contrib/tools/flatc/flatc.mf'
+	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a' '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/liblibs-flatbuffers-flatc.a.mf'
+	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/code_generators.cpp.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/flatc.cpp.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp.cpp.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_cpp_yandex_maps_iter.cpp.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_fbs.cpp.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_general.cpp.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_go.cpp.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_json_schema.cpp.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/flatc/__/src/idl_gen_python.cpp.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a' '$(BUILD_ROOT)/contrib/libs/flatbuffers/libcontrib-libs-flatbuffers.a.mf'
+	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_gen_text.cpp.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/idl_parser.cpp.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/reflection.cpp.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/flatbuffers/_/src/util.cpp.o'
+	rm -f '$(BUILD_ROOT)/contrib/tools/flatc/__/__/libs/flatbuffers/src/flatc_main.cpp.o'
+	rm -f '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.iter.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.bfbs'
+	rm -f '$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.iter.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.bfbs'
+	rm -f '$(BUILD_ROOT)/catboost/app/mode_calc.cpp.o'
+	rm -f '$(BUILD_ROOT)/catboost/app/mode_eval_feature.cpp.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h' '$(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.cc'
 	rm -f '$(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h' '$(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.cc'
 	rm -f '$(BUILD_ROOT)/contrib/libs/tensorboard/summary.pb.h' '$(BUILD_ROOT)/contrib/libs/tensorboard/summary.pb.cc'
