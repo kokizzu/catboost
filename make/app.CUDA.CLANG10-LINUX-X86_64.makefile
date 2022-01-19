@@ -6259,6 +6259,9 @@ $(BUILD_ROOT)/catboost/cuda/data/permutation.cpp.o\
 
 $(BUILD_ROOT)/catboost/cuda/gpu_data/kernels.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
+        $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/gpu_data/kernels.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/cuda/gpu_data'
@@ -6367,6 +6370,7 @@ $(BUILD_ROOT)/catboost/cuda/gpu_data/compressed_index.cpp.o\
 
 $(BUILD_ROOT)/catboost/cuda/gpu_data/compressed_index_builder.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/gpu_data/compressed_index_builder.cpp\
@@ -6383,6 +6387,7 @@ $(BUILD_ROOT)/catboost/cuda/gpu_data/ctr_helper.cpp.o\
 
 $(BUILD_ROOT)/catboost/cuda/gpu_data/dataset_helpers.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/gpu_data/dataset_helpers.cpp\
@@ -6401,6 +6406,7 @@ $(BUILD_ROOT)/catboost/cuda/gpu_data/doc_parallel_dataset.cpp.o\
 
 $(BUILD_ROOT)/catboost/cuda/gpu_data/doc_parallel_dataset_builder.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/gpu_data/doc_parallel_dataset_builder.cpp\
@@ -6419,6 +6425,7 @@ $(BUILD_ROOT)/catboost/cuda/gpu_data/estimated_features_calcer.cpp.o\
 
 $(BUILD_ROOT)/catboost/cuda/gpu_data/feature_layout.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/gpu_data/feature_layout.cpp\
@@ -6437,6 +6444,7 @@ $(BUILD_ROOT)/catboost/cuda/gpu_data/feature_parallel_dataset.cpp.o\
 
 $(BUILD_ROOT)/catboost/cuda/gpu_data/feature_parallel_dataset_builder.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/gpu_data/feature_parallel_dataset_builder.cpp\
@@ -6495,6 +6503,7 @@ $(BUILD_ROOT)/catboost/cuda/gpu_data/pinned_memory_estimation.cpp.o\
 
 $(BUILD_ROOT)/catboost/cuda/gpu_data/querywise_helper.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/gpu_data/querywise_helper.cpp\
@@ -7034,6 +7043,7 @@ $(BUILD_ROOT)/catboost/cuda/methods/_/leaves_estimation/step_estimator.cpp.o\
 
 $(BUILD_ROOT)/catboost/cuda/methods/_/pairwise_oblivious_trees/blocked_histogram_helper.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/methods/pairwise_oblivious_trees/blocked_histogram_helper.cpp\
@@ -7061,6 +7071,7 @@ $(BUILD_ROOT)/catboost/cuda/methods/_/pairwise_oblivious_trees/pairwise_optimiza
 
 $(BUILD_ROOT)/catboost/cuda/methods/_/pairwise_oblivious_trees/pairwise_score_calcer_for_policy.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/methods/pairwise_oblivious_trees/pairwise_score_calcer_for_policy.cpp\
@@ -7070,6 +7081,7 @@ $(BUILD_ROOT)/catboost/cuda/methods/_/pairwise_oblivious_trees/pairwise_score_ca
 
 $(BUILD_ROOT)/catboost/cuda/methods/_/pairwise_oblivious_trees/pairwise_scores_calcer.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/methods/pairwise_oblivious_trees/pairwise_scores_calcer.cpp\
@@ -7079,6 +7091,7 @@ $(BUILD_ROOT)/catboost/cuda/methods/_/pairwise_oblivious_trees/pairwise_scores_c
 
 $(BUILD_ROOT)/catboost/cuda/methods/_/pairwise_oblivious_trees/pairwise_structure_searcher.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/methods/pairwise_oblivious_trees/pairwise_structure_searcher.cpp\
@@ -7097,6 +7110,7 @@ $(BUILD_ROOT)/catboost/cuda/methods/add_oblivious_tree_model_feature_parallel.cp
 
 $(BUILD_ROOT)/catboost/cuda/methods/batch_feature_tensor_builder.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/methods/batch_feature_tensor_builder.cpp\
@@ -7132,6 +7146,7 @@ $(BUILD_ROOT)/catboost/cuda/methods/boosting_progress_tracker.cpp.o\
 
 $(BUILD_ROOT)/catboost/cuda/methods/ctr_from_tensor_calcer.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/methods/ctr_from_tensor_calcer.cpp\
@@ -7177,6 +7192,7 @@ $(BUILD_ROOT)/catboost/cuda/methods/oblivious_tree_doc_parallel_structure_search
 
 $(BUILD_ROOT)/catboost/cuda/methods/oblivious_tree_structure_searcher.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/methods/oblivious_tree_structure_searcher.cpp\
@@ -7222,6 +7238,7 @@ $(BUILD_ROOT)/catboost/cuda/methods/tree_ctr_datasets_visitor.cpp.o\
 
 $(BUILD_ROOT)/catboost/cuda/methods/tree_ctrs.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/methods/tree_ctrs.cpp\
@@ -7231,6 +7248,7 @@ $(BUILD_ROOT)/catboost/cuda/methods/tree_ctrs.cpp.o\
 
 $(BUILD_ROOT)/catboost/cuda/methods/tree_ctrs_dataset.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/methods/tree_ctrs_dataset.cpp\
@@ -7524,6 +7542,7 @@ $(BUILD_ROOT)/catboost/cuda/targets/combination_targets_impl.cpp.o\
 
 $(BUILD_ROOT)/catboost/cuda/targets/gpu_metrics.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/targets/gpu_metrics.cpp\
@@ -7551,6 +7570,7 @@ $(BUILD_ROOT)/catboost/cuda/targets/pair_logit_pairwise.cpp.o\
 
 $(BUILD_ROOT)/catboost/cuda/targets/pfound_f.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/targets/pfound_f.cpp\
@@ -7569,6 +7589,7 @@ $(BUILD_ROOT)/catboost/cuda/targets/pointwise_target_impl.cpp.o\
 
 $(BUILD_ROOT)/catboost/cuda/targets/query_cross_entropy.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/cuda/targets/query_cross_entropy.cpp\
