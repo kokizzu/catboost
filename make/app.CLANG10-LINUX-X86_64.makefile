@@ -1148,6 +1148,7 @@ $(BUILD_ROOT)/contrib/libs/libc_compat/libcontrib-libs-libc_compat.a.mf\
 
 $(BUILD_ROOT)/contrib/libs/libc_compat/libcontrib-libs-libc_compat.a\
         ::\
+        $(BUILD_ROOT)/contrib/libs/libc_compat/reallocarray.c.o\
         $(BUILD_ROOT)/contrib/libs/libc_compat/string.c.o\
         $(BUILD_ROOT)/contrib/libs/libc_compat/strlcat.c.o\
         $(BUILD_ROOT)/contrib/libs/libc_compat/strlcpy.c.o\
@@ -1156,7 +1157,14 @@ $(BUILD_ROOT)/contrib/libs/libc_compat/libcontrib-libs-libc_compat.a\
 
 	mkdir -p '$(BUILD_ROOT)/contrib/libs/libc_compat'
 	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name contrib-libs-libc_compat -o contrib/libs/libc_compat/libcontrib-libs-libc_compat.a.mf -t LIBRARY -Ya,lics BSD-3-Clause -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/contrib/libs/libc_compat/libcontrib-libs-libc_compat.a' '$(BUILD_ROOT)/contrib/libs/libc_compat/string.c.o' '$(BUILD_ROOT)/contrib/libs/libc_compat/strlcat.c.o' '$(BUILD_ROOT)/contrib/libs/libc_compat/strlcpy.c.o'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/contrib/libs/libc_compat/libcontrib-libs-libc_compat.a' '$(BUILD_ROOT)/contrib/libs/libc_compat/string.c.o' '$(BUILD_ROOT)/contrib/libs/libc_compat/strlcat.c.o' '$(BUILD_ROOT)/contrib/libs/libc_compat/strlcpy.c.o' '$(BUILD_ROOT)/contrib/libs/libc_compat/reallocarray.c.o'
+
+$(BUILD_ROOT)/contrib/libs/libc_compat/reallocarray.c.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/libc_compat/reallocarray.c\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/libc_compat'
+	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/libc_compat/reallocarray.c.o' '$(SOURCE_ROOT)/contrib/libs/libc_compat/reallocarray.c' '-I$(SOURCE_ROOT)/contrib/libs/libc_compat/include/uchar' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -faligned-allocation -w -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16
 
 $(BUILD_ROOT)/contrib/libs/libc_compat/string.c.o\
         ::\
@@ -37430,6 +37438,7 @@ clean\
 	rm -f '$(BUILD_ROOT)/contrib/libs/double-conversion/fixed-dtoa.cc.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/double-conversion/strtod.cc.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/libc_compat/libcontrib-libs-libc_compat.a' '$(BUILD_ROOT)/contrib/libs/libc_compat/libcontrib-libs-libc_compat.a.mf'
+	rm -f '$(BUILD_ROOT)/contrib/libs/libc_compat/reallocarray.c.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/libc_compat/string.c.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/libc_compat/strlcat.c.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/libc_compat/strlcpy.c.o'
