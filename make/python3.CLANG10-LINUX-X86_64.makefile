@@ -4058,7 +4058,6 @@ $(BUILD_ROOT)/util/all_network.cpp\
         $(SOURCE_ROOT)/util/network/interface.cpp\
         $(SOURCE_ROOT)/util/network/iovec.cpp\
         $(SOURCE_ROOT)/util/network/ip.cpp\
-        $(SOURCE_ROOT)/util/network/netloss.cpp\
         $(SOURCE_ROOT)/util/network/nonblock.cpp\
         $(SOURCE_ROOT)/util/network/pair.cpp\
         $(SOURCE_ROOT)/util/network/poller.cpp\
@@ -4067,7 +4066,7 @@ $(BUILD_ROOT)/util/all_network.cpp\
         $(SOURCE_ROOT)/util/network/socket.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/util'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_network.cpp' --ya-start-command-file util/network/address.cpp util/network/endpoint.cpp util/network/hostip.cpp util/network/init.cpp util/network/interface.cpp util/network/iovec.cpp util/network/ip.cpp util/network/netloss.cpp util/network/nonblock.cpp util/network/pair.cpp util/network/poller.cpp util/network/pollerimpl.cpp util/network/sock.cpp util/network/socket.cpp --ya-end-command-file
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_network.cpp' --ya-start-command-file util/network/address.cpp util/network/endpoint.cpp util/network/hostip.cpp util/network/init.cpp util/network/interface.cpp util/network/iovec.cpp util/network/ip.cpp util/network/nonblock.cpp util/network/pair.cpp util/network/poller.cpp util/network/pollerimpl.cpp util/network/sock.cpp util/network/socket.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/util/all_random.cpp.pic.o\
         ::\
