@@ -11882,6 +11882,7 @@ $(BUILD_ROOT)/catboost/private/libs/quantization_schema/serialization.cpp.o\
 
 $(BUILD_ROOT)/catboost/private/libs/quantization_schema/serialization.h_serialized.cpp.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/private/libs/quantization_schema/serialization.h_serialized.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/quantization_schema'
@@ -11889,6 +11890,7 @@ $(BUILD_ROOT)/catboost/private/libs/quantization_schema/serialization.h_serializ
 
 $(BUILD_ROOT)/catboost/private/libs/quantization_schema/serialization.h_serialized.cpp\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/tools/enum_parser/enum_parser/enum_parser\
         $(SOURCE_ROOT)/catboost/private/libs/quantization_schema/serialization.h\
 
