@@ -344,6 +344,7 @@ $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a.mf\
 $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a\
         ::\
         $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/addtf3.c.o\
+        $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/ashlti3.c.o\
         $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/clzti2.c.o\
         $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/comparetf2.c.o\
         $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/divdc3.c.o\
@@ -372,6 +373,7 @@ $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a\
         $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floatuntisf.c.o\
         $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/gcc_personality_v0.c.o\
         $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/int_util.c.o\
+        $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/lshrti3.c.o\
         $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/modti3.c.o\
         $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/muldc3.c.o\
         $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/muloti4.c.o\
@@ -390,7 +392,7 @@ $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a\
 
 	mkdir -p '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins'
 	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name libs-cxxsupp-builtins -o contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a.mf -t LIBRARY -Ya,lics MIT BSD -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/addtf3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/clzti2.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/comparetf2.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/divdc3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/divsc3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/divtf3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/divti3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/divxc3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/extenddftf2.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/extendsftf2.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixdfti.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixsfti.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixtfdi.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixtfsi.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixunsdfti.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixunstfsi.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixunstfdi.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixunsxfti.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixunssfti.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floatditf.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floatsitf.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floattidf.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floattisf.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floatunditf.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floatunsitf.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floatuntidf.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floatuntisf.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/gcc_personality_v0.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/int_util.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/modti3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/muldc3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/muloti4.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/mulsc3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/multf3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/mulxc3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/popcountdi2.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/subtf3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/trunctfdf2.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/trunctfsf2.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/udivmodti4.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/udivti3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/umodti3.c.o'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/addtf3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/ashlti3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/clzti2.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/comparetf2.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/divdc3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/divsc3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/divtf3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/divti3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/divxc3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/extenddftf2.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/extendsftf2.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixdfti.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixsfti.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixtfdi.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixtfsi.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixunsdfti.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixunssfti.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixunstfdi.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixunstfsi.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/fixunsxfti.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floatditf.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floatsitf.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floattidf.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floattisf.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floatunditf.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floatunsitf.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floatuntidf.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floatuntisf.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/gcc_personality_v0.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/int_util.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/lshrti3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/modti3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/muldc3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/muloti4.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/mulsc3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/multf3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/mulxc3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/popcountdi2.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/subtf3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/trunctfdf2.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/trunctfsf2.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/udivmodti4.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/udivti3.c.o' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/umodti3.c.o'
 
 $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/addtf3.c.o\
         ::\
@@ -398,6 +400,13 @@ $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/addtf3.c.o\
 
 	mkdir -p '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins'
 	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/addtf3.c.o' '$(SOURCE_ROOT)/contrib/libs/cxxsupp/builtins/addtf3.c' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -w -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16
+
+$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/ashlti3.c.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/cxxsupp/builtins/ashlti3.c\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins'
+	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/ashlti3.c.o' '$(SOURCE_ROOT)/contrib/libs/cxxsupp/builtins/ashlti3.c' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -w -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16
 
 $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/clzti2.c.o\
         ::\
@@ -594,6 +603,13 @@ $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/int_util.c.o\
 
 	mkdir -p '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins'
 	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/int_util.c.o' '$(SOURCE_ROOT)/contrib/libs/cxxsupp/builtins/int_util.c' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -w -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16
+
+$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/lshrti3.c.o\
+        ::\
+        $(SOURCE_ROOT)/contrib/libs/cxxsupp/builtins/lshrti3.c\
+
+	mkdir -p '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins'
+	'$(CC)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/lshrti3.c.o' '$(SOURCE_ROOT)/contrib/libs/cxxsupp/builtins/lshrti3.c' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -w -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16
 
 $(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/modti3.c.o\
         ::\
@@ -37064,6 +37080,7 @@ clean\
 	rm -f '$(BUILD_ROOT)/contrib/libs/cppdemangle/cxa_demangle.cpp.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a' '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/liblibs-cxxsupp-builtins.a.mf'
 	rm -f '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/addtf3.c.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/ashlti3.c.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/clzti2.c.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/comparetf2.c.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/divdc3.c.o'
@@ -37092,6 +37109,7 @@ clean\
 	rm -f '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/floatuntisf.c.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/gcc_personality_v0.c.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/int_util.c.o'
+	rm -f '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/lshrti3.c.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/modti3.c.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/muldc3.c.o'
 	rm -f '$(BUILD_ROOT)/contrib/libs/cxxsupp/builtins/muloti4.c.o'
