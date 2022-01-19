@@ -37105,15 +37105,46 @@ $(BUILD_ROOT)/library/cpp/threading/future/libcpp-threading-future.a.mf\
 
 $(BUILD_ROOT)/library/cpp/threading/future/libcpp-threading-future.a\
         ::\
+        $(BUILD_ROOT)/library/cpp/threading/future/_/core/future.cpp.pic.o\
+        $(BUILD_ROOT)/library/cpp/threading/future/_/core/fwd.cpp.pic.o\
+        $(BUILD_ROOT)/library/cpp/threading/future/_/wait/fwd.cpp.pic.o\
+        $(BUILD_ROOT)/library/cpp/threading/future/_/wait/wait.cpp.pic.o\
         $(BUILD_ROOT)/library/cpp/threading/future/async.cpp.pic.o\
-        $(BUILD_ROOT)/library/cpp/threading/future/future.cpp.pic.o\
         $(BUILD_ROOT)/library/cpp/threading/future/fwd.cpp.pic.o\
         $(SOURCE_ROOT)/build/scripts/generate_mf.py\
         $(SOURCE_ROOT)/build/scripts/link_lib.py\
 
 	mkdir -p '$(BUILD_ROOT)/library/cpp/threading/future'
 	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name cpp-threading-future -o library/cpp/threading/future/libcpp-threading-future.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/threading/future/libcpp-threading-future.a' '$(BUILD_ROOT)/library/cpp/threading/future/async.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/threading/future/future.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/threading/future/fwd.cpp.pic.o'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/library/cpp/threading/future/libcpp-threading-future.a' '$(BUILD_ROOT)/library/cpp/threading/future/async.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/threading/future/_/core/future.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/threading/future/_/core/fwd.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/threading/future/fwd.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/threading/future/_/wait/fwd.cpp.pic.o' '$(BUILD_ROOT)/library/cpp/threading/future/_/wait/wait.cpp.pic.o'
+
+$(BUILD_ROOT)/library/cpp/threading/future/_/core/future.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/threading/future/core/future.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/threading/future/_/core'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/threading/future/_/core/future.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/threading/future/core/future.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/threading/future/_/core/fwd.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/threading/future/core/fwd.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/threading/future/_/core'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/threading/future/_/core/fwd.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/threading/future/core/fwd.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/threading/future/_/wait/fwd.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/threading/future/wait/fwd.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/threading/future/_/wait'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/threading/future/_/wait/fwd.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/threading/future/wait/fwd.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/library/cpp/threading/future/_/wait/wait.cpp.pic.o\
+        ::\
+        $(SOURCE_ROOT)/library/cpp/threading/future/wait/wait.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/library/cpp/threading/future/_/wait'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/threading/future/_/wait/wait.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/threading/future/wait/wait.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
 
 $(BUILD_ROOT)/library/cpp/threading/future/async.cpp.pic.o\
         ::\
@@ -37121,13 +37152,6 @@ $(BUILD_ROOT)/library/cpp/threading/future/async.cpp.pic.o\
 
 	mkdir -p '$(BUILD_ROOT)/library/cpp/threading/future'
 	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/threading/future/async.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/threading/future/async.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/library/cpp/threading/future/future.cpp.pic.o\
-        ::\
-        $(SOURCE_ROOT)/library/cpp/threading/future/future.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/library/cpp/threading/future'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/threading/future/future.cpp.pic.o' '$(SOURCE_ROOT)/library/cpp/threading/future/future.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
 
 $(BUILD_ROOT)/library/cpp/threading/future/fwd.cpp.pic.o\
         ::\
@@ -42655,8 +42679,11 @@ clean\
 	rm -f '$(BUILD_ROOT)/library/cpp/threading/chunk_queue/libcpp-threading-chunk_queue.a' '$(BUILD_ROOT)/library/cpp/threading/chunk_queue/libcpp-threading-chunk_queue.a.mf'
 	rm -f '$(BUILD_ROOT)/library/cpp/threading/chunk_queue/queue.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/library/cpp/threading/future/libcpp-threading-future.a' '$(BUILD_ROOT)/library/cpp/threading/future/libcpp-threading-future.a.mf'
+	rm -f '$(BUILD_ROOT)/library/cpp/threading/future/_/core/future.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/threading/future/_/core/fwd.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/threading/future/_/wait/fwd.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/library/cpp/threading/future/_/wait/wait.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/library/cpp/threading/future/async.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/library/cpp/threading/future/future.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/library/cpp/threading/future/fwd.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/library/cpp/threading/hot_swap/libcpp-threading-hot_swap.a' '$(BUILD_ROOT)/library/cpp/threading/hot_swap/libcpp-threading-hot_swap.a.mf'
 	rm -f '$(BUILD_ROOT)/library/cpp/threading/hot_swap/hot_swap.cpp.pic.o'
