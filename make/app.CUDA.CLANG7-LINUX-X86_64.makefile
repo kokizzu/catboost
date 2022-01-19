@@ -1221,7 +1221,7 @@ $(BUILD_ROOT)/contrib/libs/libc_compat/libcontrib-libs-libc_compat.a\
 
 	mkdir -p '$(BUILD_ROOT)/contrib/libs/libc_compat'
 	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name contrib-libs-libc_compat -o contrib/libs/libc_compat/libcontrib-libs-libc_compat.a.mf -t LIBRARY -Ya,lics BSD-3-Clause -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/contrib/libs/libc_compat/libcontrib-libs-libc_compat.a' '$(BUILD_ROOT)/contrib/libs/libc_compat/strlcat.c.o' '$(BUILD_ROOT)/contrib/libs/libc_compat/strlcpy.c.o' '$(BUILD_ROOT)/contrib/libs/libc_compat/string.c.o'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/contrib/libs/libc_compat/libcontrib-libs-libc_compat.a' '$(BUILD_ROOT)/contrib/libs/libc_compat/string.c.o' '$(BUILD_ROOT)/contrib/libs/libc_compat/strlcat.c.o' '$(BUILD_ROOT)/contrib/libs/libc_compat/strlcpy.c.o'
 
 $(BUILD_ROOT)/contrib/libs/libc_compat/string.c.o\
         ::\
