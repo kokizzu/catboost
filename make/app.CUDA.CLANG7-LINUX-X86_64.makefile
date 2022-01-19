@@ -2993,7 +2993,7 @@ $(BUILD_ROOT)/util/charset/all_charset.cpp\
         $(SOURCE_ROOT)/util/charset/wide.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/util/charset'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/charset/all_charset.cpp' util/charset/generated/unidata.cpp util/charset/recode_result.cpp util/charset/unicode_table.cpp util/charset/unidata.cpp util/charset/utf8.cpp util/charset/wide.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/charset/all_charset.cpp' --ya-start-command-file util/charset/generated/unidata.cpp util/charset/recode_result.cpp util/charset/unicode_table.cpp util/charset/unidata.cpp util/charset/utf8.cpp util/charset/wide.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/util/charset/wide_sse41.cpp.o\
         ::\
@@ -3104,7 +3104,7 @@ $(BUILD_ROOT)/contrib/tools/ragel6/all_cd.cpp\
         $(SOURCE_ROOT)/contrib/tools/ragel6/cdtable.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/contrib/tools/ragel6'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/contrib/tools/ragel6/all_cd.cpp' contrib/tools/ragel6/cdcodegen.cpp contrib/tools/ragel6/cdfflat.cpp contrib/tools/ragel6/cdfgoto.cpp contrib/tools/ragel6/cdflat.cpp contrib/tools/ragel6/cdftable.cpp contrib/tools/ragel6/cdgoto.cpp contrib/tools/ragel6/cdipgoto.cpp contrib/tools/ragel6/cdsplit.cpp contrib/tools/ragel6/cdtable.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/contrib/tools/ragel6/all_cd.cpp' --ya-start-command-file contrib/tools/ragel6/cdcodegen.cpp contrib/tools/ragel6/cdfflat.cpp contrib/tools/ragel6/cdfgoto.cpp contrib/tools/ragel6/cdflat.cpp contrib/tools/ragel6/cdftable.cpp contrib/tools/ragel6/cdgoto.cpp contrib/tools/ragel6/cdipgoto.cpp contrib/tools/ragel6/cdsplit.cpp contrib/tools/ragel6/cdtable.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/contrib/tools/ragel6/all_cs.cpp.o\
         ::\
@@ -3127,7 +3127,7 @@ $(BUILD_ROOT)/contrib/tools/ragel6/all_cs.cpp\
         $(SOURCE_ROOT)/contrib/tools/ragel6/cstable.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/contrib/tools/ragel6'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/contrib/tools/ragel6/all_cs.cpp' contrib/tools/ragel6/cscodegen.cpp contrib/tools/ragel6/csfflat.cpp contrib/tools/ragel6/csfgoto.cpp contrib/tools/ragel6/csflat.cpp contrib/tools/ragel6/csftable.cpp contrib/tools/ragel6/csgoto.cpp contrib/tools/ragel6/csipgoto.cpp contrib/tools/ragel6/cssplit.cpp contrib/tools/ragel6/cstable.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/contrib/tools/ragel6/all_cs.cpp' --ya-start-command-file contrib/tools/ragel6/cscodegen.cpp contrib/tools/ragel6/csfflat.cpp contrib/tools/ragel6/csfgoto.cpp contrib/tools/ragel6/csflat.cpp contrib/tools/ragel6/csftable.cpp contrib/tools/ragel6/csgoto.cpp contrib/tools/ragel6/csipgoto.cpp contrib/tools/ragel6/cssplit.cpp contrib/tools/ragel6/cstable.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/contrib/tools/ragel6/all_fs.cpp.o\
         ::\
@@ -3147,7 +3147,7 @@ $(BUILD_ROOT)/contrib/tools/ragel6/all_fs.cpp\
         $(SOURCE_ROOT)/contrib/tools/ragel6/fsmstate.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/contrib/tools/ragel6'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/contrib/tools/ragel6/all_fs.cpp' contrib/tools/ragel6/fsmap.cpp contrib/tools/ragel6/fsmattach.cpp contrib/tools/ragel6/fsmbase.cpp contrib/tools/ragel6/fsmgraph.cpp contrib/tools/ragel6/fsmmin.cpp contrib/tools/ragel6/fsmstate.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/contrib/tools/ragel6/all_fs.cpp' --ya-start-command-file contrib/tools/ragel6/fsmap.cpp contrib/tools/ragel6/fsmattach.cpp contrib/tools/ragel6/fsmbase.cpp contrib/tools/ragel6/fsmgraph.cpp contrib/tools/ragel6/fsmmin.cpp contrib/tools/ragel6/fsmstate.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/contrib/tools/ragel6/all_go.cpp.o\
         ::\
@@ -3170,7 +3170,7 @@ $(BUILD_ROOT)/contrib/tools/ragel6/all_go.cpp\
         $(SOURCE_ROOT)/contrib/tools/ragel6/gotablish.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/contrib/tools/ragel6'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/contrib/tools/ragel6/all_go.cpp' contrib/tools/ragel6/gocodegen.cpp contrib/tools/ragel6/gofflat.cpp contrib/tools/ragel6/gofgoto.cpp contrib/tools/ragel6/goflat.cpp contrib/tools/ragel6/goftable.cpp contrib/tools/ragel6/gogoto.cpp contrib/tools/ragel6/goipgoto.cpp contrib/tools/ragel6/gotable.cpp contrib/tools/ragel6/gotablish.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/contrib/tools/ragel6/all_go.cpp' --ya-start-command-file contrib/tools/ragel6/gocodegen.cpp contrib/tools/ragel6/gofflat.cpp contrib/tools/ragel6/gofgoto.cpp contrib/tools/ragel6/goflat.cpp contrib/tools/ragel6/goftable.cpp contrib/tools/ragel6/gogoto.cpp contrib/tools/ragel6/goipgoto.cpp contrib/tools/ragel6/gotable.cpp contrib/tools/ragel6/gotablish.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/contrib/tools/ragel6/all_ml.cpp.o\
         ::\
@@ -3191,7 +3191,7 @@ $(BUILD_ROOT)/contrib/tools/ragel6/all_ml.cpp\
         $(SOURCE_ROOT)/contrib/tools/ragel6/mltable.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/contrib/tools/ragel6'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/contrib/tools/ragel6/all_ml.cpp' contrib/tools/ragel6/mlcodegen.cpp contrib/tools/ragel6/mlfflat.cpp contrib/tools/ragel6/mlfgoto.cpp contrib/tools/ragel6/mlflat.cpp contrib/tools/ragel6/mlftable.cpp contrib/tools/ragel6/mlgoto.cpp contrib/tools/ragel6/mltable.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/contrib/tools/ragel6/all_ml.cpp' --ya-start-command-file contrib/tools/ragel6/mlcodegen.cpp contrib/tools/ragel6/mlfflat.cpp contrib/tools/ragel6/mlfgoto.cpp contrib/tools/ragel6/mlflat.cpp contrib/tools/ragel6/mlftable.cpp contrib/tools/ragel6/mlgoto.cpp contrib/tools/ragel6/mltable.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/contrib/tools/ragel6/all_other.cpp.o\
         ::\
@@ -3214,7 +3214,7 @@ $(BUILD_ROOT)/contrib/tools/ragel6/all_other.cpp\
         $(SOURCE_ROOT)/contrib/tools/ragel6/xmlcodegen.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/contrib/tools/ragel6'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/contrib/tools/ragel6/all_other.cpp' contrib/tools/ragel6/common.cpp contrib/tools/ragel6/dotcodegen.cpp contrib/tools/ragel6/gendata.cpp contrib/tools/ragel6/inputdata.cpp contrib/tools/ragel6/javacodegen.cpp contrib/tools/ragel6/main.cpp contrib/tools/ragel6/parsedata.cpp contrib/tools/ragel6/parsetree.cpp contrib/tools/ragel6/xmlcodegen.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/contrib/tools/ragel6/all_other.cpp' --ya-start-command-file contrib/tools/ragel6/common.cpp contrib/tools/ragel6/dotcodegen.cpp contrib/tools/ragel6/gendata.cpp contrib/tools/ragel6/inputdata.cpp contrib/tools/ragel6/javacodegen.cpp contrib/tools/ragel6/main.cpp contrib/tools/ragel6/parsedata.cpp contrib/tools/ragel6/parsetree.cpp contrib/tools/ragel6/xmlcodegen.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/contrib/tools/ragel6/all_r.cpp.o\
         ::\
@@ -3235,7 +3235,7 @@ $(BUILD_ROOT)/contrib/tools/ragel6/all_r.cpp\
         $(SOURCE_ROOT)/contrib/tools/ragel6/rubytable.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/contrib/tools/ragel6'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/contrib/tools/ragel6/all_r.cpp' contrib/tools/ragel6/rbxgoto.cpp contrib/tools/ragel6/redfsm.cpp contrib/tools/ragel6/rubycodegen.cpp contrib/tools/ragel6/rubyfflat.cpp contrib/tools/ragel6/rubyflat.cpp contrib/tools/ragel6/rubyftable.cpp contrib/tools/ragel6/rubytable.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/contrib/tools/ragel6/all_r.cpp' --ya-start-command-file contrib/tools/ragel6/rbxgoto.cpp contrib/tools/ragel6/redfsm.cpp contrib/tools/ragel6/rubycodegen.cpp contrib/tools/ragel6/rubyfflat.cpp contrib/tools/ragel6/rubyflat.cpp contrib/tools/ragel6/rubyftable.cpp contrib/tools/ragel6/rubytable.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/contrib/tools/ragel6/rlparse.cpp.o\
         ::\
@@ -3960,7 +3960,7 @@ $(BUILD_ROOT)/util/all_datetime.cpp\
         $(SOURCE_ROOT)/util/datetime/uptime.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/util'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_datetime.cpp' util/datetime/base.cpp util/datetime/constants.cpp util/datetime/cputimer.cpp util/datetime/systime.cpp util/datetime/uptime.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_datetime.cpp' --ya-start-command-file util/datetime/base.cpp util/datetime/constants.cpp util/datetime/cputimer.cpp util/datetime/systime.cpp util/datetime/uptime.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/util/all_digest.cpp.o\
         ::\
@@ -3979,7 +3979,7 @@ $(BUILD_ROOT)/util/all_digest.cpp\
         $(SOURCE_ROOT)/util/digest/sequence.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/util'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_digest.cpp' util/digest/fnv.cpp util/digest/multi.cpp util/digest/murmur.cpp util/digest/numeric.cpp util/digest/sequence.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_digest.cpp' --ya-start-command-file util/digest/fnv.cpp util/digest/multi.cpp util/digest/murmur.cpp util/digest/numeric.cpp util/digest/sequence.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/util/all_folder.cpp.o\
         ::\
@@ -4000,7 +4000,7 @@ $(BUILD_ROOT)/util/all_folder.cpp\
         $(SOURCE_ROOT)/util/folder/tempdir.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/util'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_folder.cpp' util/folder/dirut.cpp util/folder/filelist.cpp util/folder/fts.cpp util/folder/iterator.cpp util/folder/path.cpp util/folder/pathsplit.cpp util/folder/tempdir.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_folder.cpp' --ya-start-command-file util/folder/dirut.cpp util/folder/filelist.cpp util/folder/fts.cpp util/folder/iterator.cpp util/folder/path.cpp util/folder/pathsplit.cpp util/folder/tempdir.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/util/all_generic.cpp.o\
         ::\
@@ -4070,7 +4070,7 @@ $(BUILD_ROOT)/util/all_generic.cpp\
         $(SOURCE_ROOT)/util/generic/ymath.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/util'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_generic.cpp' util/generic/scope.cpp util/generic/adaptor.cpp util/generic/algorithm.cpp util/generic/array_ref.cpp util/generic/array_size.cpp util/generic/bitmap.cpp util/generic/bitops.cpp util/generic/bt_exception.cpp util/generic/buffer.cpp util/generic/cast.cpp util/generic/chartraits.cpp util/generic/deque.cpp util/generic/explicit_type.cpp util/generic/fastqueue.cpp util/generic/flags.cpp util/generic/function.cpp util/generic/fwd.cpp util/generic/guid.cpp util/generic/hash.cpp util/generic/hash_primes.cpp util/generic/hash_set.cpp util/generic/hide_ptr.cpp util/generic/intrlist.cpp util/generic/is_in.cpp util/generic/iterator.cpp util/generic/iterator_range.cpp util/generic/lazy_value.cpp util/generic/list.cpp util/generic/map.cpp util/generic/mapfindptr.cpp util/generic/maybe.cpp util/generic/mem_copy.cpp util/generic/noncopyable.cpp util/generic/object_counter.cpp util/generic/ptr.cpp util/generic/queue.cpp util/generic/refcount.cpp util/generic/serialized_enum.cpp util/generic/set.cpp util/generic/singleton.cpp util/generic/size_literals.cpp util/generic/stack.cpp util/generic/store_policy.cpp util/generic/strbuf.cpp util/generic/strfcpy.cpp util/generic/string.cpp util/generic/typelist.cpp util/generic/type_name.cpp util/generic/typetraits.cpp util/generic/utility.cpp util/generic/va_args.cpp util/generic/vector.cpp util/generic/xrange.cpp util/generic/yexception.cpp util/generic/ylimits.cpp util/generic/ymath.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_generic.cpp' --ya-start-command-file util/generic/scope.cpp util/generic/adaptor.cpp util/generic/algorithm.cpp util/generic/array_ref.cpp util/generic/array_size.cpp util/generic/bitmap.cpp util/generic/bitops.cpp util/generic/bt_exception.cpp util/generic/buffer.cpp util/generic/cast.cpp util/generic/chartraits.cpp util/generic/deque.cpp util/generic/explicit_type.cpp util/generic/fastqueue.cpp util/generic/flags.cpp util/generic/function.cpp util/generic/fwd.cpp util/generic/guid.cpp util/generic/hash.cpp util/generic/hash_primes.cpp util/generic/hash_set.cpp util/generic/hide_ptr.cpp util/generic/intrlist.cpp util/generic/is_in.cpp util/generic/iterator.cpp util/generic/iterator_range.cpp util/generic/lazy_value.cpp util/generic/list.cpp util/generic/map.cpp util/generic/mapfindptr.cpp util/generic/maybe.cpp util/generic/mem_copy.cpp util/generic/noncopyable.cpp util/generic/object_counter.cpp util/generic/ptr.cpp util/generic/queue.cpp util/generic/refcount.cpp util/generic/serialized_enum.cpp util/generic/set.cpp util/generic/singleton.cpp util/generic/size_literals.cpp util/generic/stack.cpp util/generic/store_policy.cpp util/generic/strbuf.cpp util/generic/strfcpy.cpp util/generic/string.cpp util/generic/typelist.cpp util/generic/type_name.cpp util/generic/typetraits.cpp util/generic/utility.cpp util/generic/va_args.cpp util/generic/vector.cpp util/generic/xrange.cpp util/generic/yexception.cpp util/generic/ylimits.cpp util/generic/ymath.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/util/all_memory.cpp.o\
         ::\
@@ -4093,7 +4093,7 @@ $(BUILD_ROOT)/util/all_memory.cpp\
         $(SOURCE_ROOT)/util/memory/tempbuf.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/util'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_memory.cpp' util/memory/addstorage.cpp util/memory/alloc.cpp util/memory/blob.cpp util/memory/mmapalloc.cpp util/memory/pool.cpp util/memory/segmented_string_pool.cpp util/memory/segpool_alloc.cpp util/memory/smallobj.cpp util/memory/tempbuf.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_memory.cpp' --ya-start-command-file util/memory/addstorage.cpp util/memory/alloc.cpp util/memory/blob.cpp util/memory/mmapalloc.cpp util/memory/pool.cpp util/memory/segmented_string_pool.cpp util/memory/segpool_alloc.cpp util/memory/smallobj.cpp util/memory/tempbuf.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/util/all_network.cpp.o\
         ::\
@@ -4121,7 +4121,7 @@ $(BUILD_ROOT)/util/all_network.cpp\
         $(SOURCE_ROOT)/util/network/socket.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/util'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_network.cpp' util/network/address.cpp util/network/endpoint.cpp util/network/hostip.cpp util/network/init.cpp util/network/interface.cpp util/network/iovec.cpp util/network/ip.cpp util/network/netloss.cpp util/network/nonblock.cpp util/network/pair.cpp util/network/poller.cpp util/network/pollerimpl.cpp util/network/sock.cpp util/network/socket.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_network.cpp' --ya-start-command-file util/network/address.cpp util/network/endpoint.cpp util/network/hostip.cpp util/network/init.cpp util/network/interface.cpp util/network/iovec.cpp util/network/ip.cpp util/network/netloss.cpp util/network/nonblock.cpp util/network/pair.cpp util/network/poller.cpp util/network/pollerimpl.cpp util/network/sock.cpp util/network/socket.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/util/all_random.cpp.o\
         ::\
@@ -4146,7 +4146,7 @@ $(BUILD_ROOT)/util/all_random.cpp\
         $(SOURCE_ROOT)/util/random/init_atfork.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/util'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_random.cpp' util/random/common_ops.cpp util/random/easy.cpp util/random/entropy.cpp util/random/fast.cpp util/random/lcg_engine.cpp util/random/mersenne32.cpp util/random/mersenne64.cpp util/random/mersenne.cpp util/random/normal.cpp util/random/shuffle.cpp util/random/init_atfork.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_random.cpp' --ya-start-command-file util/random/common_ops.cpp util/random/easy.cpp util/random/entropy.cpp util/random/fast.cpp util/random/lcg_engine.cpp util/random/mersenne32.cpp util/random/mersenne64.cpp util/random/mersenne.cpp util/random/normal.cpp util/random/shuffle.cpp util/random/init_atfork.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/util/all_stream.cpp.o\
         ::\
@@ -4188,7 +4188,7 @@ $(BUILD_ROOT)/util/all_stream.cpp\
         $(SOURCE_ROOT)/util/stream/zlib.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/util'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_stream.cpp' util/stream/aligned.cpp util/stream/buffer.cpp util/stream/buffered.cpp util/stream/debug.cpp util/stream/direct_io.cpp util/stream/file.cpp util/stream/format.cpp util/stream/fwd.cpp util/stream/hex.cpp util/stream/holder.cpp util/stream/input.cpp util/stream/labeled.cpp util/stream/length.cpp util/stream/mem.cpp util/stream/multi.cpp util/stream/null.cpp util/stream/output.cpp util/stream/pipe.cpp util/stream/printf.cpp util/stream/str.cpp util/stream/tee.cpp util/stream/tempbuf.cpp util/stream/tokenizer.cpp util/stream/trace.cpp util/stream/walk.cpp util/stream/zerocopy.cpp util/stream/zerocopy_output.cpp util/stream/zlib.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_stream.cpp' --ya-start-command-file util/stream/aligned.cpp util/stream/buffer.cpp util/stream/buffered.cpp util/stream/debug.cpp util/stream/direct_io.cpp util/stream/file.cpp util/stream/format.cpp util/stream/fwd.cpp util/stream/hex.cpp util/stream/holder.cpp util/stream/input.cpp util/stream/labeled.cpp util/stream/length.cpp util/stream/mem.cpp util/stream/multi.cpp util/stream/null.cpp util/stream/output.cpp util/stream/pipe.cpp util/stream/printf.cpp util/stream/str.cpp util/stream/tee.cpp util/stream/tempbuf.cpp util/stream/tokenizer.cpp util/stream/trace.cpp util/stream/walk.cpp util/stream/zerocopy.cpp util/stream/zerocopy_output.cpp util/stream/zlib.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/util/all_string.cpp.o\
         ::\
@@ -4217,7 +4217,7 @@ $(BUILD_ROOT)/util/all_string.cpp\
         $(SOURCE_ROOT)/util/string/vector.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/util'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_string.cpp' util/string/ascii.cpp util/string/builder.cpp util/string/cstriter.cpp util/string/escape.cpp util/string/hex.cpp util/string/join.cpp util/string/printf.cpp util/string/reverse.cpp util/string/split.cpp util/string/strip.cpp util/string/strspn.cpp util/string/subst.cpp util/string/type.cpp util/string/util.cpp util/string/vector.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_string.cpp' --ya-start-command-file util/string/ascii.cpp util/string/builder.cpp util/string/cstriter.cpp util/string/escape.cpp util/string/hex.cpp util/string/join.cpp util/string/printf.cpp util/string/reverse.cpp util/string/split.cpp util/string/strip.cpp util/string/strspn.cpp util/string/subst.cpp util/string/type.cpp util/string/util.cpp util/string/vector.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/util/all_system_1.cpp.o\
         ::\
@@ -4260,7 +4260,7 @@ $(BUILD_ROOT)/util/all_system_1.cpp\
         $(SOURCE_ROOT)/util/system/info.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/util'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_system_1.cpp' util/system/atexit.cpp util/system/backtrace.cpp util/system/compat.cpp util/system/compiler.cpp util/system/condvar.cpp util/system/context.cpp util/system/daemon.cpp util/system/datetime.cpp util/system/defaults.c util/system/demangle.cpp util/system/direct_io.cpp util/system/dynlib.cpp util/system/env.cpp util/system/err.cpp util/system/error.cpp util/system/event.cpp util/system/execpath.cpp util/system/fasttime.cpp util/system/file.cpp util/system/file_lock.cpp util/system/filemap.cpp util/system/flock.cpp util/system/fs.cpp util/system/fstat.cpp util/system/getpid.cpp util/system/hi_lo.cpp util/system/hostname.cpp util/system/hp_timer.cpp util/system/info.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_system_1.cpp' --ya-start-command-file util/system/atexit.cpp util/system/backtrace.cpp util/system/compat.cpp util/system/compiler.cpp util/system/condvar.cpp util/system/context.cpp util/system/daemon.cpp util/system/datetime.cpp util/system/defaults.c util/system/demangle.cpp util/system/direct_io.cpp util/system/dynlib.cpp util/system/env.cpp util/system/err.cpp util/system/error.cpp util/system/event.cpp util/system/execpath.cpp util/system/fasttime.cpp util/system/file.cpp util/system/file_lock.cpp util/system/filemap.cpp util/system/flock.cpp util/system/fs.cpp util/system/fstat.cpp util/system/getpid.cpp util/system/hi_lo.cpp util/system/hostname.cpp util/system/hp_timer.cpp util/system/info.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/util/all_system_2.cpp.o\
         ::\
@@ -4314,7 +4314,7 @@ $(BUILD_ROOT)/util/all_system_2.cpp\
         $(SOURCE_ROOT)/util/system/yield.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/util'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_system_2.cpp' util/system/align.cpp util/system/atomic.cpp util/system/byteorder.cpp util/system/cpu_id.cpp util/system/fhandle.cpp util/system/guard.cpp util/system/interrupt_signals.cpp util/system/madvise.cpp util/system/maxlen.cpp util/system/mem_info.cpp util/system/mincore.cpp util/system/mktemp.cpp util/system/mlock.cpp util/system/mutex.cpp util/system/nice.cpp util/system/pipe.cpp util/system/platform.cpp util/system/progname.cpp util/system/protect.cpp util/system/rusage.cpp util/system/rwlock.cpp util/system/sanitizers.cpp util/system/sem.cpp util/system/shellcommand.cpp util/system/shmat.cpp util/system/sigset.cpp util/system/spinlock.cpp util/system/spin_wait.cpp util/system/src_location.cpp util/system/sys_alloc.cpp util/system/sysstat.cpp util/system/tempfile.cpp util/system/thread.cpp util/system/tls.cpp util/system/types.cpp util/system/unaligned_mem.cpp util/system/user.cpp util/system/utime.cpp util/system/yassert.cpp util/system/yield.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_system_2.cpp' --ya-start-command-file util/system/align.cpp util/system/atomic.cpp util/system/byteorder.cpp util/system/cpu_id.cpp util/system/fhandle.cpp util/system/guard.cpp util/system/interrupt_signals.cpp util/system/madvise.cpp util/system/maxlen.cpp util/system/mem_info.cpp util/system/mincore.cpp util/system/mktemp.cpp util/system/mlock.cpp util/system/mutex.cpp util/system/nice.cpp util/system/pipe.cpp util/system/platform.cpp util/system/progname.cpp util/system/protect.cpp util/system/rusage.cpp util/system/rwlock.cpp util/system/sanitizers.cpp util/system/sem.cpp util/system/shellcommand.cpp util/system/shmat.cpp util/system/sigset.cpp util/system/spinlock.cpp util/system/spin_wait.cpp util/system/src_location.cpp util/system/sys_alloc.cpp util/system/sysstat.cpp util/system/tempfile.cpp util/system/thread.cpp util/system/tls.cpp util/system/types.cpp util/system/unaligned_mem.cpp util/system/user.cpp util/system/utime.cpp util/system/yassert.cpp util/system/yield.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/util/all_thread.cpp.o\
         ::\
@@ -4334,7 +4334,7 @@ $(BUILD_ROOT)/util/all_thread.cpp\
         $(SOURCE_ROOT)/util/thread/singleton.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/util'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_thread.cpp' util/thread/factory.cpp util/thread/fwd.cpp util/thread/lfqueue.cpp util/thread/lfstack.cpp util/thread/pool.cpp util/thread/singleton.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_thread.cpp' --ya-start-command-file util/thread/factory.cpp util/thread/fwd.cpp util/thread/lfqueue.cpp util/thread/lfstack.cpp util/thread/pool.cpp util/thread/singleton.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/util/all_util.cpp.o\
         ::\
@@ -4351,7 +4351,7 @@ $(BUILD_ROOT)/util/all_util.cpp\
         $(SOURCE_ROOT)/util/str_stl.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/util'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_util.cpp' util/ysafeptr.cpp util/ysaveload.cpp util/str_stl.cpp
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/gen_join_srcs.py' '$(BUILD_ROOT)/util/all_util.cpp' --ya-start-command-file util/ysafeptr.cpp util/ysaveload.cpp util/str_stl.cpp --ya-end-command-file
 
 $(BUILD_ROOT)/contrib/tools/protoc/protoc.mf\
         ::\
