@@ -266,6 +266,7 @@ $(BUILD_ROOT)/catboost/app/catboost\
 $(BUILD_ROOT)/catboost/app/main.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/app/main.cpp\
 
@@ -1293,6 +1294,20 @@ $(BUILD_ROOT)/library/cpp/malloc/api/malloc.cpp.o\
 	mkdir -p '$(BUILD_ROOT)/library/cpp/malloc/api'
 	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/library/cpp/malloc/api/malloc.cpp.o' '$(SOURCE_ROOT)/library/cpp/malloc/api/malloc.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
 
+$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.iter.fbs.h\
+$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.bfbs\
+        ::\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
+
+$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
+        ::\
+        $(BUILD_ROOT)/contrib/tools/flatc/flatc\
+        $(SOURCE_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs\
+        $(SOURCE_ROOT)/build/scripts/stdout2stderr.py\
+
+	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVRBfdXNlcl9leHRyYV9hcmdzcQhdcQlVBV9wYXRocQpVVSRTL2NhdGJvb3N0L3ByaXZhdGUvbGlicy9lbWJlZGRpbmdfZmVhdHVyZXMvZmxhdGJ1ZmZlcnMvZW1iZWRkaW5nX2ZlYXR1cmVfY2FsY2Vycy5mYnNxC3WFcQxiLg== --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
+
 $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.iter.fbs.h\
 $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.bfbs\
         ::\
@@ -1310,6 +1325,7 @@ $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fb
 $(BUILD_ROOT)/catboost/app/mode_calc.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/app/mode_calc.cpp\
 
@@ -1320,6 +1336,7 @@ $(BUILD_ROOT)/catboost/app/mode_eval_feature.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
@@ -4266,6 +4283,7 @@ $(BUILD_ROOT)/contrib/libs/tensorboard/types.pb.h\
 $(BUILD_ROOT)/catboost/app/mode_eval_metrics.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/app/mode_eval_metrics.cpp\
 
@@ -4291,6 +4309,7 @@ $(BUILD_ROOT)/catboost/app/mode_fstr.cpp.o\
 $(BUILD_ROOT)/catboost/app/mode_metadata.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/app/mode_metadata.cpp\
 
@@ -4301,6 +4320,7 @@ $(BUILD_ROOT)/catboost/app/mode_model_based_eval.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
@@ -4316,6 +4336,7 @@ $(BUILD_ROOT)/catboost/app/mode_model_based_eval.cpp.o\
 $(BUILD_ROOT)/catboost/app/mode_model_sum.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/app/mode_model_sum.cpp\
 
@@ -4325,6 +4346,7 @@ $(BUILD_ROOT)/catboost/app/mode_model_sum.cpp.o\
 $(BUILD_ROOT)/catboost/app/mode_normalize_model.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/app/mode_normalize_model.cpp\
 
@@ -4334,6 +4356,7 @@ $(BUILD_ROOT)/catboost/app/mode_normalize_model.cpp.o\
 $(BUILD_ROOT)/catboost/app/mode_ostr.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/app/mode_ostr.cpp\
 
@@ -5033,6 +5056,7 @@ $(BUILD_ROOT)/catboost/libs/data/meta_info.cpp.o\
 $(BUILD_ROOT)/catboost/libs/data/model_dataset_compatibility.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/data/model_dataset_compatibility.cpp\
 
@@ -5218,6 +5242,7 @@ $(BUILD_ROOT)/catboost/libs/eval_result/column_printer.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/eval_result/column_printer.cpp\
 
@@ -5227,6 +5252,7 @@ $(BUILD_ROOT)/catboost/libs/eval_result/column_printer.cpp.o\
 $(BUILD_ROOT)/catboost/libs/eval_result/eval_helpers.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/eval_result/eval_helpers.cpp\
 
@@ -5237,6 +5263,7 @@ $(BUILD_ROOT)/catboost/libs/eval_result/eval_helpers.h_serialized.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/eval_result/eval_helpers.h_serialized.cpp\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/libs/eval_result'
@@ -5245,6 +5272,7 @@ $(BUILD_ROOT)/catboost/libs/eval_result/eval_helpers.h_serialized.cpp.o\
 $(BUILD_ROOT)/catboost/libs/eval_result/eval_helpers.h_serialized.cpp\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/tools/enum_parser/enum_parser/enum_parser\
         $(SOURCE_ROOT)/catboost/libs/eval_result/eval_helpers.h\
@@ -5256,6 +5284,7 @@ $(BUILD_ROOT)/catboost/libs/eval_result/eval_result.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/eval_result/eval_result.cpp\
 
@@ -5314,6 +5343,7 @@ $(BUILD_ROOT)/catboost/libs/fstr/libcatboost-libs-fstr.a\
 $(BUILD_ROOT)/catboost/libs/fstr/calc_fstr.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
@@ -5329,6 +5359,7 @@ $(BUILD_ROOT)/catboost/libs/fstr/calc_fstr.cpp.o\
 $(BUILD_ROOT)/catboost/libs/fstr/compare_documents.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/fstr/compare_documents.cpp\
 
@@ -5338,6 +5369,7 @@ $(BUILD_ROOT)/catboost/libs/fstr/compare_documents.cpp.o\
 $(BUILD_ROOT)/catboost/libs/fstr/feature_str.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/fstr/feature_str.cpp\
 
@@ -5347,6 +5379,7 @@ $(BUILD_ROOT)/catboost/libs/fstr/feature_str.cpp.o\
 $(BUILD_ROOT)/catboost/libs/fstr/independent_tree_shap.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/fstr/independent_tree_shap.cpp\
 
@@ -5356,6 +5389,7 @@ $(BUILD_ROOT)/catboost/libs/fstr/independent_tree_shap.cpp.o\
 $(BUILD_ROOT)/catboost/libs/fstr/output_fstr.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/fstr/output_fstr.cpp\
 
@@ -5365,6 +5399,7 @@ $(BUILD_ROOT)/catboost/libs/fstr/output_fstr.cpp.o\
 $(BUILD_ROOT)/catboost/libs/fstr/partial_dependence.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/fstr/partial_dependence.cpp\
 
@@ -5374,6 +5409,7 @@ $(BUILD_ROOT)/catboost/libs/fstr/partial_dependence.cpp.o\
 $(BUILD_ROOT)/catboost/libs/fstr/shap_exact.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/fstr/shap_exact.cpp\
 
@@ -5383,6 +5419,7 @@ $(BUILD_ROOT)/catboost/libs/fstr/shap_exact.cpp.o\
 $(BUILD_ROOT)/catboost/libs/fstr/shap_interaction_values.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/fstr/shap_interaction_values.cpp\
 
@@ -5392,6 +5429,7 @@ $(BUILD_ROOT)/catboost/libs/fstr/shap_interaction_values.cpp.o\
 $(BUILD_ROOT)/catboost/libs/fstr/shap_prepared_trees.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
@@ -5407,6 +5445,7 @@ $(BUILD_ROOT)/catboost/libs/fstr/shap_prepared_trees.cpp.o\
 $(BUILD_ROOT)/catboost/libs/fstr/shap_values.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
@@ -5422,6 +5461,7 @@ $(BUILD_ROOT)/catboost/libs/fstr/shap_values.cpp.o\
 $(BUILD_ROOT)/catboost/libs/fstr/util.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/fstr/util.cpp\
 
@@ -6009,6 +6049,7 @@ $(BUILD_ROOT)/catboost/libs/metrics/kappa.cpp.o\
 $(BUILD_ROOT)/catboost/libs/metrics/llp.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/metrics/llp.cpp\
 
@@ -6053,6 +6094,7 @@ $(BUILD_ROOT)/catboost/libs/metrics/sample.cpp.o\
 $(BUILD_ROOT)/catboost/libs/model/_/cpu/formula_evaluator.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/model/cpu/formula_evaluator.cpp\
 
@@ -6093,6 +6135,7 @@ $(BUILD_ROOT)/catboost/libs/model/libcatboost-libs-model.a\
 $(BUILD_ROOT)/catboost/libs/model/_/cpu/evaluator_impl.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/model/cpu/evaluator_impl.cpp\
 
@@ -6102,6 +6145,7 @@ $(BUILD_ROOT)/catboost/libs/model/_/cpu/evaluator_impl.cpp.o\
 $(BUILD_ROOT)/catboost/libs/model/_/cpu/quantization.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/model/cpu/quantization.cpp\
 
@@ -6119,6 +6163,7 @@ $(BUILD_ROOT)/catboost/libs/model/ctr_data.cpp.o\
 $(BUILD_ROOT)/catboost/libs/model/ctr_helpers.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/model/ctr_helpers.cpp\
 
@@ -6267,6 +6312,7 @@ $(BUILD_ROOT)/catboost/libs/model/model.cpp.o\
         $(BUILD_ROOT)/catboost/libs/model/flatbuffers/ctr_data.fbs.h\
         $(BUILD_ROOT)/catboost/libs/model/flatbuffers/features.fbs.h\
         $(BUILD_ROOT)/catboost/libs/model/flatbuffers/model.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/model/model.cpp\
 
@@ -6276,6 +6322,7 @@ $(BUILD_ROOT)/catboost/libs/model/model.cpp.o\
 $(BUILD_ROOT)/catboost/libs/model/model_build_helper.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/model/model_build_helper.cpp\
 
@@ -6296,6 +6343,7 @@ $(BUILD_ROOT)/catboost/libs/model/online_ctr.cpp.o\
 $(BUILD_ROOT)/catboost/libs/model/scale_and_bias.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/model/scale_and_bias.cpp\
 
@@ -6322,6 +6370,7 @@ $(BUILD_ROOT)/catboost/libs/model/split.h_serialized.cpp\
 $(BUILD_ROOT)/catboost/libs/model/static_ctr_provider.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/model/static_ctr_provider.cpp\
 
@@ -6886,6 +6935,7 @@ $(BUILD_ROOT)/tools/rescompressor/main.cpp.o\
 $(BUILD_ROOT)/catboost/libs/model/model_export/coreml_helpers.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/coreml/ArrayFeatureExtractor.pb.h\
         $(BUILD_ROOT)/contrib/libs/coreml/CategoricalMapping.pb.h\
@@ -7133,6 +7183,7 @@ $(BUILD_ROOT)/contrib/libs/coreml/TreeEnsemble.pb.h\
 $(BUILD_ROOT)/catboost/libs/model/model_export/cpp_exporter.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/model/model_export/cpp_exporter.cpp\
 
@@ -7142,6 +7193,7 @@ $(BUILD_ROOT)/catboost/libs/model/model_export/cpp_exporter.cpp.o\
 $(BUILD_ROOT)/catboost/libs/model/model_export/export_helpers.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/model/model_export/export_helpers.cpp\
 
@@ -7154,6 +7206,7 @@ $(BUILD_ROOT)/catboost/libs/model/model_export/json_model_helpers.cpp.o\
         $(BUILD_ROOT)/catboost/libs/model/flatbuffers/ctr_data.fbs.h\
         $(BUILD_ROOT)/catboost/libs/model/flatbuffers/features.fbs.h\
         $(BUILD_ROOT)/catboost/libs/model/flatbuffers/model.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/model/model_export/json_model_helpers.cpp\
 
@@ -7163,6 +7216,7 @@ $(BUILD_ROOT)/catboost/libs/model/model_export/json_model_helpers.cpp.o\
 $(BUILD_ROOT)/catboost/libs/model/model_export/model_exporter.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/coreml/ArrayFeatureExtractor.pb.h\
         $(BUILD_ROOT)/contrib/libs/coreml/CategoricalMapping.pb.h\
@@ -7203,6 +7257,7 @@ $(BUILD_ROOT)/contrib/libs/onnx/proto/onnx_ml.pb.h\
 $(BUILD_ROOT)/catboost/libs/model/model_export/onnx_helpers.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/onnx/proto/onnx_ml.pb.h\
         $(SOURCE_ROOT)/catboost/libs/model/model_export/onnx_helpers.cpp\
@@ -7213,6 +7268,7 @@ $(BUILD_ROOT)/catboost/libs/model/model_export/onnx_helpers.cpp.o\
 $(BUILD_ROOT)/catboost/libs/model/model_export/pmml_helpers.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/model/model_export/pmml_helpers.cpp\
 
@@ -7222,6 +7278,7 @@ $(BUILD_ROOT)/catboost/libs/model/model_export/pmml_helpers.cpp.o\
 $(BUILD_ROOT)/catboost/libs/model/model_export/python_exporter.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/model/model_export/python_exporter.cpp\
 
@@ -7231,6 +7288,7 @@ $(BUILD_ROOT)/catboost/libs/model/model_export/python_exporter.cpp.o\
 $(BUILD_ROOT)/catboost/libs/model/model_export/model_import.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/coreml/ArrayFeatureExtractor.pb.h\
         $(BUILD_ROOT)/contrib/libs/coreml/CategoricalMapping.pb.h\
@@ -7258,6 +7316,7 @@ $(BUILD_ROOT)/catboost/libs/model/model_export/model_import.cpp.o\
 $(BUILD_ROOT)/catboost/libs/model/model_import_interface.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/libs/model/model_import_interface.cpp\
 
@@ -7330,6 +7389,7 @@ $(BUILD_ROOT)/catboost/libs/train_lib/cross_validation.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
@@ -7353,6 +7413,7 @@ $(BUILD_ROOT)/catboost/libs/train_lib/eval_feature.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
@@ -7376,6 +7437,7 @@ $(BUILD_ROOT)/catboost/libs/train_lib/options_helper.cpp.o\
 $(BUILD_ROOT)/catboost/libs/train_lib/model_import_snapshot.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
@@ -7392,6 +7454,7 @@ $(BUILD_ROOT)/catboost/libs/train_lib/train_model.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
@@ -7504,6 +7567,7 @@ $(BUILD_ROOT)/catboost/private/libs/algo/libprivate-libs-algo.a\
 $(BUILD_ROOT)/catboost/private/libs/algo/apply.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/algo/apply.cpp\
 
@@ -7620,6 +7684,7 @@ $(BUILD_ROOT)/catboost/private/libs/algo/calc_score_cache.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/algo/confusion_matrix.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/algo/confusion_matrix.cpp\
 
@@ -7637,6 +7702,7 @@ $(BUILD_ROOT)/catboost/private/libs/algo/ctr_helper.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/algo/data.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/algo/data.cpp\
 
@@ -7670,6 +7736,7 @@ $(BUILD_ROOT)/catboost/private/libs/algo/feature_penalties_calcer.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/algo/features_data_helpers.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/algo/features_data_helpers.cpp\
 
@@ -7688,6 +7755,7 @@ $(BUILD_ROOT)/catboost/private/libs/algo/fold.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/algo/full_model_saver.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
@@ -7703,6 +7771,7 @@ $(BUILD_ROOT)/catboost/private/libs/algo/full_model_saver.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/algo/greedy_tensor_search.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
@@ -7733,6 +7802,7 @@ $(BUILD_ROOT)/catboost/private/libs/algo/helpers.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/algo/index_calcer.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/algo/index_calcer.cpp\
 
@@ -7765,6 +7835,7 @@ $(BUILD_ROOT)/catboost/private/libs/algo/leafwise_scoring.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/algo/learn_context.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
@@ -7780,6 +7851,7 @@ $(BUILD_ROOT)/catboost/private/libs/algo/learn_context.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/algo/model_quantization_adapter.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/algo/model_quantization_adapter.cpp\
 
@@ -7816,6 +7888,7 @@ $(BUILD_ROOT)/catboost/private/libs/algo/nonsymmetric_index_calcer.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/algo/online_ctr.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
@@ -7840,6 +7913,7 @@ $(BUILD_ROOT)/catboost/private/libs/algo/pairwise_scoring.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/algo/plot.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
@@ -7885,6 +7959,7 @@ $(BUILD_ROOT)/catboost/private/libs/algo/rand_score.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/algo/roc_curve.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/algo/roc_curve.cpp\
 
@@ -7970,6 +8045,7 @@ $(BUILD_ROOT)/catboost/private/libs/algo/train.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/algo/tree_print.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/algo/tree_print.cpp\
 
@@ -8145,6 +8221,7 @@ $(BUILD_ROOT)/catboost/private/libs/app_helpers/mode_calc_helpers.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/app_helpers/mode_calc_helpers.cpp\
 
@@ -8155,6 +8232,7 @@ $(BUILD_ROOT)/catboost/private/libs/app_helpers/mode_fit_helpers.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
@@ -8170,6 +8248,7 @@ $(BUILD_ROOT)/catboost/private/libs/app_helpers/mode_fit_helpers.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/app_helpers/mode_fstr_helpers.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/app_helpers/mode_fstr_helpers.cpp\
 
@@ -8375,6 +8454,7 @@ $(BUILD_ROOT)/catboost/private/libs/documents_importance/ders_helpers.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/documents_importance/docs_importance.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/documents_importance/docs_importance.cpp\
 
@@ -8384,6 +8464,7 @@ $(BUILD_ROOT)/catboost/private/libs/documents_importance/docs_importance.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/documents_importance/docs_importance_helpers.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
@@ -8414,6 +8495,7 @@ $(BUILD_ROOT)/catboost/private/libs/documents_importance/enums.h_serialized.cpp\
 $(BUILD_ROOT)/catboost/private/libs/documents_importance/tree_statistics.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/event.pb.h\
         $(BUILD_ROOT)/contrib/libs/tensorboard/resource_handle.pb.h\
@@ -8434,6 +8516,7 @@ $(BUILD_ROOT)/catboost/private/libs/embedding_features/libprivate-libs-embedding
         ::\
         $(BUILD_ROOT)/catboost/private/libs/embedding_features/embedding_calcers.cpp.o\
         $(BUILD_ROOT)/catboost/private/libs/embedding_features/embedding_feature_calcer.cpp.o\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/embedding_processing_collection.cpp.o\
         $(BUILD_ROOT)/catboost/private/libs/embedding_features/knn.cpp.o\
         $(BUILD_ROOT)/catboost/private/libs/embedding_features/lda.cpp.o\
         $(SOURCE_ROOT)/build/scripts/generate_mf.py\
@@ -8441,11 +8524,12 @@ $(BUILD_ROOT)/catboost/private/libs/embedding_features/libprivate-libs-embedding
 
 	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/embedding_features'
 	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name private-libs-embedding_features -o catboost/private/libs/embedding_features/libprivate-libs-embedding_features.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/catboost/private/libs/embedding_features/libprivate-libs-embedding_features.a' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/embedding_calcers.cpp.o' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/embedding_feature_calcer.cpp.o' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/knn.cpp.o' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/lda.cpp.o'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/catboost/private/libs/embedding_features/libprivate-libs-embedding_features.a' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/embedding_calcers.cpp.o' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/embedding_feature_calcer.cpp.o' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/embedding_processing_collection.cpp.o' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/knn.cpp.o' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/lda.cpp.o'
 
 $(BUILD_ROOT)/catboost/private/libs/embedding_features/embedding_calcers.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/embedding_features/embedding_calcers.cpp\
 
@@ -8455,15 +8539,42 @@ $(BUILD_ROOT)/catboost/private/libs/embedding_features/embedding_calcers.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/embedding_features/embedding_feature_calcer.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/embedding_features/embedding_feature_calcer.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/embedding_features'
 	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/catboost/private/libs/embedding_features/embedding_feature_calcer.cpp.o' '$(SOURCE_ROOT)/catboost/private/libs/embedding_features/embedding_feature_calcer.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libc_compat/include/uchar' '-I$(SOURCE_ROOT)/contrib/libs/libf2c' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
 
+$(BUILD_ROOT)/catboost/private/libs/embedding_features/embedding_processing_collection.cpp.o\
+        ::\
+        $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_processing_collection.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
+        $(SOURCE_ROOT)/catboost/private/libs/embedding_features/embedding_processing_collection.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/embedding_features'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/catboost/private/libs/embedding_features/embedding_processing_collection.cpp.o' '$(SOURCE_ROOT)/catboost/private/libs/embedding_features/embedding_processing_collection.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libc_compat/include/uchar' '-I$(SOURCE_ROOT)/contrib/libs/libf2c' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_processing_collection.iter.fbs.h\
+$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_processing_collection.bfbs\
+        ::\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_processing_collection.fbs.h\
+
+$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_processing_collection.fbs.h\
+        ::\
+        $(BUILD_ROOT)/contrib/tools/flatc/flatc\
+        $(SOURCE_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_processing_collection.fbs\
+        $(SOURCE_ROOT)/build/scripts/stdout2stderr.py\
+
+	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVRBfdXNlcl9leHRyYV9hcmdzcQhdcQlVBV9wYXRocQpVWyRTL2NhdGJvb3N0L3ByaXZhdGUvbGlicy9lbWJlZGRpbmdfZmVhdHVyZXMvZmxhdGJ1ZmZlcnMvZW1iZWRkaW5nX3Byb2Nlc3NpbmdfY29sbGVjdGlvbi5mYnNxC3WFcQxiLg== --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
+
 $(BUILD_ROOT)/catboost/private/libs/embedding_features/knn.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/embedding_features/knn.cpp\
 
@@ -8473,6 +8584,7 @@ $(BUILD_ROOT)/catboost/private/libs/embedding_features/knn.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/embedding_features/lda.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/embedding_features/lda.cpp\
 
@@ -8539,6 +8651,7 @@ $(BUILD_ROOT)/catboost/private/libs/feature_estimator/base_text_feature_estimato
 $(BUILD_ROOT)/catboost/private/libs/feature_estimator/embedding_feature_estimators.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/feature_estimator/embedding_feature_estimators.cpp\
 
@@ -8631,6 +8744,7 @@ $(BUILD_ROOT)/catboost/private/libs/labels/libprivate-libs-labels.a\
 $(BUILD_ROOT)/catboost/private/libs/labels/external_label_helper.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/labels/external_label_helper.cpp\
 
@@ -9214,6 +9328,7 @@ $(BUILD_ROOT)/catboost/private/libs/target/classification_target_helper.cpp.o\
 $(BUILD_ROOT)/catboost/private/libs/target/data_providers.cpp.o\
         ::\
         $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
         $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
         $(SOURCE_ROOT)/catboost/private/libs/target/data_providers.cpp\
 
@@ -9320,8 +9435,6 @@ $(BUILD_ROOT)/catboost/private/libs/text_processing/libprivate-libs-text_process
 $(BUILD_ROOT)/catboost/private/libs/text_processing/libprivate-libs-text_processing.a\
         ::\
         $(BUILD_ROOT)/catboost/private/libs/text_processing/dictionary.cpp.o\
-        $(BUILD_ROOT)/catboost/private/libs/text_processing/embedding.cpp.o\
-        $(BUILD_ROOT)/catboost/private/libs/text_processing/embedding_loader.cpp.o\
         $(BUILD_ROOT)/catboost/private/libs/text_processing/text_column_builder.cpp.o\
         $(BUILD_ROOT)/catboost/private/libs/text_processing/text_dataset.cpp.o\
         $(BUILD_ROOT)/catboost/private/libs/text_processing/text_digitizers.cpp.o\
@@ -9331,7 +9444,7 @@ $(BUILD_ROOT)/catboost/private/libs/text_processing/libprivate-libs-text_process
 
 	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/text_processing'
 	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name private-libs-text_processing -o catboost/private/libs/text_processing/libprivate-libs-text_processing.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/catboost/private/libs/text_processing/libprivate-libs-text_processing.a' '$(BUILD_ROOT)/catboost/private/libs/text_processing/dictionary.cpp.o' '$(BUILD_ROOT)/catboost/private/libs/text_processing/embedding.cpp.o' '$(BUILD_ROOT)/catboost/private/libs/text_processing/embedding_loader.cpp.o' '$(BUILD_ROOT)/catboost/private/libs/text_processing/text_column_builder.cpp.o' '$(BUILD_ROOT)/catboost/private/libs/text_processing/text_dataset.cpp.o' '$(BUILD_ROOT)/catboost/private/libs/text_processing/text_digitizers.cpp.o' '$(BUILD_ROOT)/catboost/private/libs/text_processing/tokenizer.cpp.o'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/catboost/private/libs/text_processing/libprivate-libs-text_processing.a' '$(BUILD_ROOT)/catboost/private/libs/text_processing/dictionary.cpp.o' '$(BUILD_ROOT)/catboost/private/libs/text_processing/text_column_builder.cpp.o' '$(BUILD_ROOT)/catboost/private/libs/text_processing/text_dataset.cpp.o' '$(BUILD_ROOT)/catboost/private/libs/text_processing/text_digitizers.cpp.o' '$(BUILD_ROOT)/catboost/private/libs/text_processing/tokenizer.cpp.o'
 
 $(BUILD_ROOT)/catboost/private/libs/text_processing/dictionary.cpp.o\
         ::\
@@ -9340,22 +9453,6 @@ $(BUILD_ROOT)/catboost/private/libs/text_processing/dictionary.cpp.o\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/text_processing'
 	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/catboost/private/libs/text_processing/dictionary.cpp.o' '$(SOURCE_ROOT)/catboost/private/libs/text_processing/dictionary.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libc_compat/include/uchar' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/catboost/private/libs/text_processing/embedding.cpp.o\
-        ::\
-        $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
-        $(SOURCE_ROOT)/catboost/private/libs/text_processing/embedding.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/text_processing'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/catboost/private/libs/text_processing/embedding.cpp.o' '$(SOURCE_ROOT)/catboost/private/libs/text_processing/embedding.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libc_compat/include/uchar' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/catboost/private/libs/text_processing/embedding_loader.cpp.o\
-        ::\
-        $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
-        $(SOURCE_ROOT)/catboost/private/libs/text_processing/embedding_loader.cpp\
-
-	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/text_processing'
-	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/catboost/private/libs/text_processing/embedding_loader.cpp.o' '$(SOURCE_ROOT)/catboost/private/libs/text_processing/embedding_loader.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libc_compat/include/uchar' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
 
 $(BUILD_ROOT)/catboost/private/libs/text_processing/text_column_builder.cpp.o\
         ::\
@@ -36386,6 +36483,7 @@ clean\
 	rm -f '$(BUILD_ROOT)/library/cpp/lfalloc/lf_allocX64.cpp.o'
 	rm -f '$(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a' '$(BUILD_ROOT)/library/cpp/malloc/api/libcpp-malloc-api.a.mf'
 	rm -f '$(BUILD_ROOT)/library/cpp/malloc/api/malloc.cpp.o'
+	rm -f '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.iter.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.bfbs'
 	rm -f '$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.iter.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.bfbs'
 	rm -f '$(BUILD_ROOT)/catboost/app/mode_calc.cpp.o'
 	rm -f '$(BUILD_ROOT)/catboost/app/mode_eval_feature.cpp.o'
@@ -37114,6 +37212,8 @@ clean\
 	rm -f '$(BUILD_ROOT)/catboost/private/libs/embedding_features/libprivate-libs-embedding_features.a' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/libprivate-libs-embedding_features.a.mf'
 	rm -f '$(BUILD_ROOT)/catboost/private/libs/embedding_features/embedding_calcers.cpp.o'
 	rm -f '$(BUILD_ROOT)/catboost/private/libs/embedding_features/embedding_feature_calcer.cpp.o'
+	rm -f '$(BUILD_ROOT)/catboost/private/libs/embedding_features/embedding_processing_collection.cpp.o'
+	rm -f '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_processing_collection.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_processing_collection.iter.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_processing_collection.bfbs'
 	rm -f '$(BUILD_ROOT)/catboost/private/libs/embedding_features/knn.cpp.o'
 	rm -f '$(BUILD_ROOT)/catboost/private/libs/embedding_features/lda.cpp.o'
 	rm -f '$(BUILD_ROOT)/catboost/private/libs/embeddings/libprivate-libs-embeddings.a' '$(BUILD_ROOT)/catboost/private/libs/embeddings/libprivate-libs-embeddings.a.mf'
@@ -37208,8 +37308,6 @@ clean\
 	rm -f '$(BUILD_ROOT)/catboost/private/libs/text_features/naive_bayesian.cpp.o'
 	rm -f '$(BUILD_ROOT)/catboost/private/libs/text_processing/libprivate-libs-text_processing.a' '$(BUILD_ROOT)/catboost/private/libs/text_processing/libprivate-libs-text_processing.a.mf'
 	rm -f '$(BUILD_ROOT)/catboost/private/libs/text_processing/dictionary.cpp.o'
-	rm -f '$(BUILD_ROOT)/catboost/private/libs/text_processing/embedding.cpp.o'
-	rm -f '$(BUILD_ROOT)/catboost/private/libs/text_processing/embedding_loader.cpp.o'
 	rm -f '$(BUILD_ROOT)/catboost/private/libs/text_processing/text_column_builder.cpp.o'
 	rm -f '$(BUILD_ROOT)/catboost/private/libs/text_processing/text_dataset.cpp.o'
 	rm -f '$(BUILD_ROOT)/catboost/private/libs/text_processing/text_digitizers.cpp.o'
