@@ -42,6 +42,5 @@ void UpdateAvrgApprox(
     const TVector<TVector<double>>& treeDelta,
     TConstArrayRef<NCB::TTrainingDataProviderPtr> testData, // can be empty
     TLearnProgress* learnProgress,
-    NPar::ILocalExecutor* localExecutor,
-    TVector<TVector<double>>* trainFoldApprox = nullptr
+    NPar::ILocalExecutor* localExecutor
 );

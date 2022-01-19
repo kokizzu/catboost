@@ -4,16 +4,13 @@ LIBRARY()
 
 
 
-VERSION(1.0.8)
+VERSION(1.0.6.0.1)
 
-ORIGINAL_SOURCE(https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz)
+LICENSE(BSD-4-Clause)
 
-LICENSE(
-    BSD-3-Clause AND
-    bzip2-1.0.6
+ADDINCL(
+    contrib/libs/libbz2
 )
-
-LICENSE_TEXTS(.yandex_meta/licenses.list.txt)
 
 NO_COMPILER_WARNINGS()
 

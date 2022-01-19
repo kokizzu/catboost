@@ -96,7 +96,7 @@ Y_UNIT_TEST_SUITE(Compression) {
 
         {
             TBufferOutput out(buffer);
-            SerializeToArcadiaStream(out, data);
+            SerializeToStream(out, data);
         }
 
         TCompressedArray loadedData;

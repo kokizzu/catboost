@@ -86,6 +86,14 @@ namespace NCB {
         return baseline;
     }
 
+    namespace {
+        enum class EReadLocation {
+            BeforeSubset,
+            InSubset,
+            AfterSubset
+        };
+    }
+
     static TVector<float> ReadGroupWeights(
         const TPathWithScheme& filePath,
         TConstArrayRef<TGroupId> groupIds,
@@ -366,37 +374,37 @@ namespace NCB {
                 return s[0] == '-';
             case 2:
                 return (ToLower(s[0]) == 'n') && (
-                    s == "NA"sv ||
-                    s == "Na"sv ||
-                    s == "na"sv ||
+                    s == AsStringBuf("NA") ||
+                    s == AsStringBuf("Na") ||
+                    s == AsStringBuf("na") ||
                     false);
             case 3:
                 return (ToLower(s[0]) == 'n' || ToLower(s[1]) == 'n') && (
-                    s == "nan"sv ||
-                    s == "NaN"sv ||
-                    s == "NAN"sv ||
-                    s == "#NA"sv ||
-                    s == "N/A"sv ||
-                    s == "n/a"sv ||
+                    s == AsStringBuf("nan") ||
+                    s == AsStringBuf("NaN") ||
+                    s == AsStringBuf("NAN") ||
+                    s == AsStringBuf("#NA") ||
+                    s == AsStringBuf("N/A") ||
+                    s == AsStringBuf("n/a") ||
                     false);
             case 4:
                 return (ToLower(s[0]) == 'n' || ToLower(s[1]) == 'n') && (
-                    s == "#N/A"sv ||
-                    s == "-NaN"sv ||
-                    s == "-nan"sv ||
-                    s == "NULL"sv ||
-                    s == "null"sv ||
-                    s == "Null"sv ||
-                    s == "none"sv ||
-                    s == "None"sv ||
+                    s == AsStringBuf("#N/A") ||
+                    s == AsStringBuf("-NaN") ||
+                    s == AsStringBuf("-nan") ||
+                    s == AsStringBuf("NULL") ||
+                    s == AsStringBuf("null") ||
+                    s == AsStringBuf("Null") ||
+                    s == AsStringBuf("none") ||
+                    s == AsStringBuf("None") ||
                     false);
             default:
                 return
-                    s == "#N/A N/A"sv ||
-                    s == "-1.#IND"sv ||
-                    s == "-1.#QNAN"sv ||
-                    s == "1.#IND"sv ||
-                    s == "1.#QNAN"sv ||
+                    s == AsStringBuf("#N/A N/A") ||
+                    s == AsStringBuf("-1.#IND") ||
+                    s == AsStringBuf("-1.#QNAN") ||
+                    s == AsStringBuf("1.#IND") ||
+                    s == AsStringBuf("1.#QNAN") ||
                     false;
         }
     }

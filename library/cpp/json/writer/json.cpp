@@ -89,22 +89,9 @@ namespace NJsonWriter {
         const int indentation = IndentSpaces * (Stack.size() - 1);
         if (!indentation && !closing)
             return;
-
-        PrintWhitespaces(Max(0, indentation), true);
-    }
-
-    void TBuf::PrintWhitespaces(size_t count, bool prependWithNewLine) {
-        static constexpr TStringBuf whitespacesTemplate = "\n                                ";
-        static_assert(whitespacesTemplate[0] == '\n');
-        static_assert(whitespacesTemplate[1] == ' ');
-
-        count += (prependWithNewLine);
-        do {
-            const TStringBuf buffer = whitespacesTemplate.SubString(prependWithNewLine ? 0 : 1, count);
-            count -= buffer.size();
-            UnsafeWriteRawBytes(buffer);
-            prependWithNewLine = false;  // skip '\n' in subsequent writes
-        } while (count > 0);
+        RawWriteChar('\n');
+        for (int i = 0; i < indentation; ++i)
+            RawWriteChar(' ');
     }
 
     inline void TBuf::WriteComma() {
@@ -323,7 +310,7 @@ namespace NJsonWriter {
 #define MATCH(sym, string)                        \
     case sym:                                     \
         UnsafeWriteRawBytes(beg, cur - beg);      \
-        UnsafeWriteRawBytes(TStringBuf(string));  \
+        UnsafeWriteRawBytes(AsStringBuf(string)); \
         return true
 
     inline bool TBuf::EscapedWriteChar(const char* beg, const char* cur, EHtmlEscapeMode hem) {

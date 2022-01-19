@@ -10,24 +10,24 @@ namespace NCB {
     class TLDAEstimator final : public TEmbeddingBaseEstimator<TLinearDACalcer, TLinearDACalcerVisitor>{
     public:
         TLDAEstimator(
-            TClassificationTargetPtr target,
+            TEmbeddingClassificationTargetPtr target,
             TEmbeddingDataSetPtr learnEmbeddings,
             TArrayRef<TEmbeddingDataSetPtr> testEmbedding,
             const NJson::TJsonValue& options)
             : TEmbeddingBaseEstimator(target, learnEmbeddings, testEmbedding)
         {
-            if (options.Has("components")) {
-                ProjectionDim = FromString<int>(options["components"].GetString());
+            if (options.Has("ProjectionDimension")) {
+                ProjectionDim = FromString<int>(options["ProjectionDimension"].GetString());
             } else {
-                ProjectionDim = Min(GetTarget().NumClasses - 1u, static_cast<ui32>(GetLearnDatasetPtr()->GetDimension()) - 1u);
+                ProjectionDim = GetTarget().NumClasses - 1u;
             }
-            if (options.Has("reg")) {
-                RegParam = FromString<float>(options["reg"].GetString());
+            if (options.Has("Regularization")) {
+                RegParam = FromString<float>(options["Regularization"].GetString());
             } else {
                 RegParam = 0.00005;
             }
-            if (options.Has("likelihood")) {
-                Likehood = FromString<bool>(options["likelihood"].GetString());
+            if (options.Has("ClassLikehode")) {
+                Likehood = FromString<bool>(options["Regularization"].GetString());
             } else {
                 Likehood = false;
             }
@@ -75,15 +75,15 @@ namespace NCB {
     class TKNNEstimator final : public TEmbeddingBaseEstimator<TKNNCalcer, TKNNCalcerVisitor>{
     public:
         TKNNEstimator(
-            TClassificationTargetPtr target,
+            TEmbeddingClassificationTargetPtr target,
             TEmbeddingDataSetPtr learnEmbeddings,
             TArrayRef<TEmbeddingDataSetPtr> testEmbedding,
             const NJson::TJsonValue& options)
             : TEmbeddingBaseEstimator(target, learnEmbeddings, testEmbedding)
         {
             ClassNum = GetTarget().NumClasses;
-            if (options.Has("k")) {
-                kNum = FromString<int>(options["k"].GetString());
+            if (options.Has("NeighborsNumber")) {
+                kNum = FromString<int>(options["NeighborsNumber"].GetString());
             } else {
                 kNum = 5;
             }
@@ -111,7 +111,7 @@ namespace NCB {
 
     TVector<TOnlineFeatureEstimatorPtr> CreateEmbeddingEstimators(
         TConstArrayRef<NCatboostOptions::TFeatureCalcerDescription> featureCalcerDescription,
-        TClassificationTargetPtr target,
+        TEmbeddingClassificationTargetPtr target,
         TEmbeddingDataSetPtr learnEmbeddings,
         TArrayRef<TEmbeddingDataSetPtr> testEmbedding
     ) {

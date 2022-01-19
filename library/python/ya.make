@@ -1,6 +1,9 @@
 
 
 RECURSE(
+    coredump_filter
+    coredump_filter/tests
+    coredump_filter/tests/data
     cores
     filelock
     filelock/ut
@@ -8,7 +11,6 @@ RECURSE(
     func
     func/ut
     fs
-    hnsw
     pymain
     pytest
     pytest/allure

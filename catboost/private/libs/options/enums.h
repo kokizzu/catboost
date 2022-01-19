@@ -121,7 +121,6 @@ enum class ELossFunction {
     /* regression errors */
 
     RMSE,
-    LogCosh,
     Lq,
     MAE,
     Quantile,
@@ -134,7 +133,6 @@ enum class ELossFunction {
     SMAPE,
     Huber,
     Tweedie,
-    Cox,
 
     RMSEWithUncertainty,
 
@@ -155,13 +153,12 @@ enum class ELossFunction {
     QuerySoftMax,
     QueryCrossEntropy,
     StochasticFilter,
-    LambdaMart,
     StochasticRank,
 
     /* user defined errors */
 
     PythonUserDefinedPerObject,
-    PythonUserDefinedMultiTarget,
+    PythonUserDefinedMultiRegression,
     UserPerObjMetric,
     UserQuerywiseMetric,
 
@@ -199,7 +196,6 @@ enum class ELossFunction {
     /* ranking metrics */
     AverageGain,
     QueryAverage,
-    QueryAUC,
     PFound,
     PrecisionAt,
     RecallAt,
@@ -207,19 +203,9 @@ enum class ELossFunction {
     NDCG,
     DCG,
     FilteredDCG,
-    MRR,
-    ERR,
-
-    /* survival-regression */
-    SurvivalAft,
 
     /* multi-regression */
     MultiRMSE,
-    MultiRMSEWithMissingValues,
-
-    /* multilabel classification */
-    MultiLogloss,
-    MultiCrossEntropy,
 
     Combination
 };
@@ -352,12 +338,6 @@ enum class ENdcgDenominatorType {
     Position
 };
 
-enum class ENdcgSortType {
-    None,
-    ByPrediction,
-    ByTarget
-};
-
 enum class EMetricBestValue {
     Max,
     Min,
@@ -394,11 +374,6 @@ enum class EF1AverageType {
     Micro,
     Macro,
     Weighted
-};
-
-enum class EAccuracyType {
-    Classic,
-    PerClass
 };
 
 namespace NCB {

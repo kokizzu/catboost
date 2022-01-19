@@ -32,12 +32,8 @@
 #define GOOGLE_PROTOBUF_UTIL_CONVERTER_OBJECT_SOURCE_H__
 
 #include <google/protobuf/stubs/common.h>
+#include <google/protobuf/stubs/stringpiece.h>
 #include <google/protobuf/stubs/status.h>
-#include <google/protobuf/stubs/strutil.h>
-#include <google/protobuf/stubs/status.h>
-
-// Must be included last.
-#include <google/protobuf/port_def.inc>
 
 namespace google {
 namespace protobuf {
@@ -52,7 +48,7 @@ class ObjectWriter;
 // example, a character stream, or protobuf.
 //
 // Derived classes could be thread-unsafe.
-class PROTOBUF_EXPORT ObjectSource {
+class LIBPROTOBUF_EXPORT ObjectSource {
  public:
   virtual ~ObjectSource() {}
 
@@ -65,7 +61,7 @@ class PROTOBUF_EXPORT ObjectSource {
   // This is useful when you chain ObjectSource together by embedding one
   // within another.
   virtual util::Status NamedWriteTo(StringPiece name,
-                                    ObjectWriter* ow) const = 0;
+                                      ObjectWriter* ow) const = 0;
 
  protected:
   ObjectSource() {}
@@ -78,8 +74,6 @@ class PROTOBUF_EXPORT ObjectSource {
 }  // namespace converter
 }  // namespace util
 }  // namespace protobuf
+
 }  // namespace google
-
-#include <google/protobuf/port_undef.inc>
-
 #endif  // GOOGLE_PROTOBUF_UTIL_CONVERTER_OBJECT_SOURCE_H__

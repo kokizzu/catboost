@@ -37,8 +37,6 @@
 
 #include <google/protobuf/compiler/code_generator.h>
 
-#include <google/protobuf/port_def.inc>
-
 namespace google {
 namespace protobuf {
 namespace compiler {
@@ -48,13 +46,13 @@ namespace ruby {
 // If you create your own protocol compiler binary and you want it to support
 // Ruby output, you can do so by registering an instance of this
 // CodeGenerator with the CommandLineInterface in your main() function.
-class PROTOC_EXPORT Generator : public CodeGenerator {
-  bool Generate(const FileDescriptor* file, const TProtoStringType& parameter,
-                GeneratorContext* generator_context,
-                TProtoStringType* error) const override;
-  uint64_t GetSupportedFeatures() const override {
-    return FEATURE_PROTO3_OPTIONAL;
-  }
+class LIBPROTOC_EXPORT Generator
+    : public google::protobuf::compiler::CodeGenerator {
+  virtual bool Generate(
+      const FileDescriptor* file,
+      const string& parameter,
+      GeneratorContext* generator_context,
+      string* error) const;
 };
 
 }  // namespace ruby
@@ -62,6 +60,5 @@ class PROTOC_EXPORT Generator : public CodeGenerator {
 }  // namespace protobuf
 }  // namespace google
 
-#include <google/protobuf/port_undef.inc>
-
 #endif  // GOOGLE_PROTOBUF_COMPILER_RUBY_GENERATOR_H__
+

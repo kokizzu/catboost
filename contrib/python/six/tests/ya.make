@@ -1,4 +1,6 @@
-PY23_TEST()
+PY23_LIBRARY()
+
+LICENSE(MIT)
 
 
 
@@ -13,3 +15,8 @@ TEST_SRCS(
 NO_LINT()
 
 END()
+
+RECURSE_FOR_TESTS(
+    py2
+    py3
+)

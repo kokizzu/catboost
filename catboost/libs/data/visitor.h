@@ -92,9 +92,6 @@ namespace NCB {
         virtual void AddGroupId(ui32 localObjectIdx, TGroupId value) = 0;
         virtual void AddSubgroupId(ui32 localObjectIdx, TSubgroupId value) = 0;
         virtual void AddTimestamp(ui32 localObjectIdx, ui64 value) = 0;
-        virtual void AddGroupId(ui32 localObjectIdx, const TString& value) = 0;
-        virtual void AddSubgroupId(ui32 localObjectIdx, const TString& value) = 0;
-        virtual void AddSampleId(ui32 localObjectIdx, const TString& value) = 0;
 
         // TRawObjectsData
         virtual void AddFloatFeature(ui32 localObjectIdx, ui32 flatFeatureIdx, float feature) = 0;
@@ -172,9 +169,6 @@ namespace NCB {
         virtual void AddGroupId(ui32 objectIdx, TGroupId value) = 0;
         virtual void AddSubgroupId(ui32 objectIdx, TSubgroupId value) = 0;
         virtual void AddTimestamp(ui32 objectIdx, ui64 value) = 0;
-        virtual void AddGroupId(ui32 objectIdx, const TString& value) = 0;
-        virtual void AddSubgroupId(ui32 objectIdx, const TString& value) = 0;
-        virtual void AddSampleId(ui32 objectIdx, const TString& value) = 0;
 
         // TRawObjectsData
 

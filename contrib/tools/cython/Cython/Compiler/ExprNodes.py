@@ -1012,11 +1012,11 @@ class ExprNode(Node):
             return self
         elif type.is_pyobject or type.is_int or type.is_ptr or type.is_float:
             return CoerceToBooleanNode(self, env)
-        elif type.is_cpp_class and type.scope and type.scope.lookup("operator bool"):
+        elif type.is_cpp_class:
             return SimpleCallNode(
                 self.pos,
                 function=AttributeNode(
-                    self.pos, obj=self, attribute=StringEncoding.EncodedString('operator bool')),
+                    self.pos, obj=self, attribute='operator bool'),
                 args=[]).analyse_types(env)
         elif type.is_ctuple:
             bool_value = len(type.components) == 0
@@ -6669,13 +6669,22 @@ class MergedDictNode(ExprNode):
         return dict_type
 
     def analyse_types(self, env):
-        self.keyword_args = [
+        args = [
             arg.analyse_types(env).coerce_to_pyobject(env).as_none_safe_node(
                 # FIXME: CPython's error message starts with the runtime function name
                 'argument after ** must be a mapping, not NoneType')
             for arg in self.keyword_args
         ]
 
+        if len(args) == 1 and args[0].type is dict_type:
+            # strip this intermediate node and use the bare dict
+            arg = args[0]
+            if arg.is_name and arg.entry.is_arg and len(arg.entry.cf_assignments) == 1:
+                # passing **kwargs through to function call => allow NULL
+                arg.allow_null = True
+            return arg
+
+        self.keyword_args = args
         return self
 
     def may_be_none(self):
@@ -12974,11 +12983,12 @@ class CoerceToMemViewSliceNode(CoercionNode):
         CoercionNode.__init__(self, arg)
         self.type = dst_type
         self.is_temp = 1
+        self.env = env
         self.use_managed_ref = True
         self.arg = arg
-        self.type.create_from_py_utility_code(env)
 
     def generate_result_code(self, code):
+        self.type.create_from_py_utility_code(self.env)
         code.putln(self.type.from_py_call_code(
             self.arg.py_result(),
             self.result(),

@@ -1,8 +1,5 @@
 #include "impl.h"
 
-#include "stack/stack_allocator.h"
-#include "stack/stack_guards.h"
-
 #include <util/generic/scope.h>
 #include <util/thread/singleton.h>
 #include <util/stream/format.h>
@@ -18,24 +15,23 @@ void TCont::TJoinWait::Wake() noexcept {
     Cont_.ReSchedule();
 }
 
-TCont::TCont(NCoro::NStack::IAllocator& allocator,
-             uint32_t stackSize,
-             TContExecutor& executor,
-             NCoro::TTrampoline::TFunc func,
-             const char* name) noexcept
+TCont::TCont(ui32 stackSize, NCoro::TStack::EGuard stackGuard, TContExecutor& executor, TContFunc func, void* arg, const char* name) noexcept
     : Executor_(executor)
     , Name_(name)
     , Trampoline_(
-        allocator,
         stackSize,
-        std::move(func),
-        this
+        stackGuard,
+        func,
+        this,
+        arg
     )
 {}
 
 
 void TCont::PrintMe(IOutputStream& out) const noexcept {
     out << "cont("
+        << "func = " << Hex((size_t)(void*)Trampoline_.Func()) << ", "
+        << "arg = " << Hex((size_t)(void*)Trampoline_.Arg()) << ", "
         << "name = " << Name_ << ", "
         << "addr = " << Hex((size_t)this)
         << ")";
@@ -117,20 +113,16 @@ void TCont::ReSchedule() noexcept {
 
 
 TContExecutor::TContExecutor(
-    uint32_t defaultStackSize,
+    ui32 defaultStackSize,
     THolder<IPollerFace> poller,
     NCoro::IScheduleCallback* callback,
-    NCoro::NStack::EGuard defaultGuard,
-    TMaybe<NCoro::NStack::TPoolAllocatorSettings> poolSettings,
-    NCoro::ITime* time
+    NCoro::TStack::EGuard defaultGuard
 )
     : CallbackPtr_(callback)
     , DefaultStackSize_(defaultStackSize)
+    , StackGuard_(defaultGuard)
     , Poller_(std::move(poller))
-    , Time_(time)
-{
-    StackAllocator_ = NCoro::NStack::GetAllocator(poolSettings, defaultGuard);
-}
+{}
 
 TContExecutor::~TContExecutor() {
     Y_VERIFY(Allocated_ == 0, "leaked %u coroutines", (ui32)Allocated_);
@@ -142,26 +134,16 @@ void TContExecutor::Execute() noexcept {
 }
 
 void TContExecutor::Execute(TContFunc func, void* arg) noexcept {
-    CreateOwned([=](TCont* cont) {
-        func(cont, arg);
-    }, "sys_main");
+    Create(func, arg, "sys_main");
     RunScheduler();
 }
 
 void TContExecutor::WaitForIO() {
     while (Ready_.Empty() && !WaitQueue_.Empty()) {
-        const auto now = Now();
+        const auto now = TInstant::Now();
 
         // Waking a coroutine puts it into ReadyNext_ list
         const auto next = WaitQueue_.WakeTimedout(now);
-
-        if (!UserEvents_.Empty()) {
-            TIntrusiveList<IUserEvent> userEvents;
-            userEvents.Swap(UserEvents_);
-            do {
-                userEvents.PopFront()->Execute();
-            } while (!userEvents.Empty());
-        }
 
         // Polling will return as soon as there is an event to process or a timeout.
         // If there are woken coroutines we do not want to sleep in the poller
@@ -179,11 +161,11 @@ void TContExecutor::WaitForIO() {
 }
 
 void TContExecutor::Poll(TInstant deadline) {
-    Poller_.Wait(PollerEvents_, deadline);
+    Poller_.Wait(Events_, deadline);
     LastPoll_ = Now();
 
     // Waking a coroutine puts it into ReadyNext_ list
-    for (auto event : PollerEvents_) {
+    for (auto event : Events_) {
         auto* lst = (NCoro::TPollEventList*)event.Data;
         const int status = event.Status;
 
@@ -220,27 +202,13 @@ TCont* TContExecutor::Create(
     const char* name,
     TMaybe<ui32> customStackSize
 ) noexcept {
-    return CreateOwned([=](TCont* cont) {
-        func(cont, arg);
-    }, name, customStackSize);
-}
-
-TCont* TContExecutor::CreateOwned(
-    NCoro::TTrampoline::TFunc func,
-    const char* name,
-    TMaybe<ui32> customStackSize
-) noexcept {
     Allocated_ += 1;
     if (!customStackSize) {
         customStackSize = DefaultStackSize_;
     }
-    auto* cont = new TCont(*StackAllocator_, *customStackSize, *this, std::move(func), name);
+    auto* cont = new TCont(*customStackSize, StackGuard_, *this, func, arg, name);
     ScheduleExecution(cont);
     return cont;
-}
-
-NCoro::NStack::TAllocatorStats TContExecutor::GetAllocatorStats() const noexcept {
-    return StackAllocator_->GetStackStats();
 }
 
 void TContExecutor::Release(TCont* cont) noexcept {
@@ -321,26 +289,12 @@ void TContExecutor::RunScheduler() noexcept {
                 break;
             }
             context->SwitchTo(cont->Trampoline_.Context());
-            if (Paused_) {
-                Paused_ = false;
-                Current_ = nullptr;
-                break;
-            }
             if (caller) {
                 break;
             }
         }
     } catch (...) {
-        TBackTrace::FromCurrentException().PrintTo(Cerr);
         Y_FAIL("Uncaught exception in the scheduler: %s", CurrentExceptionMessage().c_str());
-    }
-}
-
-void TContExecutor::Pause() {
-    if (auto cont = Running()) {
-        Paused_ = true;
-        ScheduleExecutionNow(cont);
-        cont->SwitchTo(&SchedContext_);
     }
 }
 
@@ -348,10 +302,6 @@ void TContExecutor::Exit(TCont* cont) noexcept {
     ScheduleToDelete(cont);
     cont->SwitchTo(&SchedContext_);
     Y_FAIL("can not return from exit");
-}
-
-TInstant TContExecutor::Now() {
-    return Y_LIKELY(Time_ == nullptr) ? TInstant::Now() : Time_->Now();
 }
 
 template <>

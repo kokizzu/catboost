@@ -2,18 +2,21 @@
 #include "file.h"
 
 #include <sys/stat.h>
+#include <sys/types.h>
 
+#include <util/datetime/systime.h>
+#include <util/generic/string.h>
 #include <util/folder/path.h>
 
-#include <cerrno>
+#include <errno.h>
 
 #if defined(_win_)
-    #include "fs_win.h"
+#include "fs_win.h"
 
-    #ifdef _S_IFLNK
-        #undef _S_IFLNK
-    #endif
-    #define _S_IFLNK 0x80000000
+#ifdef _S_IFLNK
+#undef _S_IFLNK
+#endif
+#define _S_IFLNK 0x80000000
 
 ui32 GetFileMode(DWORD fileAttributes) {
     ui32 mode = 0;
@@ -27,14 +30,12 @@ ui32 GetFileMode(DWORD fileAttributes) {
         mode |= _S_IFDIR;
     if (fileAttributes & (FILE_ATTRIBUTE_NORMAL | FILE_ATTRIBUTE_ARCHIVE))
         mode |= _S_IFREG;
-    if ((fileAttributes & FILE_ATTRIBUTE_READONLY) == 0)
-        mode |= _S_IWRITE;
     return mode;
 }
 
-    #define S_ISDIR(st_mode) (st_mode & _S_IFDIR)
-    #define S_ISREG(st_mode) (st_mode & _S_IFREG)
-    #define S_ISLNK(st_mode) (st_mode & _S_IFLNK)
+#define S_ISDIR(st_mode) (st_mode & _S_IFDIR)
+#define S_ISREG(st_mode) (st_mode & _S_IFREG)
+#define S_ISLNK(st_mode) (st_mode & _S_IFLNK)
 
 using TSystemFStat = BY_HANDLE_FILE_INFORMATION;
 
@@ -51,7 +52,6 @@ static void MakeStat(TFileStat& st, const TSystemFStat& fs) {
     st.Uid = fs.st_uid;
     st.Gid = fs.st_gid;
     st.Size = fs.st_size;
-    st.AllocationSize = fs.st_blocks * 512;
     st.ATime = fs.st_atime;
     st.MTime = fs.st_mtime;
     st.CTime = fs.st_ctime;
@@ -69,7 +69,6 @@ static void MakeStat(TFileStat& st, const TSystemFStat& fs) {
     st.Uid = 0;
     st.Gid = 0;
     st.Size = ((ui64)fs.nFileSizeHigh << 32) | fs.nFileSizeLow;
-    st.AllocationSize = st.Size; // FIXME
     st.INode = ((ui64)fs.nFileIndexHigh << 32) | fs.nFileIndexLow;
 #endif
 }
@@ -87,16 +86,14 @@ static bool GetStatByName(TSystemFStat& fs, const char* fileName, bool nofollow)
     TFileHandle h = NFsPrivate::CreateFileWithUtf8Name(fileName, FILE_READ_ATTRIBUTES | FILE_READ_EA, FILE_SHARE_READ | FILE_SHARE_WRITE,
                                                        OPEN_EXISTING,
                                                        (nofollow ? FILE_FLAG_OPEN_REPARSE_POINT : 0) | FILE_FLAG_BACKUP_SEMANTICS, true);
-    if (!h.IsOpen()) {
-        return false;
-    }
     return GetStatByHandle(fs, h);
 #else
     return !(nofollow ? lstat : stat)(fileName, &fs);
 #endif
 }
 
-TFileStat::TFileStat() = default;
+TFileStat::TFileStat() {
+}
 
 TFileStat::TFileStat(const TFile& f) {
     *this = TFileStat(f.GetHandle());
@@ -171,9 +168,8 @@ i64 GetFileLength(FHANDLE fd) {
     return pos.QuadPart;
 #elif defined(_unix_)
     struct stat statbuf;
-    if (::fstat(fd, &statbuf) != 0) {
+    if (::fstat(fd, &statbuf) != 0)
         return -1L;
-    }
     if (!(statbuf.st_mode & (S_IFREG | S_IFBLK | S_IFCHR))) {
         // st_size only makes sense for regular files or devices
         errno = EINVAL;
@@ -181,7 +177,7 @@ i64 GetFileLength(FHANDLE fd) {
     }
     return statbuf.st_size;
 #else
-    #error unsupported platform
+#error unsupported platform
 #endif
 }
 
@@ -196,9 +192,8 @@ i64 GetFileLength(const char* name) {
 #elif defined(_unix_)
     struct stat buf;
     int r = ::stat(name, &buf);
-    if (r == -1) {
+    if (r == -1)
         return -1;
-    }
     if (!(buf.st_mode & (S_IFREG | S_IFBLK | S_IFCHR))) {
         // st_size only makes sense for regular files or devices
         errno = EINVAL;
@@ -206,7 +201,7 @@ i64 GetFileLength(const char* name) {
     }
     return (i64)buf.st_size;
 #else
-    #error unsupported platform
+#error unsupported platform
 #endif
 }
 

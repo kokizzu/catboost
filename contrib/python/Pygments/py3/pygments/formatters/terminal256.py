@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.formatters.terminal256
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -22,6 +23,8 @@
 #    xterm. This means that default colors are white-on-black, not
 #    black-on-while, so colors like "white background" need to be converted
 #    to "white background, black foreground", etc...
+
+import sys
 
 from pygments.formatter import Formatter
 from pygments.console import codes
@@ -123,10 +126,6 @@ class Terminal256Formatter(Formatter):
     `style`
         The style to use, can be a string or a Style subclass (default:
         ``'default'``).
-
-    `linenos`
-        Set to ``True`` to have line numbers on the terminal output as well
-        (default: ``False`` = no line numbers).
     """
     name = 'Terminal256'
     aliases = ['terminal256', 'console256', '256']
@@ -145,9 +144,6 @@ class Terminal256Formatter(Formatter):
 
         self._build_color_table()  # build an RGB-to-256 color conversion table
         self._setup_styles()  # convert selected style's colors to term. colors
-
-        self.linenos = options.get('linenos', False)
-        self._lineno = 0
 
     def _build_color_table(self):
         # colors 0..15: 16 basic colors
@@ -242,17 +238,10 @@ class Terminal256Formatter(Formatter):
             self.style_string[str(ttype)] = (escape.color_string(),
                                              escape.reset_string())
 
-    def _write_lineno(self, outfile):
-        self._lineno += 1
-        outfile.write("%s%04d: " % (self._lineno != 1 and '\n' or '', self._lineno))
-
     def format(self, tokensource, outfile):
         return Formatter.format(self, tokensource, outfile)
 
     def format_unencoded(self, tokensource, outfile):
-        if self.linenos:
-            self._write_lineno(outfile)
-
         for ttype, value in tokensource:
             not_found = True
             while ttype and not_found:
@@ -266,11 +255,7 @@ class Terminal256Formatter(Formatter):
                     for line in spl[:-1]:
                         if line:
                             outfile.write(on + line + off)
-                        if self.linenos:
-                            self._write_lineno(outfile)
-                        else:
-                            outfile.write('\n')
-
+                        outfile.write('\n')
                     if spl[-1]:
                         outfile.write(on + spl[-1] + off)
 
@@ -279,15 +264,11 @@ class Terminal256Formatter(Formatter):
 
                 except KeyError:
                     # ottype = ttype
-                    ttype = ttype.parent
+                    ttype = ttype[:-1]
                     # outfile.write( '!' + str(ottype) + '->' + str(ttype) + '!' )
 
             if not_found:
                 outfile.write(value)
-
-        if self.linenos:
-            outfile.write("\n")
-
 
 
 class TerminalTrueColorFormatter(Terminal256Formatter):

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.x10
     ~~~~~~~~~~~~~~~~~~~
@@ -8,8 +9,11 @@
     :license: BSD, see LICENSE for details.
 """
 
+import re
+
 from pygments.lexer import RegexLexer
-from pygments.token import Text, Comment, Keyword, String
+from pygments.token import Text, Comment, Operator, Keyword, Name, String, \
+    Number, Punctuation, Error
 
 __all__ = ['X10Lexer']
 

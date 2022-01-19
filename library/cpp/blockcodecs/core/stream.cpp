@@ -12,7 +12,7 @@
 using namespace NBlockCodecs;
 
 namespace {
-    constexpr size_t MAX_BUF_LEN = 128 * 1024 * 1024;
+    static constexpr size_t MAX_BUF_LEN = 128 * 1024 * 1024;
 
     typedef ui16 TCodecID;
     typedef ui64 TBlockLen;
@@ -55,11 +55,11 @@ namespace {
         TByID ByID;
     };
 
-    TCodecID CodecID(const ICodec* c) {
+    static TCodecID CodecID(const ICodec* c) {
         return TIds::CodecID(c);
     }
 
-    const ICodec* CodecByID(TCodecID id) {
+    static const ICodec* CodecByID(TCodecID id) {
         return Singleton<TIds>()->Find(id);
     }
 }

@@ -275,9 +275,9 @@ void GetObjectsDataAndIndexing(
         // test
 
         const TFeaturesArraySubsetIndexing& subsetIndexing = (*objectsData)->GetFeaturesArraySubsetIndexing();
-        if (std::get_if<TFullSubset<ui32>>(&subsetIndexing)) {
+        if (GetIf<TFullSubset<ui32>>(&subsetIndexing)) {
             *columnIndexing = nullptr;
-        } else if (const TIndexedSubset<ui32>* indexedSubset = std::get_if<TIndexedSubset<ui32>>(&subsetIndexing)) {
+        } else if (const TIndexedSubset<ui32>* indexedSubset = GetIf<TIndexedSubset<ui32>>(&subsetIndexing)) {
             *columnIndexing = indexedSubset->data();
         } else {
             // blocks
@@ -312,10 +312,6 @@ static void UpdateIndices(
     ui32 objectSubsetIdx, // 0 - learn, 1+ - test (subtract 1 for testIndex)
     NPar::ILocalExecutor* localExecutor,
     TArrayRef<TIndexType> indices) {
-
-    if (indices.empty()) {
-        return;
-    }
 
     TIndexType defaultIndexValue = 0;
 
@@ -450,7 +446,7 @@ void SetPermutedIndices(
     const TTrainingDataProviders& trainingData,
     int curDepth,
     const TFold& fold,
-    TArrayRef<TIndexType> indices,
+    TVector<TIndexType>* indices,
     NPar::ILocalExecutor* localExecutor) {
 
     CB_ENSURE(curDepth > 0);
@@ -469,7 +465,7 @@ void SetPermutedIndices(
         fold,
         0, // learn
         localExecutor,
-        indices);
+        *indices);
 }
 
 static TVector<bool> GetIsLeafEmptyOpt(ui64 leafCount, TConstArrayRef<TIndexType> indices, NPar::ILocalExecutor* localExecutor) {
@@ -586,12 +582,12 @@ static TVector<const TOnlineCtrBase*> GetOnlineCtrs(
 
 static TVector<const TOnlineCtrBase*> GetOnlineCtrs(
     const TFold& fold,
-    const std::variant<TSplitTree, TNonSymmetricTreeStructure>& tree) {
+    const TVariant<TSplitTree, TNonSymmetricTreeStructure>& tree) {
 
-    if (std::holds_alternative<TSplitTree>(tree)) {
-        return GetOnlineCtrs(fold, std::get<TSplitTree>(tree));
+    if (HoldsAlternative<TSplitTree>(tree)) {
+        return GetOnlineCtrs(fold, Get<TSplitTree>(tree));
     } else {
-        return GetOnlineCtrs(fold, std::get<TNonSymmetricTreeStructure>(tree));
+        return GetOnlineCtrs(fold, Get<TNonSymmetricTreeStructure>(tree));
     }
 }
 
@@ -623,7 +619,7 @@ static void BuildIndicesForDataset(
 }
 
 static void BuildIndicesForDataset(
-    const std::variant<TSplitTree, TNonSymmetricTreeStructure>& treeVariant,
+    const TVariant<TSplitTree, TNonSymmetricTreeStructure>& treeVariant,
     const TTrainingDataProviders& trainingData,
     const TFold& fold,
     ui32 sampleCount,
@@ -644,17 +640,17 @@ static void BuildIndicesForDataset(
             indices);
     };
 
-    if (std::holds_alternative<TSplitTree>(treeVariant)) {
-        buildIndices(std::get<TSplitTree>(treeVariant));
+    if (HoldsAlternative<TSplitTree>(treeVariant)) {
+        buildIndices(Get<TSplitTree>(treeVariant));
     } else {
-        buildIndices(std::get<TNonSymmetricTreeStructure>(treeVariant));
+        buildIndices(Get<TNonSymmetricTreeStructure>(treeVariant));
     }
 }
 
 
 TVector<TIndexType> BuildIndices(
     const TFold& fold,
-    const std::variant<TSplitTree, TNonSymmetricTreeStructure>& tree,
+    const TVariant<TSplitTree, TNonSymmetricTreeStructure>& tree,
     const TTrainingDataProviders& trainingData,
     EBuildIndicesDataParts dataParts,
     NPar::ILocalExecutor* localExecutor) {

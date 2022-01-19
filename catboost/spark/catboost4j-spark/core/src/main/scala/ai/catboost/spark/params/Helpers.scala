@@ -16,8 +16,6 @@ import org.apache.spark.ml.param._;
 import org.apache.spark.ml.util.Identifiable
 import ai.catboost.CatBoostError
 
-import ru.yandex.catboost.spark.catboost4j_spark.core.src.native_impl.EOverfittingDetectorType
-
 
 // copied from org.apache.spark.ml.param because it's private there
 private[spark] object ParamValidators {
@@ -280,48 +278,9 @@ private[spark] object Helpers {
     }
   }
 
-  def processOverfittingDetectorParams(params: mutable.HashMap[String, Any]) : JObject = {
-    var maybeOdWait = params.get("odWait")
-    if (params.contains("earlyStoppingRounds")) {
-      if (maybeOdWait.isDefined) {
-        throw new CatBoostError("only one of the parameters earlyStoppingRounds, odWait should be initialized")
-      }
-      maybeOdWait = params.get("earlyStoppingRounds")
-    }
-    maybeOdWait match {
-      case Some(odWait) => {
-        if (params.contains("odType")) {
-          if (params("odType").asInstanceOf[EOverfittingDetectorType] != EOverfittingDetectorType.Iter) {
-            throw new CatBoostError(
-              "odWait or earlyStoppingRounds parameter specified with odType != EOverfittingDetectorType.Iter"
-            )
-          }
-        }
-        JObject(
-          "od_type" -> "Iter",
-          "od_wait" -> JLong(odWait.asInstanceOf[Int])
-        )
-      }
-      case None => {
-        params.get("odPval") match {
-          case Some(odPval) => {
-            if (params.contains("odType")) {
-              if (params("odType").asInstanceOf[EOverfittingDetectorType] != EOverfittingDetectorType.IncToDec) {
-                throw new CatBoostError(
-                  "odPval parameter specified with odType != EOverfittingDetectorType.IncToDec"
-                )
-              }
-            }
-            ("od_pval" -> JDouble(odPval.asInstanceOf[Float]))
-          }
-          case None => JObject()
-        }
-      }
-    }
-  }
-
   def processSnapshotIntervalParam(params: mutable.HashMap[String, Any]) : JObject = {
     if (params.contains("snapshotInterval")) {
+      println("params.contains('snapshotInterval')")
       JObject() ~ (
         "snapshot_interval" -> JLong(params("snapshotInterval").asInstanceOf[java.time.Duration].getSeconds)
       )
@@ -343,16 +302,10 @@ private[spark] object Helpers {
 
     "spark_partition_count" -> null,
     "worker_initialization_timeout" -> null,
-    "worker_max_failures" -> null,
-    "connect_timeout" -> null,
 
     // processed in separate functions
     "class_weights_map" -> null,
     "class_weights_list" -> null,
-    "early_stopping_rounds" -> null,
-    "od_pval" -> null,
-    "od_type" -> null,
-    "od_wait" -> null,
     "snapshot_interval" -> null,
 
     // defined in Predictor
@@ -396,7 +349,6 @@ private[spark] object Helpers {
     JObject()
       .merge(processClassWeightsParams(paramsHashMap, classNamesFromLabelData))
       .merge(processClassNamesFromLabelData(classNamesFromLabelData))
-      .merge(processOverfittingDetectorParams(paramsHashMap))
       .merge(processSnapshotIntervalParam(paramsHashMap))
       .merge(processWithSimpleNameMapping(paramsSeq))
   }

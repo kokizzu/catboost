@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.formatters.other
     ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -87,32 +88,34 @@ class RawTokenFormatter(Formatter):
             import gzip
             outfile = gzip.GzipFile('', 'wb', 9, outfile)
 
-            write = outfile.write
-            flush = outfile.close
+            def write(text):
+                outfile.write(text.encode())
+            flush = outfile.flush
         elif self.compress == 'bz2':
             import bz2
             compressor = bz2.BZ2Compressor(9)
 
             def write(text):
-                outfile.write(compressor.compress(text))
+                outfile.write(compressor.compress(text.encode()))
 
             def flush():
                 outfile.write(compressor.flush())
                 outfile.flush()
         else:
-            write = outfile.write
+            def write(text):
+                outfile.write(text.encode())
             flush = outfile.flush
 
         if self.error_color:
             for ttype, value in tokensource:
-                line = b"%r\t%r\n" % (ttype, value)
+                line = "%s\t%r\n" % (ttype, value)
                 if ttype is Token.Error:
                     write(colorize(self.error_color, line))
                 else:
                     write(line)
         else:
             for ttype, value in tokensource:
-                write(b"%r\t%r\n" % (ttype, value))
+                write("%s\t%r\n" % (ttype, value))
         flush()
 
 

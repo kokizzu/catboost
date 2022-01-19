@@ -2,7 +2,7 @@
 /* Top level execution of Python code (including in __main__) */
 
 /* To help control the interfaces between the startup, execution and
- * shutdown code, the phases are split across separate modules (bootstrap,
+ * shutdown code, the phases are split across separate modules (boostrap,
  * pythonrun, shutdown)
  */
 
@@ -14,8 +14,7 @@
 #undef Yield   /* undefine macro conflicting with <winbase.h> */
 
 #include "pycore_interp.h"        // PyInterpreterState.importlib
-#include "pycore_object.h"        // _PyDebug_PrintTotalRefs(),
-                                  // _PyType_GetQualName()
+#include "pycore_object.h"        // _PyDebug_PrintTotalRefs()
 #include "pycore_pyerrors.h"      // _PyErr_Fetch
 #include "pycore_pylifecycle.h"   // _Py_UnhandledKeyboardInterrupt
 #include "pycore_pystate.h"       // _PyInterpreterState_GET()
@@ -893,37 +892,36 @@ print_exception(PyObject *f, PyObject *value)
         /* Don't do anything else */
     }
     else {
-        PyObject* modulename;
-
+        PyObject* moduleName;
+        const char *className;
         _Py_IDENTIFIER(__module__);
         assert(PyExceptionClass_Check(type));
+        className = PyExceptionClass_Name(type);
+        if (className != NULL) {
+            const char *dot = strrchr(className, '.');
+            if (dot != NULL)
+                className = dot+1;
+        }
 
-        modulename = _PyObject_GetAttrId(type, &PyId___module__);
-        if (modulename == NULL || !PyUnicode_Check(modulename))
+        moduleName = _PyObject_GetAttrId(type, &PyId___module__);
+        if (moduleName == NULL || !PyUnicode_Check(moduleName))
         {
-            Py_XDECREF(modulename);
-            PyErr_Clear();
-            err = PyFile_WriteString("<unknown>.", f);
+            Py_XDECREF(moduleName);
+            err = PyFile_WriteString("<unknown>", f);
         }
         else {
-            if (!_PyUnicode_EqualToASCIIId(modulename, &PyId_builtins))
+            if (!_PyUnicode_EqualToASCIIId(moduleName, &PyId_builtins))
             {
-                err = PyFile_WriteObject(modulename, f, Py_PRINT_RAW);
+                err = PyFile_WriteObject(moduleName, f, Py_PRINT_RAW);
                 err += PyFile_WriteString(".", f);
             }
-            Py_DECREF(modulename);
+            Py_DECREF(moduleName);
         }
         if (err == 0) {
-            PyObject* qualname = _PyType_GetQualName((PyTypeObject *)type);
-            if (qualname == NULL || !PyUnicode_Check(qualname)) {
-                Py_XDECREF(qualname);
-                PyErr_Clear();
-                err = PyFile_WriteString("<unknown>", f);
-            }
-            else {
-                err = PyFile_WriteObject(qualname, f, Py_PRINT_RAW);
-                Py_DECREF(qualname);
-            }
+            if (className == NULL)
+                      err = PyFile_WriteString("<unknown>", f);
+            else
+                      err = PyFile_WriteString(className, f);
         }
     }
     if (err == 0 && (value != Py_None)) {
@@ -1074,9 +1072,8 @@ PyErr_Display(PyObject *exception, PyObject *value, PyObject *tb)
     if (file == Py_None) {
         return;
     }
-    Py_INCREF(file);
+
     _PyErr_Display(file, exception, value, tb);
-    Py_DECREF(file);
 }
 
 PyObject *

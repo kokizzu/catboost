@@ -37,9 +37,7 @@ namespace NCatboostCuda {
             CB_ENSURE(Point.GetObjectsSlice().Size(), "Set point first");
             auto targets = Target.GetTarget().GetTargets().ConstCopyView();
             TConstVec weights;
-            if ((metric->GetCpuMetric().UseWeights.IsIgnored() || metric->GetCpuMetric().UseWeights) &&
-                !Target.GetTarget().HasPairWeights()
-            ) {
+            if (metric->GetCpuMetric().UseWeights.IsIgnored() || metric->GetCpuMetric().UseWeights) {
                 weights = Target.GetTarget().GetWeights().ConstCopyView();
             } else {
                 using TVec = typename TTarget::TVec;
@@ -94,11 +92,7 @@ namespace NCatboostCuda {
                 Target.GetTarget().GetTargets().Read(CpuTarget);
             }
             if (CpuWeights.size() == 0) {
-                if (!Target.GetTarget().HasPairWeights()) {
-                    Target.GetTarget().GetWeights().Read(CpuWeights);
-                } else {
-                    CpuWeights.resize(CpuTarget.size(), 1);
-                }
+                Target.GetTarget().GetWeights().Read(CpuWeights);
             }
         }
 

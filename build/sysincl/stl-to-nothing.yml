@@ -29,12 +29,10 @@
 
 - includes:
   - __config
-  - __undef_macros
   - algorithm
   - any
   - array
   - atomic
-  - bit
   - bitset
   - cassert
   - ccomplex
@@ -50,9 +48,7 @@
   - clocale
   - cmath
   - codecvt
-  - compare
   - complex
-  - concepts
   - condition_variable
   - csetjmp
   - csignal
@@ -70,6 +66,9 @@
   - cxxabi.h
   - deque
   - exception
+  - experimental/string_view
+  - ext/hash_map
+  - ext/hash_set
   - filesystem
   - forward_list
   - fstream
@@ -91,6 +90,7 @@
   - new
   - numeric
   - optional
+  - experimental/optional
   - ostream
   - queue
   - random
@@ -99,7 +99,6 @@
   - scoped_allocator
   - set
   - shared_mutex
-  - span
   - sstream
   - stack
   - stdexcept
@@ -122,22 +121,3 @@
   - vector
   - unwind.h:
     - contrib/libs/libunwind/include/unwind.h
-
-
-# Though these are headers provided by libcxx, we do not want to allow them to be included.
-# We are using non-existent filename to generate error instead, as there is no specific syntax for this case.
-- includes:
-  - ext/hash_map:                       DO_NOT_INCLUDE_NON_STANDARD_EXT_HASH_MAP
-  - ext/hash_set:                       DO_NOT_INCLUDE_NON_STANDARD_EXT_HASH_SET
-  - experimental/any:                   DO_NOT_INCLUDE_NON_STANDARD_EXPERIMENTAL_ANY
-  - experimental/chrono:                DO_NOT_INCLUDE_NON_STANDARD_EXPERIMENTAL_CHRONO
-  - experimental/numeric:               DO_NOT_INCLUDE_NON_STANDARD_EXPERIMENTAL_NUMERIC
-  - experimental/optional:              DO_NOT_INCLUDE_NON_STANDARD_EXPERIMENTAL_OPTIONAL
-  - experimental/ratio:                 DO_NOT_INCLUDE_NON_STANDARD_EXPERIMENTAL_RATIO
-  - experimental/source_location:       DO_NOT_INCLUDE_NON_STANDARD_EXPERIMENTAL_SOURCE_LOCATION
-  - experimental/string_view:           DO_NOT_INCLUDE_NON_STANDARD_EXPERIMENTAL_STRING_VIEW
-  - experimental/system_error:          DO_NOT_INCLUDE_NON_STANDARD_EXPERIMENTAL_SYSTEM_ERROR
-  - experimental/tuple:                 DO_NOT_INCLUDE_NON_STANDARD_EXPERIMENTAL_TUPLE
-
-  # TODO: there is no <corouine> in system stl. Disable this include upon its appearance
-  - experimental/coroutine

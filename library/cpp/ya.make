@@ -10,8 +10,10 @@ RECURSE(
     binsaver/ut_util
     blockcodecs
     blockcodecs/fuzz
+    blockcodecs/ut
     build_info
     cache
+    cache/ut
     cgiparam
     cgiparam/fuzz
     cgiparam/ut
@@ -52,7 +54,6 @@ RECURSE(
     grid_creator/ut
     hnsw
     http
-    iterator
     json
     json/fast_sax
     json/flex_buffers
@@ -97,6 +98,8 @@ RECURSE(
     on_disk
     online_hnsw
     openssl
+    overloaded
+    overloaded/ut
     packers
     packers/ut
     par
@@ -117,22 +120,20 @@ RECURSE(
     text_processing
     threading
     token
-    token/lite
+    tokenizer
+    tokenizer/ut
     token/serialization
     token/serialization/ut
     token/ut
-    tokenizer
-    tokenizer/ut
+    unicode
     yson
-    yson/json
     yson/node
     yson/node/pybind
-    yt
 )
 
 IF (OS_LINUX)
     RECURSE(
-    ytalloc
+    
 )
 ENDIF()
 

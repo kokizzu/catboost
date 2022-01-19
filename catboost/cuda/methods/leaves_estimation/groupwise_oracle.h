@@ -27,7 +27,7 @@ namespace NCatboostCuda {
             {
                 auto der = TStripeBuffer<float>::CopyMapping(cursor);
 
-                Target->ApproximateAt(cursor.AsConstBuf(),
+                Target->ApproximateAt(cursor,
                                       score,
                                       &der,
                                       &DiagDer2,
@@ -77,20 +77,11 @@ namespace NCatboostCuda {
             CB_ENSURE(false, "Exact leaves estimation method on GPU is not supported for groupwise oracle");
         }
 
-        void AddLangevinNoiseToDerivatives(TVector<double>* derivatives,
-                                           NPar::ILocalExecutor* localExecutor) {
-            Y_UNUSED(derivatives);
-            Y_UNUSED(localExecutor);
-            CB_ENSURE(!this->LeavesEstimationConfig.Langevin, "Langevin on GPU is not supported for groupwise oracle");
-        }
-
         static THolder<ILeavesEstimationOracle> Create(const TGroupwiseTarget& target,
                                                        TStripeBuffer<const float>&& baseline,
-                                                       TStripeBuffer<ui32>&& binsBuf,
+                                                       TStripeBuffer<const ui32>&& bins,
                                                        ui32 binCount,
-                                                       const TLeavesEstimationConfig& estimationConfig,
-                                                       TGpuAwareRandom& random) {
-            auto bins = binsBuf.AsConstBuf();
+                                                       const TLeavesEstimationConfig& estimationConfig) {
             //order and metadata used in Approximate
             auto docOrder = target.GetApproximateDocOrder();
             auto qids = target.GetApproximateQids();
@@ -134,16 +125,15 @@ namespace NCatboostCuda {
                                       &leafWeights);
 
             return THolder<ILeavesEstimationOracle>(new TOracle(target,
-                               orderedBaseline.AsConstBuf(),
-                               orderBins.AsConstBuf(),
+                               orderedBaseline,
+                               orderBins,
                                leafWeights,
                                pairLeafWeights,
                                estimationConfig,
                                std::move(pairs),
                                std::move(pairLeafOffsets),
                                std::move(pointLeafOffsets),
-                               std::move(pointLeafIndices),
-                               random));
+                               std::move(pointLeafIndices)));
         }
 
     private:
@@ -158,14 +148,12 @@ namespace NCatboostCuda {
                 TStripeBuffer<uint2>&& pairs,
                 TStripeBuffer<ui32>&& pairLeafOffset,
                 TStripeBuffer<ui32>&& pointLeafOffsets,
-                TStripeBuffer<ui32>&& pointLeafIndices,
-                TGpuAwareRandom& random)
+                TStripeBuffer<ui32>&& pointLeafIndices)
             : TParent(std::move(baseline),
                       std::move(bins),
                       leafWeights,
                       pairLeafWeights,
-                      estimationConfig,
-                      random)
+                      estimationConfig)
             , Target(&target)
             , SupportPairs(std::move(pairs))
             , PairBinOffsets(std::move(pairLeafOffset))

@@ -1,7 +1,6 @@
 UNITTEST_FOR(util)
 
 
-SUBSCRIBER(g:util-subscribers)
 
 FORK_TESTS()
 
@@ -32,7 +31,6 @@ SRCS(
     generic/maybe_ut.cpp
     generic/mem_copy_ut.cpp
     generic/objects_counter_ut.cpp
-    generic/overloaded_ut.cpp
     generic/ptr_ut.cpp
     generic/queue_ut.cpp
     generic/serialized_enum_ut.cpp
@@ -45,8 +43,10 @@ SRCS(
     generic/string_ut.cpp
     generic/typelist_ut.cpp
     generic/typetraits_ut.cpp
+    generic/type_name_ut.cpp
     generic/utility_ut.cpp
     generic/va_args_ut.cpp
+    generic/variant_ut.cpp
     generic/vector_ut.cpp
     generic/xrange_ut.cpp
     generic/yexception_ut.c

@@ -8,9 +8,9 @@ from __future__ import print_function
 import os
 import sys
 
-from decorator import contextmanager
+from contextlib import contextmanager
 
-__version__ = '0.13.9'
+__version__ = '0.13.5'
 
 from IPython import get_ipython
 from IPython.core.debugger import BdbQuit_excepthook
@@ -22,36 +22,34 @@ except:
     import ConfigParser as configparser
 
 
-def _get_debugger_cls():
-    shell = get_ipython()
-    if shell is None:
-        # Not inside IPython
-        # Build a terminal app in order to force ipython to load the
-        # configuration
-        ipapp = TerminalIPythonApp()
-        # Avoid output (banner, prints)
-        ipapp.interact = False
-        ipapp.initialize(["--no-term-title"])
-        shell = ipapp.shell
-    else:
-        # Running inside IPython
+shell = get_ipython()
+if shell is None:
+    # Not inside IPython
+    # Build a terminal app in order to force ipython to load the
+    # configuration
+    ipapp = TerminalIPythonApp()
+    # Avoid output (banner, prints)
+    ipapp.interact = False
+    ipapp.initialize(['--no-term-title'])
+    shell = ipapp.shell
+else:
+    # Running inside IPython
 
-        # Detect if embed shell or not and display a message
-        if isinstance(shell, InteractiveShellEmbed):
-            sys.stderr.write(
-                "\nYou are currently into an embedded ipython shell,\n"
-                "the configuration will not be loaded.\n\n"
-            )
+    # Detect if embed shell or not and display a message
+    if isinstance(shell, InteractiveShellEmbed):
+        sys.stderr.write(
+            "\nYou are currently into an embedded ipython shell,\n"
+            "the configuration will not be loaded.\n\n"
+        )
 
-    # Let IPython decide about which debugger class to use
-    # This is especially important for tools that fiddle with stdout
-    return shell.debugger_cls
+# Let IPython decide about which debugger class to use
+# This is especially important for tools that fiddle with stdout
+debugger_cls = shell.debugger_cls
 
 
 def _init_pdb(context=None, commands=[]):
     if context is None:
         context = os.getenv("IPDB_CONTEXT_SIZE", get_context_from_config())
-    debugger_cls = _get_debugger_cls()
     try:
         p = debugger_cls(context=context)
     except TypeError:
@@ -82,11 +80,11 @@ def set_trace(frame=None, context=None, cond=True):
 def get_context_from_config():
     try:
         parser = get_config()
-        return parser.getint("ipdb", "context")
+        return parser.getint("tool.ipdb", "context", fallback=parser.getint("ipdb", "context"))
     except (configparser.NoSectionError, configparser.NoOptionError):
         return 3
     except ValueError:
-        value = parser.get("ipdb", "context")
+        value = parser.get("tool.ipdb", "context", fallback=parser.get("ipdb", "context"))
         raise ValueError(
             "In %s,  context value [%s] cannot be converted into an integer."
             % (parser.filepath, value)
@@ -170,20 +168,12 @@ def get_config():
             parser.filepath = filepath
             # Users are expected to put an [ipdb] section
             # only if they use setup.cfg
-            if filepath.endswith('setup.cfg'):
+            if filepath.endswith('setup.cfg') or filepath.endswith('pyproject.toml'):
                 with open(filepath) as f:
                     parser.remove_section("ipdb")
                     read_func(f)
-            # To use on pyproject.toml, put [tool.ipdb] section
-            elif filepath.endswith('pyproject.toml'):
-                import toml
-                toml_file = toml.load(filepath)
-                if "tool" in toml_file and "ipdb" in toml_file["tool"]:
-                    if not parser.has_section("ipdb"):
-                        parser.add_section("ipdb")
-                    for key, value in toml_file["tool"]["ipdb"].items():
-                        parser.set("ipdb", key, str(value))
             else:
+                parser.remove_section("tool.ipdb")
                 read_func(ConfigFile(filepath))
     return parser
 
@@ -226,10 +216,6 @@ def launch_ipdb_on_exception():
         post_mortem(tb)
     finally:
         pass
-
-
-# iex is a concise alias
-iex = launch_ipdb_on_exception()
 
 
 _usage = """\

@@ -1,33 +1,20 @@
 """
 Support pre-0.12 series pickle compatibility.
 """
-from __future__ import annotations
 
 import contextlib
 import copy
 import io
 import pickle as pkl
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 import warnings
 
-import numpy as np
-
-from pandas._libs.arrays import NDArrayBacked
 from pandas._libs.tslibs import BaseOffset
 
 from pandas import Index
-from pandas.core.arrays import (
-    DatetimeArray,
-    PeriodArray,
-    TimedeltaArray,
-)
-from pandas.core.internals import BlockManager
 
 if TYPE_CHECKING:
-    from pandas import (
-        DataFrame,
-        Series,
-    )
+    from pandas import DataFrame, Series
 
 
 def load_reduce(self):
@@ -55,14 +42,10 @@ def load_reduce(self):
                 return
             except TypeError:
                 pass
-        elif args and isinstance(args[0], type) and issubclass(args[0], BaseOffset):
+        elif args and issubclass(args[0], BaseOffset):
             # TypeError: object.__new__(Day) is not safe, use Day.__new__()
             cls = args[0]
             stack[-1] = cls.__new__(*args)
-            return
-        elif args and issubclass(args[0], PeriodArray):
-            cls = args[0]
-            stack[-1] = NDArrayBacked.__new__(*args)
             return
 
         raise
@@ -81,7 +64,7 @@ class _LoadSparseSeries:
     # https://github.com/python/mypy/issues/1020
     # error: Incompatible return type for "__new__" (returns "Series", but must return
     # a subtype of "_LoadSparseSeries")
-    def __new__(cls) -> Series:  # type: ignore[misc]
+    def __new__(cls) -> "Series":  # type: ignore[misc]
         from pandas import Series
 
         warnings.warn(
@@ -99,7 +82,7 @@ class _LoadSparseFrame:
     # https://github.com/python/mypy/issues/1020
     # error: Incompatible return type for "__new__" (returns "DataFrame", but must
     # return a subtype of "_LoadSparseFrame")
-    def __new__(cls) -> DataFrame:  # type: ignore[misc]
+    def __new__(cls) -> "DataFrame":  # type: ignore[misc]
         from pandas import DataFrame
 
         warnings.warn(
@@ -217,14 +200,6 @@ def load_newobj(self):
     # compat
     if issubclass(cls, Index):
         obj = object.__new__(cls)
-    elif issubclass(cls, DatetimeArray) and not args:
-        arr = np.array([], dtype="M8[ns]")
-        obj = cls.__new__(cls, arr, arr.dtype)
-    elif issubclass(cls, TimedeltaArray) and not args:
-        arr = np.array([], dtype="m8[ns]")
-        obj = cls.__new__(cls, arr, arr.dtype)
-    elif cls is BlockManager and not args:
-        obj = cls.__new__(cls, (), [], False)
     else:
         obj = cls.__new__(cls, *args)
 
@@ -253,7 +228,7 @@ except (AttributeError, KeyError):
     pass
 
 
-def load(fh, encoding: str | None = None, is_verbose: bool = False):
+def load(fh, encoding: Optional[str] = None, is_verbose: bool = False):
     """
     Load a pickle, with a provided encoding,
 

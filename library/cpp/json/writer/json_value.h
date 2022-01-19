@@ -6,7 +6,6 @@
 #include <util/generic/hash.h>
 #include <util/generic/vector.h>
 #include <util/generic/deque.h>
-#include <util/generic/utility.h>
 #include <util/generic/yexception.h>
 
 namespace NJson {
@@ -53,12 +52,6 @@ namespace NJson {
         template <class T>
         TJsonValue(const T*) = delete;
         TJsonValue(TStringBuf value);
-
-        TJsonValue(const std::string& s)
-            : TJsonValue(TStringBuf(s))
-        {
-        }
-
         TJsonValue(const TJsonValue& vval);
         TJsonValue(TJsonValue&& vval) noexcept;
 
@@ -205,7 +198,6 @@ namespace NJson {
             TArray* Array;
 
             TValueUnion() noexcept {
-                Zero(*this);
             }
             ~TValueUnion() noexcept {
             }

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.templates
     ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -267,11 +268,11 @@ class VelocityLexer(RegexLexer):
 
     def analyse_text(text):
         rv = 0.0
-        if re.search(r'#\{?macro\}?\(.*?\).*?#\{?end\}?', text, re.DOTALL):
+        if re.search(r'#\{?macro\}?\(.*?\).*?#\{?end\}?', text):
             rv += 0.25
-        if re.search(r'#\{?if\}?\(.+?\).*?#\{?end\}?', text, re.DOTALL):
+        if re.search(r'#\{?if\}?\(.+?\).*?#\{?end\}?', text):
             rv += 0.15
-        if re.search(r'#\{?foreach\}?\(.+?\).*?#\{?end\}?', text, re.DOTALL):
+        if re.search(r'#\{?foreach\}?\(.+?\).*?#\{?end\}?', text):
             rv += 0.15
         if re.search(r'\$!?\{?[a-zA-Z_]\w*(\([^)]*\))?'
                      r'(\.\w+(\([^)]*\))?)*\}?', text):
@@ -489,7 +490,7 @@ class MyghtyJavascriptLexer(DelegatingLexer):
     """
 
     name = 'JavaScript+Myghty'
-    aliases = ['javascript+myghty', 'js+myghty']
+    aliases = ['js+myghty', 'javascript+myghty']
     mimetypes = ['application/x-javascript+myghty',
                  'text/x-javascript+myghty',
                  'text/javascript+mygthy']
@@ -588,12 +589,12 @@ class MakoLexer(RegexLexer):
     tokens = {
         'root': [
             (r'(\s*)(%)(\s*end(?:\w+))(\n|\Z)',
-             bygroups(Text.Whitespace, Comment.Preproc, Keyword, Other)),
+             bygroups(Text, Comment.Preproc, Keyword, Other)),
             (r'(\s*)(%)([^\n]*)(\n|\Z)',
-             bygroups(Text.Whitespace, Comment.Preproc, using(PythonLexer), Other)),
+             bygroups(Text, Comment.Preproc, using(PythonLexer), Other)),
             (r'(\s*)(##[^\n]*)(\n|\Z)',
-             bygroups(Text.Whitespace, Comment.Single, Text.Whitespace)),
-            (r'(?s)<%doc>.*?</%doc>', Comment.Multiline),
+             bygroups(Text, Comment.Preproc, Other)),
+            (r'(?s)<%doc>.*?</%doc>', Comment.Preproc),
             (r'(<%)([\w.:]+)',
              bygroups(Comment.Preproc, Name.Builtin), 'tag'),
             (r'(</%)([\w.:]+)(>)',
@@ -679,7 +680,7 @@ class MakoJavascriptLexer(DelegatingLexer):
     """
 
     name = 'JavaScript+Mako'
-    aliases = ['javascript+mako', 'js+mako']
+    aliases = ['js+mako', 'javascript+mako']
     mimetypes = ['application/x-javascript+mako',
                  'text/x-javascript+mako',
                  'text/javascript+mako']
@@ -798,8 +799,8 @@ class CheetahJavascriptLexer(DelegatingLexer):
     """
 
     name = 'JavaScript+Cheetah'
-    aliases = ['javascript+cheetah', 'js+cheetah',
-               'javascript+spitfire', 'js+spitfire']
+    aliases = ['js+cheetah', 'javascript+cheetah',
+               'js+spitfire', 'javascript+spitfire']
     mimetypes = ['application/x-javascript+cheetah',
                  'text/x-javascript+cheetah',
                  'text/javascript+cheetah',
@@ -1026,7 +1027,7 @@ class XmlErbLexer(DelegatingLexer):
     """
 
     name = 'XML+Ruby'
-    aliases = ['xml+ruby', 'xml+erb']
+    aliases = ['xml+erb', 'xml+ruby']
     alias_filenames = ['*.xml']
     mimetypes = ['application/xml+ruby']
 
@@ -1046,7 +1047,7 @@ class CssErbLexer(DelegatingLexer):
     """
 
     name = 'CSS+Ruby'
-    aliases = ['css+ruby', 'css+erb']
+    aliases = ['css+erb', 'css+ruby']
     alias_filenames = ['*.css']
     mimetypes = ['text/css+ruby']
 
@@ -1064,7 +1065,7 @@ class JavascriptErbLexer(DelegatingLexer):
     """
 
     name = 'JavaScript+Ruby'
-    aliases = ['javascript+ruby', 'js+ruby', 'javascript+erb', 'js+erb']
+    aliases = ['js+erb', 'javascript+erb', 'js+ruby', 'javascript+ruby']
     alias_filenames = ['*.js']
     mimetypes = ['application/x-javascript+ruby',
                  'text/x-javascript+ruby',
@@ -1147,7 +1148,7 @@ class JavascriptPhpLexer(DelegatingLexer):
     """
 
     name = 'JavaScript+PHP'
-    aliases = ['javascript+php', 'js+php']
+    aliases = ['js+php', 'javascript+php']
     alias_filenames = ['*.js']
     mimetypes = ['application/x-javascript+php',
                  'text/x-javascript+php',
@@ -1229,7 +1230,7 @@ class JavascriptSmartyLexer(DelegatingLexer):
     """
 
     name = 'JavaScript+Smarty'
-    aliases = ['javascript+smarty', 'js+smarty']
+    aliases = ['js+smarty', 'javascript+smarty']
     alias_filenames = ['*.js', '*.tpl']
     mimetypes = ['application/x-javascript+smarty',
                  'text/x-javascript+smarty',
@@ -1311,8 +1312,8 @@ class JavascriptDjangoLexer(DelegatingLexer):
     """
 
     name = 'JavaScript+Django/Jinja'
-    aliases = ['javascript+django', 'js+django',
-               'javascript+jinja', 'js+jinja']
+    aliases = ['js+django', 'javascript+django',
+               'js+jinja', 'javascript+jinja']
     alias_filenames = ['*.js']
     mimetypes = ['application/x-javascript+django',
                  'application/x-javascript+jinja',
@@ -1750,7 +1751,7 @@ class LassoJavascriptLexer(DelegatingLexer):
     """
 
     name = 'JavaScript+Lasso'
-    aliases = ['javascript+lasso', 'js+lasso']
+    aliases = ['js+lasso', 'javascript+lasso']
     alias_filenames = ['*.js']
     mimetypes = ['application/x-javascript+lasso',
                  'text/x-javascript+lasso',

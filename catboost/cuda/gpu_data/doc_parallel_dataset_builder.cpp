@@ -34,8 +34,7 @@ NCatboostCuda::TDocParallelDataSetsHolder NCatboostCuda::TDocParallelDataSetBuil
                                                                                     learnLoadBalancingPermutation,
                                                                                     dataSetsHolder.LearnDocPerDevicesSplit->SamplesGrouping,
                                                                                     TTarget<NCudaLib::TStripeMapping>(targets.ConstCopyView(),
-                                                                                                                      weights.ConstCopyView(),
-                                                                                                                      /*isPairWeights*/ false)));
+                                                                                                                      weights.ConstCopyView())));
     }
 
     if (LinkedTest != nullptr) {
@@ -56,8 +55,7 @@ NCatboostCuda::TDocParallelDataSetsHolder NCatboostCuda::TDocParallelDataSetBuil
                                                              testLoadBalancingPermutation,
                                                              dataSetsHolder.TestDocPerDevicesSplit->SamplesGrouping,
                                                              TTarget<NCudaLib::TStripeMapping>(testTargets.ConstCopyView(),
-                                                                                               testWeights.ConstCopyView(),
-                                                                                               /*isPairWeights*/ false)));
+                                                                                               testWeights.ConstCopyView())));
     }
 
     auto allFeatures = GetLearnFeatureIds(FeaturesManager);

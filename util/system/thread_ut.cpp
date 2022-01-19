@@ -2,8 +2,6 @@
 
 #include <library/cpp/testing/unittest/registar.h>
 
-#include <atomic>
-
 Y_UNIT_TEST_SUITE(TSysThreadTest) {
     struct TIdTester {
         inline TIdTester()
@@ -22,13 +20,11 @@ Y_UNIT_TEST_SUITE(TSysThreadTest) {
         inline void Run() {
             Cur = TThread::CurrentThreadId();
             Real = Thr->Id();
-            Numeric = TThread::CurrentThreadNumericId();
         }
 
         TThread* Thr;
         TThread::TId Cur;
         TThread::TId Real;
-        TThread::TId Numeric;
     };
 
     Y_UNIT_TEST(TestThreadId) {
@@ -42,8 +38,6 @@ Y_UNIT_TEST_SUITE(TSysThreadTest) {
 
         UNIT_ASSERT_EQUAL(tst.Cur, tst.Real);
         UNIT_ASSERT(tst.Cur != 0);
-        UNIT_ASSERT(tst.Numeric != 0);
-        UNIT_ASSERT(tst.Numeric != tst.Real);
     }
 
     void* ThreadProc(void*) {
@@ -206,7 +200,7 @@ Y_UNIT_TEST_SUITE(TSysThreadTest) {
     Y_UNIT_TEST(TestCallable) {
         std::atomic_bool flag = {false};
 
-        struct TCallable: TMoveOnly {
+        struct TCallable : TMoveOnly {
             std::atomic_bool* Flag_;
 
             TCallable(std::atomic_bool* flag)

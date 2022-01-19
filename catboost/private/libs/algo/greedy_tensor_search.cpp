@@ -142,7 +142,7 @@ inline static void MarkFeatureAsExcluded(
 static void AddFloatFeatures(
     bool isEstimated,
     bool isOnlineEstimated,
-    const TQuantizedObjectsDataProvider& learnObjectsData,
+    const TQuantizedForCPUObjectsDataProvider& learnObjectsData,
     TCandidateList* candList) {
 
     learnObjectsData.GetFeaturesLayout()->IterateOverAvailableFeatures<EFeatureType::Float>(
@@ -162,7 +162,7 @@ static void AddFloatFeatures(
 
 
 static void AddOneHotFeatures(
-    const TQuantizedObjectsDataProvider& learnObjectsData,
+    const TQuantizedForCPUObjectsDataProvider& learnObjectsData,
     TLearnContext* ctx,
     TCandidateList* candList) {
 
@@ -193,7 +193,7 @@ static void AddOneHotFeatures(
 static void CompressCandidates(
     bool isEstimated,
     bool isOnlineEstimated,
-    const TQuantizedObjectsDataProvider& learnObjectsData,
+    const TQuantizedForCPUObjectsDataProvider& learnObjectsData,
     TCandidatesContext* candidatesContext) {
 
     auto& candList = candidatesContext->CandidateList;
@@ -444,7 +444,7 @@ static void DropStatsForProjection(
 }
 
 static void AddSimpleCtrs(
-    const TQuantizedObjectsDataProvider& learnObjectsData,
+    const TQuantizedForCPUObjectsDataProvider& learnObjectsData,
     TFold* fold,
     TLearnContext* ctx,
     TBucketStatsCache* statsFromPrevTree,
@@ -478,7 +478,7 @@ static void AddSimpleCtrs(
 }
 
 static void AddTreeCtrs(
-    const TQuantizedObjectsDataProvider& learnObjectsData,
+    const TQuantizedForCPUObjectsDataProvider& learnObjectsData,
     const TSplitTree& currentTree,
     TFold* fold,
     TLearnContext* ctx,
@@ -1190,7 +1190,7 @@ static TSplitTree GreedyTensorSearchOblivious(
                 data,
                 curDepth + 1,
                 *fold,
-                *indices,
+                indices,
                 ctx->LocalExecutor);
             if (isSamplingPerTree) {
                 if (useLeafwiseScoring) {
@@ -1412,7 +1412,7 @@ namespace {
                 }
             }
             MaxFeatureValueCount = CalcMaxFeatureValueCount(*fold, *CandidatesContexts);
-            // for MultiClassClassification or MultiTarget multiply by approxDimensionion
+            // for MultiClassClassification or MultiRegression multiply by approxDimensionion
             StatsSize = MaxBucketCount * nFeatures * MaxSplitEnsembles;
         }
         void ParentsQueuePop() {
@@ -1536,9 +1536,6 @@ static TNonSymmetricTreeStructure GreedyTensorSearchDepthwise(
     std::iota(subsetsForLeafs[0].data(), subsetsForLeafs[0].data() + learnSampleCount, 0);
 
     const bool isSamplingPerTree = IsSamplingPerTree(ctx->Params.ObliviousTreeOptions);
-    const bool isMultiClassOrMultiRegression = fold->GetApproxDimension() != 1;
-    const bool isSimpleRsm = ctx->Params.ObliviousTreeOptions->Rsm == 1.0f;
-    const bool isSubtractTrickAllowed = !isMultiClassOrMultiRegression && isSimpleRsm;
 
     TVector<TIndexType> curLevelLeafs = {0};
 
@@ -1556,6 +1553,7 @@ static TNonSymmetricTreeStructure GreedyTensorSearchDepthwise(
 
         TVector<TIndexType> splittedLeafs;
         TVector<TIndexType> nextLevelLeafs;
+        const bool isMultiClassOrMultiRegression = fold->GetApproxDimension() != 1;
 
         TSubtractTrickInfo subTrickInfo(
             &data,
@@ -1594,7 +1592,7 @@ static TNonSymmetricTreeStructure GreedyTensorSearchDepthwise(
                 bestSplit = bestSplitNext;
                 bestSplitCandidate = bestSplitCandidateNext;
                 isStatsCalculated = false;
-            } else if (isEvenId && (leafBoundsSize <= nextleafBoundsSize) && isNextLeafConsidered && isSubtractTrickAllowed) {
+            } else if (isEvenId && (leafBoundsSize <= nextleafBoundsSize) && isNextLeafConsidered && !isMultiClassOrMultiRegression) {
                 TVector<TBucketStats> smallStats = CalculateStats(
                     subTrickInfo,
                     curLevelLeafs[id],
@@ -1612,7 +1610,7 @@ static TNonSymmetricTreeStructure GreedyTensorSearchDepthwise(
                 ConditionalPushToParentsQueue(gain, bestSplitCandidate, std::move(smallStats), &parentsQueue);
                 ConditionalPushToParentsQueue(nextGain, bestSplitCandidateNext, std::move(largeStats), &parentsQueue);
                 isStatsCalculated = true;
-            } else if (isEvenId && (leafBoundsSize > nextleafBoundsSize) && isNextLeafConsidered && isSubtractTrickAllowed) {
+            } else if (isEvenId && (leafBoundsSize > nextleafBoundsSize) && isNextLeafConsidered && !isMultiClassOrMultiRegression) {
                 TVector<TBucketStats> smallStats = CalculateStats(
                     subTrickInfo,
                     curLevelLeafs[id + 1],
@@ -1705,7 +1703,7 @@ void GreedyTensorSearch(
     TProfileInfo& profile,
     TFold* fold,
     TLearnContext* ctx,
-    std::variant<TSplitTree, TNonSymmetricTreeStructure>* resTreeStructure) {
+    TVariant<TSplitTree, TNonSymmetricTreeStructure>* resTreeStructure) {
 
     TrimOnlineCTRcache({fold});
 

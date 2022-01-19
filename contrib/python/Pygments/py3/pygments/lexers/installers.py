@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.installers
     ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -42,8 +43,7 @@ class NSISLexer(RegexLexer):
             include('basic'),
             (r'\$\{[a-z_|][\w|]*\}', Keyword.Pseudo),
             (r'/[a-z_]\w*', Name.Attribute),
-            (r'\s+', Whitespace),
-            (r'[\w.]+', Text),
+            ('.', Text),
         ],
         'basic': [
             (r'(\n)(Function)(\s+)([._a-z][.\w]*)\b',
@@ -129,16 +129,16 @@ class NSISLexer(RegexLexer):
             (r'\$[a-z_]\w*', Name.Variable),
         ],
         'str_double': [
-            (r'"', String.Double, '#pop'),
+            (r'"', String, '#pop'),
             (r'\$(\\[nrt"]|\$)', String.Escape),
             include('interpol'),
-            (r'[^"]+', String.Double),
+            (r'.', String.Double),
         ],
         'str_backtick': [
-            (r'`', String.Double, '#pop'),
+            (r'`', String, '#pop'),
             (r'\$(\\[nrt"]|\$)', String.Escape),
             include('interpol'),
-            (r'[^`]+', String.Double),
+            (r'.', String.Double),
         ],
     }
 
@@ -224,7 +224,7 @@ class SourcesListLexer(RegexLexer):
     """
 
     name = 'Debian Sourcelist'
-    aliases = ['debsources', 'sourceslist', 'sources.list']
+    aliases = ['sourceslist', 'sources.list', 'debsources']
     filenames = ['sources.list']
     mimetype = ['application/x-debian-sourceslist']
 
@@ -268,24 +268,17 @@ class DebianControlLexer(RegexLexer):
     """
     Lexer for Debian ``control`` files and ``apt-cache show <pkg>`` outputs.
 
-    Specification of `control`` files is available at
-    https://www.debian.org/doc/debian-policy/ch-controlfields.html
-
     .. versionadded:: 0.9
     """
     name = 'Debian Control file'
-    aliases = ['debcontrol', 'control']
+    aliases = ['control', 'debcontrol']
     filenames = ['control']
 
     tokens = {
         'root': [
             (r'^(Description)', Keyword, 'description'),
-            (r'^(Maintainer|Uploaders)(:\s*)', bygroups(Keyword, Text),
-             'maintainer'),
-            (r'^((?:Build-|Pre-)?Depends(?:-Indep|-Arch)?)(:\s*)',
-             bygroups(Keyword, Text), 'depends'),
-            (r'^(Recommends|Suggests|Enhances)(:\s*)', bygroups(Keyword, Text),
-             'depends'),
+            (r'^(Maintainer)(:\s*)', bygroups(Keyword, Text), 'maintainer'),
+            (r'^((Build-)?Depends)', Keyword, 'depends'),
             (r'^((?:Python-)?Version)(:\s*)(\S+)$',
              bygroups(Keyword, Text, Number)),
             (r'^((?:Installed-)?Size)(:\s*)(\S+)$',
@@ -296,11 +289,10 @@ class DebianControlLexer(RegexLexer):
              bygroups(Keyword, Whitespace, String)),
         ],
         'maintainer': [
-            (r'<[^>]+>$', Generic.Strong, '#pop'),
             (r'<[^>]+>', Generic.Strong),
+            (r'<[^>]+>$', Generic.Strong, '#pop'),
             (r',\n?', Text),
-            (r'[^,<]+$', Text, '#pop'),
-            (r'[^,<]+', Text),
+            (r'.', Text),
         ],
         'description': [
             (r'(.*)(Homepage)(: )(\S+)',
@@ -310,18 +302,21 @@ class DebianControlLexer(RegexLexer):
             default('#pop'),
         ],
         'depends': [
-            (r'(\$)(\{)(\w+\s*:\s*\w+)(\})',
-             bygroups(Operator, Text, Name.Entity, Text)),
+            (r':\s*', Text),
+            (r'(\$)(\{)(\w+\s*:\s*\w+)', bygroups(Operator, Text, Name.Entity)),
             (r'\(', Text, 'depend_vers'),
+            (r',', Text),
             (r'\|', Operator),
-            (r',\n', Text),
-            (r'\n', Text, '#pop'),
-            (r'[,\s]', Text),
-            (r'[+.a-zA-Z0-9-]+', Name.Function),
+            (r'[\s]+', Text),
+            (r'[})]\s*$', Text, '#pop'),
+            (r'\}', Text),
+            (r'[^,]$', Name.Function, '#pop'),
+            (r'([+.a-zA-Z0-9-])(\s*)', bygroups(Name.Function, Text)),
             (r'\[.*?\]', Name.Entity),
         ],
         'depend_vers': [
-            (r'\)', Text, '#pop'),
-            (r'([><=]+)(\s*)([^)]+)', bygroups(Operator, Text, Number)),
+            (r'\),', Text, '#pop'),
+            (r'\)[^,]', Text, '#pop:2'),
+            (r'([><=]+)(\s*)([^)]+)', bygroups(Operator, Text, Number))
         ]
     }

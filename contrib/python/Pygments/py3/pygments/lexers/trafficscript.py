@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.trafficscript
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -7,6 +8,8 @@
     :copyright: Copyright 2006-2021 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
+
+import re
 
 from pygments.lexer import RegexLexer
 from pygments.token import String, Number, Name, Keyword, Operator, Text, Comment
@@ -21,7 +24,7 @@ class RtsLexer(RegexLexer):
     .. versionadded:: 2.1
     """
     name = 'TrafficScript'
-    aliases = ['trafficscript', 'rts']
+    aliases = ['rts','trafficscript']
     filenames = ['*.rts']
 
     tokens = {

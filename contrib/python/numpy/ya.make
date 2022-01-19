@@ -1,7 +1,6 @@
 PY23_LIBRARY()
 
-# Proxy library
-LICENSE(Not-Applicable)
+LICENSE(BSD-3-Clause)
 
 
 
@@ -14,9 +13,13 @@ ADDINCL(
 )
 
 IF (PYTHON2)
-    PEERDIR(contrib/python/numpy/py2)
+    PEERDIR(
+        contrib/python/numpy/py2
+    )
 ELSE()
-    PEERDIR(contrib/python/numpy/py3)
+    PEERDIR(
+        contrib/python/numpy/py3
+    )
 ENDIF()
 
 NO_LINT()

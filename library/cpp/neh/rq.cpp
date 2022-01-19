@@ -6,6 +6,7 @@
 #include <util/system/tls.h>
 #include <util/system/pipe.h>
 #include <util/system/event.h>
+#include <util/system/yield.h>
 #include <util/system/mutex.h>
 #include <util/system/condvar.h>
 #include <util/system/guard.h>
@@ -302,15 +303,15 @@ namespace {
 #include <linux/futex.h>
 
 namespace {
-    inline int sys_futex(int* uaddr, int op, int val, const struct timespec* timeout, int* uaddr2, int val3) {
+    static inline int sys_futex(int* uaddr, int op, int val, const struct timespec* timeout, int* uaddr2, int val3) {
         return syscall(SYS_futex, uaddr, op, val, timeout, uaddr2, val3);
     }
 
-    inline int FutexWake(int* addr, int nthr) {
+    static inline int FutexWake(int* addr, int nthr) {
         return sys_futex(addr, FUTEX_WAKE, nthr, nullptr, nullptr, 0);
     }
 
-    inline void FutexWait(int* addr, int val) {
+    static inline void FutexWait(int* addr, int val) {
         sys_futex(addr, FUTEX_WAIT, val, nullptr, nullptr, 0);
     }
 

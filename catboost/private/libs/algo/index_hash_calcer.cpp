@@ -69,7 +69,7 @@ struct TCtrCalcerParams {
 
 void CalcHashes(
     const TProjection& proj,
-    const TQuantizedObjectsDataProvider& objectsDataProvider,
+    const TQuantizedForCPUObjectsDataProvider& objectsDataProvider,
     const TFeaturesArraySubsetIndexing& featuresSubsetIndexing,
     const TPerfectHashedToHashedCatValuesMap* perfectHashedToHashedCatValuesMap,
     ui64* begin,

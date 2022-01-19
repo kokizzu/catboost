@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.style
     ~~~~~~~~~~~~~~
@@ -134,7 +135,7 @@ class StyleMeta(type):
             color = _ansimap[color]
         bgcolor = t[4]
         if bgcolor in _deprecated_ansicolors:
-            bgcolor = _deprecated_ansicolors[bgcolor]
+            bgcolor = _deprecated_ansicolors[color]
         if bgcolor in ansicolors:
             bgansicolor = bgcolor
             bgcolor = _ansimap[bgcolor]
@@ -176,10 +177,10 @@ class Style(metaclass=StyleMeta):
     highlight_color = '#ffffcc'
 
     #: line number font color
-    line_number_color = 'inherit'
+    line_number_color = '#000000'
 
     #: line number background color
-    line_number_background_color = 'transparent'
+    line_number_background_color = '#f0f0f0'
 
     #: special line number font color
     line_number_special_color = '#000000'
@@ -189,9 +190,3 @@ class Style(metaclass=StyleMeta):
 
     #: Style definitions for individual token types.
     styles = {}
-
-    # Attribute for lexers defined within Pygments. If set
-    # to True, the style is not shown in the style gallery
-    # on the website. This is intended for language-specific
-    # styles.
-    web_style_gallery_exclude = False

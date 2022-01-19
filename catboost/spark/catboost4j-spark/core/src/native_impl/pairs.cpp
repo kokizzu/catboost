@@ -9,7 +9,7 @@
 using namespace NCB;
 
 
-void TPairsDataBuilder::Add(i64 groupIdx, i32 winnerIdxInGroup, i32 loserIdxInGroup) {
+void TPairsDataBuilder::Add(i64 groupIdx, i32 winnerIdxInGroup, i32 loserIdxInGroup) throw(yexception) {
     Pairs.push_back(
         TPairInGroup{
             SafeIntegerCast<ui32>(groupIdx),
@@ -24,7 +24,7 @@ void TPairsDataBuilder::Add(
     i32 winnerIdxInGroup,
     i32 loserIdxInGroup,
     float weight
-) {
+) throw(yexception) {
     Pairs.push_back(
         TPairInGroup{
             SafeIntegerCast<ui32>(groupIdx),
@@ -35,18 +35,18 @@ void TPairsDataBuilder::Add(
     );
 }
 
-void TPairsDataBuilder::AddToResult(IQuantizedFeaturesDataVisitor* visitor) {
+void TPairsDataBuilder::AddToResult(IQuantizedFeaturesDataVisitor* visitor) throw(yexception) {
     visitor->SetPairs(TRawPairsData(std::move(Pairs)));
 }
 
 void SavePairsInGroupedDsvFormat(
     const NCB::TDataProviderPtr& dataProvider,
     const TString& outputFile
-) {
+) throw(yexception) {
 
     const TMaybeData<TRawPairsData>& rawPairsData = dataProvider->RawTargetData.GetPairs();
     CB_ENSURE_INTERNAL(rawPairsData, "No pairs data in dataset");
-    if (const TGroupedPairsInfo* groupedPairsInfo = std::get_if<TGroupedPairsInfo>(&*rawPairsData)) {
+    if (const TGroupedPairsInfo* groupedPairsInfo = GetIf<TGroupedPairsInfo>(&*rawPairsData)) {
         TOFStream out(outputFile);
         for (const auto& pairInfo : *groupedPairsInfo) {
             out << pairInfo.GroupIdx

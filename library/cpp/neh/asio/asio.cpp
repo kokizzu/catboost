@@ -36,7 +36,7 @@ namespace NAsio {
     }
 
     void TIOService::Post(TCompletionHandler h) {
-        Impl_->Post(std::move(h));
+        Impl_->Post(h);
     }
 
     void TIOService::Abort() {

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.parsers
     ~~~~~~~~~~~~~~~~~~~~~~~
@@ -652,7 +653,7 @@ class AntlrActionScriptLexer(DelegatingLexer):
     """
 
     name = 'ANTLR With ActionScript Target'
-    aliases = ['antlr-actionscript', 'antlr-as']
+    aliases = ['antlr-as', 'antlr-actionscript']
     filenames = ['*.G', '*.g']
 
     def __init__(self, **options):

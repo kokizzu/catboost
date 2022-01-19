@@ -1,4 +1,3 @@
 RECURSE(
-    exception
     wrappers
 )

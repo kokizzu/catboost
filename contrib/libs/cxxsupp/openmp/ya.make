@@ -1,39 +1,30 @@
 LIBRARY()
 
-LICENSE(
-    MIT AND
-    NCSA
-)
-
-LICENSE_TEXTS(.yandex_meta/licenses.list.txt)
-
-VERSION(5.0)
+LICENSE(MIT)
 
 
 
 NO_UTIL()
-
 NO_PLATFORM()
-
 NO_COMPILER_WARNINGS()
 
 IF (SANITIZER_TYPE == thread)
     NO_SANITIZE()
-    CFLAGS(
-        -fPIC
-    )
-ENDIF()
+
+    CFLAGS(-fPIC)
+ENDIF ()
 
 IF (SANITIZER_TYPE == memory)
     NO_SANITIZE()
-    CFLAGS(
-        -fPIC
-    )
-ENDIF()
+
+    CFLAGS(-fPIC)
+ENDIF ()
 
 COMPILE_C_AS_CXX()
 
-CXXFLAGS(-fno-exceptions)
+CXXFLAGS(
+    -fno-exceptions
+)
 
 SET_APPEND(CFLAGS -fno-lto)
 
@@ -65,10 +56,19 @@ SRCS(
     kmp_taskq.c
     kmp_threadprivate.c
     kmp_utility.c
+)
+
+SRCS(
     z_Linux_util.c
     kmp_gsupport.c
     asm.S
+)
+
+SRCS(
     thirdparty/ittnotify/ittnotify_static.c
+)
+
+SRCS(
     kmp_barrier.cpp
     kmp_wait_release.cpp
     kmp_affinity.cpp
@@ -77,6 +77,9 @@ SRCS(
     kmp_sched.cpp
     kmp_taskdeps.cpp
     kmp_cancel.cpp
+)
+
+SRCS(
     kmp_ftn_cdecl.c
     kmp_ftn_extra.c
     kmp_version.c

@@ -3,7 +3,6 @@ package ai.catboost.spark
 import collection.mutable
 
 import org.json4s.JObject
-import org.json4s.jackson.JsonMethods
 
 import org.apache.spark.ml.linalg._
 import org.apache.spark.ml.param.ParamMap
@@ -16,9 +15,6 @@ import ai.catboost.spark.impl.CtrsContext
 import ai.catboost.spark.params._
 
 import ru.yandex.catboost.spark.catboost4j_spark.core.src.native_impl
-import ru.yandex.catboost.spark.catboost4j_spark.core.src.native_impl.ERawTargetType
-
-import ai.catboost.CatBoostError
 
 
 /** Classification model trained by CatBoost. Use [[CatBoostClassifier]] to train it
@@ -141,13 +137,13 @@ class CatBoostClassificationModel (
   }
 
   protected def getResultIteratorForApply(
-    objectsDataProvider: native_impl.SWIGTYPE_p_NCB__TObjectsDataProviderPtr,
+    rawObjectsDataProvider: native_impl.SWIGTYPE_p_NCB__TRawObjectsDataProviderPtr,
     dstRows: mutable.ArrayBuffer[Array[Any]], // guaranteed to be non-empty
     localExecutor: native_impl.TLocalExecutor
   ) : Iterator[Row] = {
     val applyResultIterator = new native_impl.TApplyResultIterator(
       nativeModel,
-      objectsDataProvider,
+      rawObjectsDataProvider,
       native_impl.EPredictionType.RawFormulaVal,
       localExecutor
     )
@@ -255,7 +251,7 @@ object CatBoostClassificationModel extends MLReadable[CatBoostClassificationMode
     fileName: String, 
     format: EModelType = native_impl.EModelType.CatboostBinary
   ): CatBoostClassificationModel = {
-    new CatBoostClassificationModel(native_impl.native_impl.ReadModel(fileName, format))
+    new CatBoostClassificationModel(native_impl.native_impl.ReadModelWrapper(fileName, format))
   }
 }
 
@@ -375,62 +371,38 @@ class CatBoostClassifier (override val uid: String)
   protected override def preprocessBeforeTraining(
     quantizedTrainPool: Pool,
     quantizedEvalPools: Array[Pool]
-  ) : (Pool, Array[Pool], CatBoostTrainingContext) = {
-    val classTargetPreprocessor = new native_impl.TClassTargetPreprocessor(
-      JsonMethods.compact(ai.catboost.spark.params.Helpers.sparkMlParamsToCatBoostJsonParams(this)),
-      quantizedTrainPool.getTargetType,
-      quantizedTrainPool.isDefined(quantizedTrainPool.weightCol),
-      quantizedTrainPool.isDefined(quantizedTrainPool.groupIdCol)
-    )
-
-    if (classTargetPreprocessor.IsNeedToProcessDistinctTargetValues) {
-      quantizedTrainPool.getTargetType match {
-        case ERawTargetType.Integer => {
-          val distinctLabels = DataHelpers.getDistinctIntLabelValues(quantizedTrainPool.data, getLabelCol)
-          classTargetPreprocessor.ProcessDistinctIntTargetValues(distinctLabels)
-        }
-        case ERawTargetType.Float => {
-          val distinctLabels = DataHelpers.getDistinctFloatLabelValues(quantizedTrainPool.data, getLabelCol)
-          classTargetPreprocessor.ProcessDistinctFloatTargetValues(distinctLabels)
-        }
-        case ERawTargetType.String => {
-          val distinctLabels = new native_impl.TVector_TString(
-            DataHelpers.getDistinctStringLabelValues(quantizedTrainPool.data, getLabelCol)
-          )
-          classTargetPreprocessor.ProcessDistinctStringTargetValues(distinctLabels)
-        }
-        case ERawTargetType.None => throw new CatBoostError(
-            "CatBoostClassifier requires a label column in the training dataset"
-        )
-      }
+  ) : (Pool, Array[Pool], JObject, CtrsContext) = {
+    val classNamesFromLabelData = if (ai.catboost.spark.params.Helpers.classNamesAreKnown(this)) {
+      None
+    } else {
+      Some(DataHelpers.getClassNamesFromLabelData(quantizedTrainPool.data, getLabelCol))
     }
 
     if (!isDefined(lossFunction)) {
-      set(lossFunction, classTargetPreprocessor.GetLossFunction())
+      if (isDefined(targetBorder)) {
+        set(lossFunction, "Logloss")
+      } else {
+        val distinctLabelValuesCount = if (classNamesFromLabelData.isDefined) {
+          classNamesFromLabelData.get.length.toLong
+        } else {
+          quantizedTrainPool.data.select(getLabelCol).distinct.count
+        }
+        set(lossFunction, if (distinctLabelValuesCount > 2) "MultiClass" else "Logloss")
+      }
       log.info(s"lossFunction has been inferred as '${this.getLossFunction}'")
     }
 
-    val catBoostJsonParams = JsonMethods.parse(
-      classTargetPreprocessor.GetUpdatedCatBoostOptionsJsonAsString()
-    ).asInstanceOf[JObject]
-    val serializedLabelConverter = classTargetPreprocessor.GetSerializedLabelConverter()
-
+    val catBoostJsonParams = ai.catboost.spark.params.Helpers.sparkMlParamsToCatBoostJsonParams(
+      this, 
+      classNamesFromLabelData
+    )
     val (preprocessedTrainPool, preprocessedEvalPools, ctrsContext) 
-        = addEstimatedCtrFeatures(
-            quantizedTrainPool,
-            quantizedEvalPools,
-            catBoostJsonParams,
-            Some(classTargetPreprocessor),
-            serializedLabelConverter
-          )
+        = addEstimatedCtrFeatures(quantizedTrainPool, quantizedEvalPools, catBoostJsonParams)
     (
       preprocessedTrainPool, 
       preprocessedEvalPools, 
-      new CatBoostTrainingContext(
-        ctrsContext,
-        catBoostJsonParams,
-        serializedLabelConverter
-      )
+      catBoostJsonParams, 
+      ctrsContext
     )
   }
 

@@ -11,7 +11,4 @@
 
 %template(TMaybe_TString) TMaybe<TString>;
 
-
-%catches(std::exception) MakeMaybeUtf8String(TConstArrayRef<i8> data, i32 length);
-
 %include "string.h"

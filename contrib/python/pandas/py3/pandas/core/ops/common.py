@@ -7,11 +7,7 @@ from typing import Callable
 from pandas._libs.lib import item_from_zerodim
 from pandas._typing import F
 
-from pandas.core.dtypes.generic import (
-    ABCDataFrame,
-    ABCIndex,
-    ABCSeries,
-)
+from pandas.core.dtypes.generic import ABCDataFrame, ABCIndexClass, ABCSeries
 
 
 def unpack_zerodim_and_defer(name: str) -> Callable[[F], F]:
@@ -54,11 +50,11 @@ def _unpack_zerodim_and_defer(method, name: str):
     @wraps(method)
     def new_method(self, other):
 
-        if is_cmp and isinstance(self, ABCIndex) and isinstance(other, ABCSeries):
+        if is_cmp and isinstance(self, ABCIndexClass) and isinstance(other, ABCSeries):
             # For comparison ops, Index does *not* defer to Series
             pass
         else:
-            for cls in [ABCDataFrame, ABCSeries, ABCIndex]:
+            for cls in [ABCDataFrame, ABCSeries, ABCIndexClass]:
                 if isinstance(self, cls):
                     break
                 if isinstance(other, cls):
@@ -86,7 +82,7 @@ def get_op_result_name(left, right):
     name : object
         Usually a string
     """
-    if isinstance(right, (ABCSeries, ABCIndex)):
+    if isinstance(right, (ABCSeries, ABCIndexClass)):
         name = _maybe_match_name(left, right)
     else:
         name = left.name
@@ -97,7 +93,7 @@ def _maybe_match_name(a, b):
     """
     Try to find a name to attach to the result of an operation between
     a and b.  If only one of these has a `name` attribute, return that
-    name.  Otherwise return a consensus name if they match or None if
+    name.  Otherwise return a consensus name if they match of None if
     they have different names.
 
     Parameters

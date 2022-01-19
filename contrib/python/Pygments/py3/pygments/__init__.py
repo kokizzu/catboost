@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     Pygments
     ~~~~~~~~
@@ -24,9 +25,10 @@
     :copyright: Copyright 2006-2021 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
+import sys
 from io import StringIO, BytesIO
 
-__version__ = '2.11.2'
+__version__ = '2.7.4'
 __docformat__ = 'restructuredtext'
 
 __all__ = ['lex', 'format', 'highlight']

@@ -1,11 +1,9 @@
 #pragma once
 
 #include "feature_str.h"
-#include "loss_change_fstr.h"
 
 #include <catboost/private/libs/algo/split.h>
 #include <catboost/libs/data/data_provider.h>
-#include <catboost/libs/metrics/metric_holder.h>
 #include <catboost/libs/model/model.h>
 #include <catboost/private/libs/options/enums.h>
 #include <catboost/private/libs/options/enum_helpers.h>
@@ -14,7 +12,6 @@
 #include <library/cpp/threading/local_executor/local_executor.h>
 
 #include <util/digest/multi.h>
-#include <util/system/types.h>
 #include <util/system/yassert.h>
 
 #include <utility>
@@ -75,9 +72,9 @@ public:
     {}
 };
 
-TVector<std::pair<double, TFeature>> CalcFeatureEffectAverageChange(
-    const TFullModel& model,
-    TConstArrayRef<double> weights
+const NCB::TDataProviderPtr GetSubsetForFstrCalc(
+    const NCB::TDataProviderPtr dataset,
+    NPar::ILocalExecutor* localExecutor
 );
 
 TVector<std::pair<double, TFeature>> CalcFeatureEffect(
@@ -90,11 +87,6 @@ TVector<std::pair<double, TFeature>> CalcFeatureEffect(
 
 TVector<TFeatureEffect> CalcRegularFeatureEffect(
     const TVector<std::pair<double, TFeature>>& effect,
-    const TFullModel& model
-);
-
-TVector<double> GetFeatureEffectForLinearIndices(
-    const TVector<std::pair<double, TFeature>>& featureEffect,
     const TFullModel& model
 );
 
@@ -163,3 +155,4 @@ TVector<TString> GetMaybeGeneratedModelFeatureIds(
     const TFullModel& model,
     const NCB::TDataProviderPtr dataset // can be nullptr
 );
+

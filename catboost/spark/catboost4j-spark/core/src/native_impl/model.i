@@ -27,27 +27,6 @@
  *  is needed.
  */
 
-%catches(std::exception) TFullModel::Calc(
-    TConstArrayRef<double> featureValuesFromSpark,
-    TArrayRef<double> result
-) const;
-
-%catches(std::exception) TFullModel::CalcSparse(
-    i32 size,
-    TConstArrayRef<i32> featureIndicesFromSpark,
-    TConstArrayRef<double> featureValuesFromSpark,
-    TArrayRef<double> result
-) const;
-
-%catches(yexception, std::exception) TFullModel::Save(
-    const TString& fileName,
-    EModelType format,
-    const TString& exportParametersJsonString,
-    i32 poolCatFeaturesMaxUniqValueCount
-);
-
-%catches(std::exception) TFullModel::equalsImpl(const TFullModel& rhs) const;
-
 class TFullModel {
 public:
 
@@ -57,30 +36,24 @@ public:
     size_t GetDimensionsCount() const;
 
     %extend {
-        i32 GetLeafCount() const {
-            const int approxDimension = self->ModelTrees->GetDimensionsCount();
-            return i32(self->ModelTrees->GetModelTreeData()->GetLeafValues().size() / approxDimension);
-        }
-
-        bool HasLeafWeights() const {
-            return !self->ModelTrees->GetModelTreeData()->GetLeafWeights().empty();
-        }
-
-        void Calc(TConstArrayRef<double> featureValuesFromSpark, TArrayRef<double> result) const {
-            CalcOnSparkFeatureVector(*self, featureValuesFromSpark, result);
+        void Calc(TConstArrayRef<double> numericFeatures, TArrayRef<double> result) const {
+            TVector<float> featuresAsFloat;
+            featuresAsFloat.yresize(numericFeatures.size());
+            Copy(numericFeatures.begin(), numericFeatures.end(), featuresAsFloat.begin());
+            self->Calc(featuresAsFloat, TConstArrayRef<int>(), result);
         }
 
         void CalcSparse(
             i32 size,
-            TConstArrayRef<i32> featureIndicesFromSpark,
-            TConstArrayRef<double> featureValuesFromSpark,
+            TConstArrayRef<i32> numericFeaturesIndices,
+            TConstArrayRef<double> numericFeaturesValues,
             TArrayRef<double> result
         ) const {
-            TVector<float> denseFeaturesValues(size, 0.0f);
-            for (auto i : xrange(featureIndicesFromSpark.size())) {
-                denseFeaturesValues[featureIndicesFromSpark[i]] = featureValuesFromSpark[i];
+            TVector<float> featuresAsFloat(size, 0.0f);
+            for (auto i : xrange(numericFeaturesIndices.size())) {
+                featuresAsFloat[numericFeaturesIndices[i]] = numericFeaturesValues[i];
             }
-            CalcOnSparkFeatureVector<float>(*self, denseFeaturesValues, result);
+            self->Calc(featuresAsFloat, TConstArrayRef<int>(), result);
         }
         
         void Save(
@@ -88,7 +61,7 @@ public:
             EModelType format,
             const TString& exportParametersJsonString,
             i32 poolCatFeaturesMaxUniqValueCount
-        ) {
+        ) throw (yexception) {
             THashMap<ui32, TString> catFeaturesHashToString;
             for (auto v : xrange(SafeIntegerCast<ui32>(poolCatFeaturesMaxUniqValueCount))) {
                 const TString vAsString = ToString(v);
@@ -115,7 +88,7 @@ public:
     %typemap(javainterfaces) TFullModel "Externalizable"
 
     %extend {
-        TVector<i8> Serialize() const {
+        TVector<i8> Serialize() const throw (yexception) {
             TVector<i8> result;
             TVectorOutput out(&result);
             OutputModel(*self, &out);
@@ -124,7 +97,7 @@ public:
             return result;
         }
 
-        void Deserialize(TConstArrayRef<i8> binaryBuffer) {
+        void Deserialize(TConstArrayRef<i8> binaryBuffer) throw (yexception) {
             (*self) = ReadModel(binaryBuffer.data(), binaryBuffer.size());
         }
     }
@@ -189,11 +162,6 @@ public:
     ADD_EQUALS_WITH_IMPL_AND_HASH_CODE_METHODS(TFullModel)
 };
 
-
-
-%catches(yexception) ReadModel(const TString& modelFile, EModelType format = EModelType::CatboostBinary);
-
-TFullModel ReadModel(const TString& modelFile, EModelType format = EModelType::CatboostBinary);
-
-
 void CalcSoftmax(const TConstArrayRef<double> approx, TArrayRef<double> softmax);
+
+%include "model.h"

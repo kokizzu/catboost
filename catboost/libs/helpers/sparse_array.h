@@ -254,7 +254,7 @@ namespace NCB {
 
     public:
         using TImpl =
-            std::variant<TSparseSubsetIndices<TSize>, TSparseSubsetBlocks<TSize>, TSparseSubsetHybridIndex<TSize>>;
+            TVariant<TSparseSubsetIndices<TSize>, TSparseSubsetBlocks<TSize>, TSparseSubsetHybridIndex<TSize>>;
 
     public:
         // needed for IBinSaver serialization

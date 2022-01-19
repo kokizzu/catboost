@@ -4,6 +4,7 @@
 #include <util/stream/output.h>
 #include <util/stream/str.h>
 #include <util/system/error.h>
+#include <util/system/compiler.h>
 
 #if defined(_unix_)
 #include <pthread.h>

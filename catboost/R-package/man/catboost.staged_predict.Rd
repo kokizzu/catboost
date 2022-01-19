@@ -9,8 +9,8 @@ catboost.staged_predict(
   pool,
   verbose = FALSE,
   prediction_type = "RawFormulaVal",
-  ntree_start = 0L,
-  ntree_end = 0L,
+  ntree_start = 0,
+  ntree_end = 0,
   eval_period = 1,
   thread_count = -1
 )

@@ -1,21 +1,14 @@
 LIBRARY()
 
-WITHOUT_LICENSE_TEXTS()
-
-LICENSE(YandexOpen)
+LICENSE(MIT)
 
 NO_PLATFORM()
-
 NO_SANITIZE()
-
 NO_SANITIZE_COVERAGE()
 
 
 
-PYTHON(
-    generate_symbolizer.py ${CXX_COMPILER}
-    STDOUT symbolizer.c
-)
+PYTHON(generate_symbolizer.py ${CXX_COMPILER} STDOUT symbolizer.c)
 
 CFLAGS(-fPIC)
 

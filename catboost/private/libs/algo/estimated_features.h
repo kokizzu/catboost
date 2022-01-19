@@ -39,7 +39,7 @@ namespace NCB {
 
     struct TCombinedEstimatedFeaturesContext {
         TFeatureEstimatorsPtr FeatureEstimators;
-        TVector<TEstimatedFeatureId> OfflineEstimatedFeaturesLayout;
-        TVector<TEstimatedFeatureId> OnlineEstimatedFeaturesLayout;
+        TConstArrayRef<TEstimatedFeatureId> OfflineEstimatedFeaturesLayout;
+        TConstArrayRef<TEstimatedFeatureId> OnlineEstimatedFeaturesLayout;
     };
 }

@@ -1,7 +1,5 @@
 LIBRARY()
 
-PROVIDES(test_framework)
-
 
 
 PEERDIR(

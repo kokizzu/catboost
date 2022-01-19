@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.formatters
     ~~~~~~~~~~~~~~~~~~~
@@ -106,7 +107,7 @@ def load_formatter_from_file(filename, formattername="CustomFormatter",
         formatter_class = custom_namespace[formattername]
         # And finally instantiate it with the options
         return formatter_class(**options)
-    except OSError as err:
+    except IOError as err:
         raise ClassNotFound('cannot read %s: %s' % (filename, err))
     except ClassNotFound:
         raise

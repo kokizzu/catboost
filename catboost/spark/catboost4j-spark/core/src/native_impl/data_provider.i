@@ -8,27 +8,9 @@
 %include "tvector.i"
 
 
-%catches(yexception) TDataProviderPtr::GetQuantizedObjectsDataProvider() const;
-
 namespace NCB {
-    class TObjectsDataProviderPtr;
-
-    class TRawObjectsDataProviderPtr {
-    public:
-        %extend {
-            TObjectsDataProviderPtr ToBase() const {
-                return (*self);
-            }
-        }
-    };
-    
+    class TRawObjectsDataProviderPtr;
     class TQuantizedObjectsDataProviderPtr {
-    public:
-        %extend {
-            TObjectsDataProviderPtr ToBase() const {
-                return (*self);
-            }
-        }
     };
 
 
@@ -43,16 +25,16 @@ namespace NCB {
             i64 GetObjectCount() const {
                 return (*self)->GetObjectCount();
             }
-
-            NCB::TQuantizedObjectsDataProviderPtr GetQuantizedObjectsDataProvider() const {
+            
+            NCB::TQuantizedObjectsDataProviderPtr GetQuantizedObjectsDataProvider() const throw(yexception) {
                 auto* quantizedObjectsDataProvider
-                    = dynamic_cast<NCB::TQuantizedObjectsDataProvider*>((*self)->ObjectsData.Get());
+                    = dynamic_cast<NCB::TQuantizedForCPUObjectsDataProvider*>((*self)->ObjectsData.Get());
                 CB_ENSURE_INTERNAL(quantizedObjectsDataProvider, "Features data is not quantized");
                 return NCB::TQuantizedObjectsDataProviderPtr(quantizedObjectsDataProvider);
             }
         }
     };
-
+    
     class TEstimatedForCPUObjectsDataProviders {
     public:
         NCB::TQuantizedObjectsDataProviderPtr Learn; // can be nullptr
@@ -60,5 +42,5 @@ namespace NCB {
     };
 }
 
-DECLARE_TVECTOR(TVector_TDataProviderPtr, NCB::TDataProviderPtr)
-DECLARE_TVECTOR(TVector_TQuantizedObjectsDataProviderPtr, NCB::TQuantizedObjectsDataProviderPtr)
+%template(TVector_TDataProviderPtr) TVector<NCB::TDataProviderPtr>;
+%template(TVector_TQuantizedObjectsDataProviderPtr) TVector<NCB::TQuantizedObjectsDataProviderPtr>;

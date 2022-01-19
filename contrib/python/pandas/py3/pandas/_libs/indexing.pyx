@@ -3,10 +3,9 @@ cdef class NDFrameIndexerBase:
     A base class for _NDFrameIndexer for fast instantiation and attribute access.
     """
     cdef public:
-        str name
-        object obj, _ndim
+        object obj, name, _ndim
 
-    def __init__(self, name: str, obj):
+    def __init__(self, name, obj):
         self.obj = obj
         self.name = name
         self._ndim = None

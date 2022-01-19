@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.capnproto
     ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -11,7 +12,7 @@
 import re
 
 from pygments.lexer import RegexLexer, default
-from pygments.token import Text, Comment, Keyword, Name, Literal, Whitespace
+from pygments.token import Text, Comment, Keyword, Name, Literal
 
 __all__ = ['CapnProtoLexer']
 
@@ -39,8 +40,7 @@ class CapnProtoLexer(RegexLexer):
              r'extends|in|of|on|as|with|from|fixed)\b',
              Keyword),
             (r'[\w.]+', Name),
-            (r'[^#@=:$\w\s]+', Text),
-            (r'\s+', Whitespace),
+            (r'[^#@=:$\w]+', Text),
         ],
         'type': [
             (r'[^][=;,(){}$]+', Name.Class),

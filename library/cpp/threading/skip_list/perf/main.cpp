@@ -18,11 +18,11 @@ namespace {
 
     ////////////////////////////////////////////////////////////////////////////////
 
-    IOutputStream& LogInfo() {
+    static IOutputStream& LogInfo() {
         return Cerr << TInstant::Now() << " INFO: ";
     }
 
-    IOutputStream& LogError() {
+    static IOutputStream& LogError() {
         return Cerr << TInstant::Now() << " ERROR: ";
     }
 

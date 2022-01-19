@@ -68,21 +68,28 @@ namespace NLoggingImpl {
 
     TString GetLocalTimeSSimple();
 
-    // Returns correct log type to use
-    TString PrepareToOpenLog(TString logType, int logLevel, bool rotation, bool startAsDaemon);
+    template <class TLoggerType>
+    TLoggerType* CreateLogger(TString logType, const int logLevel, const bool rotation, const bool startAsDaemon) {
+        if (logLevel < 0 || logLevel > (int)LOG_MAX_PRIORITY)
+        ythrow yexception() << "Incorrect priority";
+        if (rotation && TFsPath(logType).Exists()) {
+            TString newPath = Sprintf("%s_%s_%" PRIu64, logType.data(), NLoggingImpl::GetLocalTimeSSimple().data(), static_cast<ui64>(Now().MicroSeconds()));
+            TFsPath(logType).RenameTo(newPath);
+        }
+        if (startAsDaemon && (logType == "console" || logType == "cout" || logType == "cerr")) {
+            logType = "null";
+        }
+        return new TLoggerType(logType, (ELogPriority)logLevel);
+    }
 
     template <class TLoggerType>
     void InitLogImpl(TString logType, const int logLevel, const bool rotation, const bool startAsDaemon) {
-        TLoggerOperator<TLoggerType>::Set(new TLoggerType(PrepareToOpenLog(logType, logLevel, rotation, startAsDaemon), (ELogPriority)logLevel));
+        TLoggerOperator<TLoggerType>::Set(CreateLogger<TLoggerType>(logType, logLevel, rotation, startAsDaemon));
     }
 }
 
 struct TLogRecordContext {
-    constexpr TLogRecordContext(const TSourceLocation& sourceLocation, TStringBuf customMessage, ELogPriority priority)
-        : SourceLocation(sourceLocation)
-        , CustomMessage(customMessage)
-        , Priority(priority)
-    {}
+    TLogRecordContext(const TSourceLocation& sourceLocation, const char* customMessage, ELogPriority priority);
 
     TSourceLocation SourceLocation;
     TStringBuf CustomMessage;

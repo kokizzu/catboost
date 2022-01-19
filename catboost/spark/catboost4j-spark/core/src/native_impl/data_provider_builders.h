@@ -27,20 +27,18 @@ NCB::TRawObjectsDataProviderPtr CreateRawObjectsDataProvider(
     TVector<NCB::TMaybeOwningConstArrayHolder<i32>>* columnwiseCatFeaturesData,
     i32 maxUniqCatFeatureValues,
     NPar::TLocalExecutor* localExecutor
-);
+) throw (yexception);
 
 
 class TQuantizedRowAssembler {
 public:
-    TQuantizedRowAssembler(NCB::TQuantizedObjectsDataProviderPtr objectsData);
+    TQuantizedRowAssembler(NCB::TQuantizedObjectsDataProviderPtr objectsData) throw (yexception);
 
     i32 GetObjectBlobSize() const;
 
-    void AssembleObjectBlob(i32 objectIdx, TArrayRef<i8> buffer);
+    void AssembleObjectBlob(i32 objectIdx, TArrayRef<i8> buffer) throw (yexception);
 
 private:
-    NCB::TQuantizedObjectsDataProviderPtr ObjectsData;
-
     size_t BlocksStartOffset = 0;
     size_t BlocksSize = 0;
 
@@ -62,7 +60,7 @@ public:
         const NCB::TDataProviderBuilderOptions& options,
         bool hasFeatures,
         NPar::TLocalExecutor* localExecutor
-    );
+    ) throw (yexception);
 
     template <class IVisitor>
     IVisitor* GetVisitor() {
@@ -73,7 +71,7 @@ public:
     %template(GetQuantizedVisitor) GetVisitor<NCB::IQuantizedFeaturesDataVisitor>;
 #endif
 
-    NCB::TDataProviderPtr GetResult() {
+    NCB::TDataProviderPtr GetResult() throw (yexception) {
         return DataProviderBuilder->GetResult();
     }
 

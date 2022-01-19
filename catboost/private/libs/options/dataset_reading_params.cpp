@@ -24,10 +24,6 @@ void NCatboostOptions::TDatasetReadingParams::BindParserOpts(NLastGetopt::TOpts*
         .Handler1T<TStringBuf>([&](const TStringBuf& pathWithScheme) {
             FeatureNamesPath = TPathWithScheme(pathWithScheme, "dsv");
         });
-    parser->AddLongOption("pool-metainfo-path", "PATH")
-        .Handler1T<TStringBuf>([&](const TStringBuf& pathWithScheme) {
-            PoolMetaInfoPath = TPathWithScheme(pathWithScheme);
-        });
 }
 
 void NCatboostOptions::TDatasetReadingParams::ValidatePoolParams() const {

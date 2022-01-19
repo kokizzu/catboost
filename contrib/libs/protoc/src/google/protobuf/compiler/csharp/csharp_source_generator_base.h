@@ -34,7 +34,6 @@
 #include <string>
 
 #include <google/protobuf/compiler/code_generator.h>
-#include <google/protobuf/io/printer.h>
 
 namespace google {
 namespace protobuf {
@@ -48,9 +47,6 @@ class SourceGeneratorBase {
   SourceGeneratorBase(const FileDescriptor* descriptor, const Options* options);
   virtual ~SourceGeneratorBase();
 
-  SourceGeneratorBase(const SourceGeneratorBase&) = delete;
-  SourceGeneratorBase& operator=(const SourceGeneratorBase&) = delete;
-
   TProtoStringType class_access_level();
   const Options* options();
 
@@ -61,6 +57,8 @@ class SourceGeneratorBase {
  private:
   const FileDescriptor* descriptor_;
   const Options *options_;
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(SourceGeneratorBase);
 };
 
 }  // namespace csharp

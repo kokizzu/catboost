@@ -1,12 +1,13 @@
 #include "yson.h"
 
+#include <util/generic/singleton.h>
 #include <util/string/builder.h>
 #include <util/system/env.h>
 #include <util/system/hostname.h>
 
 namespace {
     struct TWriteArg {
-        NYson::TYsonWriter* Output;
+        NYT::TYsonWriter* Output;
 
         void operator()(i64 value) {
             Output->OnInt64Scalar(value);
@@ -28,8 +29,8 @@ namespace {
 
 using namespace NChromiumTrace;
 
-TYsonTraceConsumer::TYsonTraceConsumer(IOutputStream* stream, NYson::EYsonFormat format)
-    : Yson(stream, format, ::NYson::EYsonType::ListFragment)
+TYsonTraceConsumer::TYsonTraceConsumer(IOutputStream* stream, NYT::EYsonFormat format)
+    : Yson(stream, format, NYT::YT_LIST_FRAGMENT)
     , JobId(GetCurrentJobId())
 {
 }
@@ -102,6 +103,7 @@ void TYsonTraceConsumer::AddEvent(const TMetadataEvent& event, const TEventArgs*
 
 void TYsonTraceConsumer::BeginEvent(char type, const TEventOrigin& origin) {
     Yson.OnBeginMap();
+    char ph[2] = {type, 0};
 
     if (JobId) {
         Yson.OnKeyedItem(TStringBuf("host"));
@@ -111,7 +113,7 @@ void TYsonTraceConsumer::BeginEvent(char type, const TEventOrigin& origin) {
     }
 
     Yson.OnKeyedItem(TStringBuf("ph"));
-    Yson.OnStringScalar(TStringBuf(&type, 1));
+    Yson.OnStringScalar(AsStringBuf(ph));
     Yson.OnKeyedItem(TStringBuf("pid"));
     Yson.OnUint64Scalar(origin.ProcessId);
     Yson.OnKeyedItem(TStringBuf("tid"));
@@ -130,7 +132,7 @@ void TYsonTraceConsumer::WriteArgs(const TEventArgs& args) {
     Yson.OnBeginMap();
     for (const auto& item : args.Items) {
         Yson.OnKeyedItem(item.Name);
-        std::visit(TWriteArg{&Yson}, item.Value);
+        Visit(TWriteArg{&Yson}, item.Value);
     }
     Yson.OnEndMap();
 }

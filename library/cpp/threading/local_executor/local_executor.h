@@ -75,9 +75,8 @@ namespace NPar {
             //
             template <typename TBlockCount>
             TExecRangeParams& SetBlockCount(TBlockCount blockCount) {
-                Y_ASSERT(SafeIntegerCast<int>(blockCount) > 0 || FirstId == LastId);
-                BlockSize = FirstId == LastId ? 0 : CeilDiv(LastId - FirstId, SafeIntegerCast<int>(blockCount));
-                BlockCount = BlockSize == 0 ? 0 : CeilDiv(LastId - FirstId, BlockSize);
+                BlockSize = CeilDiv(LastId - FirstId, SafeIntegerCast<int>(blockCount));
+                BlockCount = CeilDiv(LastId - FirstId, BlockSize);
                 BlockEqualToThreads = false;
                 return *this;
             }
@@ -86,9 +85,8 @@ namespace NPar {
             //
             template <typename TBlockSize>
             TExecRangeParams& SetBlockSize(TBlockSize blockSize) {
-                Y_ASSERT(SafeIntegerCast<int>(blockSize) > 0 || FirstId == LastId);
                 BlockSize = SafeIntegerCast<int>(blockSize);
-                BlockCount = BlockSize == 0 ? 0 : CeilDiv(LastId - FirstId, BlockSize);
+                BlockCount = CeilDiv(LastId - FirstId, BlockSize);
                 BlockEqualToThreads = false;
                 return *this;
             }

@@ -151,8 +151,8 @@ namespace NCB {
         }
 
         template <>
-        auto& GetObjectsDataWithFeatures(TQuantizedBuilderData& builderData) {
-            return builderData.ObjectsData;
+        auto& GetObjectsDataWithFeatures(TQuantizedForCPUBuilderData& builderData) {
+            return builderData.ObjectsData.Data;
         }
 
     }  // anonymous namespace
@@ -196,11 +196,10 @@ namespace NCB {
                 Nothing(),
                 std::move(data),
                 true,
-                dataProvider.MetaInfo.ForceUnitAutoPairWeights,
                 executor
             );
 
-            auto pred = ApplyModelMulti(model, *(dataProviderPtr->ObjectsData), false, predictionType, 0, 0, threadCount, dataProviderPtr->RawTargetData.GetBaseline())[0];
+            auto pred = ApplyModelMulti(model, *(dataProviderPtr->ObjectsData), false, predictionType, 0, 0, threadCount)[0];
             (*predictions)[numVal] = std::accumulate(pred.begin(), pred.end(), 0.) / static_cast<double>(pred.size());
             data = TBuilderDataHelper<TTObjectsDataProvider>::Extract(std::move(*dataProviderPtr));
             ++numVal;
@@ -217,7 +216,6 @@ namespace NCB {
             Nothing(),
             std::move(data),
             false,
-            dataProvider.MetaInfo.ForceUnitAutoPairWeights,
             executor);
 
         dataProvider = std::move(*(dataProviderPtr->template CastMoveTo<TObjectsDataProvider>()));
@@ -288,7 +286,7 @@ namespace NCB {
                 &rand,
                 &executor);
         } else if (auto* quantizedForCpuObjectsData =
-                   dynamic_cast<TQuantizedObjectsDataProvider*>(dataset.ObjectsData.Get()))
+                   dynamic_cast<TQuantizedForCPUObjectsDataProvider*>(dataset.ObjectsData.Get()))
         {
             quantizedPtr = quantizedForCpuObjectsData;
             isDatasetQuantized = true;
@@ -310,7 +308,6 @@ namespace NCB {
         if (isDatasetQuantized) {
             poolBinsRemap = GetFloatFeatureBordersRemap(
                 model.ModelTrees->GetFloatFeatures()[featureNum],
-                featureNum,
                 *quantizedPtr->GetQuantizedFeaturesInfo().Get());
             CB_ENSURE_INTERNAL(!poolBinsRemap.empty(), "Float feature #" << featureNum << " cannot be remapped");
             auto blockFunc = [&binNumsWriteIter, &poolBinsRemap](size_t /*blockStartIdx*/, auto block) {
@@ -377,7 +374,7 @@ namespace NCB {
             for (const auto poolBin : xrange(poolBinsRemap.size())) {
                 modelBinsToPoolBins[poolBinsRemap[poolBin]] = poolBin;
             }
-            GetPredictionsOnVaryingFeature<TQuantizedObjectsDataProvider, EFeatureType::Float>(
+            GetPredictionsOnVaryingFeature<TQuantizedForCPUObjectsDataProvider, EFeatureType::Float>(
                 model,
                 featureNum,
                 TQuantizedFloatFeatureHolderGenerator(

@@ -4,9 +4,7 @@
 #include "iostatus.h"
 #include "poller.h"
 #include "schedule_callback.h"
-#include "stack/stack_common.h"
 #include "trampoline.h"
-#include "custom_time.h"
 
 #include <library/cpp/containers/intrusive_rb_tree/rb_tree.h>
 
@@ -15,7 +13,6 @@
 #include <util/generic/intrlist.h>
 #include <util/datetime/base.h>
 #include <util/generic/maybe.h>
-#include <util/generic/function.h>
 
 
 #define EWAKEDUP 34567
@@ -25,9 +22,6 @@ struct TContRep;
 class TContExecutor;
 class TContPollEvent;
 
-namespace NCoro::NStack {
-    class IAllocator;
-}
 
 class TCont : private TIntrusiveListItem<TCont> {
     struct TJoinWait: public TIntrusiveListItem<TJoinWait> {
@@ -46,10 +40,11 @@ class TCont : private TIntrusiveListItem<TCont> {
 
 private:
     TCont(
-        NCoro::NStack::IAllocator& allocator,
-        uint32_t stackSize,
+        ui32 stackSize,
+        NCoro::TStack::EGuard stackGuard,
         TContExecutor& executor,
-        NCoro::TTrampoline::TFunc func,
+        TContFunc func,
+        void* arg,
         const char* name
     ) noexcept;
 
@@ -134,15 +129,6 @@ static void ContHelperMemberFunc(TCont* c, void* arg) {
     ((reinterpret_cast<T*>(arg))->*M)(c);
 }
 
-class IUserEvent
-    : public TIntrusiveListItem<IUserEvent>
-{
-public:
-    virtual ~IUserEvent() = default;
-
-    virtual void Execute() = 0;
-};
-
 /// Central coroutine class.
 /// Note, coroutines are single-threaded, and all methods must be called from the single thread
 class TContExecutor {
@@ -151,12 +137,10 @@ class TContExecutor {
 
 public:
     TContExecutor(
-        uint32_t defaultStackSize,
+        ui32 defaultStackSize,
         THolder<IPollerFace> poller = IPollerFace::Default(),
         NCoro::IScheduleCallback* = nullptr,
-        NCoro::NStack::EGuard stackGuard = NCoro::NStack::EGuard::Canary,
-        TMaybe<NCoro::NStack::TPoolAllocatorSettings> poolSettings = Nothing(),
-        NCoro::ITime* time = nullptr
+        NCoro::TStack::EGuard stackGuard = NCoro::TStack::EGuard::Canary
     );
 
     ~TContExecutor();
@@ -201,12 +185,6 @@ public:
         TMaybe<ui32> customStackSize = Nothing()
     ) noexcept;
 
-    TCont* CreateOwned(
-        NCoro::TTrampoline::TFunc func,
-        const char* name,
-        TMaybe<ui32> customStackSize = Nothing()
-    ) noexcept;
-
     NCoro::TContPoller* Poller() noexcept {
         return &Poller_;
     }
@@ -235,8 +213,6 @@ public:
         return TotalConts() - TotalReadyConts();
     }
 
-    NCoro::NStack::TAllocatorStats GetAllocatorStats() const noexcept;
-
     // TODO(velavokr): rename, it is just CancelAll actually
     void Abort() noexcept;
 
@@ -261,12 +237,6 @@ public:
         RegisterInWaitQueue(event);
     }
 
-    void ScheduleUserEvent(IUserEvent* event) {
-        UserEvents_.PushBack(event);
-    }
-
-    void Pause();
-    TInstant Now();
 private:
     void Release(TCont* cont) noexcept;
 
@@ -288,8 +258,8 @@ private:
 
 private:
     NCoro::IScheduleCallback* const CallbackPtr_ = nullptr;
-    const uint32_t DefaultStackSize_;
-    THolder<NCoro::NStack::IAllocator> StackAllocator_;
+    const ui32 DefaultStackSize_;
+    const NCoro::TStack::EGuard StackGuard_;
 
     TExceptionSafeContext SchedContext_;
 
@@ -298,14 +268,10 @@ private:
     TContList ReadyNext_;
     NCoro::TEventWaitQueue WaitQueue_;
     NCoro::TContPoller Poller_;
-    NCoro::TContPoller::TEvents PollerEvents_;
+    NCoro::TContPoller::TEvents Events_;
     TInstant LastPoll_;
-
-    TIntrusiveList<IUserEvent> UserEvents_;
 
     size_t Allocated_ = 0;
     TCont* Current_ = nullptr;
     bool FailOnError_ = false;
-    bool Paused_ = false;
-    NCoro::ITime* Time_ = nullptr;
 };

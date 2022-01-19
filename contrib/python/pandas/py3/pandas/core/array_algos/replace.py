@@ -1,71 +1,46 @@
 """
 Methods used by Block.replace and related methods.
 """
-from __future__ import annotations
-
 import operator
 import re
-from typing import (
-    Any,
-    Pattern,
-)
+from typing import Optional, Pattern, Union
 
 import numpy as np
 
-from pandas._typing import (
-    ArrayLike,
-    Scalar,
-)
+from pandas._typing import ArrayLike, Scalar
 
 from pandas.core.dtypes.common import (
     is_datetimelike_v_numeric,
     is_numeric_v_string_like,
     is_re,
-    is_re_compilable,
     is_scalar,
 )
 from pandas.core.dtypes.missing import isna
 
 
-def should_use_regex(regex: bool, to_replace: Any) -> bool:
-    """
-    Decide whether to treat `to_replace` as a regular expression.
-    """
-    if is_re(to_replace):
-        regex = True
-
-    regex = regex and is_re_compilable(to_replace)
-
-    # Don't use regex if the pattern is empty.
-    regex = regex and re.compile(to_replace).pattern != ""
-    return regex
-
-
 def compare_or_regex_search(
-    a: ArrayLike, b: Scalar | Pattern, regex: bool, mask: np.ndarray
-) -> ArrayLike | bool:
+    a: ArrayLike, b: Union[Scalar, Pattern], regex: bool, mask: ArrayLike
+) -> Union[ArrayLike, bool]:
     """
-    Compare two array-like inputs of the same shape or two scalar values
+    Compare two array_like inputs of the same shape or two scalar values
 
     Calls operator.eq or re.search, depending on regex argument. If regex is
     True, perform an element-wise regex matching.
 
     Parameters
     ----------
-    a : array-like
+    a : array_like
     b : scalar or regex pattern
     regex : bool
-    mask : np.ndarray[bool]
+    mask : array_like
 
     Returns
     -------
-    mask : array-like of bool
+    mask : array_like of bool
     """
-    if isna(b):
-        return ~mask
 
     def _check_comparison_types(
-        result: ArrayLike | bool, a: ArrayLike, b: Scalar | Pattern
+        result: Union[ArrayLike, bool], a: ArrayLike, b: Union[Scalar, Pattern]
     ):
         """
         Raises an error if the two arrays (a,b) cannot be compared.
@@ -74,7 +49,8 @@ def compare_or_regex_search(
         if is_scalar(result) and isinstance(a, np.ndarray):
             type_names = [type(a).__name__, type(b).__name__]
 
-            type_names[0] = f"ndarray(dtype={a.dtype})"
+            if isinstance(a, np.ndarray):
+                type_names[0] = f"ndarray(dtype={a.dtype})"
 
             raise TypeError(
                 f"Cannot compare types {repr(type_names[0])} and {repr(type_names[1])}"
@@ -115,7 +91,7 @@ def compare_or_regex_search(
     return result
 
 
-def replace_regex(values: ArrayLike, rx: re.Pattern, value, mask: np.ndarray | None):
+def replace_regex(values: ArrayLike, rx: re.Pattern, value, mask: Optional[np.ndarray]):
     """
     Parameters
     ----------
@@ -149,7 +125,7 @@ def replace_regex(values: ArrayLike, rx: re.Pattern, value, mask: np.ndarray | N
             else:
                 return s
 
-    f = np.vectorize(re_replacer, otypes=[np.object_])
+    f = np.vectorize(re_replacer, otypes=[values.dtype])
 
     if mask is None:
         values[:] = f(values)

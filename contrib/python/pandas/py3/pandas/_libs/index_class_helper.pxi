@@ -16,16 +16,11 @@ cdef class Float64Engine(IndexEngine):
     cdef _make_hash_table(self, Py_ssize_t n):
         return _hash.Float64HashTable(n)
 
-    cdef _check_type(self, object val):
-        if util.is_bool_object(val):
-            # avoid casting to True -> 1.0
-            raise KeyError(val)
 
-    cdef void _call_map_locations(self, ndarray[float64_t] values):
-        self.mapping.map_locations(values)
+    cdef void _call_map_locations(self, values):
+        self.mapping.map_locations(algos.ensure_float64(values))
 
     cdef _maybe_get_bool_indexer(self, object val):
-        # Returns ndarray[bool] or int
         cdef:
             ndarray[uint8_t, ndim=1, cast=True] indexer
             ndarray[intp_t, ndim=1] found
@@ -39,10 +34,7 @@ cdef class Float64Engine(IndexEngine):
             with warnings.catch_warnings():
                 # e.g. if values is float64 and `val` is a str, suppress warning
                 warnings.filterwarnings("ignore", category=FutureWarning)
-                if util.is_nan(val):
-                    indexer = np.isnan(values)
-                else:
-                    indexer = values == val
+                indexer = values == val
         except TypeError:
             # if the equality above returns a bool, cython will raise TypeError
             #  when trying to cast it to ndarray
@@ -58,16 +50,11 @@ cdef class Float32Engine(IndexEngine):
     cdef _make_hash_table(self, Py_ssize_t n):
         return _hash.Float32HashTable(n)
 
-    cdef _check_type(self, object val):
-        if util.is_bool_object(val):
-            # avoid casting to True -> 1.0
-            raise KeyError(val)
 
-    cdef void _call_map_locations(self, ndarray[float32_t] values):
-        self.mapping.map_locations(values)
+    cdef void _call_map_locations(self, values):
+        self.mapping.map_locations(algos.ensure_float32(values))
 
     cdef _maybe_get_bool_indexer(self, object val):
-        # Returns ndarray[bool] or int
         cdef:
             ndarray[uint8_t, ndim=1, cast=True] indexer
             ndarray[intp_t, ndim=1] found
@@ -81,10 +68,7 @@ cdef class Float32Engine(IndexEngine):
             with warnings.catch_warnings():
                 # e.g. if values is float64 and `val` is a str, suppress warning
                 warnings.filterwarnings("ignore", category=FutureWarning)
-                if util.is_nan(val):
-                    indexer = np.isnan(values)
-                else:
-                    indexer = values == val
+                indexer = values == val
         except TypeError:
             # if the equality above returns a bool, cython will raise TypeError
             #  when trying to cast it to ndarray
@@ -104,11 +88,10 @@ cdef class Int64Engine(IndexEngine):
         if not util.is_integer_object(val):
             raise KeyError(val)
 
-    cdef void _call_map_locations(self, ndarray[int64_t] values):
-        self.mapping.map_locations(values)
+    cdef void _call_map_locations(self, values):
+        self.mapping.map_locations(algos.ensure_int64(values))
 
     cdef _maybe_get_bool_indexer(self, object val):
-        # Returns ndarray[bool] or int
         cdef:
             ndarray[uint8_t, ndim=1, cast=True] indexer
             ndarray[intp_t, ndim=1] found
@@ -142,11 +125,10 @@ cdef class Int32Engine(IndexEngine):
         if not util.is_integer_object(val):
             raise KeyError(val)
 
-    cdef void _call_map_locations(self, ndarray[int32_t] values):
-        self.mapping.map_locations(values)
+    cdef void _call_map_locations(self, values):
+        self.mapping.map_locations(algos.ensure_int32(values))
 
     cdef _maybe_get_bool_indexer(self, object val):
-        # Returns ndarray[bool] or int
         cdef:
             ndarray[uint8_t, ndim=1, cast=True] indexer
             ndarray[intp_t, ndim=1] found
@@ -180,11 +162,10 @@ cdef class Int16Engine(IndexEngine):
         if not util.is_integer_object(val):
             raise KeyError(val)
 
-    cdef void _call_map_locations(self, ndarray[int16_t] values):
-        self.mapping.map_locations(values)
+    cdef void _call_map_locations(self, values):
+        self.mapping.map_locations(algos.ensure_int16(values))
 
     cdef _maybe_get_bool_indexer(self, object val):
-        # Returns ndarray[bool] or int
         cdef:
             ndarray[uint8_t, ndim=1, cast=True] indexer
             ndarray[intp_t, ndim=1] found
@@ -218,11 +199,10 @@ cdef class Int8Engine(IndexEngine):
         if not util.is_integer_object(val):
             raise KeyError(val)
 
-    cdef void _call_map_locations(self, ndarray[int8_t] values):
-        self.mapping.map_locations(values)
+    cdef void _call_map_locations(self, values):
+        self.mapping.map_locations(algos.ensure_int8(values))
 
     cdef _maybe_get_bool_indexer(self, object val):
-        # Returns ndarray[bool] or int
         cdef:
             ndarray[uint8_t, ndim=1, cast=True] indexer
             ndarray[intp_t, ndim=1] found
@@ -256,11 +236,10 @@ cdef class UInt64Engine(IndexEngine):
         if not util.is_integer_object(val):
             raise KeyError(val)
 
-    cdef void _call_map_locations(self, ndarray[uint64_t] values):
-        self.mapping.map_locations(values)
+    cdef void _call_map_locations(self, values):
+        self.mapping.map_locations(algos.ensure_uint64(values))
 
     cdef _maybe_get_bool_indexer(self, object val):
-        # Returns ndarray[bool] or int
         cdef:
             ndarray[uint8_t, ndim=1, cast=True] indexer
             ndarray[intp_t, ndim=1] found
@@ -294,11 +273,10 @@ cdef class UInt32Engine(IndexEngine):
         if not util.is_integer_object(val):
             raise KeyError(val)
 
-    cdef void _call_map_locations(self, ndarray[uint32_t] values):
-        self.mapping.map_locations(values)
+    cdef void _call_map_locations(self, values):
+        self.mapping.map_locations(algos.ensure_uint32(values))
 
     cdef _maybe_get_bool_indexer(self, object val):
-        # Returns ndarray[bool] or int
         cdef:
             ndarray[uint8_t, ndim=1, cast=True] indexer
             ndarray[intp_t, ndim=1] found
@@ -332,11 +310,10 @@ cdef class UInt16Engine(IndexEngine):
         if not util.is_integer_object(val):
             raise KeyError(val)
 
-    cdef void _call_map_locations(self, ndarray[uint16_t] values):
-        self.mapping.map_locations(values)
+    cdef void _call_map_locations(self, values):
+        self.mapping.map_locations(algos.ensure_uint16(values))
 
     cdef _maybe_get_bool_indexer(self, object val):
-        # Returns ndarray[bool] or int
         cdef:
             ndarray[uint8_t, ndim=1, cast=True] indexer
             ndarray[intp_t, ndim=1] found
@@ -370,11 +347,10 @@ cdef class UInt8Engine(IndexEngine):
         if not util.is_integer_object(val):
             raise KeyError(val)
 
-    cdef void _call_map_locations(self, ndarray[uint8_t] values):
-        self.mapping.map_locations(values)
+    cdef void _call_map_locations(self, values):
+        self.mapping.map_locations(algos.ensure_uint8(values))
 
     cdef _maybe_get_bool_indexer(self, object val):
-        # Returns ndarray[bool] or int
         cdef:
             ndarray[uint8_t, ndim=1, cast=True] indexer
             ndarray[intp_t, ndim=1] found

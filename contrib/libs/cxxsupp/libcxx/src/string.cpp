@@ -20,17 +20,12 @@ _LIBCPP_BEGIN_NAMESPACE_STD
 
 template class _LIBCPP_CLASS_TEMPLATE_INSTANTIATION_VIS __basic_string_common<true>;
 
-#define _LIBCPP_EXTERN_TEMPLATE_DEFINE(...) template __VA_ARGS__;
-#ifdef _LIBCPP_ABI_STRING_OPTIMIZED_EXTERNAL_INSTANTIATION
-_LIBCPP_STRING_UNSTABLE_EXTERN_TEMPLATE_LIST(_LIBCPP_EXTERN_TEMPLATE_DEFINE, char)
-_LIBCPP_STRING_UNSTABLE_EXTERN_TEMPLATE_LIST(_LIBCPP_EXTERN_TEMPLATE_DEFINE, wchar_t)
-#else
-_LIBCPP_STRING_V1_EXTERN_TEMPLATE_LIST(_LIBCPP_EXTERN_TEMPLATE_DEFINE, char)
-_LIBCPP_STRING_V1_EXTERN_TEMPLATE_LIST(_LIBCPP_EXTERN_TEMPLATE_DEFINE, wchar_t)
-#endif
-#undef _LIBCPP_EXTERN_TEMPLATE_DEFINE
+_LIBCPP_STRING_EXTERN_TEMPLATE_LIST(_LIBCPP_EXTERN_TEMPLATE_DEFINE, char)
+_LIBCPP_STRING_EXTERN_TEMPLATE_LIST(_LIBCPP_EXTERN_TEMPLATE_DEFINE, wchar_t)
 
-template string operator+<char, char_traits<char>, allocator<char> >(char const*, string const&);
+template
+    string
+    operator+<char, char_traits<char>, allocator<char> >(char const*, string const&);
 
 namespace
 {
@@ -178,7 +173,7 @@ as_integer( const string& func, const wstring& s, size_t* idx, int base )
 
 // as_float
 
-template<typename V, typename S, typename F>
+template<typename V, typename S, typename F> 
 inline
 V
 as_float_helper(const string& func, const S& str, size_t* idx, F f )
@@ -423,7 +418,7 @@ get_swprintf()
 }
 
 template <typename S, typename V>
-S i_to_string(V v)
+S i_to_string(const V v)
 {
 //  numeric_limits::digits10 returns value less on 1 than desired for unsigned numbers.
 //  For example, for 1-byte unsigned value digits10 is 2 (999 can not be represented),

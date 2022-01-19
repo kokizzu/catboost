@@ -1,14 +1,17 @@
 PY23_LIBRARY()
 
-# Proxy library
-LICENSE(Not-Applicable)
+LICENSE(BSD-3-Clause)
 
 
 
 IF (PYTHON2)
-    PEERDIR(contrib/python/Pygments/py2)
+    PEERDIR(
+        contrib/python/Pygments/py2
+    )
 ELSE()
-    PEERDIR(contrib/python/Pygments/py3)
+    PEERDIR(
+        contrib/python/Pygments/py3
+    )
 ENDIF()
 
 NO_LINT()

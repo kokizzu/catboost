@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.plugin
     ~~~~~~~~~~~~~~~
@@ -43,7 +44,7 @@ FILTER_ENTRY_POINT = 'pygments.filters'
 def iter_entry_points(group_name):
     try:
         import pkg_resources
-    except (ImportError, OSError):
+    except (ImportError, IOError):
         return []
 
     return pkg_resources.iter_entry_points(group_name)

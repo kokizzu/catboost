@@ -71,7 +71,7 @@ static void AssertApplyEqual(
 
 static void AssertAllApplyEqual(
     const TVector<TTextFeature>& features,
-    const TMap<ui32, TTokenizedTextFeature>& tokenizedTextFeatures,
+    const TVector<TTokenizedTextFeature>& tokenizedTextFeatures,
     const TVector<TVector<ui32>>& perFeatureDigitizers,
     const TVector<TVector<ui32>>& perTokenizedFeatureCalcers,
     const TVector<TTextFeatureCalcerPtr>& calcers,
@@ -84,7 +84,7 @@ static void AssertAllApplyEqual(
             for (ui32 calcerId : perTokenizedFeatureCalcers[tokenizedFeatureId]) {
                 AssertApplyEqual(
                     features[featureId],
-                    tokenizedTextFeatures.at(tokenizedFeatureId + features.size()),
+                    tokenizedTextFeatures[tokenizedFeatureId],
                     TTextProcessingIdx{ featureId, digitizerId, calcerId },
                     calcers[calcerId],
                     collection
@@ -137,7 +137,7 @@ Y_UNIT_TEST_SUITE(TestTextProcessingCollection) {
 
     Y_UNIT_TEST(TestApply) {
         TVector<TTextFeature> features;
-        TMap<ui32, TTokenizedTextFeature> tokenizedFeatures;
+        TVector<TTokenizedTextFeature> tokenizedFeatures;
         TVector<TDigitizer> digitizers;
         TVector<TTextFeatureCalcerPtr> calcers;
         TVector<TVector<ui32>> perFeatureDigitizers;
@@ -171,7 +171,7 @@ Y_UNIT_TEST_SUITE(TestTextProcessingCollection) {
 
     Y_UNIT_TEST(TestSerialization) {
         TVector<TTextFeature> features;
-        TMap<ui32, TTokenizedTextFeature> tokenizedFeatures;
+        TVector<TTokenizedTextFeature> tokenizedFeatures;
         TVector<TDigitizer> digitizers;
         TVector<TTextFeatureCalcerPtr> calcers;
         TVector<TVector<ui32>> perFeatureDigitizers;

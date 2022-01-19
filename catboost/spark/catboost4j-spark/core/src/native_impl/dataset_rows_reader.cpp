@@ -171,15 +171,6 @@ public:
     void AddSubgroupId(ui32 localObjectIdx, TSubgroupId value) override {
         Rows[localObjectIdx].SubgroupId = reinterpret_cast<const i32&>(value);
     }
-    void AddGroupId(ui32 /*localObjectIdx*/, const TString& /*value*/) override {
-        CB_ENSURE_INTERNAL(false, "unsupported function");
-    }
-    void AddSubgroupId(ui32 /*localObjectIdx*/, const TString& /*value*/) override {
-        CB_ENSURE_INTERNAL(false, "unsupported function");
-    }
-    void AddSampleId(ui32 /*localObjectIdx*/, const TString& /*value*/) override {
-        CB_ENSURE_INTERNAL(false, "unsupported function");
-    }
     void AddTimestamp(ui32 localObjectIdx, ui64 value) override {
         Rows[localObjectIdx].Timestamp = SafeIntegerCast<i64>(value);
     }
@@ -345,7 +336,7 @@ TRawDatasetRowsReader::TRawDatasetRowsReader(
     bool hasHeader,
     i32 blockSize,
     i32 threadCount
-) {
+) throw (yexception) {
     THolder<ILineDataReader> lineReaderHolder(lineReader);
 
     CB_ENSURE(threadCount >= 1, "threadCount must be >= 1");
@@ -373,7 +364,6 @@ TRawDatasetRowsReader::TRawDatasetRowsReader(
             /*baselineFilePath*/ TPathWithScheme(),
             /*timestampsFilePath*/ TPathWithScheme(),
             /*featureNamesPath*/ TPathWithScheme(),
-            /*poolMetaInfoPath*/ TPathWithScheme(),
             /*classLabels*/ TVector<NJson::TJsonValue>(),
             dsvFormatOptions,
             std::move(cdProvider),
@@ -381,8 +371,6 @@ TRawDatasetRowsReader::TRawDatasetRowsReader(
             EObjectsOrder::Undefined,
             SafeIntegerCast<ui32>(blockSize),
             /*loadSubset*/ TDatasetSubset(),
-            /*LoadColumnsAsString*/ false,
-            /*ForceUnitAutoPairWeights*/ false,
             &LocalExecutor
         }
     };
@@ -402,7 +390,7 @@ TRawDatasetRowsReader::TRawDatasetRowsReader(
     VisitorHolder = std::move(visitorHolder);
 }
 
-i32 TRawDatasetRowsReader::ReadNextBlock() {
+i32 TRawDatasetRowsReader::ReadNextBlock() throw (yexception) {
     if (Loader->DoBlock(Visitor)) {
         return Visitor->GetBlockSize();
     } else {
@@ -410,7 +398,7 @@ i32 TRawDatasetRowsReader::ReadNextBlock() {
     }
 }
 
-const TRawDatasetRow& TRawDatasetRowsReader::GetRow(i32 objectIdx) {
+const TRawDatasetRow& TRawDatasetRowsReader::GetRow(i32 objectIdx) throw (yexception) {
     return Visitor->GetRow(objectIdx);
 }
 

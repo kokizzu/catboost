@@ -6,16 +6,9 @@ PROVIDES(protobuf)
 
 
 
-VERSION(3.17.3)
+VERSION(3.4.1)
 
-ORIGINAL_SOURCE(https://github.com/protocolbuffers/protobuf/archive/v3.17.3.tar.gz)
-
-LICENSE(
-    BSD-3-Clause AND
-    Protobuf-License
-)
-
-LICENSE_TEXTS(.yandex_meta/licenses.list.txt)
+LICENSE(BSD-3-Clause)
 
 PEERDIR(
     contrib/libs/zlib
@@ -23,27 +16,24 @@ PEERDIR(
 
 ADDINCL(
     GLOBAL contrib/libs/protobuf/src
-    GLOBAL FOR
-    proto
-    contrib/libs/protobuf/src
+    GLOBAL FOR proto contrib/libs/protobuf/src
 )
 
 NO_COMPILER_WARNINGS()
 
 CFLAGS(
-    -DHAVE_CONFIG_H
-    -DHAVE_PTHREAD=1
-    -DHAVE_ZLIB=1
+    -DHAVE_ZLIB
+    -DHAVE_PTHREAD
+    GLOBAL -D_SHARED_PTR_H
 )
 
 IF (OS_ANDROID)
-    EXTRALIBS(log)
+    EXTRALIBS(-llog)
 ENDIF()
 
 SRCS(
     src/google/protobuf/any.cc
     src/google/protobuf/any.pb.cc
-    src/google/protobuf/any_lite.cc
     src/google/protobuf/api.pb.cc
     src/google/protobuf/arena.cc
     src/google/protobuf/arenastring.cc
@@ -55,17 +45,13 @@ SRCS(
     src/google/protobuf/empty.pb.cc
     src/google/protobuf/extension_set.cc
     src/google/protobuf/extension_set_heavy.cc
-    src/google/protobuf/field_access_listener.cc
     src/google/protobuf/field_mask.pb.cc
-    src/google/protobuf/generated_enum_util.cc
     src/google/protobuf/generated_message_reflection.cc
     src/google/protobuf/generated_message_table_driven.cc
     src/google/protobuf/generated_message_table_driven_lite.cc
     src/google/protobuf/generated_message_util.cc
-    src/google/protobuf/implicit_weak_message.cc
     src/google/protobuf/io/coded_stream.cc
     src/google/protobuf/io/gzip_stream.cc
-    src/google/protobuf/io/io_win32.cc
     src/google/protobuf/io/printer.cc
     src/google/protobuf/io/strtod.cc
     src/google/protobuf/io/tokenizer.cc
@@ -73,20 +59,24 @@ SRCS(
     src/google/protobuf/io/zero_copy_stream_impl.cc
     src/google/protobuf/io/zero_copy_stream_impl_lite.cc
     src/google/protobuf/json_util.cc
-    src/google/protobuf/map.cc
     src/google/protobuf/map_field.cc
     src/google/protobuf/message.cc
     src/google/protobuf/message_lite.cc
     src/google/protobuf/messagext.cc
-    src/google/protobuf/parse_context.cc
+    src/google/protobuf/messagext_lite.cc
     src/google/protobuf/reflection_ops.cc
     src/google/protobuf/repeated_field.cc
     src/google/protobuf/service.cc
     src/google/protobuf/source_context.pb.cc
     src/google/protobuf/struct.pb.cc
+    src/google/protobuf/stubs/atomicops_internals_x86_gcc.cc
+    src/google/protobuf/stubs/atomicops_internals_x86_msvc.cc
     src/google/protobuf/stubs/bytestream.cc
     src/google/protobuf/stubs/common.cc
     src/google/protobuf/stubs/int128.cc
+    src/google/protobuf/stubs/io_win32.cc
+    src/google/protobuf/stubs/mathlimits.cc
+    src/google/protobuf/stubs/once.cc
     src/google/protobuf/stubs/status.cc
     src/google/protobuf/stubs/statusor.cc
     src/google/protobuf/stubs/stringpiece.cc
@@ -125,6 +115,10 @@ SRCS(
     src/google/protobuf/wrappers.pb.cc
 )
 
+SUPPRESSIONS(
+    tsan.supp
+)
+
 FILES(
     src/google/protobuf/any.proto
     src/google/protobuf/api.proto
@@ -140,7 +134,3 @@ FILES(
 )
 
 END()
-
-RECURSE(
-    builtin_proto
-)

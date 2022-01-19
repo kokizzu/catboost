@@ -9,8 +9,6 @@ not to be used outside IPython.
 
 import unicodedata
 from wcwidth import wcwidth
-import sys
-import traceback
 
 from IPython.core.completer import (
     provisionalcompleter, cursor_to_position,

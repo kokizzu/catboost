@@ -6,19 +6,7 @@ Expose public exceptions & warnings
 
 from pandas._config.config import OptionError
 
-from pandas._libs.tslibs import (
-    OutOfBoundsDatetime,
-    OutOfBoundsTimedelta,
-)
-
-
-class IntCastingNaNError(ValueError):
-    """
-    raised when attempting an astype operation on an array with NaN to an integer
-    dtype.
-    """
-
-    pass
+from pandas._libs.tslibs import OutOfBoundsDatetime, OutOfBoundsTimedelta
 
 
 class NullFrequencyError(ValueError):

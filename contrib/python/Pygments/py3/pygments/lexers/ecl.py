@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.ecl
     ~~~~~~~~~~~~~~~~~~~
@@ -12,7 +13,7 @@ import re
 
 from pygments.lexer import RegexLexer, include, bygroups, words
 from pygments.token import Text, Comment, Operator, Keyword, Name, String, \
-    Number, Punctuation, Whitespace
+    Number, Punctuation, Error
 
 __all__ = ['ECLLexer']
 
@@ -39,7 +40,7 @@ class ECLLexer(RegexLexer):
             include('statements'),
         ],
         'whitespace': [
-            (r'\s+', Whitespace),
+            (r'\s+', Text),
             (r'\/\/.*', Comment.Single),
             (r'/(\\\n)?\*(.|\n)*?\*(\\\n)?/', Comment.Multiline),
         ],
@@ -55,6 +56,7 @@ class ECLLexer(RegexLexer):
             (r'0x[0-9a-f]+[lu]*', Number.Hex),
             (r'0[0-7]+[lu]*', Number.Oct),
             (r'\d+[lu]*', Number.Integer),
+            (r'\*/', Error),
             (r'[~!%^&*+=|?:<>/-]+', Operator),
             (r'[{}()\[\],.;]', Punctuation),
             (r'[a-z_]\w*', Name),
@@ -67,7 +69,7 @@ class ECLLexer(RegexLexer):
             (r'((?:ASCII|BIG_ENDIAN|BOOLEAN|DATA|DECIMAL|EBCDIC|INTEGER|PATTERN|'
              r'QSTRING|REAL|RECORD|RULE|SET OF|STRING|TOKEN|UDECIMAL|UNICODE|'
              r'UNSIGNED|VARSTRING|VARUNICODE)\d*)(\s+)',
-             bygroups(Keyword.Type, Whitespace)),
+             bygroups(Keyword.Type, Text)),
         ],
         'keywords': [
             (words((
@@ -124,10 +126,10 @@ class ECLLexer(RegexLexer):
 
     def analyse_text(text):
         """This is very difficult to guess relative to other business languages.
-        -> in conjuction with BEGIN/END seems relatively rare though."""
+        <- in conjuction with BEGIN/END seems relatively rare though."""
         result = 0
 
-        if '->' in text:
+        if '<-' in text:
             result += 0.01
         if 'BEGIN' in text:
             result += 0.01

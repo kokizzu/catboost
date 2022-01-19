@@ -4492,6 +4492,7 @@ PyMODINIT_FUNC PyInit__multiarray_umath(void) {
     Py_DECREF(s);
 
     s = npy_cpu_features_dict();
+    s = PyDict_New();
     if (s == NULL) {
         goto err;
     }

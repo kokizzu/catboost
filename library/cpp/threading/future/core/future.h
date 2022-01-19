@@ -103,11 +103,6 @@ namespace NThreading {
         template <typename F>
         const TFuture<T>& Subscribe(F&& callback) const;
 
-        // precondition: EnsureInitialized() passes
-        // postcondition: std::terminate is highly unlikely
-        template <typename F>
-        const TFuture<T>& NoexceptSubscribe(F&& callback) const noexcept;
-
         template <typename F>
         TFuture<TFutureType<TFutureCallResult<F, T>>> Apply(F&& func) const;
 
@@ -118,6 +113,7 @@ namespace NThreading {
         **/
         TMaybe<TFutureStateId> StateId() const noexcept;
 
+    private:
         void EnsureInitialized() const;
     };
 
@@ -158,11 +154,6 @@ namespace NThreading {
         template <typename F>
         const TFuture<void>& Subscribe(F&& callback) const;
 
-        // precondition: EnsureInitialized() passes
-        // postcondition: std::terminate is highly unlikely
-        template <typename F>
-        const TFuture<void>& NoexceptSubscribe(F&& callback) const noexcept;
-
         template <typename F>
         TFuture<TFutureType<TFutureCallResult<F, void>>> Apply(F&& func) const;
 
@@ -178,6 +169,7 @@ namespace NThreading {
         **/
         TMaybe<TFutureStateId> StateId() const noexcept;
 
+    private:
         void EnsureInitialized() const;
     };
 

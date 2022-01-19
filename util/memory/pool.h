@@ -212,9 +212,10 @@ public:
 
     template <typename TChar>
     inline TChar* Append(const TChar* str, size_t len) {
-        TChar* ret = AllocateArray<TChar>(len);
+        TChar* ret = static_cast<TChar*>(Allocate(len * sizeof(TChar)));
 
         std::char_traits<TChar>::copy(ret, str, len);
+
         return ret;
     }
 

@@ -7,8 +7,6 @@
 #include <catboost/private/libs/options/loss_description.h>
 #include <library/cpp/threading/local_executor/local_executor.h>
 
-#include <util/generic/array_ref.h>
-#include <util/generic/fwd.h>
 #include <util/generic/ptr.h>
 #include <util/generic/vector.h>
 #include <util/ysaveload.h>
@@ -105,16 +103,6 @@ public:
 
 TShapPreparedTrees PrepareTrees(const TFullModel& model, NPar::ILocalExecutor* localExecutor);
 
-TShapPreparedTrees PrepareTreesWithoutIndependent(
-    const TFullModel& model,
-    i64 datasetObjectCount, // can be -1 if no dataset is provided
-    bool needSumModelAndDatasetWeights,
-    TConstArrayRef<double> leafWeightsFromDataset,
-    EPreCalcShapValues mode,
-    bool calcInternalValues,
-    ECalcTypeShapValues calcType
-);
-
 TShapPreparedTrees PrepareTrees(
     const TFullModel& model,
     const NCB::TDataProvider* dataset, // can be nullptr if model has LeafWeights
@@ -123,7 +111,6 @@ TShapPreparedTrees PrepareTrees(
     NPar::ILocalExecutor* localExecutor,
     bool calcInternalValues = false,
     ECalcTypeShapValues calcType = ECalcTypeShapValues::Regular,
-    EExplainableModelOutput modelOutputType = EExplainableModelOutput::Raw,
-    bool fstrOnTrainPool=false
+    EExplainableModelOutput modelOutputType = EExplainableModelOutput::Raw
 );
 

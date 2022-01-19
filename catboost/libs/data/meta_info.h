@@ -4,7 +4,6 @@
 
 #include <catboost/private/libs/options/enums.h>
 #include <catboost/libs/column_description/column.h>
-#include <catboost/libs/column_description/feature_tag.h>
 
 #include <library/cpp/binsaver/bin_saver.h>
 #include <library/cpp/dbg_output/dump.h>
@@ -54,12 +53,9 @@ namespace NCB {
         bool HasGroupId = false;
         bool HasGroupWeight = false;
         bool HasSubgroupIds = false;
-        bool HasSampleId = false;
         bool HasWeights = false;
         bool HasTimestamp = false;
         bool HasPairs = false;
-        bool StoreStringColumns = false;
-        bool ForceUnitAutoPairWeights = false;
 
         // can be set from baseline file header or from quantized pool
         TVector<NJson::TJsonValue> ClassLabels = {};
@@ -77,12 +73,10 @@ namespace NCB {
             bool hasAdditionalGroupWeight,
             bool hasTimestamp,
             bool hasPairs,
-            bool forceUnitAutoPairWeights,
             TMaybe<ui32> additionalBaselineCount = Nothing(),
 
             // if specified - prefer these to Id in columnsInfo.Columns, otherwise take names
             TMaybe<const TVector<TString>*> featureNames = Nothing(),
-            TMaybe<const THashMap<TString, TTagDescription>*> featureTags = Nothing(),
             const TVector<NJson::TJsonValue>& classLabels = {}
         );
 

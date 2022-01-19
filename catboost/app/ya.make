@@ -49,26 +49,21 @@ PEERDIR(
 
 GENERATE_ENUM_SERIALIZATION(model_metainfo_helpers.h)
 
-IF(OPENSOURCE)
-    RESTRICT_LICENSES(
-        DENY REQUIRE_DISCLOSURE FORBIDDEN
-        EXCEPT
-            contrib/libs/linux-headers # DTCC-725
-            contrib/libs/intel/mkl # DTCC-730
-    )
+IF(CATBOOST_OPENSOURCE)
+    NO_GPL()
 ELSE()
     PEERDIR(
         catboost//private/libs/for_app
     )
 ENDIF()
 
-IF (OS_WINDOWS)
+IF (ARCH_AARCH64 OR OS_WINDOWS)
     ALLOCATOR(J)
 ELSE()
-    ALLOCATOR(MIM)
+    ALLOCATOR(LF)
 ENDIF()
 
-IF (OPENSOURCE AND AUTOCHECK)
+IF (CATBOOST_OPENSOURCE AND AUTOCHECK)
     INCLUDE(${ARCADIA_ROOT}/catboost//oss/checks/check_deps.inc)
 ENDIF()
 

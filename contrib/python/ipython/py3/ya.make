@@ -1,21 +1,20 @@
 PY3_LIBRARY()
 
-
-
-VERSION(7.31.0)
-
 LICENSE(BSD-3-Clause)
 
+VERSION(7.19.0)
+
+
+
 PEERDIR(
-    contrib/python/Pygments
     contrib/python/backcall
     contrib/python/decorator
     contrib/python/jedi
-    contrib/python/matplotlib-inline
     contrib/python/pickleshare
-    contrib/python/prompt-toolkit
-    contrib/python/setuptools
     contrib/python/traitlets
+    contrib/python/prompt_toolkit
+    contrib/python/Pygments
+    contrib/python/setuptools
 )
 
 IF (OS_WINDOWS)
@@ -34,11 +33,9 @@ IF (OS_DARWIN)
     )
 ENDIF()
 
-NO_LINT()
+NO_CHECK_IMPORTS(IPython.*)
 
-NO_CHECK_IMPORTS(
-    IPython.*
-)
+NO_LINT()
 
 PY_SRCS(
     TOP_LEVEL
@@ -125,7 +122,7 @@ PY_SRCS(
     IPython/frontend.py
     IPython/html.py
     IPython/kernel/__init__.py
-    IPython/kernel/__main__.py
+    #IPython/kernel/__main__.py
     IPython/kernel/adapter.py
     IPython/kernel/channels.py
     IPython/kernel/channelsabc.py
@@ -152,7 +149,6 @@ PY_SRCS(
     IPython/lib/inputhookglut.py
     IPython/lib/inputhookgtk.py
     IPython/lib/inputhookgtk3.py
-    IPython/lib/inputhookgtk4.py
     IPython/lib/inputhookpyglet.py
     IPython/lib/inputhookqt4.py
     IPython/lib/inputhookwx.py
@@ -183,7 +179,6 @@ PY_SRCS(
     IPython/terminal/pt_inputhooks/glut.py
     IPython/terminal/pt_inputhooks/gtk.py
     IPython/terminal/pt_inputhooks/gtk3.py
-    IPython/terminal/pt_inputhooks/gtk4.py
     IPython/terminal/pt_inputhooks/osx.py
     IPython/terminal/pt_inputhooks/pyglet.py
     IPython/terminal/pt_inputhooks/qt.py
@@ -193,7 +188,6 @@ PY_SRCS(
     IPython/terminal/ptutils.py
     IPython/terminal/shortcuts.py
     IPython/testing/__init__.py
-    IPython/testing/__main__.py
     IPython/testing/decorators.py
     IPython/testing/globalipapp.py
     IPython/testing/iptest.py
@@ -264,7 +258,6 @@ PY_SRCS(
 RESOURCE_FILES(
     PREFIX contrib/python/ipython/py3/
     .dist-info/METADATA
-    .dist-info/entry_points.txt
     .dist-info/top_level.txt
     IPython/core/profile/README_STARTUP
 )

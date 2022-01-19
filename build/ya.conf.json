@@ -68,9 +68,6 @@
         "ninja": {
             "description": "Run ninja"
         },
-        "pprof": {
-            "description": "Run pprof"
-        },
         "ytexec": {
             "description": "Run ytexec"
         },
@@ -94,9 +91,6 @@
             "description": "Run Python 3",
             "visible": false
         },
-        "jar": {
-            "description": "Run jar"
-        },
         "java": {
             "description": "Run java"
         },
@@ -115,23 +109,17 @@
         "javac11": {
             "description": "Run javac 11"
         },
-        "jar15": {
-            "description": "Run jar from jdk15"
-        },
         "java15": {
             "description": "Run java 15"
         },
         "javac15": {
             "description": "Run javac 15"
         },
-        "jar17": {
+        "jar": {
+            "description": "Run jar"
+        },
+        "jar15": {
             "description": "Run jar from jdk15"
-        },
-        "java17": {
-            "description": "Run java 15"
-        },
-        "javac17": {
-            "description": "Run javac 15"
         },
         "jq": {
             "description": "Run jq"
@@ -161,10 +149,6 @@
             "description": "Run wine64",
             "visible": false
         },
-        "wine32": {
-            "description": "Run wine",
-            "visible": false
-        },
         "deploy": {
             "description": "Run Samogon",
             "visible": false
@@ -174,12 +158,6 @@
         },
         "perf": {
             "description": "Run Perf"
-        },
-        "cuda-check": {
-            "description": "Run cuda-check"
-        },
-        "sre": {
-            "description": "Run sretool"
         },
         "samogonctl": {
             "description": "Run Samogon Controller"
@@ -194,6 +172,10 @@
         },
         "gcov": {
             "description": "Run gcov"
+        },
+        "hg": {
+            "description": "Run mercurial",
+            "visible": false
         },
         "bloat": {
             "description": "Run bloat tool",
@@ -215,9 +197,6 @@
         },
         "yf": {
             "description": "Run YF client"
-        },
-        "rtmr-deploy": {
-            "description": "Run RTMR deploy"
         },
         "yt": {
             "description": "Run YT client"
@@ -287,26 +266,20 @@
         "apphost": {
             "description": "Run local apphost instance"
         },
-        "renderer": {
-            "description": "Run local renderer instance"
-        },
-        "appteka": {
-            "description": "Run local appteka instance"
-        },
         "news": {
             "description": "Run news team tools"
         },
+        "go_1.15.7": {
+            "description": "Run go tool (1.15.7)"
+        },
+        "gofmt_1.15.7": {
+            "description": "Run gofmt tool (1.15.7)"
+        },
         "go": {
-            "description": "Run go tool (1.17.6)"
+            "description": "Run go tool (1.15.8)"
         },
         "gofmt": {
-            "description": "Run gofmt tool (1.17.6)"
-        },
-        "go_1.18beta1": {
-            "description": "Run go tool (1.18beta1)"
-        },
-        "gofmt_1.18beta1": {
-            "description": "Run gofmt tool (1.18beta1)"
+            "description": "Run gofmt tool (1.15.8)"
         },
         "godoc": {
             "description": "Arcadia version of godoc"
@@ -323,10 +296,6 @@
         "dlv": {
             "description": "Debugger for the Go programming language"
         },
-        "node-search": {
-            "description": "Autocheck data inspector tool",
-            "visible": false
-        },
         "releaser": {
             "description": "Release tool"
         },
@@ -335,6 +304,9 @@
         },
         "sandboxctl": {
             "description": "Tool to run tasks in Sandbox"
+        },
+        "golangci-lint": {
+            "description": "Linters Runner for Go"
         },
         "qemu": {
             "description": "QEMU x86_64 machine emulator and virtualizer"
@@ -436,9 +408,6 @@
         "jstyle": {
             "description": "Java styler"
         },
-        "ktlint": {
-            "description": "Run kotlin styler"
-        },
         "ya_sed": {
             "description": "This tool simplifies replacing of some text in Arcadia"
         },
@@ -457,130 +426,117 @@
         "iceflame": {
             "description": "Performance data collection and analysis"
         },
-        "cs": {
-            "description": "Fast CodeSearch CLI tool"
-        },
         "wall-e": {
             "description": "Client for Wall-E"
-        },
-        "rtcdiag": {
-            "description": "RTC hosts diag tool"
-        },
-        "skotty": {
-            "description": "Skotty (SSH-agent) launcher"
-        },
-        "license_analyzer": {
-            "description": "Run devtools license analyzer"
-        },
-        "eductl": {
-            "description": "eductl is a toolchain of Yandex Education"
-        },
-        "bigb_request": {
-            "description": "utility to get user info"
-        },
-        "bigb_hitlog_analyser": {
-            "description": "bigb utility"
-        },
-        "bigb_bsyeti_experiments": {
-            "description": "bigb utility"
-        },
-        "bigb_bb_cluster_analyzer": {
-            "description": "bigb utility"
-        },
-        "bigb_yt_profiles_dumper": {
-            "description": "bigb utility"
-        },
-        "bigb_ab": {
-            "description": "bigb utility"
-        },
-        "bigrt_cli": {
-            "description": "bigrt utility"
-        },
-        "caesar_yt_sync": {
-            "description": "caesar utility"
-        },
-        "caesar_lookup_profile": {
-            "description": "caesar utility"
-        },
-        "caesar_profile_size_analyzer": {
-            "description": "caesar utility"
-        },
-        "exp_stats": {
-            "description": "bsyeti tool"
         }
     },
     "toolchain": {
-        "bigb_request": {
+        "msvc2017-i686": {
+            "name": "msvc2017",
             "tools": {
-                "bigb_request": {
-                    "bottle": "bigb_request",
-                    "executable": "bb_requester"
+                "cc": {
+                    "bottle": "msvc2017",
+                    "executable": "msvc"
+                },
+                "c++": {
+                    "bottle": "msvc2017",
+                    "executable": "msvc"
                 }
             },
             "platforms": [
                 {
                     "host": {
-                        "os": "LINUX"
+                        "os": "WIN"
                     },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
+                    "target": {
+                        "os": "WIN",
+                        "arch": "i686"
+                    }
                 }
-            ]
+            ],
+            "params": {
+                "type": "msvc",
+                "match_root": "MSVC",
+                "werror_mode": "compiler_specific",
+                "c_compiler": "$(MSVC)/bin/Hostx64/x86/cl.exe",
+                "cxx_compiler": "$(MSVC)/bin/Hostx64/x86/cl.exe",
+                "cxx_std": "c++17",
+                "version": "2017"
+            }
         },
-        "bigb_hitlog_analyser": {
+        "msvc2017-x86_64": {
+            "name": "msvc2017",
             "tools": {
-                "bigb_hitlog_analyser": {
-                    "bottle": "bigb_hitlog_analyser",
-                    "executable": "hitlog_analyser"
+                "cc": {
+                    "bottle": "msvc2017",
+                    "executable": "msvc"
+                },
+                "c++": {
+                    "bottle": "msvc2017",
+                    "executable": "msvc"
                 }
             },
             "platforms": [
                 {
                     "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
+                        "os": "WIN"
+                    }
                 }
-            ]
+            ],
+            "params": {
+                "type": "msvc",
+                "match_root": "MSVC",
+                "werror_mode": "compiler_specific",
+                "c_compiler": "$(MSVC)/bin/Hostx64/x64/cl.exe",
+                "cxx_compiler": "$(MSVC)/bin/Hostx64/x64/cl.exe",
+                "cxx_std": "c++17",
+                "version": "2017",
+                "for_ide": "msvs2017"
+            }
         },
-        "bigb_bsyeti_experiments": {
+        "msvc2017-arm": {
+            "name": "msvc2017",
             "tools": {
-                "bigb_bsyeti_experiments": {
-                    "bottle": "bigb_bsyeti_experiments",
-                    "executable": "bsyeti_experiments"
+                "cc": {
+                    "bottle": "msvc2017",
+                    "executable": "msvc"
+                },
+                "c++": {
+                    "bottle": "msvc2017",
+                    "executable": "msvc"
                 }
             },
             "platforms": [
                 {
                     "host": {
-                        "os": "LINUX"
+                        "os": "WIN"
                     },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
+                    "target": {
+                        "os": "WIN",
+                        "arch": "arm"
+                    }
                 }
-            ]
+            ],
+            "params": {
+                "type": "msvc",
+                "match_root": "MSVC",
+                "werror_mode": "compiler_specific",
+                "c_compiler": "$(MSVC)/bin/Hostx64/arm/cl.exe",
+                "cxx_compiler": "$(MSVC)/bin/Hostx64/arm/cl.exe",
+                "cxx_std": "c++17",
+                "version": "2017"
+            }
         },
-        "bigb_bb_cluster_analyzer": {
+        "wine-msvc2017-i686": {
+            "name": "msvc2017",
             "tools": {
-                "bigb_bb_cluster_analyzer": {
-                    "bottle": "bigb_bb_cluster_analyzer",
-                    "executable": "bb_cluster_analyzer"
+                "cc": {
+                    "bottle": "msvc2017",
+                    "executable": "msvc"
+                },
+                "c++": {
+                    "bottle": "msvc2017",
+                    "executable": "msvc"
                 }
             },
             "platforms": [
@@ -588,21 +544,33 @@
                     "host": {
                         "os": "LINUX"
                     },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
+                    "target": {
+                        "os": "WIN",
+                        "arch": "i686"
+                    }
                 }
-            ]
+            ],
+            "params": {
+                "type": "msvc",
+                "match_root": "MSVC",
+                "werror_mode": "compiler_specific",
+                "c_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:1093314933)/bin/wine64 -v140 c $WINE_ENV ${ARCADIA_ROOT} ${ARCADIA_BUILD_ROOT} $(MSVC)/bin/Hostx64/x86/cl.exe",
+                "cxx_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:1093314933)/bin/wine64 -v140 cxx $WINE_ENV ${ARCADIA_ROOT} ${ARCADIA_BUILD_ROOT} $(MSVC)/bin/Hostx64/x86/cl.exe",
+                "cxx_std": "c++17",
+                "version": "2017",
+                "wine": "yes"
+            }
         },
-        "bigb_yt_profiles_dumper": {
+        "wine-msvc2017-x86_64": {
+            "name": "msvc2017",
             "tools": {
-                "bigb_yt_profiles_dumper": {
-                    "bottle": "bigb_yt_profiles_dumper",
-                    "executable": "yt_profiles_dumper"
+                "cc": {
+                    "bottle": "msvc2017",
+                    "executable": "msvc"
+                },
+                "c++": {
+                    "bottle": "msvc2017",
+                    "executable": "msvc"
                 }
             },
             "platforms": [
@@ -610,21 +578,32 @@
                     "host": {
                         "os": "LINUX"
                     },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
+                    "target": {
+                        "os": "WIN"
+                    }
                 }
-            ]
+            ],
+            "params": {
+                "type": "msvc",
+                "match_root": "MSVC",
+                "werror_mode": "compiler_specific",
+                "c_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:1093314933)/bin/wine64 -v140 c $WINE_ENV ${ARCADIA_ROOT} ${ARCADIA_BUILD_ROOT} $(MSVC)/bin/Hostx64/x64/cl.exe",
+                "cxx_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:1093314933)/bin/wine64 -v140 cxx $WINE_ENV ${ARCADIA_ROOT} ${ARCADIA_BUILD_ROOT} $(MSVC)/bin/Hostx64/x64/cl.exe",
+                "cxx_std": "c++17",
+                "version": "2017",
+                "wine": "yes"
+            }
         },
-        "bigb_ab": {
+        "wine-msvc2017-arm": {
+            "name": "msvc2017",
             "tools": {
-                "bigb_ab": {
-                    "bottle": "bigb_ab",
-                    "executable": "ab"
+                "cc": {
+                    "bottle": "msvc2017",
+                    "executable": "msvc"
+                },
+                "c++": {
+                    "bottle": "msvc2017",
+                    "executable": "msvc"
                 }
             },
             "platforms": [
@@ -632,125 +611,22 @@
                     "host": {
                         "os": "LINUX"
                     },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
+                    "target": {
+                        "os": "WIN",
+                        "arch": "arm"
+                    }
                 }
-            ]
-        },
-        "bigrt_cli": {
-            "tools": {
-                "bigrt_cli": {
-                    "bottle": "bigrt_cli",
-                    "executable": "big_rt_cli"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
-                }
-            ]
-        },
-        "caesar_lookup_profile": {
-            "tools": {
-                "caesar_lookup_profile": {
-                    "bottle": "caesar_lookup_profile",
-                    "executable": "lookup_profile"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
-                }
-            ]
-        },
-        "exp_stats": {
-            "tools": {
-                "exp_stats": {
-                    "bottle": "exp_stats",
-                    "executable": "exp_stats"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
-                }
-            ]
-        },
-        "caesar_profile_size_analyzer": {
-            "tools": {
-                "caesar_profile_size_analyzer": {
-                    "bottle": "caesar_profile_size_analyzer",
-                    "executable": "profile_size_analyzer"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
-                }
-            ]
-        },
-        "caesar_yt_sync": {
-            "tools": {
-                "caesar_yt_sync": {
-                    "bottle": "caesar_yt_sync",
-                    "executable": "yt_sync"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
-                }
-            ]
+            ],
+            "params": {
+                "type": "msvc",
+                "match_root": "MSVC",
+                "werror_mode": "compiler_specific",
+                "c_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:1093314933)/bin/wine64 -v140 c $WINE_ENV ${ARCADIA_ROOT} ${ARCADIA_BUILD_ROOT} $(MSVC)/bin/Hostx64/arm/cl.exe",
+                "cxx_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:1093314933)/bin/wine64 -v140 cxx $WINE_ENV ${ARCADIA_ROOT} ${ARCADIA_BUILD_ROOT} $(MSVC)/bin/Hostx64/arm/cl.exe",
+                "cxx_std": "c++17",
+                "version": "2017",
+                "wine": "yes"
+            }
         },
         "msvc2019-i686": {
             "name": "msvc2019",
@@ -782,7 +658,7 @@
                 "werror_mode": "compiler_specific",
                 "c_compiler": "$(MSVC)/bin/Hostx64/x86/cl.exe",
                 "cxx_compiler": "$(MSVC)/bin/Hostx64/x86/cl.exe",
-                "cxx_std": "c++latest",
+                "cxx_std": "c++17",
                 "version": "2019"
             }
         },
@@ -812,9 +688,8 @@
                 "werror_mode": "compiler_specific",
                 "c_compiler": "$(MSVC)/bin/Hostx64/x64/cl.exe",
                 "cxx_compiler": "$(MSVC)/bin/Hostx64/x64/cl.exe",
-                "cxx_std": "c++latest",
-                "version": "2019",
-                "for_ide": "msvs2019"
+                "cxx_std": "c++17",
+                "version": "2019"
             }
         },
         "msvc2019-arm": {
@@ -847,7 +722,7 @@
                 "werror_mode": "compiler_specific",
                 "c_compiler": "$(MSVC)/bin/Hostx64/arm/cl.exe",
                 "cxx_compiler": "$(MSVC)/bin/Hostx64/arm/cl.exe",
-                "cxx_std": "c++latest",
+                "cxx_std": "c++17",
                 "version": "2019"
             }
         },
@@ -881,7 +756,7 @@
                 "werror_mode": "compiler_specific",
                 "c_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:1093314933)/bin/wine64 -v140 c $WINE_ENV ${ARCADIA_ROOT} ${ARCADIA_BUILD_ROOT} $(MSVC)/bin/Hostx64/x86/cl.exe",
                 "cxx_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:1093314933)/bin/wine64 -v140 cxx $WINE_ENV ${ARCADIA_ROOT} ${ARCADIA_BUILD_ROOT} $(MSVC)/bin/Hostx64/x86/cl.exe",
-                "cxx_std": "c++latest",
+                "cxx_std": "c++17",
                 "version": "2019",
                 "wine": "yes"
             }
@@ -915,7 +790,7 @@
                 "werror_mode": "compiler_specific",
                 "c_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:1093314933)/bin/wine64 -v140 c $WINE_ENV ${ARCADIA_ROOT} ${ARCADIA_BUILD_ROOT} $(MSVC)/bin/Hostx64/x64/cl.exe",
                 "cxx_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:1093314933)/bin/wine64 -v140 cxx $WINE_ENV ${ARCADIA_ROOT} ${ARCADIA_BUILD_ROOT} $(MSVC)/bin/Hostx64/x64/cl.exe",
-                "cxx_std": "c++latest",
+                "cxx_std": "c++17",
                 "version": "2019",
                 "wine": "yes"
             }
@@ -950,77 +825,10 @@
                 "werror_mode": "compiler_specific",
                 "c_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:1093314933)/bin/wine64 -v140 c $WINE_ENV ${ARCADIA_ROOT} ${ARCADIA_BUILD_ROOT} $(MSVC)/bin/Hostx64/arm/cl.exe",
                 "cxx_compiler": "${YMAKE_PYTHON} ${input:\"build/scripts/run_msvc_wine.py\"} $(WINE_TOOL-sbr:1093314933)/bin/wine64 -v140 cxx $WINE_ENV ${ARCADIA_ROOT} ${ARCADIA_BUILD_ROOT} $(MSVC)/bin/Hostx64/arm/cl.exe",
-                "cxx_std": "c++latest",
+                "cxx_std": "c++17",
                 "version": "2019",
                 "wine": "yes"
             }
-        },
-        "clang-format": {
-            "tools": {
-                "clang-format": {
-                    "bottle": "clang-format",
-                    "executable": "clang-format"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "WIN"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "default": true
-                }
-            ]
-        },
-        "clang-tidy": {
-            "tools": {
-                "clang-tidy": {
-                    "bottle": "clang-tidy",
-                    "executable": "clang-tidy"
-                },
-                "clang-apply-replacements": {
-                    "bottle": "clang-tidy",
-                    "executable": "clang-apply-replacements"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "WIN"
-                    },
-                    "default": true
-                }
-            ]
         },
         "ymake": {
             "tools": {
@@ -1038,6 +846,12 @@
                 },
                 {
                     "host": {
+                        "os": "FREEBSD"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
                         "os": "WIN"
                     },
                     "default": true
@@ -1045,13 +859,6 @@
                 {
                     "host": {
                         "os": "DARWIN"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
                     },
                     "default": true
                 },
@@ -1082,6 +889,12 @@
                 {
                     "host": {
                         "os": "LINUX"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
+                        "os": "FREEBSD"
                     },
                     "default": true
                 },
@@ -1234,13 +1047,6 @@
                 },
                 {
                     "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
                         "os": "WIN"
                     },
                     "default": true
@@ -1375,6 +1181,69 @@
                 }
             ]
         },
+        "golangci-lint": {
+            "tools": {
+                "golangci-lint": {
+                    "bottle": "golangci-lint",
+                    "executable": "golangci-lint"
+                }
+            },
+            "platforms": [
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "default": true
+                }
+            ]
+        },
+        "hg": {
+            "tools": {
+                "hg": {
+                    "bottle": "hg",
+                    "executable": "hg"
+                }
+            },
+            "platforms": [
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
+                        "os": "FREEBSD"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
+                        "os": "WIN"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
+                        "os": "LINUX",
+                        "arch": "aarch64"
+                    },
+                    "default": true
+                }
+            ]
+        },
         "gcc82": {
             "tools": {
                 "cc": {
@@ -1430,48 +1299,772 @@
                 }
             }
         },
-        "clang12-windows": {
-            "name": "clang12",
+        "gcc8": {
+            "tools": {
+                "cc": {
+                    "bottle": "gcc82",
+                    "executable": "cc"
+                },
+                "c++": {
+                    "bottle": "gcc82",
+                    "executable": "c++"
+                },
+                "gcov": {
+                    "bottle": "gcc82",
+                    "executable": "gcov"
+                },
+                "c++filt": {
+                    "bottle": "gcc82",
+                    "executable": "c++filt"
+                },
+                "nm": {
+                    "bottle": "gcc82",
+                    "executable": "nm"
+                },
+                "strip": {
+                    "bottle": "gcc82",
+                    "executable": "strip"
+                }
+            },
+            "platforms": [
+                {
+                    "host": {
+                        "os": "LINUX"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    }
+                }
+            ],
+            "params": {
+                "type": "gnu",
+                "match_root": "GCC",
+                "werror_mode": "compiler_specific",
+                "c_compiler": "$(GCC)/gcc/bin/gcc",
+                "cxx_compiler": "$(GCC)/gcc/bin/g++",
+                "cxx_std": "c++17",
+                "gcc_version": "8.2.0",
+                "arch_opt": [
+                    "-w"
+                ],
+                "dwarf_tool": {
+                    "DARWIN": "dsymutil -f"
+                }
+            }
+        },
+        "clang5": {
+            "tools": {
+                "cc": {
+                    "bottle": "clang50",
+                    "executable": "cc"
+                },
+                "c++": {
+                    "bottle": "clang50",
+                    "executable": "c++"
+                },
+                "gcov": {
+                    "bottle": "clang50",
+                    "executable": "gcov"
+                },
+                "c++filt": {
+                    "bottle": "clang50",
+                    "executable": "c++filt"
+                },
+                "llvm-symbolizer": {
+                    "bottle": "clang50",
+                    "executable": "llvm-symbolizer"
+                },
+                "llvm-cov": {
+                    "bottle": "clang50",
+                    "executable": "llvm-cov"
+                },
+                "nm": {
+                    "bottle": "clang50",
+                    "executable": "nm"
+                },
+                "strip": {
+                    "bottle": "clang50",
+                    "executable": "strip"
+                }
+            },
+            "platforms": [
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "x86_64"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "aarch64"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "ppc64le"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "DARWIN",
+                        "arch": "x86_64"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "i386"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "x86_64"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "armv7"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "arm64"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "x86_64"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "DARWIN",
+                        "arch": "x86_64"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "i386"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "x86_64"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "armv7"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "arm64"
+                    }
+                }
+            ],
+            "params": {
+                "type": "clang",
+                "match_root": "CLANG",
+                "werror_mode": "all",
+                "c_compiler": "$(CLANG)/bin/clang",
+                "cxx_compiler": "$(CLANG)/bin/clang++",
+                "llvm-symbolizer": "$(CLANG)/bin/llvm-symbolizer",
+                "gcc_version": "5.0"
+            }
+        },
+        "clang50": {
+            "tools": {
+                "cc": {
+                    "bottle": "clang50",
+                    "executable": "cc"
+                },
+                "c++": {
+                    "bottle": "clang50",
+                    "executable": "c++"
+                },
+                "gcov": {
+                    "bottle": "clang50",
+                    "executable": "gcov"
+                },
+                "c++filt": {
+                    "bottle": "clang50",
+                    "executable": "c++filt"
+                },
+                "llvm-symbolizer": {
+                    "bottle": "clang50",
+                    "executable": "llvm-symbolizer"
+                },
+                "llvm-cov": {
+                    "bottle": "clang50",
+                    "executable": "llvm-cov"
+                },
+                "nm": {
+                    "bottle": "clang50",
+                    "executable": "nm"
+                },
+                "strip": {
+                    "bottle": "clang50",
+                    "executable": "strip"
+                }
+            },
+            "platforms": [
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "x86_64"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "aarch64"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "ppc64le"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "DARWIN",
+                        "arch": "x86_64"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "i386"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "x86_64"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "armv7"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "arm64"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "x86_64"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "DARWIN",
+                        "arch": "x86_64"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "i386"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "x86_64"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "armv7"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "arm64"
+                    }
+                }
+            ],
+            "params": {
+                "type": "clang",
+                "match_root": "CLANG",
+                "werror_mode": "all",
+                "c_compiler": "$(CLANG)/bin/clang",
+                "cxx_compiler": "$(CLANG)/bin/clang++",
+                "cxx_std": "c++17",
+                "llvm-symbolizer": "$(CLANG)/bin/llvm-symbolizer",
+                "gcc_version": "5.0"
+            }
+        },
+        "clang7": {
             "tools": {
                 "c++": {
-                    "bottle": "clang12",
+                    "bottle": "clang7",
                     "executable": "c++"
                 },
                 "c++filt": {
-                    "bottle": "clang12",
+                    "bottle": "clang7",
                     "executable": "c++filt"
                 },
                 "cc": {
-                    "bottle": "clang12",
+                    "bottle": "clang7",
                     "executable": "cc"
                 },
+                "clang-format": {
+                    "bottle": "clang7",
+                    "executable": "clang-format"
+                },
+                "clang-tidy": {
+                    "bottle": "clang7",
+                    "executable": "clang-tidy"
+                },
                 "gcov": {
-                    "bottle": "clang12",
-                    "executable": "llvm-gcov"
+                    "bottle": "clang7",
+                    "executable": "gcov"
                 },
                 "llvm-cov": {
-                    "bottle": "clang12",
+                    "bottle": "clang7",
                     "executable": "llvm-cov"
                 },
                 "llvm-profdata": {
-                    "bottle": "clang12",
+                    "bottle": "clang7",
                     "executable": "llvm-profdata"
                 },
                 "llvm-symbolizer": {
-                    "bottle": "clang12",
+                    "bottle": "clang7",
                     "executable": "llvm-symbolizer"
                 },
                 "nm": {
-                    "bottle": "clang12",
+                    "bottle": "clang7",
                     "executable": "llvm-nm"
                 },
                 "strip": {
-                    "bottle": "clang12",
+                    "bottle": "clang7",
                     "executable": "llvm-strip"
                 },
                 "objcopy": {
-                    "bottle": "clang12",
+                    "bottle": "clang7",
                     "executable": "llvm-objcopy"
+                }
+            },
+            "platforms": [
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "aarch64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "ppc64le"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "power9le"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "DARWIN",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "i386"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "armv7"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "arm64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "YOCTO",
+                        "arch": "armv7a"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "aarch64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "ppc64le"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "power9le"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "DARWIN",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "i386"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "armv7"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "arm64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "armv7ahf_cortex_a35"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "armv7ahf_cortex_a53"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "armv8a_cortex_a35"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "armv8a_cortex_a53"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX",
+                        "arch": "ppc64le"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "ppc64le"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX",
+                        "arch": "ppc64le"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "power9le"
+                    },
+                    "default": false
+                }
+            ],
+            "params": {
+                "type": "clang",
+                "match_root": "CLANG",
+                "werror_mode": "all",
+                "c_compiler": "$(CLANG)/bin/clang",
+                "cxx_compiler": "$(CLANG)/bin/clang++",
+                "cxx_std": "c++17",
+                "llvm-symbolizer": "$(CLANG)/bin/llvm-symbolizer",
+                "objcopy": "$(CLANG)/bin/llvm-objcopy",
+                "strip": "$(CLANG)/bin/llvm-strip",
+                "gcc_version": "7.0"
+            }
+        },
+        "clang7-windows": {
+            "name": "clang7",
+            "tools": {
+                "c++": {
+                    "bottle": "clang7-windows",
+                    "executable": "c++"
+                },
+                "c++filt": {
+                    "bottle": "clang7-windows",
+                    "executable": "c++filt"
+                },
+                "cc": {
+                    "bottle": "clang7-windows",
+                    "executable": "cc"
+                },
+                "clang-format": {
+                    "bottle": "clang7-windows",
+                    "executable": "clang-format"
+                },
+                "clang-tidy": {
+                    "bottle": "clang7-windows",
+                    "executable": "clang-tidy"
+                },
+                "gcov": {
+                    "bottle": "clang7-windows",
+                    "executable": "gcov"
+                },
+                "llvm-cov": {
+                    "bottle": "clang7-windows",
+                    "executable": "llvm-cov"
+                },
+                "llvm-profdata": {
+                    "bottle": "clang7-windows",
+                    "executable": "llvm-profdata"
+                },
+                "llvm-symbolizer": {
+                    "bottle": "clang7-windows",
+                    "executable": "llvm-symbolizer"
+                },
+                "nm": {
+                    "bottle": "clang7-windows",
+                    "executable": "nm"
+                },
+                "strip": {
+                    "bottle": "clang7-windows",
+                    "executable": "strip"
                 }
             },
             "platforms": [
@@ -1487,17 +2080,80 @@
                 },
                 {
                     "host": {
-                        "os": "LINUX"
+                        "os": "WIN"
                     },
                     "target": {
                         "os": "WIN",
-                        "arch": "i686"
+                        "arch": "x86_64"
                     },
                     "default": false
+                }
+            ],
+            "params": {
+                "type": "msvc",
+                "use_clang": true,
+                "match_root": "CLANG",
+                "werror_mode": "all",
+                "c_compiler": "$(CLANG)/bin/clang-cl",
+                "cxx_compiler": "$(CLANG)/bin/clang-cl",
+                "cxx_std": "c++17",
+                "llvm-symbolizer": "$(CLANG)/bin/llvm-symbolizer",
+                "wine": "yes",
+                "version": "2017"
+            }
+        },
+        "clang11-windows": {
+            "name": "clang11",
+            "tools": {
+                "c++": {
+                    "bottle": "clang11-windows",
+                    "executable": "c++"
                 },
+                "c++filt": {
+                    "bottle": "clang11-windows",
+                    "executable": "c++filt"
+                },
+                "cc": {
+                    "bottle": "clang11-windows",
+                    "executable": "cc"
+                },
+                "clang-format": {
+                    "bottle": "clang11-windows",
+                    "executable": "clang-format"
+                },
+                "clang-tidy": {
+                    "bottle": "clang11-windows",
+                    "executable": "clang-tidy"
+                },
+                "gcov": {
+                    "bottle": "clang11-windows",
+                    "executable": "gcov"
+                },
+                "llvm-cov": {
+                    "bottle": "clang11-windows",
+                    "executable": "llvm-cov"
+                },
+                "llvm-profdata": {
+                    "bottle": "clang11-windows",
+                    "executable": "llvm-profdata"
+                },
+                "llvm-symbolizer": {
+                    "bottle": "clang11-windows",
+                    "executable": "llvm-symbolizer"
+                },
+                "nm": {
+                    "bottle": "clang11-windows",
+                    "executable": "nm"
+                },
+                "strip": {
+                    "bottle": "clang11-windows",
+                    "executable": "strip"
+                }
+            },
+            "platforms": [
                 {
                     "host": {
-                        "os": "WIN"
+                        "os": "LINUX"
                     },
                     "target": {
                         "os": "WIN",
@@ -1511,7 +2167,7 @@
                     },
                     "target": {
                         "os": "WIN",
-                        "arch": "i686"
+                        "arch": "x86_64"
                     },
                     "default": false
                 }
@@ -1529,50 +2185,564 @@
                 "version": "2019"
             }
         },
-        "clang12": {
+        "clang8": {
             "tools": {
                 "c++": {
-                    "bottle": "clang12",
+                    "bottle": "clang8",
                     "executable": "c++"
                 },
                 "c++filt": {
-                    "bottle": "clang12",
+                    "bottle": "clang8",
                     "executable": "c++filt"
                 },
                 "cc": {
-                    "bottle": "clang12",
+                    "bottle": "clang8",
                     "executable": "cc"
                 },
-                "clang-rename": {
-                    "bottle": "clang12",
-                    "executable": "clang-rename"
+                "clang-format": {
+                    "bottle": "clang8",
+                    "executable": "clang-format"
+                },
+                "clang-tidy": {
+                    "bottle": "clang8",
+                    "executable": "clang-tidy"
                 },
                 "gcov": {
-                    "bottle": "clang12",
-                    "executable": "llvm-gcov"
+                    "bottle": "clang8",
+                    "executable": "gcov"
                 },
                 "llvm-cov": {
-                    "bottle": "clang12",
+                    "bottle": "clang8",
                     "executable": "llvm-cov"
                 },
                 "llvm-profdata": {
-                    "bottle": "clang12",
+                    "bottle": "clang8",
                     "executable": "llvm-profdata"
                 },
                 "llvm-symbolizer": {
-                    "bottle": "clang12",
+                    "bottle": "clang8",
                     "executable": "llvm-symbolizer"
                 },
                 "nm": {
-                    "bottle": "clang12",
+                    "bottle": "clang8",
                     "executable": "llvm-nm"
                 },
                 "strip": {
-                    "bottle": "clang12",
+                    "bottle": "clang8",
+                    "executable": "llvm-strip"
+                }
+            },
+            "platforms": [
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "aarch64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "ppc64le"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "DARWIN",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "i386"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "armv7"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "arm64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "aarch64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "ppc64le"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "DARWIN",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "i386"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "armv7"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "arm64"
+                    },
+                    "default": false
+                }
+            ],
+            "params": {
+                "type": "clang",
+                "match_root": "CLANG",
+                "werror_mode": "all",
+                "c_compiler": "$(CLANG)/bin/clang",
+                "cxx_compiler": "$(CLANG)/bin/clang++",
+                "cxx_std": "c++17",
+                "llvm-symbolizer": "$(CLANG)/bin/llvm-symbolizer",
+                "objcopy": "$(CLANG)/bin/llvm-objcopy",
+                "strip": "$(CLANG)/bin/llvm-strip",
+                "gcc_version": "8.0"
+            }
+        },
+        "clang10": {
+            "tools": {
+                "c++": {
+                    "bottle": "clang10",
+                    "executable": "c++"
+                },
+                "cc": {
+                    "bottle": "clang10",
+                    "executable": "cc"
+                },
+                "llvm-cov": {
+                    "bottle": "clang10",
+                    "executable": "llvm-cov"
+                },
+                "llvm-profdata": {
+                    "bottle": "clang10",
+                    "executable": "llvm-profdata"
+                },
+                "llvm-symbolizer": {
+                    "bottle": "clang10",
+                    "executable": "llvm-symbolizer"
+                },
+                "nm": {
+                    "bottle": "clang10",
+                    "executable": "llvm-nm"
+                },
+                "strip": {
+                    "bottle": "clang10",
                     "executable": "llvm-strip"
                 },
                 "objcopy": {
-                    "bottle": "clang12",
+                    "bottle": "clang10",
+                    "executable": "llvm-objcopy"
+                }
+            },
+            "platforms": [
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "aarch64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "ppc64le"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "power9le"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "DARWIN",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "i386"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "armv7"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "arm64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "YOCTO",
+                        "arch": "armv7a"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "aarch64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "ppc64le"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "power9le"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "DARWIN",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "i386"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "armv7"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "IOS",
+                        "arch": "arm64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "armv7ahf_cortex_a35"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "armv7ahf_cortex_a53"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "armv8a_cortex_a35"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "LINUX",
+                        "arch": "armv8a_cortex_a53"
+                    },
+                    "default": false
+                }
+            ],
+            "params": {
+                "type": "clang",
+                "match_root": "CLANG",
+                "werror_mode": "all",
+                "c_compiler": "$(CLANG)/bin/clang",
+                "cxx_compiler": "$(CLANG)/bin/clang++",
+                "cxx_std": "c++17",
+                "llvm-symbolizer": "$(CLANG)/bin/llvm-symbolizer",
+                "objcopy": "$(CLANG)/bin/llvm-objcopy",
+                "strip": "$(CLANG)/bin/llvm-strip",
+                "gcc_version": "10.0"
+            }
+        },
+        "clang11": {
+            "tools": {
+                "c++": {
+                    "bottle": "clang11",
+                    "executable": "c++"
+                },
+                "c++filt": {
+                    "bottle": "clang11",
+                    "executable": "c++filt"
+                },
+                "cc": {
+                    "bottle": "clang11",
+                    "executable": "cc"
+                },
+                "clang-apply-replacements": {
+                    "bottle": "clang11",
+                    "executable": "clang-apply-replacements"
+                },
+                "clang-format": {
+                    "bottle": "clang11",
+                    "executable": "clang-format"
+                },
+                "clang-rename": {
+                    "bottle": "clang11",
+                    "executable": "clang-rename"
+                },
+                "clang-tidy": {
+                    "bottle": "clang11",
+                    "executable": "clang-tidy"
+                },
+                "gcov": {
+                    "bottle": "clang11",
+                    "executable": "llvm-gcov"
+                },
+                "llvm-cov": {
+                    "bottle": "clang11",
+                    "executable": "llvm-cov"
+                },
+                "llvm-profdata": {
+                    "bottle": "clang11",
+                    "executable": "llvm-profdata"
+                },
+                "llvm-symbolizer": {
+                    "bottle": "clang11",
+                    "executable": "llvm-symbolizer"
+                },
+                "nm": {
+                    "bottle": "clang11",
+                    "executable": "llvm-nm"
+                },
+                "strip": {
+                    "bottle": "clang11",
+                    "executable": "llvm-strip"
+                },
+                "objcopy": {
+                    "bottle": "clang11",
                     "executable": "llvm-objcopy"
                 }
             },
@@ -1624,16 +2794,6 @@
                     "target": {
                         "os": "DARWIN",
                         "arch": "x86_64"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "target": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
                     },
                     "default": true
                 },
@@ -1742,16 +2902,6 @@
                         "os": "DARWIN"
                     },
                     "target": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "target": {
                         "os": "IOS",
                         "arch": "i386"
                     },
@@ -1784,126 +2934,6 @@
                     "target": {
                         "os": "IOS",
                         "arch": "arm64"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "target": {
-                        "os": "LINUX",
-                        "arch": "x86_64"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "target": {
-                        "os": "LINUX",
-                        "arch": "aarch64"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "target": {
-                        "os": "LINUX",
-                        "arch": "ppc64le"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "target": {
-                        "os": "LINUX",
-                        "arch": "power9le"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "target": {
-                        "os": "DARWIN",
-                        "arch": "x86_64"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "target": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "target": {
-                        "os": "IOS",
-                        "arch": "i386"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "target": {
-                        "os": "IOS",
-                        "arch": "x86_64"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "target": {
-                        "os": "IOS",
-                        "arch": "armv7"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "target": {
-                        "os": "IOS",
-                        "arch": "arm64"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "target": {
-                        "os": "LINUX",
-                        "arch": "armv7a_cortex_a9"
                     },
                     "default": true
                 },
@@ -1979,65 +3009,7 @@
                 "llvm-symbolizer": "$(CLANG)/bin/llvm-symbolizer",
                 "objcopy": "$(CLANG)/bin/llvm-objcopy",
                 "strip": "$(CLANG)/bin/llvm-strip",
-                "gcc_version": "12.0"
-            }
-        },
-        "local": {
-            "tools": {
-                "c++": {
-                    "executable": "c++"
-                },
-                "cc": {
-                    "executable": "cc"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "target": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "default": false
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "target": {
-                        "os": "DARWIN",
-                        "arch": "x86_64"
-                    },
-                    "default": false
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "target": {
-                        "os": "IOS",
-                        "arch": "x86_64"
-                    },
-                    "default": false
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "target": {
-                        "os": "IOS",
-                        "arch": "arm64"
-                    },
-                    "default": false
-                }
-            ],
-            "params": {
-                "type": "xcode",
-                "local": true,
-                "werror_mode": "all",
-                "gcc_version": "13.1"
+                "gcc_version": "11.0"
             }
         },
         "xcode_11_1": {
@@ -2120,7 +3092,7 @@
                 }
             ],
             "params": {
-                "type": "xcode",
+                "type": "clang",
                 "match_root": "CLANG",
                 "werror_mode": "all",
                 "c_compiler": "$(CLANG)/usr/bin/clang",
@@ -2213,7 +3185,7 @@
                 }
             ],
             "params": {
-                "type": "xcode",
+                "type": "clang",
                 "match_root": "CLANG",
                 "werror_mode": "all",
                 "c_compiler": "$(CLANG)/usr/bin/clang",
@@ -2227,40 +3199,121 @@
                 }
             }
         },
-        "xcode_12_5": {
+        "android-ndk-r21": {
+            "name": "clang9",
             "tools": {
-                "c++": {
-                    "bottle": "xcode_12_5",
-                    "executable": "c++"
-                },
                 "cc": {
-                    "bottle": "xcode_12_5",
+                    "bottle": "android-ndk-r21b",
                     "executable": "cc"
                 },
+                "c++": {
+                    "bottle": "android-ndk-r21b",
+                    "executable": "c++"
+                },
+                "gcov": {
+                    "bottle": "android-ndk-r21b",
+                    "executable": "llvm-cov"
+                },
+                "strip": {
+                    "bottle": "android-ndk-r21b",
+                    "executable": "strip"
+                },
+                "objcopy": {
+                    "bottle": "android-ndk-r21b",
+                    "executable": "objcopy"
+                },
+                "nm": {
+                    "bottle": "android-ndk-r21b",
+                    "executable": "nm"
+                },
+                "clang-format": {
+                    "bottle": "android-ndk-r21b",
+                    "executable": "clang-format"
+                },
+                "clang-tidy": {
+                    "bottle": "android-ndk-r21b",
+                    "executable": "clang-tidy"
+                },
                 "llvm-cov": {
-                    "bottle": "xcode_12_5",
+                    "bottle": "android-ndk-r21b",
                     "executable": "llvm-cov"
                 },
                 "llvm-profdata": {
-                    "bottle": "xcode_12_5",
+                    "bottle": "android-ndk-r21b",
                     "executable": "llvm-profdata"
                 },
-                "nm": {
-                    "bottle": "xcode_12_5",
-                    "executable": "llvm-nm"
-                },
-                "strip": {
-                    "bottle": "xcode_12_5",
-                    "executable": "strip"
+                "llvm-symbolizer": {
+                    "bottle": "android-ndk-r21b",
+                    "executable": "llvm-symbolizer"
                 }
             },
             "platforms": [
                 {
                     "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "ANDROID",
+                        "arch": "i686"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "ANDROID",
+                        "arch": "x86_64"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "ANDROID",
+                        "arch": "armv7a"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "ANDROID",
+                        "arch": "armv7a_neon"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "target": {
+                        "os": "ANDROID",
+                        "arch": "armv8a"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
                         "os": "DARWIN"
                     },
                     "target": {
-                        "os": "DARWIN",
+                        "os": "ANDROID",
+                        "arch": "i686"
+                    },
+                    "default": false
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "target": {
+                        "os": "ANDROID",
                         "arch": "x86_64"
                     },
                     "default": false
@@ -2270,8 +3323,8 @@
                         "os": "DARWIN"
                     },
                     "target": {
-                        "os": "IOS",
-                        "arch": "i386"
+                        "os": "ANDROID",
+                        "arch": "armv7a"
                     },
                     "default": false
                 },
@@ -2280,8 +3333,8 @@
                         "os": "DARWIN"
                     },
                     "target": {
-                        "os": "IOS",
-                        "arch": "x86_64"
+                        "os": "ANDROID",
+                        "arch": "armv7a_neon"
                     },
                     "default": false
                 },
@@ -2290,84 +3343,73 @@
                         "os": "DARWIN"
                     },
                     "target": {
-                        "os": "IOS",
-                        "arch": "armv7"
-                    },
-                    "default": false
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "target": {
-                        "os": "IOS",
-                        "arch": "arm64"
-                    },
-                    "default": false
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "target": {
-                        "os": "IOSSIM",
-                        "arch": "arm64"
+                        "os": "ANDROID",
+                        "arch": "armv8a"
                     },
                     "default": false
                 }
             ],
             "params": {
-                "type": "xcode",
-                "match_root": "CLANG",
-                "werror_mode": "all",
-                "c_compiler": "$(CLANG)/usr/bin/clang",
-                "cxx_compiler": "$(CLANG)/usr/bin/clang++",
+                "type": "clang",
+                "match_root": "NDK",
+                "ar": "$(NDK)/llvm-toolchain/bin/llvm-ar",
+                "c_compiler": "$(NDK)/llvm-toolchain/bin/clang",
+                "cxx_compiler": "$(NDK)/llvm-toolchain/bin/clang++",
                 "cxx_std": "c++17",
-                "ar": "$(CLANG)/usr/bin/libtool",
-                "inplace_tools": true,
-                "gcc_version": "8.0",
-                "dwarf_tool": {
-                    "DARWIN": "$(CLANG)/usr/bin/dsymutil -flat"
-                }
+                "objcopy": "$(NDK)/llvm-toolchain/bin/llvm-objcopy",
+                "strip": "$(NDK)/llvm-toolchain/bin/llvm-strip",
+                "werror_mode": "all",
+                "gcc_version": "9.0",
+                "target_opt": [
+                    "-DANDROID_FAKEID=android_r21b"
+                ]
             }
         },
-        "android-ndk-r23": {
-            "name": "clang12",
+        "android-ndk-r22": {
+            "name": "clang11",
             "tools": {
                 "cc": {
-                    "bottle": "android-ndk-r23",
+                    "bottle": "android-ndk-r22",
                     "executable": "cc"
                 },
                 "c++": {
-                    "bottle": "android-ndk-r23",
+                    "bottle": "android-ndk-r22",
                     "executable": "c++"
                 },
                 "gcov": {
-                    "bottle": "android-ndk-r23",
+                    "bottle": "android-ndk-r22",
                     "executable": "llvm-cov"
                 },
                 "strip": {
-                    "bottle": "android-ndk-r23",
+                    "bottle": "android-ndk-r22",
                     "executable": "strip"
                 },
                 "objcopy": {
-                    "bottle": "android-ndk-r23",
+                    "bottle": "android-ndk-r22",
                     "executable": "objcopy"
                 },
                 "nm": {
-                    "bottle": "android-ndk-r23",
+                    "bottle": "android-ndk-r22",
                     "executable": "nm"
                 },
+                "clang-format": {
+                    "bottle": "android-ndk-r22",
+                    "executable": "clang-format"
+                },
+                "clang-tidy": {
+                    "bottle": "android-ndk-r22",
+                    "executable": "clang-tidy"
+                },
                 "llvm-cov": {
-                    "bottle": "android-ndk-r23",
+                    "bottle": "android-ndk-r22",
                     "executable": "llvm-cov"
                 },
                 "llvm-profdata": {
-                    "bottle": "android-ndk-r23",
+                    "bottle": "android-ndk-r22",
                     "executable": "llvm-profdata"
                 },
                 "llvm-symbolizer": {
-                    "bottle": "android-ndk-r23",
+                    "bottle": "android-ndk-r22",
                     "executable": "llvm-symbolizer"
                 }
             },
@@ -2479,156 +3521,11 @@
                 "ar": "$(NDK)/llvm-toolchain/bin/llvm-ar",
                 "c_compiler": "$(NDK)/llvm-toolchain/bin/clang",
                 "cxx_compiler": "$(NDK)/llvm-toolchain/bin/clang++",
+                "cxx_std": "c++17",
                 "objcopy": "$(NDK)/llvm-toolchain/bin/llvm-objcopy",
                 "strip": "$(NDK)/llvm-toolchain/bin/llvm-strip",
                 "werror_mode": "all",
-                "gcc_version": "12.0",
-                "android_ndk_version": 23
-            }
-        },
-        "android-ndk-r24": {
-            "name": "clang13",
-            "tools": {
-                "cc": {
-                    "bottle": "android-ndk-r24",
-                    "executable": "cc"
-                },
-                "c++": {
-                    "bottle": "android-ndk-r24",
-                    "executable": "c++"
-                },
-                "gcov": {
-                    "bottle": "android-ndk-r24",
-                    "executable": "llvm-cov"
-                },
-                "strip": {
-                    "bottle": "android-ndk-r24",
-                    "executable": "strip"
-                },
-                "objcopy": {
-                    "bottle": "android-ndk-r24",
-                    "executable": "objcopy"
-                },
-                "nm": {
-                    "bottle": "android-ndk-r24",
-                    "executable": "nm"
-                },
-                "llvm-cov": {
-                    "bottle": "android-ndk-r24",
-                    "executable": "llvm-cov"
-                },
-                "llvm-profdata": {
-                    "bottle": "android-ndk-r24",
-                    "executable": "llvm-profdata"
-                },
-                "llvm-symbolizer": {
-                    "bottle": "android-ndk-r24",
-                    "executable": "llvm-symbolizer"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "target": {
-                        "os": "ANDROID",
-                        "arch": "i686"
-                    }
-                },
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "target": {
-                        "os": "ANDROID",
-                        "arch": "x86_64"
-                    }
-                },
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "target": {
-                        "os": "ANDROID",
-                        "arch": "armv7a"
-                    }
-                },
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "target": {
-                        "os": "ANDROID",
-                        "arch": "armv7a_neon"
-                    }
-                },
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "target": {
-                        "os": "ANDROID",
-                        "arch": "armv8a"
-                    }
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "target": {
-                        "os": "ANDROID",
-                        "arch": "i686"
-                    }
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "target": {
-                        "os": "ANDROID",
-                        "arch": "x86_64"
-                    }
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "target": {
-                        "os": "ANDROID",
-                        "arch": "armv7a"
-                    }
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "target": {
-                        "os": "ANDROID",
-                        "arch": "armv7a_neon"
-                    }
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "target": {
-                        "os": "ANDROID",
-                        "arch": "armv8a"
-                    }
-                }
-            ],
-            "params": {
-                "type": "clang",
-                "match_root": "NDK",
-                "ar": "$(NDK)/llvm-toolchain/bin/llvm-ar",
-                "c_compiler": "$(NDK)/llvm-toolchain/bin/clang",
-                "cxx_compiler": "$(NDK)/llvm-toolchain/bin/clang++",
-                "objcopy": "$(NDK)/llvm-toolchain/bin/llvm-objcopy",
-                "strip": "$(NDK)/llvm-toolchain/bin/llvm-strip",
-                "werror_mode": "all",
-                "gcc_version": "13.0",
-                "android_ndk_version": 24
+                "gcc_version": "11.0"
             }
         },
         "bloat": {
@@ -2636,28 +3533,6 @@
                 "bloat": {
                     "bottle": "bloat",
                     "executable": "bloat"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
-                }
-            ]
-        },
-        "pprof": {
-            "tools": {
-                "pprof": {
-                    "bottle": "pprof",
-                    "executable": "pprof"
                 }
             },
             "platforms": [
@@ -2707,6 +3582,12 @@
                 },
                 {
                     "host": {
+                        "os": "FREEBSD"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
                         "os": "WIN"
                     },
                     "default": true
@@ -2714,13 +3595,6 @@
                 {
                     "host": {
                         "os": "DARWIN"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
                     },
                     "default": true
                 },
@@ -2749,6 +3623,12 @@
                 {
                     "host": {
                         "os": "LINUX"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
+                        "os": "FREEBSD"
                     },
                     "default": true
                 },
@@ -2789,6 +3669,12 @@
                 },
                 {
                     "host": {
+                        "os": "FREEBSD"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
                         "os": "WIN"
                     },
                     "default": true
@@ -2796,13 +3682,6 @@
                 {
                     "host": {
                         "os": "DARWIN"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
                     },
                     "default": true
                 },
@@ -2838,6 +3717,12 @@
                 },
                 {
                     "host": {
+                        "os": "FREEBSD"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
                         "os": "WIN"
                     },
                     "default": true
@@ -2866,6 +3751,12 @@
                 },
                 {
                     "host": {
+                        "os": "FREEBSD"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
                         "os": "WIN"
                     },
                     "default": true
@@ -2882,22 +3773,6 @@
             "tools": {
                 "wine": {
                     "bottle": "wine",
-                    "executable": "wine"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                }
-            ]
-        },
-        "wine32": {
-            "tools": {
-                "wine32": {
-                    "bottle": "wine32",
                     "executable": "wine"
                 }
             },
@@ -3096,38 +3971,6 @@
                 }
             ]
         },
-        "cuda-check": {
-            "tools": {
-                "cuda-check": {
-                    "bottle": "cuda-check",
-                    "executable": "cuda-check"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                }
-            ]
-        },
-        "sre": {
-            "tools": {
-                "sre": {
-                    "bottle": "sre",
-                    "executable": "sre"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                }
-            ]
-        },
         "samogonctl": {
             "tools": {
                 "samogonctl": {
@@ -3169,6 +4012,12 @@
                 {
                     "host": {
                         "os": "LINUX"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
+                        "os": "FREEBSD"
                     },
                     "default": true
                 },
@@ -3294,46 +4143,112 @@
                 }
             ]
         },
-        "jdk17": {
+        "svn17": {
             "tools": {
-                "jar17": {
-                    "bottle": "jdk17",
-                    "executable": "jar"
+                "svn": {
+                    "bottle": "svn17",
+                    "executable": "svn"
                 },
-                "java17": {
-                    "bottle": "jdk17",
-                    "executable": "java"
+                "svnadmin": {
+                    "bottle": "svn17",
+                    "executable": "svnadmin"
                 },
-                "javac17": {
-                    "bottle": "jdk17",
-                    "executable": "javac"
+                "svnlook": {
+                    "bottle": "svn17",
+                    "executable": "svnlook"
+                },
+                "svnversion": {
+                    "bottle": "svn17",
+                    "executable": "svnversion"
                 }
             },
             "platforms": [
                 {
                     "host": {
                         "os": "LINUX"
-                    },
-                    "default": true
+                    }
+                },
+                {
+                    "host": {
+                        "os": "FREEBSD"
+                    }
                 },
                 {
                     "host": {
                         "os": "WIN"
-                    },
-                    "default": true
+                    }
                 },
                 {
                     "host": {
                         "os": "DARWIN"
-                    },
-                    "default": true
+                    }
+                }
+            ]
+        },
+        "svn18": {
+            "tools": {
+                "svn": {
+                    "bottle": "svn18",
+                    "executable": "svn"
+                },
+                "svnadmin": {
+                    "bottle": "svn18",
+                    "executable": "svnadmin"
+                },
+                "svnlook": {
+                    "bottle": "svn18",
+                    "executable": "svnlook"
+                },
+                "svnversion": {
+                    "bottle": "svn18",
+                    "executable": "svnversion"
+                }
+            },
+            "platforms": [
+                {
+                    "host": {
+                        "os": "LINUX"
+                    }
                 },
                 {
                     "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "default": true
+                        "os": "FREEBSD"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "WIN"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    }
+                }
+            ]
+        },
+        "svn19": {
+            "tools": {
+                "svn": {
+                    "bottle": "svn19",
+                    "executable": "svn"
+                }
+            },
+            "platforms": [
+                {
+                    "host": {
+                        "os": "LINUX"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "WIN"
+                    }
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    }
                 }
             ]
         },
@@ -3415,6 +4330,12 @@
                 },
                 {
                     "host": {
+                        "os": "FREEBSD"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
                         "os": "WIN"
                     },
                     "default": true
@@ -3460,6 +4381,12 @@
                 {
                     "host": {
                         "os": "LINUX"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
+                        "os": "FREEBSD"
                     },
                     "default": true
                 },
@@ -3520,28 +4447,6 @@
                 {
                     "host": {
                         "os": "LINUX"
-                    },
-                    "default": true
-                }
-            ]
-        },
-        "rtmr-deploy": {
-            "tools": {
-                "rtmr-deploy": {
-                    "bottle": "rtmr-deploy",
-                    "executable": "rtmr-deploy"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
                     },
                     "default": true
                 }
@@ -3726,7 +4631,7 @@
             },
             "env": {
                 "TERMINFO": [
-                    "$(ROOT)/share/terminfo"
+                    "$(ROOT)/lib/terminfo"
                 ]
             },
             "platforms": [
@@ -3810,28 +4715,6 @@
                 }
             ]
         },
-        "node-search": {
-            "tools": {
-                "node-search": {
-                    "bottle": "node-search",
-                    "executable": "node-search"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
-                }
-            ]
-        },
         "gpt": {
             "tools": {
                 "gpt_perf": {
@@ -3903,6 +4786,12 @@
                 },
                 {
                     "host": {
+                        "os": "FREEBSD"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
                         "os": "DARWIN"
                     },
                     "default": true
@@ -3961,6 +4850,12 @@
                 },
                 {
                     "host": {
+                        "os": "FREEBSD"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
                         "os": "WIN"
                     },
                     "default": true
@@ -3983,6 +4878,12 @@
                 {
                     "host": {
                         "os": "LINUX"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
+                        "os": "FREEBSD"
                     },
                     "default": true
                 },
@@ -4015,6 +4916,12 @@
                 },
                 {
                     "host": {
+                        "os": "FREEBSD"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
                         "os": "WIN"
                     },
                     "default": true
@@ -4042,6 +4949,12 @@
                 },
                 {
                     "host": {
+                        "os": "FREEBSD"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
                         "os": "WIN"
                     },
                     "default": true
@@ -4064,6 +4977,12 @@
                 {
                     "host": {
                         "os": "LINUX"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
+                        "os": "FREEBSD"
                     },
                     "default": true
                 },
@@ -4152,6 +5071,12 @@
                 },
                 {
                     "host": {
+                        "os": "FREEBSD"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
                         "os": "WIN"
                     },
                     "default": true
@@ -4174,6 +5099,12 @@
                 {
                     "host": {
                         "os": "LINUX"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
+                        "os": "FREEBSD"
                     },
                     "default": true
                 },
@@ -4245,13 +5176,6 @@
                         "os": "DARWIN"
                     },
                     "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "default": true
                 }
             ]
         },
@@ -4308,6 +5232,12 @@
                 },
                 {
                     "host": {
+                        "os": "FREEBSD"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
                         "os": "DARWIN"
                     },
                     "default": true
@@ -4324,6 +5254,12 @@
                 {
                     "host": {
                         "os": "LINUX"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
+                        "os": "FREEBSD"
                     },
                     "default": true
                 },
@@ -4479,13 +5415,6 @@
                 {
                     "host": {
                         "os": "DARWIN"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
                     },
                     "default": true
                 }
@@ -4697,50 +5626,6 @@
                 }
             ]
         },
-        "renderer": {
-            "tools": {
-                "renderer": {
-                    "bottle": "renderer",
-                    "executable": "renderer"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
-                }
-            ]
-        },
-        "appteka": {
-            "tools": {
-                "appteka": {
-                    "bottle": "appteka",
-                    "executable": "appteka"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
-                }
-            ]
-        },
         "news": {
             "tools": {
                 "news": {
@@ -4763,18 +5648,58 @@
                 }
             ]
         },
-        "golang_1_17_6": {
+        "golang_1_15_7": {
+            "tools": {
+                "golang_1.15.7": {
+                    "bottle": "golang_1.15.7",
+                    "executable": "golang_1.15.7"
+                },
+                "go_1.15.7": {
+                    "bottle": "golang_1.15.7",
+                    "executable": "go_1.15.7"
+                },
+                "gofmt_1.15.7": {
+                    "bottle": "golang_1.15.7",
+                    "executable": "gofmt_1.15.7"
+                }
+            },
+            "platforms": [
+                {
+                    "host": {
+                        "os": "LINUX"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
+                        "os": "DARWIN"
+                    },
+                    "default": true
+                },
+                {
+                    "host": {
+                        "os": "WIN"
+                    },
+                    "default": true
+                }
+            ],
+            "params": {
+                "type": "golang",
+                "version": "1.15.7"
+            }
+        },
+        "golang_1_15_8": {
             "tools": {
                 "golang": {
-                    "bottle": "golang_1.17.6",
+                    "bottle": "golang_1.15.8",
                     "executable": "golang"
                 },
                 "go": {
-                    "bottle": "golang_1.17.6",
+                    "bottle": "golang_1.15.8",
                     "executable": "go"
                 },
                 "gofmt": {
-                    "bottle": "golang_1.17.6",
+                    "bottle": "golang_1.15.8",
                     "executable": "gofmt"
                 }
             },
@@ -4793,13 +5718,6 @@
                 },
                 {
                     "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
                         "os": "WIN"
                     },
                     "default": true
@@ -4807,54 +5725,7 @@
             ],
             "params": {
                 "type": "golang",
-                "version": "1.17.6"
-            }
-        },
-        "golang_1_18beta1": {
-            "tools": {
-                "golang_1.18beta1": {
-                    "bottle": "golang_1.18beta1",
-                    "executable": "golang_1.18beta1"
-                },
-                "go_1.18beta1": {
-                    "bottle": "golang_1.18beta1",
-                    "executable": "go_1.18beta1"
-                },
-                "gofmt_1.18beta1": {
-                    "bottle": "golang_1.18beta1",
-                    "executable": "gofmt_1.18beta1"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "WIN"
-                    },
-                    "default": true
-                }
-            ],
-            "params": {
-                "type": "golang",
-                "version": "1.18beta1"
+                "version": "1.15.8"
             }
         },
         "godoc": {
@@ -4936,22 +5807,6 @@
                 {
                     "host": {
                         "os": "WIN"
-                    },
-                    "default": true
-                }
-            ]
-        },
-        "rtcdiag": {
-            "tools": {
-                "rtcdiag": {
-                    "bottle": "rtcdiag",
-                    "executable": "rtcdiag"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
                     },
                     "default": true
                 }
@@ -5044,7 +5899,7 @@
         "bpftrace": {
             "tools": {
                 "bpftrace": {
-                    "bottle": "sre",
+                    "bottle": "bpftrace",
                     "executable": "bpftrace"
                 }
             },
@@ -5327,50 +6182,6 @@
                 }
             ]
         },
-        "ktlint_bundle": {
-            "tools": {
-                "ktlint": {
-                    "bottle": "ktlint_bundle",
-                    "executable": "ktlint"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "WIN"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
-                }
-            ]
-        },
-        "devtools_license_analyzer_bundle": {
-            "tools": {
-                "license_analyzer": {
-                    "bottle": "devtools_license_analyzer_bundle",
-                    "executable": "license_analyzer"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                }
-            ]
-        },
         "ya_sed": {
             "tools": {
                 "ya_sed": {
@@ -5422,13 +6233,6 @@
                 {
                     "host": {
                         "os": "DARWIN"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN",
-                        "arch": "arm64"
                     },
                     "default": true
                 }
@@ -5528,28 +6332,6 @@
                 }
             ]
         },
-        "cs": {
-            "tools": {
-                "cs": {
-                    "bottle": "cs",
-                    "executable": "cs"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
-                }
-            ]
-        },
         "wall-e": {
             "tools": {
                 "wall-e": {
@@ -5571,109 +6353,23 @@
                     "default": true
                 }
             ]
-        },
-        "skotty": {
-            "tools": {
-                "skotty": {
-                    "bottle": "skotty",
-                    "executable": "launcher"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "WIN"
-                    },
-                    "default": true
-                }
-            ]
-        },
-        "gcc102-arm-none-eabi": {
-            "tools": {
-                "cc": {
-                    "bottle": "gcc102-arm-none-eabi",
-                    "executable": "cc"
-                },
-                "c++": {
-                    "bottle": "gcc102-arm-none-eabi",
-                    "executable": "c++"
-                },
-                "gcov": {
-                    "bottle": "gcc102-arm-none-eabi",
-                    "executable": "gcov"
-                },
-                "c++filt": {
-                    "bottle": "gcc102-arm-none-eabi",
-                    "executable": "c++filt"
-                },
-                "nm": {
-                    "bottle": "gcc102-arm-none-eabi",
-                    "executable": "nm"
-                },
-                "strip": {
-                    "bottle": "gcc102-arm-none-eabi",
-                    "executable": "strip"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "target": {
-                        "os": "NONE",
-                        "arch": "armv8m_cortex_m33"
-                    },
-                    "default": true
-                }
-            ],
-            "params": {
-                "type": "gnu",
-                "match_root": "GCC",
-                "werror_mode": "compiler_specific",
-                "c_compiler": "$(GCC)/bin/arm-none-eabi-gcc",
-                "cxx_compiler": "$(GCC)/bin/arm-none-eabi-g++",
-                "ar": "$(GCC)/bin/arm-none-eabi-ar",
-                "objcopy": "$(GCC)/bin/arm-none-eabi-objcopy",
-                "gcc_version": "10.2.1"
-            }
-        },
-        "eductl": {
-            "tools": {
-                "eductl": {
-                    "bottle": "eductl",
-                    "executable": "eductl"
-                }
-            },
-            "platforms": [
-                {
-                    "host": {
-                        "os": "LINUX"
-                    },
-                    "default": true
-                },
-                {
-                    "host": {
-                        "os": "DARWIN"
-                    },
-                    "default": true
-                }
-            ]
         }
     },
     "bottles": {
+        "msvc2017": {
+            "formula": {
+                "sandbox_id": 623175770,
+                "match": "2017"
+            },
+            "executable": {
+                "msvc": [
+                    "bin",
+                    "Hostx64",
+                    "x64",
+                    "cl.exe"
+                ]
+            }
+        },
         "msvc2019": {
             "formula": {
                 "sandbox_id": 887495315,
@@ -5691,7 +6387,7 @@
         "ymake": {
             "formula": {
                 "sandbox_id": [
-                    1184719029
+                    908194269
                 ],
                 "match": "ymake"
             },
@@ -5701,42 +6397,9 @@
                 ]
             }
         },
-        "clang-format": {
-            "formula": {
-                "sandbox_id": [
-                    1042773541
-                ],
-                "match": "clang-format"
-            },
-            "executable": {
-                "clang-format": [
-                    "clang-format"
-                ]
-            }
-        },
-        "clang-tidy": {
-            "formula": {
-                "sandbox_id": [
-                    1073581733,
-                    1073610805,
-                    1073627148
-                ],
-                "match": "CLANG_TIDY"
-            },
-            "executable": {
-                "clang-tidy": [
-                    "bin",
-                    "clang-tidy"
-                ],
-                "clang-apply-replacements": [
-                    "bin",
-                    "clang-apply-replacements"
-                ]
-            }
-        },
         "maven_import_sandbox_uploader": {
             "formula": {
-                "sandbox_id": 1031028343,
+                "sandbox_id": 210952169,
                 "match": "uploader"
             },
             "executable": {
@@ -5748,7 +6411,7 @@
         "arc": {
             "formula": {
                 "sandbox_id": [
-                    1163754336
+                    900579077
                 ],
                 "match": "arc"
             },
@@ -5771,7 +6434,10 @@
         },
         "yo": {
             "formula": {
-                "sandbox_id": 1183539336,
+                "sandbox_id": [
+                    888418483,
+                    888418472
+                ],
                 "match": "yo"
             },
             "executable": {
@@ -5798,7 +6464,7 @@
         "swagger": {
             "formula": {
                 "sandbox_id": [
-                    1002355733
+                    801239513
                 ],
                 "match": "swagger"
             },
@@ -5811,7 +6477,7 @@
         "delve": {
             "formula": {
                 "sandbox_id": [
-                    1147889396
+                    883633700
                 ],
                 "match": "delve"
             },
@@ -5837,7 +6503,7 @@
         },
         "yoimports": {
             "formula": {
-                "sandbox_id": 1113620552,
+                "sandbox_id": 906880745,
                 "match": "yoimports"
             },
             "executable": {
@@ -5849,7 +6515,7 @@
         "releaser": {
             "formula": {
                 "sandbox_id": [
-                    1026890210
+                    887908284
                 ],
                 "match": "releaser"
             },
@@ -5861,7 +6527,9 @@
         },
         "tvmknife": {
             "formula": {
-                "sandbox_id": 1162775119,
+                "sandbox_id": [
+                    896992690
+                ],
                 "match": "tvmknife"
             },
             "executable": {
@@ -5883,9 +6551,38 @@
                 ]
             }
         },
+        "golangci-lint": {
+            "formula": {
+                "sandbox_id": [
+                    505159783,
+                    505158707
+                ],
+                "match": "golangci-lint"
+            },
+            "executable": {
+                "golangci-lint": [
+                    "golangci-lint"
+                ]
+            }
+        },
+        "hg": {
+            "formula": {
+                "sandbox_id": [
+                    384697982,
+                    384698485,
+                    446769978
+                ],
+                "match": "Hg"
+            },
+            "executable": {
+                "hg": [
+                    "hg/hg"
+                ]
+            }
+        },
         "python": {
             "formula": {
-                "sandbox_id": 981577320,
+                "sandbox_id": 786386535,
                 "match": "Python"
             },
             "executable": {
@@ -5910,10 +6607,9 @@
         "jdk": {
             "formula": {
                 "sandbox_id": [
-                    854293674,
-                    854378931,
-                    854302209,
-                    1054292521
+                    309573383,
+                    309578810,
+                    309571719
                 ],
                 "match": "jdk"
             },
@@ -6004,39 +6700,338 @@
                 ]
             }
         },
-        "jdk17": {
+        "clang50": {
             "formula": {
                 "sandbox_id": [
-                    1086829307,
-                    1086824941,
-                    1086822428,
-                    1086827917
+                    220049371,
+                    234642283
                 ],
-                "match": "openjdk"
+                "match": "CLANG"
             },
             "executable": {
-                "jar": [
+                "c++": [
                     "bin",
-                    "jar"
+                    "clang++"
                 ],
-                "java": [
+                "cc": [
                     "bin",
-                    "java"
+                    "clang"
                 ],
-                "javac": [
+                "clang-format": [
                     "bin",
-                    "javac"
+                    "clang-format"
+                ],
+                "llvm-profdata": [
+                    "bin",
+                    "llvm-profdata"
+                ],
+                "llvm-symbolizer": [
+                    "bin",
+                    "llvm-symbolizer"
+                ],
+                "llvm-cov": [
+                    "bin",
+                    "llvm-cov"
+                ],
+                "gcov": [
+                    "bin",
+                    "llvm-gcov"
+                ],
+                "c++filt": [
+                    "bin",
+                    "c++filt"
+                ],
+                "nm": [
+                    "bin",
+                    "nm"
+                ],
+                "strip": [
+                    "bin",
+                    "strip"
                 ]
             }
         },
-        "clang12": {
+        "clang7": {
             "formula": {
                 "sandbox_id": [
-                    1042818759,
-                    1042820568,
-                    1042823154,
-                    1042827120,
-                    1042828064
+                    433792615,
+                    425919040,
+                    703744721
+                ],
+                "match": "CLANG"
+            },
+            "executable": {
+                "c++": [
+                    "bin",
+                    "clang++"
+                ],
+                "c++filt": [
+                    "bin",
+                    "c++filt"
+                ],
+                "cc": [
+                    "bin",
+                    "clang"
+                ],
+                "clang-format": [
+                    "bin",
+                    "clang-format"
+                ],
+                "clang-tidy": [
+                    "bin",
+                    "clang-tidy"
+                ],
+                "gcov": [
+                    "bin",
+                    "llvm-gcov"
+                ],
+                "llvm-cov": [
+                    "bin",
+                    "llvm-cov"
+                ],
+                "llvm-profdata": [
+                    "bin",
+                    "llvm-profdata"
+                ],
+                "llvm-symbolizer": [
+                    "bin",
+                    "llvm-symbolizer"
+                ],
+                "llvm-nm": [
+                    "bin",
+                    "llvm-nm"
+                ],
+                "llvm-strip": [
+                    "bin",
+                    "llvm-strip"
+                ],
+                "llvm-objcopy": [
+                    "bin",
+                    "llvm-objcopy"
+                ]
+            }
+        },
+        "clang7-windows": {
+            "formula": {
+                "sandbox_id": [
+                    763586573,
+                    764308081
+                ],
+                "match": "CLANG"
+            },
+            "executable": {
+                "c++": [
+                    "bin",
+                    "clang++"
+                ],
+                "c++filt": [
+                    "bin",
+                    "c++filt"
+                ],
+                "cc": [
+                    "bin",
+                    "clang"
+                ],
+                "clang-format": [
+                    "bin",
+                    "clang-format"
+                ],
+                "clang-tidy": [
+                    "bin",
+                    "clang-tidy"
+                ],
+                "gcov": [
+                    "bin",
+                    "llvm-gcov"
+                ],
+                "llvm-cov": [
+                    "bin",
+                    "llvm-cov"
+                ],
+                "llvm-profdata": [
+                    "bin",
+                    "llvm-profdata"
+                ],
+                "llvm-symbolizer": [
+                    "bin",
+                    "llvm-symbolizer"
+                ],
+                "llvm-nm": [
+                    "bin",
+                    "llvm-nm"
+                ],
+                "llvm-strip": [
+                    "bin",
+                    "llvm-strip"
+                ],
+                "llvm-objcopy": [
+                    "bin",
+                    "llvm-objcopy"
+                ]
+            }
+        },
+        "clang11-windows": {
+            "formula": {
+                "sandbox_id": [
+                    898093597,
+                    899158915
+                ],
+                "match": "CLANG"
+            },
+            "executable": {
+                "c++": [
+                    "bin",
+                    "clang++"
+                ],
+                "c++filt": [
+                    "bin",
+                    "c++filt"
+                ],
+                "cc": [
+                    "bin",
+                    "clang"
+                ],
+                "clang-format": [
+                    "bin",
+                    "clang-format"
+                ],
+                "clang-tidy": [
+                    "bin",
+                    "clang-tidy"
+                ],
+                "gcov": [
+                    "bin",
+                    "llvm-gcov"
+                ],
+                "llvm-cov": [
+                    "bin",
+                    "llvm-cov"
+                ],
+                "llvm-profdata": [
+                    "bin",
+                    "llvm-profdata"
+                ],
+                "llvm-symbolizer": [
+                    "bin",
+                    "llvm-symbolizer"
+                ],
+                "llvm-nm": [
+                    "bin",
+                    "llvm-nm"
+                ],
+                "llvm-strip": [
+                    "bin",
+                    "llvm-strip"
+                ],
+                "llvm-objcopy": [
+                    "bin",
+                    "llvm-objcopy"
+                ]
+            }
+        },
+        "clang8": {
+            "formula": {
+                "sandbox_id": [
+                    439450490,
+                    441588173
+                ],
+                "match": "CLANG"
+            },
+            "executable": {
+                "c++": [
+                    "bin",
+                    "clang++"
+                ],
+                "c++filt": [
+                    "bin",
+                    "c++filt"
+                ],
+                "cc": [
+                    "bin",
+                    "clang"
+                ],
+                "clang-format": [
+                    "bin",
+                    "clang-format"
+                ],
+                "clang-tidy": [
+                    "bin",
+                    "clang-tidy"
+                ],
+                "gcov": [
+                    "bin",
+                    "llvm-gcov"
+                ],
+                "llvm-cov": [
+                    "bin",
+                    "llvm-cov"
+                ],
+                "llvm-profdata": [
+                    "bin",
+                    "llvm-profdata"
+                ],
+                "llvm-symbolizer": [
+                    "bin",
+                    "llvm-symbolizer"
+                ],
+                "llvm-nm": [
+                    "bin",
+                    "llvm-nm"
+                ],
+                "llvm-strip": [
+                    "bin",
+                    "llvm-strip"
+                ]
+            }
+        },
+        "clang10": {
+            "formula": {
+                "sandbox_id": [
+                    810336231
+                ],
+                "match": "CLANG"
+            },
+            "executable": {
+                "c++": [
+                    "bin",
+                    "clang++"
+                ],
+                "cc": [
+                    "bin",
+                    "clang"
+                ],
+                "llvm-cov": [
+                    "bin",
+                    "llvm-cov"
+                ],
+                "llvm-profdata": [
+                    "bin",
+                    "llvm-profdata"
+                ],
+                "llvm-symbolizer": [
+                    "bin",
+                    "llvm-symbolizer"
+                ],
+                "llvm-nm": [
+                    "bin",
+                    "llvm-nm"
+                ],
+                "llvm-strip": [
+                    "bin",
+                    "llvm-strip"
+                ],
+                "llvm-objcopy": [
+                    "bin",
+                    "llvm-objcopy"
+                ]
+            }
+        },
+        "clang11": {
+            "formula": {
+                "sandbox_id": [
+                    847800827,
+                    828496042,
+                    827918501
                 ],
                 "match": "CLANG"
             },
@@ -6053,9 +7048,21 @@
                     "bin",
                     "clang"
                 ],
+                "clang-apply-replacements": [
+                    "bin",
+                    "clang-apply-replacements"
+                ],
+                "clang-format": [
+                    "bin",
+                    "clang-format"
+                ],
                 "clang-rename": [
                     "bin",
                     "clang-rename"
+                ],
+                "clang-tidy": [
+                    "bin",
+                    "clang-tidy"
                 ],
                 "llvm-gcov": [
                     "bin",
@@ -6167,51 +7174,11 @@
                 ]
             }
         },
-        "xcode_12_5": {
+        "android-ndk-r21b": {
             "formula": {
                 "sandbox_id": [
-                    1047943010
-                ],
-                "match": "toolchain"
-            },
-            "executable": {
-                "c++": [
-                    "usr",
-                    "bin",
-                    "clang++"
-                ],
-                "cc": [
-                    "usr",
-                    "bin",
-                    "clang"
-                ],
-                "llvm-cov": [
-                    "usr",
-                    "bin",
-                    "llvm-cov"
-                ],
-                "llvm-profdata": [
-                    "usr",
-                    "bin",
-                    "llvm-profdata"
-                ],
-                "llvm-nm": [
-                    "usr",
-                    "bin",
-                    "llvm-nm"
-                ],
-                "strip": [
-                    "usr",
-                    "bin",
-                    "strip"
-                ]
-            }
-        },
-        "android-ndk-r23": {
-            "formula": {
-                "sandbox_id": [
-                    1125103574,
-                    1125105409
+                    681102131,
+                    681103148
                 ],
                 "match": "NDK"
             },
@@ -6235,6 +7202,16 @@
                     "llvm-toolchain",
                     "bin",
                     "i686-linux-android-c++filt"
+                ],
+                "clang-format": [
+                    "llvm-toolchain",
+                    "bin",
+                    "clang-format"
+                ],
+                "clang-tidy": [
+                    "llvm-toolchain",
+                    "bin",
+                    "clang-tidy"
                 ],
                 "llvm-cov": [
                     "llvm-toolchain",
@@ -6263,11 +7240,11 @@
                 ]
             }
         },
-        "android-ndk-r24": {
+        "android-ndk-r22": {
             "formula": {
                 "sandbox_id": [
-                    1125138634,
-                    1125141078
+                    847367573,
+                    847367436
                 ],
                 "match": "NDK"
             },
@@ -6291,6 +7268,16 @@
                     "llvm-toolchain",
                     "bin",
                     "i686-linux-android-c++filt"
+                ],
+                "clang-format": [
+                    "llvm-toolchain",
+                    "bin",
+                    "clang-format"
+                ],
+                "clang-tidy": [
+                    "llvm-toolchain",
+                    "bin",
+                    "clang-tidy"
                 ],
                 "llvm-cov": [
                     "llvm-toolchain",
@@ -6428,7 +7415,7 @@
         "scriptgen": {
             "formula": {
                 "sandbox_id": [
-                    1164520637
+                    691600140
                 ],
                 "match": "SCRIPTGEN"
             }
@@ -6442,18 +7429,6 @@
                 "wine": [
                     "bin",
                     "wine64"
-                ]
-            }
-        },
-        "wine32": {
-            "formula": {
-                "sandbox_id": 1010959442,
-                "match": "Wine"
-            },
-            "executable": {
-                "wine": [
-                    "bin",
-                    "wine"
                 ]
             }
         },
@@ -6471,9 +7446,7 @@
         },
         "yt": {
             "formula": {
-                "sandbox_id": [
-                    1176257742
-                ],
+                "sandbox_id": 903305509,
                 "match": "YT"
             },
             "executable": {
@@ -6484,7 +7457,7 @@
         },
         "yndexer": {
             "formula": {
-                "sandbox_id": 992600186,
+                "sandbox_id": 847830973,
                 "match": "YNDEXER"
             },
             "executable": {
@@ -6495,7 +7468,7 @@
         },
         "ytyndexer": {
             "formula": {
-                "sandbox_id": 1051903185,
+                "sandbox_id": 712000152,
                 "match": "YTYNDEXER"
             },
             "executable": {
@@ -6550,38 +7523,12 @@
         },
         "perf": {
             "formula": {
-                "sandbox_id": 1130176134,
+                "sandbox_id": 829735695,
                 "match": "infra/kernel/tools/perf/build/perf-static.tar.gz"
             },
             "executable": {
                 "perf": [
                     "perf"
-                ]
-            }
-        },
-        "cuda-check": {
-            "formula": {
-                "sandbox_id": "1128218000",
-                "match": "infra/rsm/nvgpumanager/tools/cuda-check/cuda-check"
-            },
-            "executable": {
-                "cuda-check": [
-                    "cuda-check"
-                ]
-            }
-        },
-        "sre": {
-            "formula": {
-                "sandbox_id": "1156434675",
-                "match": "infra/rtc/sretools/sretools.tar.gz"
-            },
-            "executable": {
-                "sre": [
-                    "sretool"
-                ],
-                "bpftrace": [
-                    "tools",
-                    "bpftrace"
                 ]
             }
         },
@@ -6675,10 +7622,9 @@
         "gdb": {
             "formula": {
                 "sandbox_id": [
-                    1037272933,
-                    1032891985,
-                    717207102,
-                    1032896450
+                    756948432,
+                    491831556,
+                    717207102
                 ],
                 "match": "GDB"
             },
@@ -6695,20 +7641,9 @@
                 ]
             }
         },
-        "pprof": {
-            "formula": {
-                "sandbox_id": 1115456319,
-                "match": "pprof"
-            },
-            "executable": {
-                "pprof": [
-                    "pprof"
-                ]
-            }
-        },
         "ytexec": {
             "formula": {
-                "sandbox_id": 1101655914,
+                "sandbox_id": 867090780,
                 "match": "ytexec"
             },
             "executable": {
@@ -6731,7 +7666,7 @@
         },
         "valgrind": {
             "formula": {
-                "sandbox_id": 944969271,
+                "sandbox_id": 157894143,
                 "match": "Valgrind"
             },
             "executable": {
@@ -6758,26 +7693,16 @@
         "yf": {
             "formula": {
                 "sandbox_id": [
-                    1044416355
+                    828579949
                 ],
                 "match": "yf-client"
             },
             "executable": "yf-client"
         },
-        "rtmr-deploy": {
-            "formula": {
-                "sandbox_id": [
-                    986392295,
-                    986388505
-                ],
-                "match": "rtmr-deploy"
-            },
-            "executable": "rtmr-deploy"
-        },
         "yp-util": {
             "formula": {
                 "sandbox_id": [
-                    1182323086
+                    904529315
                 ],
                 "match": "yp_util"
             },
@@ -6790,9 +7715,9 @@
         "yp": {
             "formula": {
                 "sandbox_id": [
-                    1182320818
+                    904529115
                 ],
-                "match": "YP"
+                "match": "yp"
             },
             "executable": {
                 "yp": [
@@ -6803,7 +7728,7 @@
         "yd-migrate": {
             "formula": {
                 "sandbox_id": [
-                    990283171
+                    885831242
                 ],
                 "match": "yd_migrate"
             },
@@ -6816,7 +7741,7 @@
         "dctl": {
             "formula": {
                 "sandbox_id": [
-                    1158224684
+                    901122774
                 ],
                 "match": "dctl"
             },
@@ -6861,9 +7786,7 @@
         },
         "tmux": {
             "formula": {
-                "sandbox_id": [
-                    1105659071
-                ],
+                "sandbox_id": 38325457,
                 "match": "tmux"
             },
             "executable": {
@@ -6886,19 +7809,6 @@
                 ]
             }
         },
-        "node-search": {
-            "formula": {
-                "sandbox_id": [
-                    1157378401
-                ],
-                "match": "node_search"
-            },
-            "executable": {
-                "node-search": [
-                    "node_search"
-                ]
-            }
-        },
         "rsync": {
             "formula": {
                 "sandbox_id": [
@@ -6910,6 +7820,72 @@
                 "rsync": [
                     "bin",
                     "rsync"
+                ]
+            }
+        },
+        "svn17": {
+            "formula": {
+                "sandbox_id": [
+                    20095848,
+                    22391628,
+                    24233243
+                ],
+                "match": "Svn"
+            },
+            "executable": {
+                "svn": [
+                    "bin",
+                    "svn"
+                ],
+                "svnadmin": [
+                    "bin",
+                    "svnadmin"
+                ],
+                "svnlook": [
+                    "bin",
+                    "svnlook"
+                ],
+                "svnversion": [
+                    "bin",
+                    "svnversion"
+                ]
+            }
+        },
+        "svn18": {
+            "formula": {
+                "sandbox_id": [
+                    56236637,
+                    22390926
+                ],
+                "match": "Svn"
+            },
+            "executable": {
+                "svn": [
+                    "bin",
+                    "svn"
+                ],
+                "svnadmin": [
+                    "bin",
+                    "svnadmin"
+                ],
+                "svnlook": [
+                    "bin",
+                    "svnlook"
+                ],
+                "svnversion": [
+                    "bin",
+                    "svnversion"
+                ]
+            }
+        },
+        "svn19": {
+            "formula": {
+                "sandbox_id": 200249024,
+                "match": "svn"
+            },
+            "executable": {
+                "svn": [
+                    "svn"
                 ]
             }
         },
@@ -7135,7 +8111,7 @@
         },
         "horadric": {
             "formula": {
-                "sandbox_id": 1185822037,
+                "sandbox_id": 911346664,
                 "match": "horadric"
             },
             "executable": {
@@ -7146,7 +8122,7 @@
         },
         "logbroker": {
             "formula": {
-                "sandbox_id": 1061549819,
+                "sandbox_id": 870482808,
                 "match": "logbroker"
             },
             "executable": {
@@ -7157,7 +8133,7 @@
         },
         "zcli": {
             "formula": {
-                "sandbox_id": 948535797,
+                "sandbox_id": 911254890,
                 "match": "zcli"
             },
             "executable": {
@@ -7190,7 +8166,7 @@
         },
         "python3": {
             "formula": {
-                "sandbox_id": 1020522806,
+                "sandbox_id": 422563749,
                 "match": "python3"
             },
             "executable": {
@@ -7223,7 +8199,7 @@
         },
         "contexts_difference": {
             "formula": {
-                "sandbox_id": 1128937263,
+                "sandbox_id": 870900517,
                 "match": "contexts_difference"
             },
             "executable": {
@@ -7234,7 +8210,7 @@
         },
         "ycmerge": {
             "formula": {
-                "sandbox_id": 1164600398,
+                "sandbox_id": 906440114,
                 "match": "ycmerge"
             },
             "executable": {
@@ -7245,7 +8221,7 @@
         },
         "ygdiff": {
             "formula": {
-                "sandbox_id": 982695480,
+                "sandbox_id": 848469817,
                 "match": "ygdiff"
             },
             "executable": {
@@ -7256,7 +8232,7 @@
         },
         "ya-tc": {
             "formula": {
-                "sandbox_id": 981372621,
+                "sandbox_id": 728126496,
                 "match": "ya-tc"
             },
             "executable": {
@@ -7278,7 +8254,7 @@
         },
         "apphost": {
             "formula": {
-                "sandbox_id": 1185873019,
+                "sandbox_id": 911347179,
                 "match": "app_host_launcher"
             },
             "executable": {
@@ -7287,34 +8263,9 @@
                 ]
             }
         },
-        "renderer": {
-            "formula": {
-                "sandbox_id": [
-                    1085349224,
-                    1088353208
-                ],
-                "match": ""
-            },
-            "executable": {
-                "renderer": [
-                    "report-renderer/bin/run"
-                ]
-            }
-        },
-        "appteka": {
-            "formula": {
-                "sandbox_id": 1186598996,
-                "match": "appteka"
-            },
-            "executable": {
-                "appteka": [
-                    "appteka/appteka"
-                ]
-            }
-        },
         "news": {
             "formula": {
-                "sandbox_id": 1088628929,
+                "sandbox_id": 881745887,
                 "match": "news_launcher"
             },
             "executable": {
@@ -7323,13 +8274,32 @@
                 ]
             }
         },
-        "golang_1.17.6": {
+        "golang_1.15.7": {
             "formula": {
                 "sandbox_id": [
-                    1178356987,
-                    1178357306,
-                    1178357717,
-                    1178358055
+                    874690160,
+                    874690855,
+                    874691497
+                ],
+                "match": "GOLANG"
+            },
+            "executable": {
+                "go_1.15.7": [
+                    "bin",
+                    "go"
+                ],
+                "gofmt_1.15.7": [
+                    "bin",
+                    "gofmt"
+                ]
+            }
+        },
+        "golang_1.15.8": {
+            "formula": {
+                "sandbox_id": [
+                    891692206,
+                    891693575,
+                    891694631
                 ],
                 "match": "GOLANG"
             },
@@ -7339,27 +8309,6 @@
                     "go"
                 ],
                 "gofmt": [
-                    "bin",
-                    "gofmt"
-                ]
-            }
-        },
-        "golang_1.18beta1": {
-            "formula": {
-                "sandbox_id": [
-                    1155805076,
-                    1155805822,
-                    1155806316,
-                    1155806789
-                ],
-                "match": "GOLANG"
-            },
-            "executable": {
-                "go_1.18beta1": [
-                    "bin",
-                    "go"
-                ],
-                "gofmt_1.18beta1": [
                     "bin",
                     "gofmt"
                 ]
@@ -7398,7 +8347,7 @@
         "qyp": {
             "formula": {
                 "sandbox_id": [
-                    1150668841
+                    875027840
                 ],
                 "match": "infra/qyp/vmctl/bin/vmctl"
             },
@@ -7408,23 +8357,10 @@
                 ]
             }
         },
-        "rtcdiag": {
-            "formula": {
-                "sandbox_id": [
-                    944810510
-                ],
-                "match": "search/mon/rtc/rtcdiag/bin/rtcdiag"
-            },
-            "executable": {
-                "rtcdiag": [
-                    "rtcdiag"
-                ]
-            }
-        },
         "fio": {
             "formula": {
                 "sandbox_id": [
-                    1136887344
+                    897210323
                 ],
                 "match": "infra/kernel/tools/fio/build/fio-static.tar.gz"
             },
@@ -7486,7 +8422,7 @@
         "bpftool": {
             "formula": {
                 "sandbox_id": [
-                    1130914217
+                    708007910
                 ],
                 "match": "infra/kernel/tools/bpftool/build/bpftool-static.tar.gz"
             },
@@ -7571,7 +8507,7 @@
         "coronerctl": {
             "formula": {
                 "sandbox_id": [
-                    1183844682
+                    889638176
                 ],
                 "match": "infra/rsm/coroner/build/packages/coroner/pkg.json"
             },
@@ -7659,9 +8595,7 @@
         },
         "vmexec": {
             "formula": {
-                "sandbox_id": [
-                    940486578
-                ],
+                "sandbox_id": 901636930,
                 "match": "infra/qemu/vmexec/vmexec"
             },
             "executable": {
@@ -7672,7 +8606,7 @@
         },
         "yfm-docs": {
             "formula": {
-                "sandbox_id": 1150530779,
+                "sandbox_id": 881401560,
                 "match": "yfm-docs"
             },
             "executable": {
@@ -7694,7 +8628,7 @@
         },
         "sedem": {
             "formula": {
-                "sandbox_id": 1183804527,
+                "sandbox_id": 897431194,
                 "match": "SEDEM archive"
             },
             "executable": {
@@ -7720,39 +8654,10 @@
                 ]
             }
         },
-        "ktlint_bundle": {
-            "formula": {
-                "sandbox_id": [
-                    1037460929,
-                    1037467384,
-                    1038449502
-                ],
-                "match": "ktlint"
-            },
-            "executable": {
-                "ktlint": [
-                    "run.bat"
-                ]
-            }
-        },
-        "devtools_license_analyzer_bundle": {
-            "formula": {
-                "sandbox_id": [
-                    1183873324,
-                    1183874148
-                ],
-                "match": "license_analyzer"
-            },
-            "executable": {
-                "license_analyzer": [
-                    "license_analyzer"
-                ]
-            }
-        },
         "ya_sed": {
             "formula": {
                 "sandbox_id": [
-                    1173019696
+                    806271103
                 ],
                 "match": "ya_sed"
             },
@@ -7765,7 +8670,7 @@
         "black": {
             "formula": {
                 "sandbox_id": [
-                    1147448676
+                    761684096
                 ],
                 "match": "black"
             },
@@ -7777,7 +8682,7 @@
         },
         "yadi": {
             "formula": {
-                "sandbox_id": 1155032720,
+                "sandbox_id": 832380091,
                 "match": "yadi-arc"
             },
             "executable": {
@@ -7810,7 +8715,7 @@
         },
         "iceflame": {
             "formula": {
-                "sandbox_id": 1179554942,
+                "sandbox_id": 910702076,
                 "match": "iceflame"
             },
             "executable": {
@@ -7819,20 +8724,9 @@
                 ]
             }
         },
-        "cs": {
-            "formula": {
-                "sandbox_id": 1179660361,
-                "match": "cs"
-            },
-            "executable": {
-                "cs": [
-                    "cs"
-                ]
-            }
-        },
         "wall-e": {
             "formula": {
-                "sandbox_id": 1085675590,
+                "sandbox_id": 846366628,
                 "match": "wall-e"
             },
             "executable": {
@@ -7840,194 +8734,6 @@
                     "wall-e"
                 ]
             }
-        },
-        "skotty": {
-            "formula": {
-                "sandbox_id": 1160938937,
-                "match": "launcher"
-            },
-            "executable": {
-                "launcher": [
-                    "launcher"
-                ]
-            }
-        },
-        "gcc102-arm-none-eabi": {
-            "formula": {
-                "sandbox_id": 1020757602,
-                "match": "GNU ARM"
-            },
-            "executable": {
-                "c++": [
-                    "bin",
-                    "arm-none-eabi",
-                    "arm-none-eabi-g++"
-                ],
-                "cc": [
-                    "bin",
-                    "arm-none-eabi",
-                    "arm-none-eabi-gcc"
-                ],
-                "gcov": [
-                    "bin",
-                    "arm-none-eabi",
-                    "arm-none-eabi-gcov"
-                ],
-                "c++filt": [
-                    "bin",
-                    "arm-none-eabi",
-                    "arm-none-eabi-c++filt"
-                ],
-                "nm": [
-                    "bin",
-                    "arm-none-eabi",
-                    "arm-none-eabi-nm"
-                ],
-                "strip": [
-                    "bin",
-                    "arm-none-eabi",
-                    "arm-none-eabi-strip"
-                ]
-            }
-        },
-        "eductl": {
-            "formula": {
-                "sandbox_id": 1182653737,
-                "match": "eductl"
-            },
-            "executable": {
-                "eductl": [
-                    "eductl"
-                ]
-            }
-        },
-        "bigb_request": {
-            "formula": {
-                "sandbox_id": 1185822424,
-                "match": "bb_requester"
-            },
-            "executable": {
-                "bb_requester": [
-                    "bb_requester"
-                ]
-            }
-        },
-        "bigb_hitlog_analyser": {
-            "formula": {
-                "sandbox_id": 1185822594,
-                "match": "hitlog_analyser"
-            },
-            "executable": {
-                "hitlog_analyser": [
-                    "hitlog_analyser"
-                ]
-            }
-        },
-        "bigb_bsyeti_experiments": {
-            "formula": {
-                "sandbox_id": 1117529876,
-                "match": "bsyeti_experiments"
-            },
-            "executable": {
-                "bsyeti_experiments": [
-                    "bsyeti_experiments"
-                ]
-            }
-        },
-        "bigb_bb_cluster_analyzer": {
-            "formula": {
-                "sandbox_id": 1185823555,
-                "match": "bb_cluster_analyzer"
-            },
-            "executable": {
-                "bb_cluster_analyzer": [
-                    "bb_cluster_analyzer"
-                ]
-            }
-        },
-        "bigb_yt_profiles_dumper": {
-            "formula": {
-                "sandbox_id": 1185822162,
-                "match": "yt_profiles_dumper"
-            },
-            "executable": {
-                "yt_profiles_dumper": [
-                    "yt_profiles_dumper"
-                ]
-            }
-        },
-        "bigb_ab": {
-            "formula": {
-                "sandbox_id": 1185821891,
-                "match": "ab"
-            },
-            "executable": {
-                "ab": [
-                    "ab"
-                ]
-            }
-        },
-        "bigrt_cli": {
-            "formula": {
-                "sandbox_id": [
-                    1063136697
-                ],
-                "match": "big_rt_cli"
-            },
-            "executable": {
-                "big_rt_cli": [
-                    "big_rt_cli"
-                ]
-            }
-        },
-        "caesar_yt_sync": {
-            "formula": {
-                "sandbox_id": 1185822343,
-                "match": "yt_sync"
-            },
-            "executable": {
-                "yt_sync": [
-                    "yt_sync"
-                ]
-            }
-        },
-        "caesar_lookup_profile": {
-            "formula": {
-                "sandbox_id": 1185822314,
-                "match": "lookup_profile"
-            },
-            "executable": {
-                "lookup_profile": [
-                    "lookup_profile"
-                ]
-            }
-        },
-        "exp_stats": {
-            "formula": {
-                "sandbox_id": 1185822290,
-                "match": "exp_stats"
-            },
-            "executable": {
-                "exp_stats": [
-                    "exp_stats"
-                ]
-            }
-        },
-        "caesar_profile_size_analyzer": {
-            "formula": {
-                "sandbox_id": 1185822680,
-                "match": "profile_size_analyzer"
-            },
-            "executable": {
-                "profile_size_analyzer": [
-                    "profile_size_analyzer"
-                ]
-            }
         }
-    },
-    "toolchain_aliases": {
-        "clang-win-x86_64": "clang12-win-x86_64",
-        "clang-win-i686": "clang12-win-i686",
-        "gcc-linux-x86_64": "gcc82-linux-x86_64"
     }
 }

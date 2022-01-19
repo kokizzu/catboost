@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.ambient
     ~~~~~~~~~~~~~~~~~~~~~~~
@@ -10,9 +11,9 @@
 
 import re
 
-from pygments.lexer import RegexLexer, include, words, bygroups
+from pygments.lexer import RegexLexer, include, words
 from pygments.token import Text, Comment, Operator, Keyword, Name, String, \
-    Number, Punctuation, Whitespace
+    Number, Punctuation
 
 __all__ = ['AmbientTalkLexer']
 
@@ -25,7 +26,7 @@ class AmbientTalkLexer(RegexLexer):
     """
     name = 'AmbientTalk'
     filenames = ['*.at']
-    aliases = ['ambienttalk', 'ambienttalk/2', 'at']
+    aliases = ['at', 'ambienttalk', 'ambienttalk/2']
     mimetypes = ['text/x-ambienttalk']
 
     flags = re.MULTILINE | re.DOTALL
@@ -36,7 +37,7 @@ class AmbientTalkLexer(RegexLexer):
                      'mirroredBy:', 'is:'))
     tokens = {
         'root': [
-            (r'\s+', Whitespace),
+            (r'\s+', Text),
             (r'//.*?\n', Comment.Single),
             (r'/\*.*?\*/', Comment.Multiline),
             (r'(def|deftype|import|alias|exclude)\b', Keyword),
@@ -69,7 +70,7 @@ class AmbientTalkLexer(RegexLexer):
         ],
         'arglist': [
             (r'\|', Punctuation, '#pop'),
-            (r'(\s*)(,)(\s*)', bygroups(Whitespace, Punctuation, Whitespace)),
+            (r'\s*(,)\s*', Punctuation),
             (r'[a-zA-Z_]\w*', Name.Variable),
         ],
     }

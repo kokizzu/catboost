@@ -336,10 +336,8 @@ namespace NCatboostCuda {
 
                     const auto& taskDataSet = dataSet.GetDataSetForPermutation(learnPermutationId);
                     using TWeakTarget = typename TTargetAtPointTrait<TObjective>::Type;
-                    auto target = TTargetAtPointTrait<TObjective>::Create(
-                        *(learnTarget[learnPermutationId]),
-                        (*learnCursors)[learnPermutationId].AsConstBuf()
-                    );
+                    auto target = TTargetAtPointTrait<TObjective>::Create(*(learnTarget[learnPermutationId]),
+                                                                          (*learnCursors)[learnPermutationId]);
                     auto mult = CalcScoreModelLengthMult(dataSet.GetDataProvider().GetObjectCount(),
                                                          iteration * step);
                     auto optimizer = weak->template CreateStructureSearcher<TWeakTarget, TDocParallelDataSet>(
@@ -359,12 +357,10 @@ namespace NCatboostCuda {
 
                     for (ui32 permutation = 0; permutation < permutationCount; ++permutation) {
                         const auto& taskDataSet = dataSet.GetDataSetForPermutation(permutation);
-                        estimator.AddEstimationTask(
-                            *(learnTarget[permutation]),
-                            taskDataSet,
-                            (*learnCursors)[permutation].AsConstBuf(),
-                            &iterationModels[permutation]
-                        );
+                        estimator.AddEstimationTask(*(learnTarget[permutation]),
+                                                    taskDataSet,
+                                                    (*learnCursors)[permutation],
+                                                    &iterationModels[permutation]);
                     }
                     estimator.Estimate(LocalExecutor);
                 }
@@ -479,7 +475,7 @@ namespace NCatboostCuda {
                 models.size() == permutationCount,
                 "Progress permutation count differs from current learning task: " << models.size() << " / " << permutationCount
             );
-            auto weak = MakeWeakLearner<TWeakLearner>(FeaturesManager, Config, CatBoostOptions, Random);
+            auto weak = MakeWeakLearner<TWeakLearner>(FeaturesManager, CatBoostOptions);
             if (models[0].Size() > 0) {
                 auto guard = NCudaLib::GetCudaManager().GetProfiler().Profile("Restore from progress");
                 AppendEnsembles(
@@ -557,7 +553,7 @@ namespace NCatboostCuda {
                 return baseModelSize - offset + offset / experimentCount * experimentIdx;
             };
 
-            auto baseWeak = MakeWeakLearner<TWeakLearner>(baseFeatureManager, Config, CatBoostOptions, Random);
+            auto baseWeak = MakeWeakLearner<TWeakLearner>(baseFeatureManager, CatBoostOptions);
             AppendEnsembles(
                 baseInputData->DataSets,
                 baseModels,
@@ -592,20 +588,16 @@ namespace NCatboostCuda {
             for (featureSetIdx = 0; featureSetIdx < features.size(); ++featureSetIdx) {
                 TSet<ui32> ignoredFeatures = allEvaluatedFeatures;
                 for (ui32 feature : features[featureSetIdx]) {
-                    if (FeaturesManager.HasBorders(feature)) {
-                        ignoredFeatures.erase(feature);
-                    } else {
-                        CATBOOST_WARNING_LOG << "Ignoring constant feature " << feature  << " in feature set " << featureSetIdx << Endl;
-                    }
+                    ignoredFeatures.erase(feature);
                 }
                 TBinarizedFeaturesManager featureManager(FeaturesManager, {ignoredFeatures.begin(), ignoredFeatures.end()});
-                if (featureManager.GetDataProviderFeatureIds().empty() || allEvaluatedFeatures == ignoredFeatures) {
+                if (featureManager.GetDataProviderFeatureIds().empty()) {
                     CATBOOST_WARNING_LOG << "Feature set " << featureSetIdx
                         << " is not evaluated because it consists of ignored or constant features" << Endl;
                     continue;
                 }
                 auto inputData = CreateInputData(permutationCount, &featureManager);
-                auto weak = MakeWeakLearner<TWeakLearner>(featureManager, Config, CatBoostOptions, Random);
+                auto weak = MakeWeakLearner<TWeakLearner>(featureManager, CatBoostOptions);
 
                 baseCursors->CopyFrom(*startingBaseCursors);
                 for (experimentIdx = 0; experimentIdx < ModelBasedEvalConfig.ExperimentCount; ++experimentIdx) {

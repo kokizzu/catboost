@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.styles
     ~~~~~~~~~~~~~~~
@@ -17,12 +18,10 @@ STYLE_MAP = {
     'default':  'default::DefaultStyle',
     'emacs':    'emacs::EmacsStyle',
     'friendly': 'friendly::FriendlyStyle',
-    'friendly_grayscale': 'friendly_grayscale::FriendlyGrayscaleStyle',
     'colorful': 'colorful::ColorfulStyle',
     'autumn':   'autumn::AutumnStyle',
     'murphy':   'murphy::MurphyStyle',
     'manni':    'manni::ManniStyle',
-    'material': 'material::MaterialStyle',
     'monokai':  'monokai::MonokaiStyle',
     'perldoc':  'perldoc::PerldocStyle',
     'pastie':   'pastie::PastieStyle',
@@ -52,12 +51,6 @@ STYLE_MAP = {
     'stata-light': 'stata_light::StataLightStyle',
     'stata-dark':  'stata_dark::StataDarkStyle',
     'inkpot':      'inkpot::InkPotStyle',
-    'zenburn': 'zenburn::ZenburnStyle',
-    'gruvbox-dark': 'gruvbox::GruvboxDarkStyle',
-    'gruvbox-light': 'gruvbox::GruvboxLightStyle',
-    'dracula': 'dracula::DraculaStyle',
-    'one-dark': 'onedark::OneDarkStyle',
-    'lilypond' : 'lilypond::LilyPondStyle',
 }
 
 

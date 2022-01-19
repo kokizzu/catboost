@@ -98,13 +98,6 @@ namespace NCB {
             Data.TargetData.PrepareForInitialization(Data.MetaInfo, ObjectCount, prevTailSize);
             Data.CommonObjectsData.PrepareForInitialization(Data.MetaInfo, ObjectCount, prevTailSize);
             Data.ObjectsData.PrepareForInitialization(Data.MetaInfo);
-            Data.CommonObjectsData.SetBuildersArrayRef(
-                metaInfo,
-                &NumGroupIdsRef,
-                &StringGroupIdsRef,
-                &NumSubgroupIdsRef,
-                &StringSubgroupIdsRef
-            );
 
             Data.CommonObjectsData.ResourceHolders = std::move(resourceHolders);
             Data.CommonObjectsData.Order = objectsOrder;
@@ -162,27 +155,11 @@ namespace NCB {
 
         // TCommonObjectsData
         void AddGroupId(ui32 localObjectIdx, TGroupId value) override {
-            Y_ASSERT(!Data.CommonObjectsData.StoreStringColumns);
-            NumGroupIdsRef[Cursor + localObjectIdx] = value;
-        }
-
-        void AddGroupId(ui32 localObjectIdx, const TString& value) override {
-            Y_ASSERT(Data.CommonObjectsData.StoreStringColumns);
-            StringGroupIdsRef[Cursor + localObjectIdx] = value;
+            (*Data.CommonObjectsData.GroupIds)[Cursor + localObjectIdx] = value;
         }
 
         void AddSubgroupId(ui32 localObjectIdx, TSubgroupId value) override {
-            Y_ASSERT(!Data.CommonObjectsData.StoreStringColumns);
-            NumSubgroupIdsRef[Cursor + localObjectIdx] = value;
-        }
-
-        void AddSubgroupId(ui32 localObjectIdx, const TString& value) override {
-            Y_ASSERT(Data.CommonObjectsData.StoreStringColumns);
-            StringSubgroupIdsRef[Cursor + localObjectIdx] = value;
-        }
-
-        void AddSampleId(ui32 localObjectIdx, const TString& value) override {
-            (*Data.CommonObjectsData.SampleId)[Cursor + localObjectIdx] = value;
+            (*Data.CommonObjectsData.SubgroupIds)[Cursor + localObjectIdx] = value;
         }
 
         void AddTimestamp(ui32 localObjectIdx, ui64 value) override {
@@ -381,7 +358,7 @@ namespace NCB {
 
         // needed for checking groupWeights consistency while loading from separate file
         TMaybeData<TConstArrayRef<TGroupId>> GetGroupIds() const override {
-            return Data.CommonObjectsData.GroupIds.GetMaybeNumData();
+            return Data.CommonObjectsData.GroupIds;
         }
 
         void Finish() override {
@@ -428,14 +405,14 @@ namespace NCB {
                 if (Data.MetaInfo.HasWeights) {
                     Data.TargetData.Weights = TWeights<float>(
                         TVector<float>(WeightsBuffer),
-                        TStringBuf("Weights"),
+                        AsStringBuf("Weights"),
                         /*allWeightsCanBeZero*/ true
                     );
                 }
                 if (Data.MetaInfo.HasGroupWeight) {
                     Data.TargetData.GroupWeights = TWeights<float>(
                         TVector<float>(GroupWeightsBuffer),
-                        TStringBuf("GroupWeights"),
+                        AsStringBuf("GroupWeights"),
                         /*allWeightsCanBeZero*/ true
                     );
                 }
@@ -455,14 +432,14 @@ namespace NCB {
                 if (Data.MetaInfo.HasWeights) {
                     Data.TargetData.Weights = TWeights<float>(
                         std::move(WeightsBuffer),
-                        TStringBuf("Weights"),
+                        AsStringBuf("Weights"),
                         /*allWeightsCanBeZero*/ InBlock
                     );
                 }
                 if (Data.MetaInfo.HasGroupWeight) {
                     Data.TargetData.GroupWeights = TWeights<float>(
                         std::move(GroupWeightsBuffer),
-                        TStringBuf("GroupWeights"),
+                        AsStringBuf("GroupWeights"),
                         /*allWeightsCanBeZero*/ InBlock
                     );
                 }
@@ -510,7 +487,6 @@ namespace NCB {
                     /*objectsGrouping*/ Nothing(), // will init from data
                     std::move(Data),
                     Options.SkipCheck,
-                    Data.MetaInfo.ForceUnitAutoPairWeights,
                     LocalExecutor
                 );
 
@@ -543,7 +519,6 @@ namespace NCB {
                     /*objectsGrouping*/ Nothing(), // will init from data
                     std::move(Data),
                     Options.SkipCheck,
-                    Data.MetaInfo.ForceUnitAutoPairWeights,
                     LocalExecutor
                 )->CastMoveTo<TObjectsDataProvider>();
             }
@@ -561,7 +536,6 @@ namespace NCB {
                 /*objectsGrouping*/ Nothing(), // will init from data
                 std::move(Data),
                 Options.SkipCheck,
-                Data.MetaInfo.ForceUnitAutoPairWeights,
                 LocalExecutor
             );
 
@@ -585,28 +559,19 @@ namespace NCB {
         }
 
     private:
-        template <class T>
-        inline void RollbackNextCursorToLastGroupStartImpl(const TVector<T>& groupIds) {
+        void RollbackNextCursorToLastGroupStart() {
+            const auto& groupIds = *Data.CommonObjectsData.GroupIds;
+            if (ObjectCount == 0) {
+                return;
+            }
             auto rit = groupIds.rbegin();
-            const T& lastGroupId = *rit;
+            TGroupId lastGroupId = *rit;
             for (++rit; rit != groupIds.rend(); ++rit) {
                 if (*rit != lastGroupId) {
                     break;
                 }
             }
-            // always rollback to the second last group
             NextCursor = ObjectCount - (rit - groupIds.rbegin());
-        }
-
-        void RollbackNextCursorToLastGroupStart() {
-            if (ObjectCount == 0) {
-                return;
-            }
-            if (Data.CommonObjectsData.StoreStringColumns) {
-                RollbackNextCursorToLastGroupStartImpl(*Data.CommonObjectsData.GroupIds.GetMaybeStringData());
-            } else {
-                RollbackNextCursorToLastGroupStartImpl(*Data.CommonObjectsData.GroupIds.GetMaybeNumData());
-            }
         }
 
         template <EFeatureType FeatureType>
@@ -1059,11 +1024,6 @@ namespace NCB {
         TFeaturesStorage<EFeatureType::Text, TString> TextFeaturesStorage;
         TFeaturesStorage<EFeatureType::Embedding, TConstEmbedding> EmbeddingFeaturesStorage;
 
-        TArrayRef<TGroupId> NumGroupIdsRef;
-        TArrayRef<TString> StringGroupIdsRef;
-        TArrayRef<TSubgroupId> NumSubgroupIdsRef;
-        TArrayRef<TString> StringSubgroupIdsRef;
-
         std::array<THashPart, CB_THREAD_LIMIT> HashMapParts;
 
 
@@ -1121,13 +1081,6 @@ namespace NCB {
             Data.TargetData.PrepareForInitialization(metaInfo, ObjectCount, 0);
             Data.CommonObjectsData.PrepareForInitialization(metaInfo, ObjectCount, 0);
             Data.ObjectsData.PrepareForInitialization(metaInfo);
-            Data.CommonObjectsData.SetBuildersArrayRef(
-                metaInfo,
-                &NumGroupIdsRef,
-                &StringGroupIdsRef,
-                &NumSubgroupIdsRef,
-                &StringSubgroupIdsRef
-            );
 
             Data.CommonObjectsData.ResourceHolders = std::move(resourceHolders);
             Data.CommonObjectsData.Order = objectsOrder;
@@ -1139,27 +1092,11 @@ namespace NCB {
 
         // TCommonObjectsData
         void AddGroupId(ui32 objectIdx, TGroupId value) override {
-            Y_ASSERT(!Data.CommonObjectsData.StoreStringColumns);
-            NumGroupIdsRef[objectIdx] = value;
+            (*Data.CommonObjectsData.GroupIds)[objectIdx] = value;
         }
 
         void AddSubgroupId(ui32 objectIdx, TSubgroupId value) override {
-            Y_ASSERT(!Data.CommonObjectsData.StoreStringColumns);
-            NumSubgroupIdsRef[objectIdx] = value;
-        }
-
-        void AddGroupId(ui32 objectIdx, const TString& value) override {
-            Y_ASSERT(Data.CommonObjectsData.StoreStringColumns);
-            StringGroupIdsRef[objectIdx] = value;
-        }
-
-        void AddSubgroupId(ui32 objectIdx, const TString& value) override {
-            Y_ASSERT(Data.CommonObjectsData.StoreStringColumns);
-            StringSubgroupIdsRef[objectIdx] = value;
-        }
-
-        void AddSampleId(ui32 objectIdx, const TString& value) override {
-            (*Data.CommonObjectsData.SampleId)[objectIdx] = value;
+            (*Data.CommonObjectsData.SubgroupIds)[objectIdx] = value;
         }
 
         void AddTimestamp(ui32 objectIdx, ui64 value) override {
@@ -1311,7 +1248,7 @@ namespace NCB {
 
         // needed for checking groupWeights consistency while loading from separate file
         TMaybeData<TConstArrayRef<TGroupId>> GetGroupIds() const override {
-            return Data.CommonObjectsData.GroupIds.GetMaybeNumData();
+            return Data.CommonObjectsData.GroupIds;
         }
 
         void Finish() override {
@@ -1337,7 +1274,6 @@ namespace NCB {
                 /*objectsGrouping*/ Nothing(), // will init from data
                 std::move(Data),
                 Options.SkipCheck,
-                Data.MetaInfo.ForceUnitAutoPairWeights,
                 LocalExecutor
             )->CastMoveTo<TObjectsDataProvider>();
         }
@@ -1420,11 +1356,6 @@ namespace NCB {
         ui32 ObjectCount;
 
         TRawBuilderData Data;
-
-        TArrayRef<TGroupId> NumGroupIdsRef;
-        TArrayRef<TString> StringGroupIdsRef;
-        TArrayRef<TSubgroupId> NumSubgroupIdsRef;
-        TArrayRef<TString> StringSubgroupIdsRef;
 
         TDataProviderBuilderOptions Options;
 
@@ -1536,7 +1467,7 @@ namespace NCB {
 
             Data.TargetData.PrepareForInitialization(metaInfo, objectCount, 0);
             Data.CommonObjectsData.PrepareForInitialization(metaInfo, objectCount, 0);
-            Data.ObjectsData.PrepareForInitialization(
+            Data.ObjectsData.Data.PrepareForInitialization(
                 metaInfo,
 
                 // TODO(akhropov): get from quantized pool meta info when it will be available: MLTOOLS-2392.
@@ -1552,7 +1483,7 @@ namespace NCB {
 
             FillQuantizedFeaturesInfo(
                 poolQuantizationSchema,
-                Data.ObjectsData.QuantizedFeaturesInfo.Get()
+                Data.ObjectsData.Data.QuantizedFeaturesInfo.Get()
             );
 
             Data.ObjectsData.ExclusiveFeatureBundlesData = TExclusiveFeatureBundlesData(
@@ -1562,7 +1493,7 @@ namespace NCB {
 
             Data.ObjectsData.PackedBinaryFeaturesData = TPackedBinaryFeaturesData(
                 *metaInfo.FeaturesLayout,
-                *Data.ObjectsData.QuantizedFeaturesInfo,
+                *Data.ObjectsData.Data.QuantizedFeaturesInfo,
                 Data.ObjectsData.ExclusiveFeatureBundlesData,
                 /*dontPack*/ Options.GpuDistributedFormat
             );
@@ -1581,7 +1512,7 @@ namespace NCB {
                 FloatFeaturesStorage.PrepareForInitialization(
                     *metaInfo.FeaturesLayout,
                     objectCount,
-                    Data.ObjectsData.QuantizedFeaturesInfo,
+                    Data.ObjectsData.Data.QuantizedFeaturesInfo,
                     BinaryFeaturesStorage,
                     Data.ObjectsData.PackedBinaryFeaturesData.FlatFeatureIndexToPackedBinaryIndex,
                     wholeColumns
@@ -1589,7 +1520,7 @@ namespace NCB {
                 CategoricalFeaturesStorage.PrepareForInitialization(
                     *metaInfo.FeaturesLayout,
                     objectCount,
-                    Data.ObjectsData.QuantizedFeaturesInfo,
+                    Data.ObjectsData.Data.QuantizedFeaturesInfo,
                     BinaryFeaturesStorage,
                     Data.ObjectsData.PackedBinaryFeaturesData.FlatFeatureIndexToPackedBinaryIndex,
                     wholeColumns
@@ -1623,7 +1554,7 @@ namespace NCB {
         template <class T>
         static void CopyPart(ui32 objectOffset, TUnalignedArrayBuf<T> srcPart, TVector<T>* dstData) {
             CB_ENSURE_INTERNAL(
-                objectOffset <= dstData->size(),
+                objectOffset < dstData->size(),
                 LabeledOutput(objectOffset, srcPart.GetSize(), dstData->size()));
             CB_ENSURE_INTERNAL(
                 objectOffset + srcPart.GetSize() <= dstData->size(),
@@ -1635,11 +1566,11 @@ namespace NCB {
 
         // TCommonObjectsData
         void AddGroupIdPart(ui32 objectOffset, TUnalignedArrayBuf<TGroupId> groupIdPart) override {
-            CopyPart(objectOffset, groupIdPart, &(*Data.CommonObjectsData.GroupIds.GetMaybeNumData()));
+            CopyPart(objectOffset, groupIdPart, &(*Data.CommonObjectsData.GroupIds));
         }
 
         void AddSubgroupIdPart(ui32 objectOffset, TUnalignedArrayBuf<TSubgroupId> subgroupIdPart) override {
-            CopyPart(objectOffset, subgroupIdPart, &(*Data.CommonObjectsData.SubgroupIds.GetMaybeNumData()));
+            CopyPart(objectOffset, subgroupIdPart, &(*Data.CommonObjectsData.SubgroupIds));
         }
 
         void AddTimestampPart(ui32 objectOffset, TUnalignedArrayBuf<ui64> timestampPart) override {
@@ -1764,7 +1695,7 @@ namespace NCB {
 
         // needed for checking groupWeights consistency while loading from separate file
         TMaybeData<TConstArrayRef<TGroupId>> GetGroupIds() const override {
-            return Data.CommonObjectsData.GroupIds.GetMaybeNumData();
+            return Data.CommonObjectsData.GroupIds;
         }
 
         void Finish() override {
@@ -1789,7 +1720,7 @@ namespace NCB {
                     *Data.MetaInfo.FeaturesLayout,
                     Data.CommonObjectsData.SubsetIndexing.Get(),
                     Data.ObjectsData.PackedBinaryFeaturesData.SrcData,
-                    &Data.ObjectsData.FloatFeatures
+                    &Data.ObjectsData.Data.FloatFeatures
                 );
 
                 CategoricalFeaturesStorage.GetResult(
@@ -1797,19 +1728,18 @@ namespace NCB {
                     *Data.MetaInfo.FeaturesLayout,
                     Data.CommonObjectsData.SubsetIndexing.Get(),
                     Data.ObjectsData.PackedBinaryFeaturesData.SrcData,
-                    &Data.ObjectsData.CatFeatures
+                    &Data.ObjectsData.Data.CatFeatures
                 );
             }
 
             SetResultsTaken();
 
-            return MakeDataProvider<TQuantizedObjectsDataProvider>(
+            return MakeDataProvider<TQuantizedForCPUObjectsDataProvider>(
                 /*objectsGrouping*/ Nothing(), // will init from data
                 std::move(Data),
                 // without HasFeatures dataprovider self-test fails on distributed train
                 // on quantized pool
                 Options.SkipCheck || !DatasetSubset.HasFeatures,
-                Data.MetaInfo.ForceUnitAutoPairWeights,
                 LocalExecutor
             )->CastMoveTo<TObjectsDataProvider>();
         }
@@ -1844,7 +1774,7 @@ namespace NCB {
             GetBinaryFeaturesDataResult();
         }
 
-        TQuantizedBuilderData& GetDataRef() {
+        TQuantizedForCPUBuilderData& GetDataRef() {
             return Data;
         }
 
@@ -2302,7 +2232,10 @@ namespace NCB {
     private:
         ui32 ObjectCount;
 
-        TQuantizedBuilderData Data;
+        /* ForCPU because TQuantizedForCPUObjectsData is more generic than TQuantizedObjectsData -
+         * it contains it as a subset
+         */
+        TQuantizedForCPUBuilderData Data;
 
         TVector<TString> StringClassLabels; // if poolQuantizationSchema.ClassLabels has Strings
         TVector<float> FloatClassLabels;    // if poolQuantizationSchema.ClassLabels has Integer or Float
@@ -2353,7 +2286,7 @@ namespace NCB {
             const auto& featuresLayout = *dataRef.MetaInfo.FeaturesLayout;
 
             CB_ENSURE(featuresLayout.GetFeatureCount(EFeatureType::Categorical) == 0, "Categorical Lazy columns are not supported");
-            dataRef.ObjectsData.CatFeatures.clear();
+            dataRef.ObjectsData.Data.CatFeatures.clear();
 
             const size_t featureCount = (size_t)featuresLayout.GetFeatureCount(EFeatureType::Float);
 
@@ -2363,7 +2296,7 @@ namespace NCB {
             const auto& isAvailable = MakeIsAvailable<EFeatureType::Float>(featuresLayout);
 
             TVector<THolder<IQuantizedFloatValuesHolder>>& lazyQuantizedColumns =
-                dataRef.ObjectsData.FloatFeatures;
+                dataRef.ObjectsData.Data.FloatFeatures;
             lazyQuantizedColumns.clear();
             lazyQuantizedColumns.reserve(featureCount);
             for (auto perTypeFeatureIdx : xrange(featureCount)) {
@@ -2383,11 +2316,10 @@ namespace NCB {
 
             SetResultsTaken();
 
-            return MakeDataProvider<TQuantizedObjectsDataProvider>(
+            return MakeDataProvider<TQuantizedForCPUObjectsDataProvider>(
                 /*objectsGrouping*/ Nothing(), // will init from data
                 std::move(dataRef),
                 Options.SkipCheck,
-                dataRef.MetaInfo.ForceUnitAutoPairWeights,
                 LocalExecutor
             )->CastMoveTo<TObjectsDataProvider>();
         }

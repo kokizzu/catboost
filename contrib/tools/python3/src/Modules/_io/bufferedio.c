@@ -341,10 +341,11 @@ _enter_buffered_busy(buffered *self)
      : buffered_closed(self)))
 
 #define CHECK_CLOSED(self, error_msg) \
-    if (IS_CLOSED(self) & (Py_SAFE_DOWNCAST(READAHEAD(self), Py_off_t, Py_ssize_t) == 0)) { \
+    if (IS_CLOSED(self)) { \
         PyErr_SetString(PyExc_ValueError, error_msg); \
         return NULL; \
-    } \
+    }
+
 
 #define VALID_READ_BUFFER(self) \
     (self->readable && self->read_end != -1)
@@ -528,9 +529,6 @@ buffered_close(buffered *self, PyObject *args)
         _PyErr_ChainExceptions(exc, val, tb);
         Py_CLEAR(res);
     }
-
-    self->read_end = 0;
-    self->pos = 0;
 
 end:
     LEAVE_BUFFERED(self)

@@ -1,23 +1,11 @@
 import sys
 import os
-from IPython.external.qt_for_kernel import QtCore, QtGui, enum_helper
-from IPython import get_ipython
+from IPython.external.qt_for_kernel import QtCore, QtGui
 
 # If we create a QApplication, keep a reference to it so that it doesn't get
 # garbage collected.
 _appref = None
 _already_warned = False
-
-
-def _exec(obj):
-    # exec on PyQt6, exec_ elsewhere.
-    obj.exec() if hasattr(obj, "exec") else obj.exec_()
-
-
-def _reclaim_excepthook():
-    shell = get_ipython()
-    if shell is not None:
-        sys.excepthook = shell.excepthook
 
 
 def inputhook(context):
@@ -37,24 +25,8 @@ def inputhook(context):
                         'variable. Deactivate Qt5 code.'
                     )
                 return
-        try:
-            QtCore.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
-        except AttributeError:  # Only for Qt>=5.6, <6.
-            pass
-        try:
-            QtCore.QApplication.setHighDpiScaleFactorRoundingPolicy(
-                QtCore.Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
-            )
-        except AttributeError:  # Only for Qt>=5.14.
-            pass
+        QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
         _appref = app = QtGui.QApplication([" "])
-
-        # "reclaim" IPython sys.excepthook after event loop starts
-        # without this, it defaults back to BaseIPythonApplication.excepthook
-        # and exceptions in the Qt event loop are rendered without traceback
-        # formatting and look like "bug in IPython".
-        QtCore.QTimer.singleShot(0, _reclaim_excepthook)
-
     event_loop = QtCore.QEventLoop(app)
 
     if sys.platform == 'win32':
@@ -64,20 +36,19 @@ def inputhook(context):
         timer.timeout.connect(event_loop.quit)
         while not context.input_is_ready():
             timer.start(50)  # 50 ms
-            _exec(event_loop)
+            event_loop.exec_()
             timer.stop()
     else:
         # On POSIX platforms, we can use a file descriptor to quit the event
         # loop when there is input ready to read.
-        notifier = QtCore.QSocketNotifier(
-            context.fileno(), enum_helper("QtCore.QSocketNotifier.Type").Read
-        )
+        notifier = QtCore.QSocketNotifier(context.fileno(),
+                                          QtCore.QSocketNotifier.Read)
         try:
             # connect the callback we care about before we turn it on
             notifier.activated.connect(lambda: event_loop.exit())
             notifier.setEnabled(True)
             # only start the event loop we are not already flipped
             if not context.input_is_ready():
-                _exec(event_loop)
+                event_loop.exec_()
         finally:
             notifier.setEnabled(False)

@@ -105,15 +105,15 @@ private:
 
 struct TCustomMetricDescriptor {
     using TEvalFuncPtr = TMetricHolder (*)(
-        TConstArrayRef<TConstArrayRef<double>>& approx,
+        const TVector<TVector<double>>& approx,
         TConstArrayRef<float> target,
         TConstArrayRef<float> weight,
         int begin,
         int end,
         void* customData);
 
-    using TEvalMultiTargetFuncPtr = TMetricHolder (*)(
-        TConstArrayRef<TConstArrayRef<double>> approx,
+    using TEvalMultiregressionFuncPtr = TMetricHolder (*)(
+        TConstArrayRef<TVector<double>> approx,
         TConstArrayRef<TConstArrayRef<float>> target,
         TConstArrayRef<float> weight,
         int begin,
@@ -126,19 +126,39 @@ struct TCustomMetricDescriptor {
 
     void* CustomData = nullptr;
     TMaybe<TEvalFuncPtr> EvalFunc;
-    TMaybe<TEvalMultiTargetFuncPtr> EvalMultiTargetFunc;
+    TMaybe<TEvalMultiregressionFuncPtr> EvalMultiregressionFunc;
     TGetDescriptionFuncPtr GetDescriptionFunc = nullptr;
     TIsMaxOptimalFuncPtr IsMaxOptimalFunc = nullptr;
     TGetFinalErrorFuncPtr GetFinalErrorFunc = nullptr;
 
-    bool IsMultiTargetMetric() const {
-        CB_ENSURE(EvalFunc.Defined() || EvalMultiTargetFunc.Defined(), "Any custom eval function must be defined");
-        CB_ENSURE(EvalFunc.Empty() || EvalMultiTargetFunc.Empty(), "Only one custom eval function must be defined");
-        return EvalMultiTargetFunc.Defined();
+    bool IsMultiregressionMetric() const {
+        CB_ENSURE(EvalFunc.Defined() || EvalMultiregressionFunc.Defined(), "Any custom eval function must be defined");
+        CB_ENSURE(EvalFunc.Empty() || EvalMultiregressionFunc.Empty(), "Only one custom eval function must be defined");
+        return EvalMultiregressionFunc.Defined();
     }
 };
 
 struct IMetric {
+    virtual TMetricHolder Eval(
+        const TVector<TVector<double>>& approx,
+        TConstArrayRef<float> target,
+        TConstArrayRef<float> weight,
+        TConstArrayRef<TQueryInfo> queriesInfo,
+        int begin,
+        int end,
+        NPar::ILocalExecutor& executor
+    ) const = 0;
+    virtual TMetricHolder Eval(
+        const TConstArrayRef<TConstArrayRef<double>> approx,
+        const TConstArrayRef<TConstArrayRef<double>> approxDelta,
+        bool isExpApprox,
+        TConstArrayRef<float> target,
+        TConstArrayRef<float> weight,
+        TConstArrayRef<TQueryInfo> queriesInfo,
+        int begin,
+        int end,
+        NPar::ILocalExecutor& executor
+    ) const = 0;
     virtual TString GetDescription() const = 0;
     virtual void GetBestValue(EMetricBestValue* valueType, float* bestValue) const = 0;
     virtual EErrorType GetErrorType() const = 0;
@@ -149,19 +169,9 @@ struct IMetric {
     virtual void AddHint(const TString& key, const TString& value) = 0;
     virtual bool NeedTarget() const = 0;
     virtual ~IMetric() = default;
+
 public:
     TMetricParam<bool> UseWeights{"use_weights", true};
-};
-
-struct TParamInfo {
-    TString Name;
-    bool IsMandatory;
-    NJson::TJsonValue DefaultValue;
-};
-
-struct TParamSet {
-    TVector<TParamInfo> ValidParams;
-    TString NameSuffix;
 };
 
 struct TMetric: public IMetric {
@@ -177,62 +187,51 @@ struct TMetric: public IMetric {
     // and constructs a Metric:key1=value1;key2=value2 string from them.
     // UseWeights is included in the description if the weights have been specified.
     virtual TString GetDescription() const override;
-protected:
+private:
     TMap<TString, TString> Hints;
     const ELossFunction LossFunction;
     const TLossParams DescriptionParams;
 };
 
-struct ISingleTargetEval {
+struct TMultiRegressionMetric: public TMetric {
+    explicit TMultiRegressionMetric(ELossFunction lossFunction, const TLossParams& descriptionParams)
+        : TMetric(lossFunction, descriptionParams) {}
     virtual TMetricHolder Eval(
-        const TVector<TVector<double>>& approx,
-        TConstArrayRef<float> target,
-        TConstArrayRef<float> weight,
-        TConstArrayRef<TQueryInfo> queriesInfo,
-        int begin,
-        int end,
-        NPar::ILocalExecutor& executor
-    ) const {
-        return Eval(To2DConstArrayRef<double>(approx), /*approxDelta*/{}, /*isExpApprox*/false, target, weight, queriesInfo, begin, end, executor);
-    }
-    virtual TMetricHolder Eval(
-        TConstArrayRef<TConstArrayRef<double>> approx,
-        TConstArrayRef<TConstArrayRef<double>> approxDelta,
-        bool isExpApprox,
-        TConstArrayRef<float> target,
-        TConstArrayRef<float> weight,
-        TConstArrayRef<TQueryInfo> queriesInfo,
-        int begin,
-        int end,
-        NPar::ILocalExecutor& executor
-    ) const = 0;
-};
-
-struct IMultiTargetEval {
-    virtual TMetricHolder Eval(
-        TConstArrayRef<TConstArrayRef<double>> approx,
-        TConstArrayRef<TConstArrayRef<double>> approxDelta,
+        TConstArrayRef<TVector<double>> approx,
+        TConstArrayRef<TVector<double>> approxDelta,
         TConstArrayRef<TConstArrayRef<float>> target,
         TConstArrayRef<float> weight,
         int begin,
         int end,
         NPar::ILocalExecutor& executor
     ) const = 0;
-};
-
-struct TSingleTargetMetric : public TMetric, ISingleTargetEval {
-    explicit TSingleTargetMetric(ELossFunction lossFunction, const TLossParams& descriptionParams)
-        : TMetric(lossFunction, descriptionParams) {}
-};
-
-struct TMultiTargetMetric: public TMetric, IMultiTargetEval {
-    explicit TMultiTargetMetric(ELossFunction lossFunction, const TLossParams& descriptionParams)
-        : TMetric(lossFunction, descriptionParams) {}
-};
-
-struct TUniversalMetric : public TMetric, ISingleTargetEval, IMultiTargetEval {
-    explicit TUniversalMetric(ELossFunction lossFunction, const TLossParams& descriptionParams)
-        : TMetric(lossFunction, descriptionParams) {}
+    TMetricHolder Eval(
+        const TVector<TVector<double>>& /*approx*/,
+        TConstArrayRef<float> /*target*/,
+        TConstArrayRef<float> /*weight*/,
+        TConstArrayRef<TQueryInfo> /*queriesInfo*/,
+        int /*begin*/,
+        int /*end*/,
+        NPar::ILocalExecutor& /*executor*/
+    ) const final {
+        CB_ENSURE(false, "Multiregression metrics should not be used like regular metric");
+    }
+    TMetricHolder Eval(
+        const TConstArrayRef<TConstArrayRef<double>> /*approx*/,
+        const TConstArrayRef<TConstArrayRef<double>> /*approxDelta*/,
+        bool /*isExpApprox*/,
+        TConstArrayRef<float> /*target*/,
+        TConstArrayRef<float> /*weight*/,
+        TConstArrayRef<TQueryInfo> /*queriesInfo*/,
+        int /*begin*/,
+        int /*end*/,
+        NPar::ILocalExecutor& /*executor*/
+    ) const final {
+        CB_ENSURE(false, "Multiregression metrics should not be used like regular metric");
+    }
+    EErrorType GetErrorType() const final {
+        return EErrorType::PerObjectError;
+    }
 };
 
 static inline int GetMinBlockSize(int objectCount) {
@@ -268,6 +267,7 @@ static inline TMetricHolder ParallelEvalMetric(TEvalFunction eval, int minBlockS
 
 THolder<IMetric> MakeCtrFactorMetric(const TLossParams& params);
 
+THolder<IMetric> MakeBinClassAucMetric(const TLossParams& params);
 THolder<IMetric> MakeMultiClassAucMetric(const TLossParams& params, int positiveClass);
 
 THolder<IMetric> MakeBinClassPrecisionMetric(const TLossParams& params,
@@ -305,7 +305,6 @@ TVector<THolder<IMetric>> CreateMetricFromDescription(const NCatboostOptions::TL
 
 // For tests.
 TVector<THolder<IMetric>> CreateMetric(ELossFunction metric, const TLossParams& params, int approxDimension);
-TVector<THolder<TSingleTargetMetric>> CreateSingleTargetMetric(ELossFunction metric, const TLossParams& params, int approxDimension);
 
 TVector<THolder<IMetric>> CreateMetrics(
     TConstArrayRef<NCatboostOptions::TLossDescription> metricDescriptions,
@@ -324,8 +323,6 @@ void InitializeEvalMetricIfNotSet(
 TVector<TString> GetMetricsDescription(const TVector<const IMetric*>& metrics);
 TVector<TString> GetMetricsDescription(const TVector<THolder<IMetric>>& metrics);
 
-NJson::TJsonValue ExportAllMetricsParamsToJson();
-
 TVector<bool> GetSkipMetricOnTrain(const TVector<const IMetric*>& metrics);
 TVector<bool> GetSkipMetricOnTrain(const TVector<THolder<IMetric>>& metrics);
 
@@ -341,8 +338,8 @@ TMetricHolder EvalErrors(
 );
 
 TMetricHolder EvalErrors(
-    TConstArrayRef<TConstArrayRef<double>> approx,
-    TConstArrayRef<TConstArrayRef<double>> approxDelta,
+    const TConstArrayRef<TConstArrayRef<double>> approx,
+    const TConstArrayRef<TConstArrayRef<double>> approxDelta,
     bool isExpApprox,
     TConstArrayRef<float> target,
     TConstArrayRef<float> weight,

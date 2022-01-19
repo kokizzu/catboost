@@ -88,7 +88,7 @@ std::function<bool(ui32)> BuildNodeSplitFunction(
 
 std::function<bool(ui32)> BuildNodeSplitFunction(
     const TSplitNode& node,
-    const TQuantizedObjectsDataProvider& objectsDataProvider,
+    const TQuantizedForCPUObjectsDataProvider& objectsDataProvider,
     const TOnlineCtrBase* onlineCtr,
     ui32 datasetIdx) {
 

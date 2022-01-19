@@ -175,7 +175,7 @@ Y_UNIT_TEST_SUITE(TObliviousTreeModel) {
             ui32 treeIndex = estimatedFeatureId;
             model.Calc(
                 {},
-                TConstArrayRef<TVector<TStringBuf>>{},
+                {},
                 transposedTextFeatures,
                 treeIndex,
                 treeIndex + 1,
@@ -194,7 +194,7 @@ Y_UNIT_TEST_SUITE(TObliviousTreeModel) {
 
     Y_UNIT_TEST(TestTextOnlyModel) {
         TVector<NCBTest::TTextFeature> features;
-        TMap<ui32, NCBTest::TTokenizedTextFeature> tokenizedFeatures;
+        TVector<NCBTest::TTokenizedTextFeature> tokenizedFeatures;
         TVector<TDigitizer> digitizers;
         TVector<TTextFeatureCalcerPtr> calcers;
         TVector<TVector<ui32>> perFeatureDigitizers;

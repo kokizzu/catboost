@@ -73,7 +73,7 @@ namespace {
         const TStringBuf N;
     };
 
-    inline TString DoFmtTime(double t) {
+    static inline TString DoFmtTime(double t) {
         if (t > 0.1) {
             return ToString(t) + " seconds";
         }
@@ -173,7 +173,7 @@ namespace {
         }
     };
 
-    TLinFunc CalcModel(const TSamples& s) {
+    static TLinFunc CalcModel(const TSamples& s) {
         TKahanSLRSolver solver;
 
         for (const auto& p : s) {
@@ -188,7 +188,7 @@ namespace {
         return TLinFunc{c, i};
     }
 
-    inline TSamples RemoveOutliers(const TSamples& s, double fraction) {
+    static inline TSamples RemoveOutliers(const TSamples& s, double fraction) {
         if (s.size() < 20) {
             return s;
         }
@@ -263,7 +263,7 @@ namespace {
 
     using TTests = TIntrusiveListWithAutoDelete<ITestRunner, TDestructor>;
 
-    inline TTests& Tests() {
+    static inline TTests& Tests() {
         return *Singleton<TTests>();
     }
 
@@ -285,7 +285,7 @@ namespace {
         F_JSON /* "json" */
     };
 
-    TAdaptiveLock STDOUT_LOCK;
+    static TAdaptiveLock STDOUT_LOCK;
 
     struct IReporter {
         virtual void Report(TResult&& result) = 0;
@@ -420,7 +420,7 @@ namespace {
         TAdaptiveLock ResultsLock_;
     };
 
-    THolder<IReporter> MakeReporter(const EOutFormat type) {
+    static THolder<IReporter> MakeReporter(const EOutFormat type) {
         switch (type) {
             case F_CONSOLE:
                 return MakeHolder<TConsoleReporter>();
@@ -438,11 +438,11 @@ namespace {
         return MakeHolder<TConsoleReporter>(); // make compiler happy
     }
 
-    THolder<IReporter> MakeOrderedReporter(const EOutFormat type) {
+    static THolder<IReporter> MakeOrderedReporter(const EOutFormat type) {
         return MakeHolder<TOrderedReporter>(MakeReporter(type));
     }
 
-    void EnumerateTests(TVector<ITestRunner*>& tests) {
+    static void EnumerateTests(TVector<ITestRunner*>& tests) {
         for (size_t id : xrange(tests.size())) {
             tests[id]->SequentialId = id;
         }

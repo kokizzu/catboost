@@ -1,7 +1,7 @@
 #pragma once
 
 #include <util/generic/fwd.h>
-#include <stddef.h>
+#include <util/system/defaults.h>
 
 class IOutputStream;
 

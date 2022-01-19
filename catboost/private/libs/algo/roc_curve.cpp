@@ -87,12 +87,7 @@ void TRocCurve::BuildCurve(
     size_t allDocumentsOffset = 0;
     for (size_t poolIdx = 0; poolIdx < labels.size(); ++poolIdx) {
         TVector<TVector<double>> rawApproxesMulti(1, approxes[poolIdx]);
-        auto probabilities = PrepareEval(
-            EPredictionType::Probability,
-            /* ensemblesCount */ 1,
-            /* lossFunctionName */ "",
-            rawApproxesMulti,
-            localExecutor);
+        auto probabilities = PrepareEval(EPredictionType::Probability,  /* lossFunctionName */ "", rawApproxesMulti, localExecutor);
         const auto& targets = labels[poolIdx];
         size_t documentsCount = targets.size();
         for (size_t documentIdx = 0; documentIdx < documentsCount; ++documentIdx) {
@@ -191,8 +186,7 @@ TRocCurve::TRocCurve(const TFullModel& model, const TVector<TDataProviderPtr>& d
                 EPredictionType::RawFormulaVal,
                 0,
                 0,
-                &localExecutor,
-                processedData.TargetData->GetBaseline()
+                &localExecutor
             )[0];
 
             targetDataParts[i] = std::move(processedData.TargetData);

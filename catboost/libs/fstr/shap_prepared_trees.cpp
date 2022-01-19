@@ -309,7 +309,7 @@ static double CalcAverageApprox(const TVector<double>& averageApproxByClass) {
 
 bool IsPrepareTreesCalcShapValues(
     const TFullModel& model,
-    TMaybe<ui32> datasetObjectCount,
+    const TDataProvider* dataset,
     EPreCalcShapValues mode
 ) {
     switch (mode) {
@@ -319,7 +319,7 @@ bool IsPrepareTreesCalcShapValues(
         case EPreCalcShapValues::NoPreCalc:
             return false;
         case EPreCalcShapValues::Auto: {
-            if (!datasetObjectCount) {
+            if (dataset==nullptr) {
                 return true;
             }
             if (!model.IsOblivious()) {
@@ -328,7 +328,7 @@ bool IsPrepareTreesCalcShapValues(
             const size_t treeCount = model.GetTreeCount();
             const TModelTrees& forest = *model.ModelTrees;
             double treesAverageLeafCount = forest.GetModelTreeData()->GetLeafValues().size() / treeCount;
-            return treesAverageLeafCount < *datasetObjectCount;
+            return treesAverageLeafCount < dataset->ObjectsGrouping->GetObjectCount();
         }
     }
     Y_UNREACHABLE();
@@ -406,20 +406,29 @@ static void CalcTreeStats(
     }
 }
 
-static void InitPreparedTreesWithoutIndependent(
+static void InitPreparedTrees(
     const TFullModel& model,
-    TMaybe<ui32> datasetObjectCount,
+    const TDataProvider* dataset, // can be nullptr if model has LeafWeights
+    const TDataProviderPtr referenceDataset,
     EPreCalcShapValues mode,
     bool calcInternalValues,
     ECalcTypeShapValues calcType,
+    EExplainableModelOutput modelOutputType,
+    NPar::ILocalExecutor* localExecutor,
     TShapPreparedTrees* preparedTrees
 ) {
     const size_t treeCount = model.GetTreeCount();
-    preparedTrees->CalcShapValuesByLeafForAllTrees = IsPrepareTreesCalcShapValues(
-        model,
-        datasetObjectCount,
-        mode
-    );
+    // use only if model.ModelTrees->LeafWeights is empty
+    if (model.ModelTrees->GetModelTreeData()->GetLeafWeights().empty()) {
+        CB_ENSURE(
+            dataset,
+            "PrepareTrees requires either non-empty LeafWeights in model or provided dataset"
+        );
+        CB_ENSURE(dataset->ObjectsGrouping->GetObjectCount() != 0, "To calculate shap values, dataset must contain objects.");
+        CB_ENSURE(dataset->MetaInfo.GetFeatureCount() > 0, "To calculate shap values, dataset must contain features.");
+    }
+
+    preparedTrees->CalcShapValuesByLeafForAllTrees = IsPrepareTreesCalcShapValues(model, dataset, mode);
 
     preparedTrees->ShapValuesByLeafForAllTrees.resize(treeCount);
     preparedTrees->SubtreeWeightsForAllTrees.resize(treeCount);
@@ -435,24 +444,36 @@ static void InitPreparedTreesWithoutIndependent(
         &preparedTrees->BinFeatureCombinationClass,
         &preparedTrees->CombinationClassFeatures
     );
+
+    if (calcType == ECalcTypeShapValues::Independent) {
+        preparedTrees->IndependentTreeShapParams = TIndependentTreeShapParams(
+            model,
+            *dataset,
+            *referenceDataset,
+            modelOutputType,
+            localExecutor
+        );
+    }
 }
 
 static void InitLeafWeights(
     const TFullModel& model,
-    bool needSumModelAndDatasetWeights,
-    TConstArrayRef<double> leafWeightsFromDataset, // can be empty
+    const TDataProvider* dataset,
+    NPar::ILocalExecutor* localExecutor,
     TVector<double>* leafWeights
 ) {
     const auto leafWeightsOfModels = model.ModelTrees->GetModelTreeData()->GetLeafWeights();
-
+    const bool needSumModelAndDatasetWeights = HasNonZeroApproxForZeroWeightLeaf(model);
     if (leafWeightsOfModels.empty() || needSumModelAndDatasetWeights) {
-        CB_ENSURE_INTERNAL(
-            !leafWeightsFromDataset.empty(),
-            "Leaf weights from dataset are not provided"
+        CB_ENSURE(
+            dataset,
+            "To calculate shap values, either a model with leaf weights, or a dataset are required."
         );
-        leafWeights->assign(leafWeightsFromDataset.begin(), leafWeightsFromDataset.end());
+        CB_ENSURE(dataset->ObjectsGrouping->GetObjectCount() != 0, "To calculate shap values, dataset must contain objects.");
+        CB_ENSURE(dataset->MetaInfo.GetFeatureCount() > 0, "To calculate shap values, dataset must contain features.");
+        *leafWeights = CollectLeavesStatistics(*dataset, model, localExecutor);
     }
-    if (!leafWeightsOfModels.empty()) {
+    if (!leafWeightsOfModels.empty()){
         if (!leafWeights->empty()) {
             auto dst = leafWeights->data();
             for (auto i : xrange(leafWeights->size())) {
@@ -462,31 +483,11 @@ static void InitLeafWeights(
             leafWeights->assign(leafWeightsOfModels.begin(), leafWeightsOfModels.end());
         }
     }
+    CB_ENSURE(
+        !leafWeights->empty(),
+        "For Shap values calculation either model should contain leaf weights or user should provide non-empty dataset"
+    );
 }
-
-static void InitLeafWeights(
-    const TFullModel& model,
-    bool fstrOnTrainPool,
-    const TDataProvider* dataset,
-    NPar::ILocalExecutor* localExecutor,
-    TVector<double>* leafWeights
-) {
-    const auto leafWeightsOfModels = model.ModelTrees->GetModelTreeData()->GetLeafWeights();
-    const bool needSumModelAndDatasetWeights = !fstrOnTrainPool && HasNonZeroApproxForZeroWeightLeaf(model);
-
-    TVector<double> leafWeightsFromDataset;
-    if (leafWeightsOfModels.empty() || needSumModelAndDatasetWeights) {
-        CB_ENSURE(
-            dataset,
-            "To calculate shap values, either a model with leaf weights, or a dataset are required."
-        );
-        CB_ENSURE(dataset->ObjectsGrouping->GetObjectCount() != 0, "To calculate shap values, dataset must contain objects.");
-        CB_ENSURE(dataset->MetaInfo.GetFeatureCount() > 0, "To calculate shap values, dataset must contain features.");
-        leafWeightsFromDataset = CollectLeavesStatistics(*dataset, model, localExecutor);
-    }
-    InitLeafWeights(model, needSumModelAndDatasetWeights, leafWeightsFromDataset, leafWeights);
-}
-
 
 static inline bool IsMultiClassification(const TFullModel& model) {
     ELossFunction modelLoss = ELossFunction::RMSE;
@@ -502,32 +503,6 @@ static inline bool IsMultiClassification(const TFullModel& model) {
     return (modelLoss == ELossFunction::MultiClass);
 }
 
-
-TShapPreparedTrees PrepareTreesWithoutIndependent(
-    const TFullModel& model,
-    i64 datasetObjectCount,
-    bool needSumModelAndDatasetWeights,
-    TConstArrayRef<double> leafWeightsFromDataset,
-    EPreCalcShapValues mode,
-    bool calcInternalValues,
-    ECalcTypeShapValues calcType
-) {
-    TShapPreparedTrees preparedTrees;
-    InitLeafWeights(model, needSumModelAndDatasetWeights, leafWeightsFromDataset, &preparedTrees.LeafWeightsForAllTrees);
-    InitPreparedTreesWithoutIndependent(
-        model,
-        (datasetObjectCount > 0) ? TMaybe<ui32>(SafeIntegerCast<ui32>(datasetObjectCount)) : Nothing(),
-        mode,
-        calcInternalValues,
-        calcType,
-        &preparedTrees
-    );
-    const bool isMultiClass = IsMultiClassification(model);
-    CalcTreeStats(*model.ModelTrees, preparedTrees.LeafWeightsForAllTrees, isMultiClass, calcType, &preparedTrees);
-    return preparedTrees;
-}
-
-
 TShapPreparedTrees PrepareTrees(
     const TFullModel& model,
     const TDataProvider* dataset, // can be nullptr if model has LeafWeights
@@ -536,28 +511,11 @@ TShapPreparedTrees PrepareTrees(
     NPar::ILocalExecutor* localExecutor,
     bool calcInternalValues,
     ECalcTypeShapValues calcType,
-    EExplainableModelOutput modelOutputType,
-    bool fstrOnTrainPool
+    EExplainableModelOutput modelOutputType
 ) {
     TShapPreparedTrees preparedTrees;
-    InitLeafWeights(model, fstrOnTrainPool, dataset, localExecutor, &preparedTrees.LeafWeightsForAllTrees);
-    InitPreparedTreesWithoutIndependent(
-        model,
-        dataset ? TMaybe<ui32>(dataset->GetObjectCount()) : Nothing(),
-        mode,
-        calcInternalValues,
-        calcType,
-        &preparedTrees
-    );
-    if (calcType == ECalcTypeShapValues::Independent) {
-        preparedTrees.IndependentTreeShapParams = TIndependentTreeShapParams(
-            model,
-            *dataset,
-            *referenceDataset,
-            modelOutputType,
-            localExecutor
-        );
-    }
+    InitLeafWeights(model, dataset, localExecutor, &preparedTrees.LeafWeightsForAllTrees);
+    InitPreparedTrees(model, dataset, referenceDataset, mode, calcInternalValues, calcType, modelOutputType, localExecutor, &preparedTrees);
     const bool isMultiClass = IsMultiClassification(model);
     CalcTreeStats(*model.ModelTrees, preparedTrees.LeafWeightsForAllTrees, isMultiClass, calcType, &preparedTrees);
     return preparedTrees;

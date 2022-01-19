@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.styles.paraiso_light
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -34,6 +35,9 @@ PURPLE = "#815ba4"
 class ParaisoLightStyle(Style):
 
     default_style = ''
+
+    background_color = BACKGROUND
+    highlight_color = SELECTION
 
     background_color = BACKGROUND
     highlight_color = SELECTION

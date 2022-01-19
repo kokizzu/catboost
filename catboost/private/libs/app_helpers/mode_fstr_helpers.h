@@ -2,7 +2,6 @@
 
 #include "implementation_type_enum.h"
 
-#include <catboost/libs/model/model.h>
 #include <catboost/private/libs/options/analytical_mode_params.h>
 
 #include <library/cpp/getopt/small/last_getopt_opts.h>
@@ -23,7 +22,4 @@ namespace NCB {
         NLastGetopt::TOpts* parserPtr);
 
     void ModeFstrSingleHost(const NCB::TAnalyticalModeCommonParams& params);
-    void ModeFstrSingleHostInner(
-        const NCB::TAnalyticalModeCommonParams& params,
-        const TFullModel& model);
 }

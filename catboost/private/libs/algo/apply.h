@@ -26,8 +26,7 @@ TVector<TVector<double>> ApplyModelMulti(
     const EPredictionType predictionType,
     int begin,
     int end,
-    NPar::ILocalExecutor* executor = nullptr,
-    const NCB::TMaybeData<TConstArrayRef<TConstArrayRef<float>>>& baseline = Nothing());
+    NPar::ILocalExecutor* executor = nullptr);
 
 TVector<TVector<double>> ApplyModelMulti(
     const TFullModel& model,
@@ -36,8 +35,7 @@ TVector<TVector<double>> ApplyModelMulti(
     const EPredictionType predictionType = EPredictionType::RawFormulaVal,
     int begin = 0,
     int end = 0,
-    int threadCount = 1,
-    const NCB::TMaybeData<TConstArrayRef<TConstArrayRef<float>>>& baseline = Nothing());
+    int threadCount = 1);
 
 TVector<TVector<double>> ApplyModelMulti(
     const TFullModel& model,

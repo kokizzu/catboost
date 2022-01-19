@@ -61,7 +61,7 @@ namespace NChromiumTrace {
 
     struct TEventArgs {
         struct TArg {
-            using TValue = std::variant<TStringBuf, i64, double>;
+            using TValue = TVariant<TStringBuf, i64, double>;
 
             TStringBuf Name;
             TValue Value;
@@ -201,7 +201,7 @@ namespace NChromiumTrace {
         return !(lhs == rhs);
     }
 
-    using TAnyEvent = std::variant<
+    using TAnyEvent = TVariant<
         TDurationBeginEvent,
         TDurationEndEvent,
         TDurationCompleteEvent,

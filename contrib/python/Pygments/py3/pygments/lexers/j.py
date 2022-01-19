@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.j
     ~~~~~~~~~~~~~~~~~
@@ -88,7 +89,7 @@ class JLexer(RegexLexer):
             (r'=[.:]', Operator),
 
             # Builtins
-            (r'[-=+*#$%@!~`^&";:.,<>{}\[\]\\|/?]', Operator),
+            (r'[-=+*#$%@!~`^&";:.,<>{}\[\]\\|/]', Operator),
 
             # Short Keywords
             (r'[abCdDeEfHiIjLMoprtT]\.',  Keyword.Reserved),

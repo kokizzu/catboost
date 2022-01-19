@@ -12,7 +12,6 @@ PEERDIR(
     catboost/libs/logging
     catboost/libs/model
     catboost/private/libs/options
-    library/cpp/binsaver
     library/cpp/json
 )
 

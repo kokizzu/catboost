@@ -1,13 +1,9 @@
 #include "error_functions.h"
 
 #include <catboost/libs/helpers/dispatch_generic_lambda.h>
-#include <catboost/libs/metrics/dcg.h>
 
 #include <util/generic/xrange.h>
 #include <util/random/normal.h>
-
-
-using namespace NCB;
 
 
 template <int MaxDerivativeOrder, bool UseTDers, bool UseExpApprox, bool HasDelta>
@@ -111,144 +107,6 @@ void IDerCalcer::CalcDersRange(
             }
     },
     useTDers, IsExpApprox, hasDelta);
-}
-
-TVector<size_t> ArgSort(
-    int start,
-    int count,
-    const float* targets
-) {
-    TVector<size_t> labelOrder(count);
-    std::iota(labelOrder.begin(), labelOrder.end(), start);
-    std::sort(labelOrder.begin(), labelOrder.end(), [&]
-        (size_t lhs, size_t rhs){
-            return std::abs(targets[lhs]) < std::abs(targets[rhs]);
-        }
-    );
-
-    return labelOrder;
-}
-
-double CalcCoxApproxSum(
-    int start,
-    int count,
-    const double* approxes,
-    const double* approxesDeltas
-) {
-    double expPSum = 0;
-    for (yssize_t i = 0; i < count; ++i) {
-        double updatedApprox = approxes[start + i];
-        if (approxesDeltas != nullptr) {
-            updatedApprox += approxesDeltas[start + i];
-        }
-        expPSum += std::exp(updatedApprox);
-    }
-
-    return expPSum;
-}
-
-void TCoxError::CalcDersRange(
-    int start,
-    int count,
-    bool /*calcThirdDer*/,
-    const double* approxes,
-    const double* approxesDeltas,
-    const float* targets,
-    const float* /*weights*/,
-    TDers* ders
-) const {
-
-    TVector<size_t> labelOrder = ArgSort(start, count, targets);
-
-    double expPSum = CalcCoxApproxSum(start, count, approxes, approxesDeltas);
-
-    double rk = 0;
-    double sk = 0;
-    double lastExpP = 0.0;
-    double lastAbsY = 0.0;
-    double accumulatedSum = 0;
-    for (yssize_t i = 0; i < count; ++i) {
-        const size_t ind = labelOrder[i];
-        const double p = approxes[ind] + (approxesDeltas == nullptr ? 0 : approxesDeltas[ind]);
-
-        const double expP = std::exp(p);
-        const double y = targets[ind];
-        const double absY = std::abs(y);
-        // only update the denominator after we move forward in time (labels are sorted)
-        // this is Breslow's method for ties
-        accumulatedSum += lastExpP;
-        if (lastAbsY < absY) {
-            expPSum -= accumulatedSum;
-            accumulatedSum = 0;
-        } else {
-            CB_ENSURE(lastAbsY <= absY);
-        }
-
-        if (y > 0) {
-            rk += 1.0 / expPSum;
-            sk += 1.0 / (expPSum * expPSum);
-        }
-
-        const double grad = expP * rk - static_cast<float>(y > 0);
-        const double hess = expP * rk - expP * expP * sk;
-        ders[ind].Der1 = - grad;
-        ders[ind].Der2 = - hess;
-
-        lastAbsY = absY;
-        lastExpP = expP;
-    }
-}
-
-
-void TCoxError::CalcFirstDerRange(
-        int start,
-        int count,
-        const double* approxes,
-        const double* approxesDeltas,
-        const float* targets,
-        const float* /*weights*/,
-        double* firstDers
-    ) const {
-
-    //CalcCoxDersRange(start, count, approxes, approxesDeltas, targets, );
-    // object weights are not supported yet
-
-    TVector<size_t> labelOrder = ArgSort(start, count, targets);
-
-    double expPSum = CalcCoxApproxSum(start, count, approxes, approxesDeltas);
-
-
-    double rk = 0;
-    double lastExpP = 0.0;
-    double lastAbsY = 0.0;
-    double accumulatedSum = 0;
-    for (yssize_t i = 0; i < count; ++i) {
-        const size_t ind = labelOrder[start + i];
-        const double p = approxes[ind] + (approxesDeltas == nullptr ? 0 : approxesDeltas[ind]);
-
-        const double expP = std::exp(p);
-        const double y = targets[ind];
-        const double absY = std::abs(y);
-        // only update the denominator after we move forward in time (labels are sorted)
-        // this is Breslow's method for ties
-        accumulatedSum += lastExpP;
-        if (lastAbsY < absY) {
-            expPSum -= accumulatedSum;
-            accumulatedSum = 0;
-        } else {
-            CB_ENSURE(lastAbsY <= absY);
-        }
-
-        if (y > 0) {
-            rk += 1.0 / expPSum;
-        }
-
-        const double grad = expP * rk - static_cast<float>(y > 0);
-        firstDers[ind] =  - grad; // GradientPair(grad * w, hess * w);
-
-        lastAbsY = absY;
-        lastExpP = expP;
-    }
 }
 
 namespace {
@@ -356,99 +214,6 @@ static void CalcCrossEntropyDerRangeImpl(
         }
     }
 }
-
-void TSurvivalAftError::CalcDers(
-    TConstArrayRef<double> approx,
-    TConstArrayRef<float> target,
-    float /*weight*/,
-    TVector<double>* der,
-    THessianInfo* der2
-) const {
-    double transformedTargetLower = 0, transformedTargetUpper = 0;
-    double firstDerNumerator, firstDerDenominator, secondDerNumerator, secondDerDenominator;
-    bool target_sign;
-    ECensoredType censorType;
-    const auto distributionType = Distribution->GetDistributionType();
-    if (target[0] == target[1]) {
-        transformedTargetLower = InverseMonotoneTransform(approx[0], target[0], Scale);
-        target_sign = transformedTargetLower > 0;
-        censorType = ECensoredType::Uncensored;
-        const auto pdf = Distribution->CalcPdf(transformedTargetLower);
-        const auto der1 = Distribution->CalcPdfDer1(pdf, transformedTargetLower);
-
-        firstDerNumerator = der1;
-        firstDerDenominator = Scale * pdf;
-        if (der2 != nullptr) {
-            Y_ASSERT(der2->HessianType == EHessianType::Diagonal &&
-                        der2->ApproxDimension == approx.ysize());
-
-            secondDerNumerator = -(pdf * Distribution->CalcPdfDer2(pdf, transformedTargetLower) - std::pow(der1, 2));
-            secondDerDenominator = std::pow(Scale * pdf, 2);
-        }
-    } else {
-        censorType = ECensoredType::IntervalCensored;
-        double pdfUpper, pdfLower, cdfUpper, cdfLower, der1Upper, der1Lower;
-        if (target[1] == -1) {
-            pdfUpper = 0;
-            cdfUpper = 1;
-            der1Upper = 0;
-            censorType = ECensoredType::RightCensored;
-        } else {
-            transformedTargetUpper = InverseMonotoneTransform(approx[0], target[1], Scale);
-            pdfUpper = Distribution->CalcPdf(transformedTargetUpper);
-            cdfUpper = Distribution->CalcCdf(transformedTargetUpper);
-            der1Upper = Distribution->CalcPdfDer1(pdfUpper, transformedTargetUpper);
-        }
-        if (target[0] == -1) {
-            pdfLower = 0;
-            cdfLower = 0;
-            der1Lower = 0;
-            censorType = ECensoredType::LeftCensored;
-        } else {
-            transformedTargetLower = InverseMonotoneTransform(approx[0], target[0], Scale);
-            pdfLower = Distribution->CalcPdf(transformedTargetLower);;
-            cdfLower = Distribution->CalcCdf(transformedTargetLower);
-            der1Lower = Distribution->CalcPdfDer1(pdfLower, transformedTargetLower);
-        }
-        target_sign = (transformedTargetLower > 0 || transformedTargetUpper > 0);
-        const auto pdfDiff = pdfUpper - pdfLower;
-        const auto der1Diff = der1Upper - der1Lower;
-        const auto cdfDiff = cdfUpper - cdfLower;
-
-        firstDerNumerator = pdfDiff;
-        firstDerDenominator = Scale * cdfDiff;
-
-        if (der2 != nullptr) {
-            Y_ASSERT(der2->HessianType == EHessianType::Diagonal &&
-                        der2->ApproxDimension == approx.ysize());
-
-            secondDerNumerator = -cdfDiff * der1Diff + std::pow(pdfDiff, 2);
-            secondDerDenominator = std::pow(Scale * cdfDiff, 2);
-        }
-    }
-
-
-    (*der)[0] = firstDerNumerator / firstDerDenominator;
-    if (firstDerDenominator < TDerivativeConstants::Epsilon && (IsNan((*der)[0]) || !IsFinite((*der)[0]))) {
-        const auto& ders =  DispatchDerivativeLimits(distributionType, EDerivativeOrder::First, censorType, Scale);
-        auto minDer1 = std::get<0>(ders);
-        auto maxDer1 = std::get<1>(ders);
-        (*der)[0] = target_sign ? minDer1 : maxDer1;
-    }
-    (*der)[0] = -ClipDerivatives((*der)[0], TDerivativeConstants::MinFirstDer, TDerivativeConstants::MaxFirstDer);
-
-    if (der2 != nullptr) {
-        der2->Data[0] = secondDerNumerator / secondDerDenominator;
-        if (secondDerDenominator < TDerivativeConstants::Epsilon && (IsNan(der2->Data[0]) || !IsFinite(der2->Data[0]))) {
-            const auto& ders =  DispatchDerivativeLimits(distributionType, EDerivativeOrder::Second, censorType, Scale);
-            auto minDer2 = std::get<0>(ders);
-            auto maxDer2 = std::get<1>(ders);
-            der2->Data[0] = target_sign ? minDer2 : maxDer2;
-        }
-        der2->Data[0] = -ClipDerivatives(der2->Data[0], TDerivativeConstants::MinSecondDer, TDerivativeConstants::MaxSecondDer);
-    }
-}
-
 
 void TCrossEntropyError::CalcFirstDerRange(
     int start,
@@ -558,139 +323,6 @@ void CheckDerivativeOrderForObjectImportance(ui32 derivativeOrder, ELeavesEstima
     }
 }
 
-// TLambdaMartError definitions
-TLambdaMartError::TLambdaMartError(
-    ELossFunction targetMetric,
-    const TMap<TString, TString>& metricParams,
-    double sigma, bool norm)
-    : IDerCalcer(false, 1, EErrorType::QuerywiseError)
-    , TargetMetric(targetMetric)
-    , TopSize(NCatboostOptions::GetParamOrDefault(metricParams, "top", -1))
-    , NumeratorType(NCatboostOptions::GetParamOrDefault(metricParams, "type", ENdcgMetricType::Base))
-    , DenominatorType(NCatboostOptions::GetParamOrDefault(metricParams, "denominator", ENdcgDenominatorType::LogPosition))
-    , Sigma(sigma)
-    , Norm(norm)
-{
-    CB_ENSURE(EqualToOneOf(TargetMetric, ELossFunction::DCG, ELossFunction::NDCG),
-        "Only DCG and NDCG target metric supported for LambdaMART now");
-    CB_ENSURE(Sigma > 0, "Sigma should be positive");
-}
-
-void TLambdaMartError::CalcDersForQueries(
-    int queryStartIndex,
-    int queryEndIndex,
-    const TVector<double>& approxes,
-    const TVector<float>& target,
-    const TVector<float>& /*weights*/,
-    const TVector<TQueryInfo>& queriesInfo,
-    TArrayRef<TDers> ders,
-    ui64 /*randomSeed*/,
-    NPar::ILocalExecutor* localExecutor
-) const {
-    auto start = queriesInfo[queryStartIndex].Begin;
-    NPar::ParallelFor(*localExecutor, queryStartIndex, queryEndIndex, [&](int queryIndex) {
-        auto begin = queriesInfo[queryIndex].Begin;
-        auto end = queriesInfo[queryIndex].End;
-        auto count = end - begin;
-        TArrayRef<TDers> queryDers(ders.data() + begin - start, count);
-        TConstArrayRef<double> queryApproxes(approxes.data() + begin, count);
-        TConstArrayRef<float> queryTargets(target.data() + begin, count);
-        CalcDersForSingleQuery(queryApproxes, queryTargets, queryDers);
-    });
-}
-
-void TLambdaMartError::CalcDersForSingleQuery(
-    TConstArrayRef<double> approxes,
-    TConstArrayRef<float> targets,
-    TArrayRef<TDers> ders
-) const {
-    size_t count = approxes.size();
-    Y_ASSERT(targets.size() == count);
-    Y_ASSERT(ders.size() == count);
-
-    Fill(ders.begin(), ders.end(), TDers{0.0, 0.0, 0.0});
-
-    if (count <= 1) {
-        return;
-    }
-
-    const size_t queryTopSize = GetQueryTopSize(count);
-
-    const double idealScore = CalcIdealMetric(targets, queryTopSize);
-
-    TVector<size_t> order(count);
-    Iota(order.begin(), order.end(), 0);
-    Sort(order.begin(), order.end(), [&](int a, int b) {
-        return approxes[a] > approxes[b];
-    });
-
-    const bool isApproxesSame = (approxes[order[0]] == approxes[order[count - 1]]);
-
-    double sumDer1 = 0.0;
-
-    for (size_t firstId = 0; firstId < count; ++firstId) {
-        size_t boundForSecondId = firstId < queryTopSize ? count : queryTopSize;
-        for (size_t secondId = 0; secondId < boundForSecondId; ++secondId) {
-
-            const double firstTarget = targets[order[firstId]];
-            const double secondTarget = targets[order[secondId]];
-
-            if (firstTarget <= secondTarget) {
-                continue;
-            }
-
-            const double approxDiff = approxes[order[firstId]] - approxes[order[secondId]];
-
-            const double dcgNum = CalcNumerator(firstTarget) - CalcNumerator(secondTarget);
-            const double dcgDen = std::abs(1.0 / CalcDenominator(firstId) -
-                                     1.0 / CalcDenominator(secondId));
-
-            double delta = dcgNum * dcgDen / idealScore;
-
-            if (Norm && !isApproxesSame) {
-                delta /= 0.01 + std::abs(approxDiff);
-            }
-
-            double antigrad = 1.0 / (1.0 + std::exp(Sigma * approxDiff));
-            double hessian = antigrad * (1 - antigrad);
-            antigrad *=  - Sigma * delta;
-            hessian *= Sigma * Sigma * delta;
-
-            ders[order[firstId]].Der1 += antigrad;
-            ders[order[firstId]].Der2 += hessian;
-            ders[order[secondId]].Der1 -= antigrad;
-            ders[order[secondId]].Der2 += hessian;
-
-            sumDer1 -= 2 * antigrad;
-        }
-    }
-    if (Norm && sumDer1 > 0) {
-        double norma = std::log2(1 + sumDer1) / sumDer1;
-        for (auto& der : ders) {
-            der.Der1 *= norma;
-            der.Der2 *= norma;
-        }
-    }
-}
-
-double TLambdaMartError::CalcIdealMetric(TConstArrayRef<float> target, size_t queryTopSize) const {
-    double score = 0;
-    TVector<float> sortedTargets(target.begin(), target.end());
-    Sort(sortedTargets, [](float a, float b) {
-        return a > b;
-    });
-    for (size_t id = 0; id < queryTopSize; ++id) {
-        score += CalcNumerator(sortedTargets[id])  / CalcDenominator(id);
-    }
-    return score;
-}
-
-static inline ENdcgDenominatorType GetDefaultDenominatorType(ELossFunction metric) {
-    return metric == ELossFunction::FilteredDCG
-        ? ENdcgDenominatorType::Position
-        : ENdcgDenominatorType::LogPosition;
-}
-
 // TStochasticRankError definitions
 TStochasticRankError::TStochasticRankError(
     ELossFunction targetMetric,
@@ -704,7 +336,7 @@ TStochasticRankError::TStochasticRankError(
     , TargetMetric(targetMetric)
     , TopSize(NCatboostOptions::GetParamOrDefault(metricParams, "top", -1))
     , NumeratorType(NCatboostOptions::GetParamOrDefault(metricParams, "type", ENdcgMetricType::Base))
-    , DenominatorType(NCatboostOptions::GetParamOrDefault(metricParams, "denominator", GetDefaultDenominatorType(targetMetric)))
+    , DenominatorType(NCatboostOptions::GetParamOrDefault(metricParams, "denominator", ENdcgDenominatorType::LogPosition))
     , Decay(NCatboostOptions::GetParamOrDefault(metricParams, "decay", 0.85))
     , Sigma(sigma)
     , NumEstimations(numEstimations)
@@ -712,9 +344,8 @@ TStochasticRankError::TStochasticRankError(
     , Nu(nu)
     , Lambda(lambda)
 {
-    CB_ENSURE(EqualToOneOf(TargetMetric, ELossFunction::DCG, ELossFunction::NDCG,
-                                         ELossFunction::PFound, ELossFunction::FilteredDCG),
-        "Only DCG, NDCG, PFound and FilteredDCG target metric supported for StochasticRank now");
+    CB_ENSURE(EqualToOneOf(TargetMetric, ELossFunction::DCG, ELossFunction::NDCG, ELossFunction::PFound),
+        "Only DCG, NDCG and PFound target metric supported for StochasticRank now");
     CB_ENSURE(0.0 <= Decay && Decay <= 1.0, "Decay should be in [0, 1]");
     CB_ENSURE(NumEstimations > 0, "Number of estimations should be positive");
     CB_ENSURE(Sigma > 0, "Sigma should be positive");
@@ -738,21 +369,10 @@ void TStochasticRankError::CalcDersForQueries(
         auto begin = queriesInfo[queryIndex].Begin;
         auto end = queriesInfo[queryIndex].End;
         auto count = end - begin;
-        if (TargetMetric == ELossFunction::FilteredDCG) {
-            // we add virtual document with zero approx and target to reuse for DCG
-            TVector<TDers> queryDers(count + 1);
-            TVector<double> queryApproxes(count + 1);
-            TVector<float> queryTargets(count + 1);
-            CopyN(approxes.data() + begin, count, queryApproxes.data());
-            CopyN(target.data() + begin, count, queryTargets.data());
-            CalcDersForSingleQuery(queryApproxes, queryTargets, randomSeed + queryIndex, queryDers);
-            CopyN(queryDers.data(), count, ders.data() + begin - start);
-        } else {
-            TArrayRef<TDers> queryDers(ders.data() + begin - start, count);
-            TConstArrayRef<double> queryApproxes(approxes.data() + begin, count);
-            TConstArrayRef<float> queryTargets(target.data() + begin, count);
-            CalcDersForSingleQuery(queryApproxes, queryTargets, randomSeed + queryIndex, queryDers);
-        }
+        TArrayRef<TDers> queryDers(ders.data() + begin - start, count);
+        TConstArrayRef<double> queryApproxes(approxes.data() + begin, count);
+        TConstArrayRef<float> queryTargets(target.data() + begin, count);
+        CalcDersForSingleQuery(queryApproxes, queryTargets, randomSeed + queryIndex, queryDers);
     });
 }
 
@@ -777,11 +397,9 @@ void TStochasticRankError::CalcDersForSingleQuery(
     for (size_t docId = 0; docId < count; ++docId) {
         shiftedApproxes[docId] = approxes[docId] - Sigma * Mu * targets[docId];
     }
-    if (TargetMetric != ELossFunction::FilteredDCG) {
-        double avrgShiftedApprox = Accumulate(shiftedApproxes, 0.0) / count;
-        for (size_t docId = 0; docId < count; ++docId) {
-            shiftedApproxes[docId] -= avrgShiftedApprox;
-        }
+    double avrgShiftedApprox = Accumulate(shiftedApproxes, 0.0) / count;
+    for (size_t docId = 0; docId < count; ++docId) {
+        shiftedApproxes[docId] -= avrgShiftedApprox;
     }
 
     // Stage 2 - estimate gradients via noise and Monte Carlo method
@@ -795,16 +413,12 @@ void TStochasticRankError::CalcDersForSingleQuery(
             noise[docId] = StdNormalDistribution<double>(rng);
             scores[docId] = shiftedApproxes[docId] + Sigma * noise[docId];
         }
-        if (TargetMetric == ELossFunction::FilteredDCG) {
-            noise.back() = 0;
-            scores.back() = shiftedApproxes.back();
-        }
         const double noiseSum = Accumulate(noise, 0.0);
         Iota(order.begin(), order.end(), 0);
         Sort(order.begin(), order.end(), [&](int a, int b) {
             return scores[a] > scores[b];
         });
-        if (EqualToOneOf(TargetMetric, ELossFunction::DCG, ELossFunction::NDCG, ELossFunction::FilteredDCG) && sample == 0) {
+        if (EqualToOneOf(TargetMetric, ELossFunction::DCG, ELossFunction::NDCG) && sample == 0) {
             posWeights = ComputeDCGPosWeights(targets);
         } else if (TargetMetric == ELossFunction::PFound) {
             posWeights = ComputePFoundPosWeights(targets, order);
@@ -821,15 +435,13 @@ void TStochasticRankError::CalcDersForSingleQuery(
     }
 
     // Stage 3 - SFA, make gradients ortogonal with approxes
-    if (TargetMetric != ELossFunction::FilteredDCG) {
-        double avrgDer = 0.0;
-        for (const auto& der : ders) {
-            avrgDer += der.Der1;
-        }
-        avrgDer /= count;
-        for (auto& der : ders) {
-            der.Der1 -= avrgDer;
-        }
+    double avrgDer = 0.0;
+    for (const auto& der : ders) {
+        avrgDer += der.Der1;
+    }
+    avrgDer /= count;
+    for (auto& der : ders) {
+        der.Der1 -= avrgDer;
     }
     if (count > 2) {
         double avrgApprox = Accumulate(approxes, 0.0) / count;
@@ -868,8 +480,8 @@ void TStochasticRankError::CalcMonteCarloEstimateForSingleQueryPermutation(
     TVector<double> cumSum(count + 1);
     TVector<double> cumSumUp(count + 1);
     TVector<double> cumSumLow(count + 1);
-    if (EqualToOneOf(TargetMetric, ELossFunction::DCG, ELossFunction::NDCG, ELossFunction::FilteredDCG)) {
-        CalcDCGCumulativeStatistics(targets, order, posWeights, scores, cumSum, cumSumUp, cumSumLow);
+    if (EqualToOneOf(TargetMetric, ELossFunction::DCG, ELossFunction::NDCG)) {
+        CalcDCGCumulativeStatistics(targets, order, posWeights, cumSum, cumSumUp, cumSumLow);
     } else if (TargetMetric == ELossFunction::PFound) {
         CalcPFoundCumulativeStatistics(targets, order, posWeights, cumSum);
     } else {
@@ -880,19 +492,15 @@ void TStochasticRankError::CalcMonteCarloEstimateForSingleQueryPermutation(
         const size_t docId = order[pos];
         const double score = scores[docId];
         const double approx = approxes[docId];
-        const double mean = approx + (
-            TargetMetric == ELossFunction::FilteredDCG ? 0 : (noiseSum - (score - approx)) / (count - 1)
-        );
-        const double sigma = Sigma * (
-            TargetMetric == ELossFunction::FilteredDCG ? 1 : std::sqrtl(count / (count - 1.0))
-        );
+        const double mean = approx + (noiseSum - (score - approx)) / (count - 1);
+        const double sigma = std::sqrtl(count / (count - 1.0)) * Sigma;
         double derSum = 0.0;
         for (size_t newPos = 0; newPos < Min(count, queryTopSize + 1); ++newPos) {
             if (newPos == pos) {
                 continue;
             }
             const double metricDiff = CalcMetricDiff(pos, newPos, queryTopSize, targets, order,
-                                                     posWeights, scores, cumSum, cumSumUp, cumSumLow);
+                                                     posWeights, cumSum, cumSumUp, cumSumLow);
             double densityDiff = 0.0;
             if (newPos == 0) {
                 densityDiff = NormalDensity(scores[order[0]], mean, sigma);
@@ -910,27 +518,19 @@ void TStochasticRankError::CalcMonteCarloEstimateForSingleQueryPermutation(
         ders[docId].Der1 += derSum / NumEstimations;
     }
 }
+
 double TStochasticRankError::CalcDCGMetricDiff(
     size_t oldPos,
     size_t newPos,
     const TConstArrayRef<float> targets,
     const TVector<size_t>& order,
     const TVector<double>& posWeights,
-    const TVector<double>& scores,
     const TVector<double>& cumSum,
     const TVector<double>& cumSumUp,
     const TVector<double>& cumSumLow
 ) const {
-    double oldWeight = posWeights[oldPos];
-    double newWeight = posWeights[newPos];
-    if (TargetMetric == ELossFunction::FilteredDCG) {
-        const double oldScore = scores[order[oldPos]];
-        oldWeight *= (oldScore >= 0);
-        const double newScore = newPos < oldPos
-            ? scores[order[newPos]]
-            : (newPos + 1 < scores.size() ? scores[order[newPos + 1]] : -1);
-        newWeight *= (newScore >= 0);
-    }
+    const double oldWeight = posWeights[oldPos];
+    const double newWeight = posWeights[newPos];
     const double docGain = CalcNumerator(targets[order[oldPos]]);
     const double docDiff = docGain * (newWeight - oldWeight);
     double midDiff = 0.0;
@@ -1005,7 +605,6 @@ double TStochasticRankError::CalcMetricDiff(
     const TConstArrayRef<float> targets,
     const TVector<size_t>& order,
     const TVector<double>& posWeights,
-    const TVector<double>& scores,
     const TVector<double>& cumSum,
     const TVector<double>& cumSumUp,
     const TVector<double>& cumSumLow
@@ -1014,8 +613,8 @@ double TStochasticRankError::CalcMetricDiff(
         return 0.0;
     }
 
-    if (EqualToOneOf(TargetMetric, ELossFunction::DCG, ELossFunction::NDCG, ELossFunction::FilteredDCG)) {
-        return CalcDCGMetricDiff(oldPos, newPos, targets, order, posWeights, scores, cumSum, cumSumUp, cumSumLow);
+    if (EqualToOneOf(TargetMetric, ELossFunction::DCG, ELossFunction::NDCG)) {
+        return CalcDCGMetricDiff(oldPos, newPos, targets, order, posWeights, cumSum, cumSumUp, cumSumLow);
     } else if (TargetMetric == ELossFunction::PFound) {
         return CalcPFoundMetricDiff(oldPos, newPos, queryTopSize, targets, order, posWeights, cumSum);
     }
@@ -1026,7 +625,6 @@ void TStochasticRankError::CalcDCGCumulativeStatistics(
     TConstArrayRef<float> targets,
     const TVector<size_t>& order,
     const TVector<double>& posWeights,
-    const TVector<double>& scores,
     TArrayRef<double> cumSum,
     TArrayRef<double> cumSumUp,
     TArrayRef<double> cumSumLow
@@ -1035,7 +633,7 @@ void TStochasticRankError::CalcDCGCumulativeStatistics(
     cumSum[0] = cumSumUp[0] = cumSumLow[0] = cumSumUp[1] = 0;
     for (size_t pos = 0; pos < count; ++pos) {
         const size_t docId = order[pos];
-        const double gain = (TargetMetric == ELossFunction::FilteredDCG && scores[docId] < 0) ? 0 : CalcNumerator(targets[docId]);
+        const double gain = CalcNumerator(targets[docId]);
         cumSum[pos + 1] = cumSum[pos] + gain * posWeights[pos];
         if (pos + 1 < count) {
             cumSumLow[pos + 1] = cumSumLow[pos] + gain * posWeights[pos + 1];
@@ -1068,7 +666,7 @@ TVector<double> TStochasticRankError::ComputeDCGPosWeights(
     size_t count = targets.size();
     TVector<double> posWeights(count);
     size_t queryTopSize = GetQueryTopSize(count);
-    Y_ASSERT(EqualToOneOf(TargetMetric, ELossFunction::DCG, ELossFunction::NDCG, ELossFunction::FilteredDCG));
+    Y_ASSERT(EqualToOneOf(TargetMetric, ELossFunction::DCG, ELossFunction::NDCG));
     for (size_t pos = 0; pos < queryTopSize; ++pos) {
         posWeights[pos] = 1.0 / CalcDenominator(pos);
     }

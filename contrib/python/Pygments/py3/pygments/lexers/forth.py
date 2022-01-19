@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.forth
     ~~~~~~~~~~~~~~~~~~~~~
@@ -11,8 +12,7 @@
 import re
 
 from pygments.lexer import RegexLexer, bygroups
-from pygments.token import Text, Comment, Keyword, Name, String, Number, \
-        Whitespace
+from pygments.token import Text, Comment, Keyword, Name, String, Number
 
 
 __all__ = ['ForthLexer']
@@ -33,15 +33,15 @@ class ForthLexer(RegexLexer):
 
     tokens = {
         'root': [
-            (r'\s+', Whitespace),
+            (r'\s+', Text),
             # All comment types
-            (r'\\.*?$', Comment.Single),
+            (r'\\.*?\n', Comment.Single),
             (r'\([\s].*?\)', Comment.Single),
             # defining words. The next word is a new command name
             (r'(:|variable|constant|value|buffer:)(\s+)',
-             bygroups(Keyword.Namespace, Whitespace), 'worddef'),
+             bygroups(Keyword.Namespace, Text), 'worddef'),
             # strings are rather simple
-            (r'([.sc]")(\s+?)', bygroups(String, Whitespace), 'stringdef'),
+            (r'([.sc]")(\s+?)', bygroups(String, Text), 'stringdef'),
             # keywords from the various wordsets
             # *** Wordset BLOCK
             (r'(blk|block|buffer|evaluate|flush|load|save-buffers|update|'
@@ -175,4 +175,4 @@ class ForthLexer(RegexLexer):
         """Forth uses : COMMAND ; quite a lot in a single line, so we're trying
         to find that."""
         if re.search('\n:[^\n]+;\n', text):
-            return 0.3
+            return 0.1

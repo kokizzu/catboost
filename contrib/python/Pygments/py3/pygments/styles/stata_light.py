@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.styles.stata_light
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~

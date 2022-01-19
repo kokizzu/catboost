@@ -5,9 +5,20 @@ IF (USE_PREBUILT_TOOLS)
 ENDIF()
 
 IF (NOT PREBUILT)
-    INCLUDE(${ARCADIA_ROOT}/contrib/tools/protoc/plugins/grpc_java/bin/ya.make)
-ENDIF()
+    PROGRAM()
 
-RECURSE(
-    bin
-)
+    NO_COMPILER_WARNINGS()
+
+    PEERDIR(
+        contrib/libs/protoc
+    )
+
+    SRCDIR(contrib/libs/grpc-java/compiler/src/java_plugin/cpp)
+
+    SRCS(
+        java_plugin.cpp
+        java_generator.cpp
+    )
+
+    END()
+ENDIF()

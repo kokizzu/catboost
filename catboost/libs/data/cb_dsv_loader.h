@@ -81,10 +81,4 @@ namespace NCB {
         TMaybe<ui32> ObjectCount;
     };
 
-    int GetDsvColumnCount(
-        const TPathWithScheme& pathWithScheme,
-        const TDsvFormatOptions& format = TDsvFormatOptions(),
-        bool ignoreCsvQuoting = false
-    );
-
 }

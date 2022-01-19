@@ -1,10 +1,7 @@
 #pragma once
 
-#include <util/generic/fwd.h>
+#include <util/generic/string.h>
 #include <util/memory/blob.h>
-
-#include <stddef.h>
-
 
 namespace NHnsw {
     template <class TVectorComponent>

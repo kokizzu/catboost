@@ -220,27 +220,6 @@ namespace NCB::NModelEvaluation {
                 CalcFlat(floatFeatures, treeStart, treeEnd, results, featureLayout);
             }
 
-            void CalcWithHashedCatAndText(
-                TConstArrayRef<TConstArrayRef<float>> floatFeatures,
-                TConstArrayRef<TConstArrayRef<int>> catFeatures,
-                TConstArrayRef<TConstArrayRef<TStringBuf>> textFeatures,
-                size_t treeStart,
-                size_t treeEnd,
-                TArrayRef<double> results,
-                const TFeatureLayout* featureLayout
-            ) const override {
-                ValidateInputFeatures(floatFeatures, catFeatures);
-                CB_ENSURE(
-                    catFeatures.empty(),
-                    "Cat features are not supported on GPU, should be empty"
-                );
-                CB_ENSURE(
-                    textFeatures.empty(),
-                    "Text features are not supported on GPU, should be empty"
-                );
-                CalcFlat(floatFeatures, treeStart, treeEnd, results, featureLayout);
-            }
-
             void Calc(
                 TConstArrayRef<TConstArrayRef<float>> floatFeatures,
                 TConstArrayRef<TConstArrayRef<TStringBuf>> catFeatures,
@@ -328,30 +307,6 @@ namespace NCB::NModelEvaluation {
                 Y_UNUSED(indexes);
                 ythrow yexception() << "Unimplemented on GPU";
             }
-
-            void Quantize(
-		    TConstArrayRef<TConstArrayRef<float>> features,
-		    IQuantizedData* quantizedData
-	    ) const override {
-	        auto expectedFlatVecSize = ModelTrees->GetFlatFeatureVectorExpectedSize();
-	        const size_t docCount = features.size();
-	        const size_t stride = CeilDiv<size_t>(expectedFlatVecSize, 32) * 32;
-
-		TGPUDataInput dataInput;
-	        dataInput.FloatFeatureLayout = TGPUDataInput::EFeatureLayout::RowFirst;
-	        dataInput.ObjectCount = docCount;
-	        dataInput.FloatFeatureCount = expectedFlatVecSize;
-	        dataInput.Stride = stride;
-	        Ctx.EvalDataCache.PrepareCopyBufs(docCount * stride, docCount);
-	        dataInput.FlatFloatsVector = Ctx.EvalDataCache.CopyDataBufDevice.AsArrayRef();
-	        auto copyBufRef = Ctx.EvalDataCache.CopyDataBufHost.AsArrayRef();
-	        for (size_t docId = 0; docId < docCount; ++docId) {
-		    memcpy(&copyBufRef[docId * stride], features[docId].data(), sizeof(float) * expectedFlatVecSize);
-		}
-	        MemoryCopyAsync<float>(copyBufRef, Ctx.EvalDataCache.CopyDataBufDevice.AsArrayRef(), Ctx.Stream);
-	        TCudaQuantizedData* cudaQuantizedData = reinterpret_cast<TCudaQuantizedData*>(quantizedData);
-	        Ctx.QuantizeData(dataInput, cudaQuantizedData);
-	    }
         private:
             template <typename TCatFeatureContainer = TConstArrayRef<int>>
             void ValidateInputFeatures(

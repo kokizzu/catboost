@@ -3,7 +3,7 @@ PY3_PROGRAM(ipython)
 
 
 PEERDIR(
-    contrib/python/ipython
+    contrib/python/ipython/py3
 )
 
 PY_MAIN(IPython:start_ipython)

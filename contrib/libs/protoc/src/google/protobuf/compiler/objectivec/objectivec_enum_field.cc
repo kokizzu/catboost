@@ -32,9 +32,11 @@
 #include <string>
 
 #include <google/protobuf/compiler/objectivec/objectivec_enum_field.h>
+#include <google/protobuf/stubs/common.h>
 #include <google/protobuf/compiler/objectivec/objectivec_helpers.h>
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/wire_format.h>
+#include <google/protobuf/stubs/strutil.h>
 
 namespace google {
 namespace protobuf {
@@ -44,8 +46,8 @@ namespace objectivec {
 namespace {
 
 void SetEnumVariables(const FieldDescriptor* descriptor,
-                      std::map<TProtoStringType, TProtoStringType>* variables) {
-  TProtoStringType type = EnumName(descriptor->enum_type());
+                      std::map<string, string>* variables) {
+  string type = EnumName(descriptor->enum_type());
   (*variables)["storage_type"] = type;
   // For non repeated fields, if it was defined in a different file, the
   // property decls need to use "enum NAME" rather than just "NAME" to support
@@ -104,26 +106,26 @@ void EnumFieldGenerator::GenerateCFunctionImplementations(
       "int32_t $owning_message_class$_$capitalized_name$_RawValue($owning_message_class$ *message) {\n"
       "  GPBDescriptor *descriptor = [$owning_message_class$ descriptor];\n"
       "  GPBFieldDescriptor *field = [descriptor fieldWithNumber:$field_number_name$];\n"
-      "  return GPBGetMessageRawEnumField(message, field);\n"
+      "  return GPBGetMessageInt32Field(message, field);\n"
       "}\n"
       "\n"
       "void Set$owning_message_class$_$capitalized_name$_RawValue($owning_message_class$ *message, int32_t value) {\n"
       "  GPBDescriptor *descriptor = [$owning_message_class$ descriptor];\n"
       "  GPBFieldDescriptor *field = [descriptor fieldWithNumber:$field_number_name$];\n"
-      "  GPBSetMessageRawEnumField(message, field, value);\n"
+      "  GPBSetInt32IvarWithFieldInternal(message, field, value, descriptor.file.syntax);\n"
       "}\n"
       "\n");
 }
 
 void EnumFieldGenerator::DetermineForwardDeclarations(
-    std::set<TProtoStringType>* fwd_decls) const {
+    std::set<string>* fwd_decls) const {
   SingleFieldGenerator::DetermineForwardDeclarations(fwd_decls);
   // If it is an enum defined in a different file, then we'll need a forward
   // declaration for it.  When it is in our file, all the enums are output
   // before the message, so it will be declared before it is needed.
   if (descriptor_->file() != descriptor_->enum_type()->file()) {
     // Enum name is already in "storage_type".
-    const TProtoStringType& name = variable("storage_type");
+    const string& name = variable("storage_type");
     fwd_decls->insert("GPB_ENUM_FWD_DECLARE(" + name + ")");
   }
 }

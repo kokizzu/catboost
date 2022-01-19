@@ -4,23 +4,15 @@ HTML IO.
 
 """
 
-from __future__ import annotations
-
 from collections import abc
 import numbers
 import os
 import re
-from typing import (
-    Pattern,
-    Sequence,
-)
+from typing import Dict, List, Optional, Pattern, Sequence, Tuple, Union
 
 from pandas._typing import FilePathOrBuffer
 from pandas.compat._optional import import_optional_dependency
-from pandas.errors import (
-    AbstractMethodError,
-    EmptyDataError,
-)
+from pandas.errors import AbstractMethodError, EmptyDataError
 from pandas.util._decorators import deprecate_nonkeyword_arguments
 
 from pandas.core.dtypes.common import is_list_like
@@ -28,12 +20,7 @@ from pandas.core.dtypes.common import is_list_like
 from pandas.core.construction import create_series_with_explicit_dtype
 from pandas.core.frame import DataFrame
 
-from pandas.io.common import (
-    is_url,
-    stringify_path,
-    urlopen,
-    validate_header_arg,
-)
+from pandas.io.common import is_url, stringify_path, urlopen, validate_header_arg
 from pandas.io.formats.printing import pprint_thing
 from pandas.io.parsers import TextParser
 
@@ -52,13 +39,17 @@ def _importers():
         return
 
     global _HAS_BS4, _HAS_LXML, _HAS_HTML5LIB
-    bs4 = import_optional_dependency("bs4", errors="ignore")
+    bs4 = import_optional_dependency("bs4", raise_on_missing=False, on_version="ignore")
     _HAS_BS4 = bs4 is not None
 
-    lxml = import_optional_dependency("lxml.etree", errors="ignore")
+    lxml = import_optional_dependency(
+        "lxml.etree", raise_on_missing=False, on_version="ignore"
+    )
     _HAS_LXML = lxml is not None
 
-    html5lib = import_optional_dependency("html5lib", errors="ignore")
+    html5lib = import_optional_dependency(
+        "html5lib", raise_on_missing=False, on_version="ignore"
+    )
     _HAS_HTML5LIB = html5lib is not None
 
     _IMPORTS = True
@@ -444,7 +435,7 @@ class _HtmlFrameParser:
         to subsequent cells.
         """
         all_texts = []  # list of rows, each a list of str
-        remainder: list[tuple[int, str, int]] = []  # list of (index, text, nrows)
+        remainder: List[Tuple[int, str, int]] = []  # list of (index, text, nrows)
 
         for tr in rows:
             texts = []  # the output for this row
@@ -627,7 +618,7 @@ def _build_xpath_expr(attrs) -> str:
     if "class_" in attrs:
         attrs["class"] = attrs.pop("class_")
 
-    s = " and ".join(f"@{k}={repr(v)}" for k, v in attrs.items())
+    s = " and ".join([f"@{k}={repr(v)}" for k, v in attrs.items()])
     return f"[{s}]"
 
 
@@ -713,11 +704,7 @@ class _LxmlFrameParser(_HtmlFrameParser):
         pandas.io.html._HtmlFrameParser._build_doc
         """
         from lxml.etree import XMLSyntaxError
-        from lxml.html import (
-            HTMLParser,
-            fromstring,
-            parse,
-        )
+        from lxml.html import HTMLParser, fromstring, parse
 
         parser = HTMLParser(recover=True, encoding=self.encoding)
 
@@ -937,21 +924,21 @@ def _parse(flavor, io, match, attrs, encoding, displayed_only, **kwargs):
 @deprecate_nonkeyword_arguments(version="2.0")
 def read_html(
     io: FilePathOrBuffer,
-    match: str | Pattern = ".+",
-    flavor: str | None = None,
-    header: int | Sequence[int] | None = None,
-    index_col: int | Sequence[int] | None = None,
-    skiprows: int | Sequence[int] | slice | None = None,
-    attrs: dict[str, str] | None = None,
+    match: Union[str, Pattern] = ".+",
+    flavor: Optional[str] = None,
+    header: Optional[Union[int, Sequence[int]]] = None,
+    index_col: Optional[Union[int, Sequence[int]]] = None,
+    skiprows: Optional[Union[int, Sequence[int], slice]] = None,
+    attrs: Optional[Dict[str, str]] = None,
     parse_dates: bool = False,
-    thousands: str | None = ",",
-    encoding: str | None = None,
+    thousands: Optional[str] = ",",
+    encoding: Optional[str] = None,
     decimal: str = ".",
-    converters: dict | None = None,
+    converters: Optional[Dict] = None,
     na_values=None,
     keep_default_na: bool = True,
     displayed_only: bool = True,
-) -> list[DataFrame]:
+) -> List[DataFrame]:
     r"""
     Read HTML tables into a ``list`` of ``DataFrame`` objects.
 

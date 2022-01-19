@@ -12,7 +12,6 @@
 #include <catboost/cuda/methods/leaves_estimation/leaves_estimation_config.h>
 #include <catboost/cuda/methods/leaves_estimation/oblivious_tree_leaves_estimator.h>
 #include <catboost/private/libs/options/catboost_options.h>
-#include <catboost/private/libs/options/boosting_options.h>
 
 namespace NCatboostCuda {
     class TDocParallelObliviousTree {
@@ -22,17 +21,13 @@ namespace NCatboostCuda {
         using TDataSet = TDocParallelDataSet;
 
         TDocParallelObliviousTree(const TBinarizedFeaturesManager& featuresManager,
-                                  const NCatboostOptions::TBoostingOptions& boostingOptions,
                                   const NCatboostOptions::TCatBoostOptions& config,
-                                  TGpuAwareRandom& random,
                                   bool makeZeroAverage = false)
             : FeaturesManager(featuresManager)
-            , BoostingOptions(boostingOptions)
             , TreeConfig(config.ObliviousTreeOptions)
             , LossDescription(config.LossFunctionDescription.Get())
             , Seed(config.RandomSeed)
             , MakeZeroAverage(makeZeroAverage)
-            , Random(random)
         {
         }
 
@@ -50,21 +45,15 @@ namespace NCatboostCuda {
             }
 
             return TDocParallelObliviousTreeSearcher(FeaturesManager,
-                                                     BoostingOptions,
                                                      TreeConfig,
                                                      *Bootstrap,
-                                                     mult,
-                                                     Random);
+                                                     mult);
         }
 
         TObliviousTreeLeavesEstimator CreateEstimator() {
             CB_ENSURE(NeedEstimation());
             return TObliviousTreeLeavesEstimator(FeaturesManager,
-                                                 CreateLeavesEstimationConfig(TreeConfig,
-                                                                              MakeZeroAverage,
-                                                                              LossDescription,
-                                                                              BoostingOptions),
-                                                 Random);
+                                                 CreateLeavesEstimationConfig(TreeConfig, MakeZeroAverage, LossDescription));
         }
 
         template <class TDataSet>
@@ -74,12 +63,10 @@ namespace NCatboostCuda {
 
     private:
         const TBinarizedFeaturesManager& FeaturesManager;
-        const NCatboostOptions::TBoostingOptions& BoostingOptions;
         const NCatboostOptions::TObliviousTreeLearnerOptions& TreeConfig;
         const NCatboostOptions::TLossDescription& LossDescription;
         THolder<TBootstrap<NCudaLib::TStripeMapping>> Bootstrap;
         ui64 Seed;
         bool MakeZeroAverage = false;
-        TGpuAwareRandom& Random;
     };
 }

@@ -33,14 +33,15 @@ IF(HAVE_CUDA)
         catboost/cuda/train_lib
         catboost/libs/model/cuda
     )
-    INCLUDE(${ARCADIA_ROOT}/catboost/cuda/cuda_lib/default_nvcc_flags.make.inc)
 ENDIF()
 
-IF (OS_LINUX AND NOT ARCH_AARCH64)
-    ALLOCATOR(TCMALLOC_256K)
-ELSE()
+IF (ARCH_AARCH64 OR OS_WINDOWS)
     ALLOCATOR(J)
+ELSE()
+    ALLOCATOR(LF)
 ENDIF()
+
+INCLUDE(${ARCADIA_ROOT}/catboost/cuda/cuda_lib/default_nvcc_flags.make.inc)
 
 IF (OS_WINDOWS)
     CFLAGS(-D_WINDLL)

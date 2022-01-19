@@ -95,7 +95,7 @@ namespace NCatboostCuda {
 
         TStripeBuffer<const ui32> GetApproximateDocOrder() const {
             const auto& cachedData = GetCachedMetadata();
-            return cachedData.FuncValueOrder.AsConstBuf();
+            return cachedData.FuncValueOrder;
         }
 
         void ApproximateAt(const TConstVec& orderedPoint,

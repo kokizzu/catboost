@@ -7,13 +7,6 @@
   # DB2_ODBC_CLI
   - sqlcli1.h
 
-
-- includes:
-  - gelf.h: contrib/restricted/libelf/include/libelf/gelf.h
-  - libelf.h: contrib/restricted/libelf/include/libelf/libelf.h
-  - libelf/libelf.h: contrib/restricted/libelf/include/libelf/libelf.h
-  - libelf/sys_elf.h: contrib/restricted/libelf/include/libelf/sys_elf.h
-
 # We have lots of ADDINCLs to contrib/libs/libiconv all around the repo
 # so we need to add it to sysincl for consistent resolving.
 # We can go the other way here and remove iconv.h from all sysincl configs
@@ -36,7 +29,7 @@
 # since they do not peerdir contrib/libs/jdk.
 # Resolve Python.h from swig/Lib/python/pyruntime.swg when building non-python .swg
 # since they do not peerdir contrib/libs/python.
-- source_filter: "[.]swg([.](h|c(c|pp|xx)?))?$"
+- source_filter: "[.]swg$"
   includes:
   - jni.h:           contrib/libs/jdk/include/jni.h
   - Python.h:        contrib/libs/python/Include/Python.h
@@ -115,13 +108,13 @@
   includes:
     - error.h:       contrib/libs/cppkafka/include/cppkafka/error.h
 
+- source_filter: "^contrib/libs/clang10-rt"
+  includes:
+    - xray/xray_interface.h: contrib/libs/clang10-rt/include/xray/xray_interface.h
+
 - source_filter: "^contrib/libs/clang11-rt"
   includes:
     - xray/xray_interface.h: contrib/libs/clang11-rt/include/xray/xray_interface.h
-
-- source_filter: "^contrib/libs/clang12-rt"
-  includes:
-    - xray/xray_interface.h: contrib/libs/clang12-rt/include/xray/xray_interface.h
 
 - source_filter: "^contrib/libs/llvm"
   includes:
@@ -147,15 +140,12 @@
     - atomic.h:      contrib/libs/zeromq/missing_includes/atomic.h
     - Mstcpip.h:     contrib/libs/zeromq/missing_includes/Mstcpip.h
 
-- source_filter: "^contrib/restricted/openal-soft"
-  includes:
-    - atomic.h: contrib/restricted/openal-soft/common/atomic.h
-
 - source_filter: "^contrib/libs/ffmpeg-3"
   includes:
     - fontconfig/fontconfig.h
     - fribidi.h
     - stdatomic.h:   contrib/libs/ffmpeg-3.4.1/compat/atomics/win32/stdatomic.h
+    - nppi.h:        contrib/libs/ffmpeg-3/libavfilter/vf_scale_npp.c
 
 - source_filter: "^contrib/libs/glog"
   includes:
@@ -171,6 +161,10 @@
 - source_filter: "^contrib/libs/nsync"
   includes:
     - atomic.h:      contrib/libs/nsync/platform/c++11/atomic.h
+
+- source_filter: "^contrib/python/numpy/py2"
+  includes:
+    - cpuid.h:       contrib/python/numpy/py2/numpy/core/src/umath/cpuid.h
 
 - source_filter: "^contrib/python/numpy/py3"
   includes:
@@ -393,6 +387,87 @@
   includes:
     - mpi.h
 
+- source_filter: "^contrib/libs/clickhouse"
+  includes:
+    - DataStreams/CapnProtoRowInputStream.h
+    - Formats/CapnProtoRowInputStream.h
+    - Formats/ProtobufRowInputStream.h
+    - Formats/ProtobufSchemas.h
+    - IO/WriteBufferFromHDFS.h
+    - ParquetBlockInputStream.h
+    - ParquetBlockOutputStream.h
+    - Poco/SQL/ODBC/
+    - Poco/SQL/ODBC/ODBCException.h
+    - Poco/SQL/ODBC/SessionImpl.h
+    - Poco/SQL/ODBC/Utility.h
+    - ProtobufBlockOutputStream.h
+    - ProtobufRowOutputStream.h
+    - Storages/StorageHDFS.h
+    - Suggest.h
+    - TableFunctions/TableFunctionHDFS.h
+    - arrow/api.h
+    - arrow/io/api.h
+    - arrow/util/decimal.h
+    - capnp/common.h
+    - capnp/dynamic.h
+    - capnp/serialize.h
+    - capnp/schema-parser.h
+    - civil_time.h
+    - config_compile.h
+    - cpuinfo.h
+    - editline/history.h
+    - google/protobuf/compiler/importer.h
+    - google/protobuf/descriptor.h
+    - google/protobuf/descriptor.pb.h
+    - gperftools/malloc_extension.h
+    - hdfs/hdfs.h
+    - hs.h
+    - hs/hs.h
+    - lf_allocX64.h
+    - libbase64.h
+    - llvm/
+    - llvm/Analysis/TargetTransformInfo.h
+    - llvm/Config/llvm-config.h
+    - llvm/ExecutionEngine/ExecutionEngine.h
+    - llvm/ExecutionEngine/JITSymbol.h
+    - llvm/ExecutionEngine/Orc/CompileUtils.h
+    - llvm/ExecutionEngine/Orc/IRCompileLayer.h
+    - llvm/ExecutionEngine/Orc/RTDyldObjectLinkingLayer.h
+    - llvm/ExecutionEngine/SectionMemoryManager.h
+    - llvm/IR/BasicBlock.h
+    - llvm/IR/DataLayout.h
+    - llvm/IR/DerivedTypes.h
+    - llvm/IR/Function.h
+    - llvm/IR/IRBuilder.h
+    - llvm/IR/LLVMContext.h
+    - llvm/IR/Mangler.h
+    - llvm/IR/Module.h
+    - llvm/IR/Type.h
+    - llvm/MC/SubtargetFeature.h
+    - llvm/Support/DynamicLibrary.h
+    - llvm/Support/Host.h
+    - llvm/Support/TargetRegistry.h
+    - llvm/Support/TargetSelect.h
+    - llvm/Target/TargetMachine.h
+    - llvm/Transforms/IPO/PassManagerBuilder.h
+    - mariadb/mysql.h
+    - mariadb/mysqld_error.h
+    - mimalloc.h
+    - parquet/arrow/reader.h
+    - parquet/arrow/writer.h
+    - parquet/exception.h
+    - parquet/file_reader.h
+    - parquet/util/memory.h
+    - pcg_uint128.hpp
+    - rdkafka.h
+    - re2_st/re2.h
+    - readpassphrase.h: contrib/libs/clickhouse/dbms/programs/client/readpassphrase/readpassphrase.h
+    - simdjson/jsonparser.h
+    - time_zone.h
+    - vectorf128.h
+    - vectormath_exp.h
+    - vectormath_trig.h
+
 - source_filter: "^contrib/libs/libf2c"
   includes:
     - local.h
@@ -409,21 +484,29 @@
   includes:
     - backtrace.h: contrib/libs/backtrace/backtrace.h
 
+- source_filter: "^contrib/restricted/glib"
+  includes:
+    - gelf.h: contrib/restricted/libelf/include/libelf/gelf.h
+    - libelf.h: contrib/restricted/libelf/include/libelf/libelf.h
+
 - source_filter: "^contrib/restricted/libelf"
   includes:
     - byteswap.h: contrib/restricted/libelf/lib/byteswap.h
     - gelf.h: contrib/restricted/libelf/lib/gelf.h
     - libelf.h: contrib/restricted/libelf/lib/libelf.h
+    - libelf/libelf.h: contrib/restricted/libelf/include/libelf/libelf.h
+    - libelf/sys_elf.h: contrib/restricted/libelf/include/libelf/sys_elf.h
     - nlist.h: contrib/restricted/libelf/lib/nlist.h
     - sys_elf.h: contrib/restricted/libelf/lib/sys_elf.h
 
-- source_filter: "^contrib/libs/dpdk/"
+- source_filter: "^contrib/libs/libbpf"
+  includes:
+    - gelf.h: contrib/restricted/libelf/include/libelf/gelf.h
+    - libelf.h: contrib/restricted/libelf/include/libelf/libelf.h
+
+- source_filter: "^contrib/libs/dpdk"
   includes:
     - process.h: contrib/libs/dpdk/drivers/bus/dpaa/include/process.h
-
-- source_filter: "^contrib/libs/dpdk_arm64/"
-  includes:
-    - process.h: contrib/libs/dpdk_arm64/drivers/bus/dpaa/include/process.h
 
 - source_filter: "^contrib/libs/usrsctp/"
   includes:
@@ -446,10 +529,3 @@
     - cmqxc.h
     - cmqcfc.h
     - cmqbc.h
-
-- source_filter: "^contrib/libs/h3"
-  includes:
-    - alloc.h: contrib/libs/h3/h3lib/include/alloc.h
-- source_filter: "^cloud/iam/token_agent/daemon"
-  includes:
-    - contrib/libs/grpc/include/grpcpp/impl/codegen/server_context_impl.h

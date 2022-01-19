@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.ml
     ~~~~~~~~~~~~~~~~~~
@@ -775,7 +776,7 @@ class ReasonLexer(RegexLexer):
     """
 
     name = 'ReasonML'
-    aliases = ['reasonml', 'reason']
+    aliases = ['reason', "reasonml"]
     filenames = ['*.re', '*.rei']
     mimetypes = ['text/x-reasonml']
 

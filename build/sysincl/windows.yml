@@ -190,7 +190,6 @@
   - realtimeapiset.h
   - reason.h
   - richedit.h
-  - roapi.h
   - robuffer.h
   - rpc.h
   - rpcdce.h
@@ -287,7 +286,6 @@
   - winsdkver.h
   - winsock.h
   - winsock2.h
-  - winstring.h
   - winsvc.h
   - winternl.h
   - winuser.h
@@ -313,4 +311,3 @@
   - wtypes.h
   - xa.h
   - xaudio2.h
-  - xmllite.h

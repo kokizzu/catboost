@@ -31,6 +31,10 @@ namespace NCB {
 
     using TRawBuilderData = TBuilderData<TRawObjectsData>;
     using TQuantizedBuilderData = TBuilderData<TQuantizedObjectsData>;
+    using TQuantizedForCPUBuilderData = TBuilderData<TQuantizedForCPUObjectsData>;
+
+    TQuantizedBuilderData CastToBase(TQuantizedForCPUBuilderData&& builderData);
+
 
     template <class TTObjectsDataProvider>
     class TDataProviderTemplate : public TThrRefBase {
@@ -144,20 +148,6 @@ namespace NCB {
             return GetSubset(objectsGroupingSubset, cpuUsedRamLimit, &localExecutor);
         }
 
-        TIntrusivePtr<TDataProviderTemplate> Clone(
-            ui64 cpuUsedRamLimit,
-            NPar::ILocalExecutor* localExecutor
-        ) const {
-            return GetSubset(
-                GetGroupingSubsetFromObjectsSubset(
-                    ObjectsGrouping,
-                    TArraySubsetIndexing(TFullSubset<ui32>(GetObjectCount())),
-                    EObjectsOrder::Ordered),
-                cpuUsedRamLimit,
-                localExecutor
-            );
-        }
-
         // ObjectsGrouping->GetObjectCount() used a lot, so make it a member here
         ui32 GetObjectCount() const {
             return ObjectsGrouping->GetObjectCount();
@@ -196,11 +186,6 @@ namespace NCB {
             RawTargetData.SetWeights(weights);
             MetaInfo.HasWeights = true;
         }
-
-        void SetTimestamps(TConstArrayRef<ui64> timestamps) { // [objectIdx]
-            ObjectsData->SetTimestamps(timestamps);
-            MetaInfo.HasTimestamp = true;
-        }
     };
 
     using TDataProvider = TDataProviderTemplate<TObjectsDataProvider>;
@@ -211,12 +196,12 @@ namespace NCB {
     using TRawDataProviderPtr = TIntrusivePtr<TRawDataProvider>;
     using TConstRawDataProviderPtr = TIntrusivePtr<const TRawDataProvider>;
 
-    using TQuantizedDataProvider = TDataProviderTemplate<TQuantizedObjectsDataProvider>;
+    using TQuantizedDataProvider = TDataProviderTemplate<TQuantizedForCPUObjectsDataProvider>;
     using TQuantizedDataProviderPtr = TIntrusivePtr<TQuantizedDataProvider>;
-    using TConstQuantizedDataProviderPtr = TIntrusivePtr<const TQuantizedObjectsDataProvider>;
+    using TConstQuantizedDataProviderPtr = TIntrusivePtr<const TQuantizedForCPUObjectsDataProvider>;
 
     /*
-     * TDataProviderTemplate can be either TRawObjectsDataProvider or TQuantizedObjectsDataProvider
+     * TDataProviderTemplate can be either TRawObjectsDataProvider or TQuantized(ForCPU)ObjectsDataProvider
      *  had to make this method instead of TDataProviderTemplate constructor because it
      *  won't work for TDataProviderTemplate=TTObjectsDataProvider (kind of base class)
      */
@@ -225,7 +210,6 @@ namespace NCB {
         TMaybe<TObjectsGroupingPtr> objectsGrouping, // if undefined ObjectsGrouping created from data
         TBuilderData<typename TTObjectsDataProvider::TData>&& builderData,
         bool skipCheck,
-        bool forceUnitAutoPairWeights,
         NPar::ILocalExecutor* localExecutor
     ) {
         if (!skipCheck) {
@@ -268,7 +252,6 @@ namespace NCB {
                     *objectsGrouping,
                     std::move(builderData.TargetData),
                     skipCheck,
-                    forceUnitAutoPairWeights,
                     localExecutor
                 );
             }
@@ -297,7 +280,7 @@ namespace NCB {
 
     using TDataProviders = TDataProvidersTemplate<TObjectsDataProvider>;
     using TRawDataProviders = TDataProvidersTemplate<TRawObjectsDataProvider>;
-    using TQuantizedDataProviders = TDataProvidersTemplate<TQuantizedObjectsDataProvider>;
+    using TQuantizedDataProviders = TDataProvidersTemplate<TQuantizedForCPUObjectsDataProvider>;
 
 
     template <class TTObjectsDataProvider>
@@ -426,7 +409,7 @@ namespace NCB {
     using TProcessedDataProvider = TProcessedDataProviderTemplate<TObjectsDataProvider>;
     using TProcessedDataProviderPtr = TIntrusivePtr<TProcessedDataProvider>;
 
-    using TTrainingDataProvider = TProcessedDataProviderTemplate<TQuantizedObjectsDataProvider>;
+    using TTrainingDataProvider = TProcessedDataProviderTemplate<TQuantizedForCPUObjectsDataProvider>;
     using TTrainingDataProviderPtr = TIntrusivePtr<TTrainingDataProvider>;
 
     template <class TTObjectsDataProvider>
@@ -550,7 +533,7 @@ namespace NCB {
 
     class TEstimatedForCPUObjectsDataProviders {
     public:
-        using TTObjectsDataProvider = TQuantizedObjectsDataProvider;
+        using TTObjectsDataProvider = TQuantizedForCPUObjectsDataProvider;
         using TTObjectsDataProviderPtr = TIntrusivePtr<TTObjectsDataProvider>;
 
         TTObjectsDataProviderPtr Learn; // can be nullptr
@@ -601,7 +584,7 @@ namespace NCB {
 
     class TTrainingDataProviders {
     public:
-        using TTObjectsDataProvider = TQuantizedObjectsDataProvider;
+        using TTObjectsDataProvider = TQuantizedForCPUObjectsDataProvider;
         using TTrainingDataProviderTemplatePtr =
             TIntrusivePtr<TProcessedDataProviderTemplate<TTObjectsDataProvider>>;
         using TDataPtr = TTrainingDataProviderTemplatePtr;
@@ -620,7 +603,7 @@ namespace NCB {
              AddWithSharedMulti(&binSaver, Learn, Test);
              binSaver.Add(0, &EstimatedObjectsData);
              return 0;
-        }
+         }
 
         ui32 GetTestSampleCount() const {
             return NCB::GetObjectCount<TTObjectsDataProvider>(Test);

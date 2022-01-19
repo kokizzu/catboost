@@ -22,7 +22,7 @@ namespace NCatboostOptions {
 }
 
 namespace NCB {
-    class TQuantizedObjectsDataProvider;
+    class TQuantizedForCPUObjectsDataProvider;
 }
 
 namespace NPar {
@@ -35,7 +35,7 @@ namespace NPar {
 // This function does all the work - it calculates sums in buckets, gets real sums for splits and
 // (optionally - if scoreCalcer is non-null) calculates scores.
 void CalcStatsAndScores(
-    const NCB::TQuantizedObjectsDataProvider& objectsDataProvider,
+    const NCB::TQuantizedForCPUObjectsDataProvider& objectsDataProvider,
     const std::tuple<const TOnlineCtrBase&, const TOnlineCtrBase&>& allCtrs,
     const TCalcScoreFold& fold,
     const TCalcScoreFold& prevLevelData,

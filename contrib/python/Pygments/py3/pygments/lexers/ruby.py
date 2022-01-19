@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.ruby
     ~~~~~~~~~~~~~~~~~~~~
@@ -33,9 +34,9 @@ class RubyLexer(ExtendedRegexLexer):
     """
 
     name = 'Ruby'
-    aliases = ['ruby', 'rb', 'duby']
+    aliases = ['rb', 'ruby', 'duby']
     filenames = ['*.rb', '*.rbw', 'Rakefile', '*.rake', '*.gemspec',
-                 '*.rbx', '*.duby', 'Gemfile', 'Vagrantfile']
+                 '*.rbx', '*.duby', 'Gemfile']
     mimetypes = ['text/x-ruby', 'application/x-ruby']
 
     flags = re.DOTALL | re.MULTILINE
@@ -329,13 +330,9 @@ class RubyLexer(ExtendedRegexLexer):
         ],
         'funcname': [
             (r'\(', Punctuation, 'defexpr'),
-            (r'(?:([a-zA-Z_]\w*)(\.))?'  # optional scope name, like "self."
-             r'('
-                r'[a-zA-Z\u0080-\uffff][a-zA-Z0-9_\u0080-\uffff]*[!?=]?'  # method name
-                r'|!=|!~|=~|\*\*?|[-+!~]@?|[/%&|^]|<=>|<[<=]?|>[>=]?|===?'  # or operator override
-                r'|\[\]=?'  # or element reference/assignment override
-                r'|`'  # or the undocumented backtick override
-             r')',
+            (r'(?:([a-zA-Z_]\w*)(\.))?'
+             r'([a-zA-Z_]\w*[!?]?|\*\*?|[-+]@?|'
+             r'[/%&|^`~]|\[\]=?|<<|>>|<=?>|>=?|===?)',
              bygroups(Name.Class, Operator, Name.Function), '#pop'),
             default('#pop')
         ],

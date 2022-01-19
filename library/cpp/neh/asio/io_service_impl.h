@@ -423,7 +423,7 @@ namespace NAsio {
             public:
                 TFuncOperation(TCompletionHandler completionHandler)
                     : TNoneOperation()
-                    , H_(std::move(completionHandler))
+                    , H_(completionHandler)
                 {
                     Speculative_ = true;
                 }
@@ -439,7 +439,7 @@ namespace NAsio {
                 TCompletionHandler H_;
             };
 
-            ScheduleOp(new TFuncOperation(std::move(h)));
+            ScheduleOp(new TFuncOperation(h));
         }
 
         //cancel all current operations (handlers be called with errorCode == ECANCELED)

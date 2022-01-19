@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.nimrod
     ~~~~~~~~~~~~~~~~~~~~~~
@@ -25,7 +26,7 @@ class NimrodLexer(RegexLexer):
     """
 
     name = 'Nimrod'
-    aliases = ['nimrod', 'nim']
+    aliases = ['nim', 'nimrod']
     filenames = ['*.nim', '*.nimrod']
     mimetypes = ['text/x-nim']
 

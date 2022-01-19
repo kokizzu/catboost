@@ -15,7 +15,7 @@ inline void AddDersRangeMulti(
     TArrayRef<TSumMulti> leafDers // [dimensionIdx]
 ) {
     const auto* multiError = dynamic_cast<const TMultiDerCalcer*>(&error);
-    const bool isMultiTarget = multiError != nullptr;
+    const bool isMultiRegression = multiError != nullptr;
 
     const int approxDimension = approx.size();
     const bool useHessian = !leafDers[0].SumDer2.Data.empty();
@@ -24,21 +24,21 @@ inline void AddDersRangeMulti(
     constexpr int UnrollMaxCount = 16;
     TVector<TVector<double>> curApprox(UnrollMaxCount, TVector<double>(approxDimension));
     TVector<TVector<float>> curTarget;
-    if (isMultiTarget) {
+    if (isMultiRegression) {
         curTarget = TVector<TVector<float>>(UnrollMaxCount, TVector<float>(target.size()));
     }
 
-    const auto addDersRangeMultiImpl = [&](auto useWeights, auto useLeafIndices, auto useHessian, auto isMultiTarget) {
+    const auto addDersRangeMultiImpl = [&](auto useWeights, auto useLeafIndices, auto useHessian, auto isMultiRegression) {
         for (int columnIdx = rowBegin; columnIdx < rowEnd; columnIdx += UnrollMaxCount) {
             const int unrollCount = Min(UnrollMaxCount, rowEnd - columnIdx);
             SumTransposedBlocks(columnIdx, columnIdx + unrollCount, approx, approxDeltas, MakeArrayRef(curApprox));
-            if (isMultiTarget) {
+            if (isMultiRegression) {
                 SumTransposedBlocks(columnIdx, columnIdx + unrollCount, target, /*targetDeltas*/{}, MakeArrayRef(curTarget));
             }
             for (int unrollIdx : xrange(unrollCount)) {
                 const double w = useWeights ? weight[columnIdx + unrollIdx] : 1;
 
-                if (isMultiTarget) {
+                if (isMultiRegression) {
                     multiError->CalcDers(curApprox[unrollIdx], curTarget[unrollIdx], w, &curDer, useHessian ? &curDer2 : nullptr);
                 } else {
                     error.CalcDersMulti(curApprox[unrollIdx], target[0][columnIdx + unrollIdx], w, &curDer, useHessian ? &curDer2 : nullptr);
@@ -54,7 +54,7 @@ inline void AddDersRangeMulti(
         }
     };
 
-    DispatchGenericLambda(addDersRangeMultiImpl, !weight.empty(), !leafIndices.empty(), useHessian, isMultiTarget);
+    DispatchGenericLambda(addDersRangeMultiImpl, !weight.empty(), !leafIndices.empty(), useHessian, isMultiRegression);
 }
 
 void CalcLeafDersMulti(

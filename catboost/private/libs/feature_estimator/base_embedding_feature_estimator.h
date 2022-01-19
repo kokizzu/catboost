@@ -1,10 +1,7 @@
 #pragma once
 
-#include "classification_target.h"
 #include "feature_estimator.h"
-
 #include <catboost/private/libs/embeddings/embedding_dataset.h>
-
 
 namespace NCB {
 
@@ -12,7 +9,7 @@ namespace NCB {
     class TEmbeddingBaseEstimator : public IOnlineFeatureEstimator {
     public:
         TEmbeddingBaseEstimator(
-            TClassificationTargetPtr target,
+            TEmbeddingClassificationTargetPtr target,
             TEmbeddingDataSetPtr learnArrays,
             TArrayRef<TEmbeddingDataSetPtr> testArrays)
             : Target(target)
@@ -164,7 +161,7 @@ namespace NCB {
             featureCalcer.Compute(vector, outputFeaturesIterator);
         }
 
-        const TClassificationTarget& GetTarget() const {
+        const TEmbeddingClassificationTarget& GetTarget() const {
             return *Target;
         }
 
@@ -193,7 +190,7 @@ namespace NCB {
 
 
     private:
-        TClassificationTargetPtr Target;
+        TEmbeddingClassificationTargetPtr Target;
         TEmbeddingDataSetPtr LearnArrays;
         TVector<TEmbeddingDataSetPtr> TestArrays;
         const TGuid Guid;

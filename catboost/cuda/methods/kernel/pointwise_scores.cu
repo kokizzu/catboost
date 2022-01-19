@@ -416,7 +416,7 @@ namespace NKernel {
                                const float* binFeaturesWeights, ui32 binaryFeatureWeightsCount,
                                const float* splits, const TPartitionStatistics* parts, ui32 pCount,
                                TBestSplitProperties* result, ui32 resultSize,
-                               EScoreFunction scoreFunction, double l2, double metaL2Exponent, double metaFrequency, bool normalize,
+                               EScoreFunction scoreFunction, double l2, bool normalize,
                                double scoreStdDev, ui64 seed,
                                TCudaStream stream) {
         const int blockSize = 128;
@@ -447,8 +447,7 @@ namespace NKernel {
             case EScoreFunction::L2:
             case EScoreFunction::NewtonL2: {
                 using TScoreCalcer = TL2ScoreCalcer;
-                const float metaExponent = (NextUniform(&seed) >= metaFrequency ? 1.0f : static_cast<float>(metaL2Exponent));
-                TScoreCalcer scoreCalcer(static_cast<float>(l2), metaExponent);
+                TScoreCalcer scoreCalcer(static_cast<float>(l2));
                 RUN()
                 break;
             }
@@ -474,7 +473,7 @@ namespace NKernel {
                           const float* binFeaturesWeights, ui32 binaryFeatureWeightsCount,
                           const float* splits, const TPartitionStatistics* parts, ui32 pCount, ui32 foldCount,
                           TBestSplitProperties* result, ui32 resultSize,
-                          EScoreFunction scoreFunction, double l2, double metaL2Exponent, double metaL2Frequency, bool normalize,
+                          EScoreFunction scoreFunction, double l2, bool normalize,
                           double scoreStdDev, ui64 seed, bool gatheredByLeaves,
                           TCudaStream stream)
     {
@@ -482,10 +481,10 @@ namespace NKernel {
         if (foldCount == 1) {
             if (gatheredByLeaves) {
                 using THistLoader = TGatheredByLeavesHistLoader;
-                FindOptimalSplitPlain<THistLoader>(binaryFeatures, binaryFeatureCount, binFeaturesWeights, binaryFeatureWeightsCount, splits, parts, pCount, result, resultSize, scoreFunction, l2, metaL2Exponent, metaL2Frequency, normalize, scoreStdDev, seed, stream);
+                FindOptimalSplitPlain<THistLoader>(binaryFeatures, binaryFeatureCount, binFeaturesWeights, binaryFeatureWeightsCount, splits, parts, pCount, result, resultSize, scoreFunction, l2, normalize, scoreStdDev, seed, stream);
             } else {
                 using THistLoader = TDirectHistLoader;
-                FindOptimalSplitPlain<THistLoader>(binaryFeatures, binaryFeatureCount, binFeaturesWeights, binaryFeatureWeightsCount, splits, parts, pCount, result, resultSize, scoreFunction, l2, metaL2Exponent, metaL2Frequency, normalize, scoreStdDev, seed, stream);
+                FindOptimalSplitPlain<THistLoader>(binaryFeatures, binaryFeatureCount, binFeaturesWeights, binaryFeatureWeightsCount, splits, parts, pCount, result, resultSize, scoreFunction, l2, normalize, scoreStdDev, seed, stream);
             }
         } else {
             FindOptimalSplitDynamic(binaryFeatures, binaryFeatureCount, binFeaturesWeights, binaryFeatureWeightsCount, splits, parts, pCount, foldCount, result, resultSize, scoreFunction, l2, normalize, scoreStdDev, seed, stream);
@@ -501,9 +500,9 @@ namespace NKernel {
                                                  const int foldCount,
                                                  float* result) {
 
-        const int featuresPerBlock = (BLOCK_SIZE + leafCount - 1) / leafCount;
+        const int featuresPerBlock = BLOCK_SIZE / leafCount;
         const int featureId = blockIdx.x * featuresPerBlock + threadIdx.x / leafCount;
-        const int leafId = (threadIdx.x & (leafCount - 1)) + threadIdx.z * BLOCK_SIZE;
+        const int leafId = threadIdx.x & (leafCount - 1);
 
         const int foldId = blockIdx.y;
         TPointwisePartOffsetsHelper helper(gridDim.y);
@@ -534,11 +533,10 @@ namespace NKernel {
     )
     {
         const int blockSize = 1024;
-        const int leavesInBlock = Min<int>(leafCount, blockSize);
         dim3 numBlocks;
-        numBlocks.x = (binFeatureCount + (blockSize / leavesInBlock) - 1) / (blockSize / leavesInBlock);
+        numBlocks.x = (binFeatureCount + (blockSize / leafCount) - 1) / (blockSize / leafCount);
         numBlocks.y = foldCount;
-        numBlocks.z = (leafCount + blockSize - 1) / blockSize;
+        numBlocks.z = 1;
 
         switch (histCount) {
             case 1: {

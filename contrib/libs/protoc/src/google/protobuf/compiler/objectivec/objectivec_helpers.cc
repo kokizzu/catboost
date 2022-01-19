@@ -38,21 +38,23 @@
 #include <iostream>
 #include <sstream>
 #include <stdlib.h>
-#include <unordered_set>
 #include <vector>
 
-#include <google/protobuf/compiler/code_generator.h>
+#include <google/protobuf/stubs/hash.h>
 #include <google/protobuf/compiler/objectivec/objectivec_helpers.h>
-#include <google/protobuf/compiler/objectivec/objectivec_nsobject_methods.h>
 #include <google/protobuf/descriptor.pb.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
-#include <google/protobuf/io/io_win32.h>
-#include <google/protobuf/port.h>
 #include <google/protobuf/stubs/common.h>
-#include <google/protobuf/stubs/port.h>
+#include <google/protobuf/stubs/io_win32.h>
 #include <google/protobuf/stubs/strutil.h>
+
+#if defined(_MSC_VER)
+// DO NOT include <io.h>, instead create functions in io_win32.{h,cc} and import
+// them like we do below.
+using google::protobuf::internal::win32::open;
+#endif
 
 // NOTE: src/google/protobuf/compiler/plugin.cc makes use of cerr for some
 // error cases, so it seems to be ok to use as a back door for errors.
@@ -62,34 +64,18 @@ namespace protobuf {
 namespace compiler {
 namespace objectivec {
 
-// <io.h> is transitively included in this file. Import the functions explicitly
-// in this port namespace to avoid ambiguous definition.
-namespace posix {
-#ifdef _WIN32
-using ::google::protobuf::io::win32::open;
-#else
-using ::open;
-#endif
-}  // namespace port
-
 Options::Options() {
   // Default is the value of the env for the package prefixes.
   const char* file_path = getenv("GPB_OBJC_EXPECTED_PACKAGE_PREFIXES");
   if (file_path) {
     expected_prefixes_path = file_path;
   }
-  const char* suppressions = getenv("GPB_OBJC_EXPECTED_PACKAGE_PREFIXES_SUPPRESSIONS");
-  if (suppressions) {
-    expected_prefixes_suppressions =
-        Split(suppressions, ";", true);
-  }
 }
 
 namespace {
 
-std::unordered_set<TProtoStringType> MakeWordsMap(const char* const words[],
-                                             size_t num_words) {
-  std::unordered_set<TProtoStringType> result;
+hash_set<string> MakeWordsMap(const char* const words[], size_t num_words) {
+  hash_set<string> result;
   for (int i = 0; i < num_words; i++) {
     result.insert(words[i]);
   }
@@ -98,7 +84,7 @@ std::unordered_set<TProtoStringType> MakeWordsMap(const char* const words[],
 
 const char* const kUpperSegmentsList[] = {"url", "http", "https"};
 
-std::unordered_set<TProtoStringType> kUpperSegments =
+hash_set<string> kUpperSegments =
     MakeWordsMap(kUpperSegmentsList, GOOGLE_ARRAYSIZE(kUpperSegmentsList));
 
 bool ascii_isnewline(char c) {
@@ -108,10 +94,9 @@ bool ascii_isnewline(char c) {
 // Internal helper for name handing.
 // Do not expose this outside of helpers, stick to having functions for specific
 // cases (ClassName(), FieldName()), so there is always consistent suffix rules.
-TProtoStringType UnderscoresToCamelCase(const TProtoStringType& input,
-                                   bool first_capitalized) {
-  std::vector<TProtoStringType> values;
-  TProtoStringType current;
+string UnderscoresToCamelCase(const string& input, bool first_capitalized) {
+  vector<string> values;
+  string current;
 
   bool last_char_was_number = false;
   bool last_char_was_lower = false;
@@ -149,11 +134,10 @@ TProtoStringType UnderscoresToCamelCase(const TProtoStringType& input,
   }
   values.push_back(current);
 
-  TProtoStringType result;
+  string result;
   bool first_segment_forces_upper = false;
-  for (std::vector<TProtoStringType>::iterator i = values.begin(); i != values.end();
-       ++i) {
-    TProtoStringType value = *i;
+  for (vector<string>::iterator i = values.begin(); i != values.end(); ++i) {
+    string value = *i;
     bool all_upper = (kUpperSegments.count(value) > 0);
     if (all_upper && (result.length() == 0)) {
       first_segment_forces_upper = true;
@@ -176,118 +160,73 @@ TProtoStringType UnderscoresToCamelCase(const TProtoStringType& input,
 }
 
 const char* const kReservedWordList[] = {
-  // Note NSObject Methods:
-  // These are brought in from objectivec_nsobject_methods.h that is generated
-  // using method_dump.sh. See kNSObjectMethods below.
+    // Objective C "keywords" that aren't in C
+    // From
+    // http://stackoverflow.com/questions/1873630/reserved-keywords-in-objective-c
+    "id", "_cmd", "super", "in", "out", "inout", "bycopy", "byref", "oneway",
+    "self",
 
-  // Objective C "keywords" that aren't in C
-  // From
-  // http://stackoverflow.com/questions/1873630/reserved-keywords-in-objective-c
-  // with some others added on.
-  "id", "_cmd", "super", "in", "out", "inout", "bycopy", "byref", "oneway",
-  "self", "instancetype", "nullable", "nonnull", "nil", "Nil",
-  "YES", "NO", "weak",
+    // C/C++ keywords (Incl C++ 0x11)
+    // From http://en.cppreference.com/w/cpp/keywords
+    "and", "and_eq", "alignas", "alignof", "asm", "auto", "bitand", "bitor",
+    "bool", "break", "case", "catch", "char", "char16_t", "char32_t", "class",
+    "compl", "const", "constexpr", "const_cast", "continue", "decltype",
+    "default", "delete", "double", "dynamic_cast", "else", "enum", "explicit",
+    "export", "extern ", "false", "float", "for", "friend", "goto", "if",
+    "inline", "int", "long", "mutable", "namespace", "new", "noexcept", "not",
+    "not_eq", "nullptr", "operator", "or", "or_eq", "private", "protected",
+    "public", "register", "reinterpret_cast", "return", "short", "signed",
+    "sizeof", "static", "static_assert", "static_cast", "struct", "switch",
+    "template", "this", "thread_local", "throw", "true", "try", "typedef",
+    "typeid", "typename", "union", "unsigned", "using", "virtual", "void",
+    "volatile", "wchar_t", "while", "xor", "xor_eq",
 
-  // C/C++ keywords (Incl C++ 0x11)
-  // From http://en.cppreference.com/w/cpp/keywords
-  "and", "and_eq", "alignas", "alignof", "asm", "auto", "bitand", "bitor",
-  "bool", "break", "case", "catch", "char", "char16_t", "char32_t", "class",
-  "compl", "const", "constexpr", "const_cast", "continue", "decltype",
-  "default", "delete", "double", "dynamic_cast", "else", "enum", "explicit",
-  "export", "extern ", "false", "float", "for", "friend", "goto", "if",
-  "inline", "int", "long", "mutable", "namespace", "new", "noexcept", "not",
-  "not_eq", "nullptr", "operator", "or", "or_eq", "private", "protected",
-  "public", "register", "reinterpret_cast", "return", "short", "signed",
-  "sizeof", "static", "static_assert", "static_cast", "struct", "switch",
-  "template", "this", "thread_local", "throw", "true", "try", "typedef",
-  "typeid", "typename", "union", "unsigned", "using", "virtual", "void",
-  "volatile", "wchar_t", "while", "xor", "xor_eq",
+    // C99 keywords
+    // From
+    // http://publib.boulder.ibm.com/infocenter/lnxpcomp/v8v101/index.jsp?topic=%2Fcom.ibm.xlcpp8l.doc%2Flanguage%2Fref%2Fkeyw.htm
+    "restrict",
 
-  // C99 keywords
-  // From
-  // http://publib.boulder.ibm.com/infocenter/lnxpcomp/v8v101/index.jsp?topic=%2Fcom.ibm.xlcpp8l.doc%2Flanguage%2Fref%2Fkeyw.htm
-  "restrict",
+    // Objective-C Runtime typedefs
+    // From <obc/runtime.h>
+    "Category", "Ivar", "Method", "Protocol",
 
-  // GCC/Clang extension
-  "typeof",
+    // NSObject Methods
+    // new is covered by C++ keywords.
+    "description", "debugDescription", "finalize", "hash", "dealloc", "init",
+    "class", "superclass", "retain", "release", "autorelease", "retainCount",
+    "zone", "isProxy", "copy", "mutableCopy", "classForCoder",
 
-  // Not a keyword, but will break you
-  "NULL",
+    // GPBMessage Methods
+    // Only need to add instance methods that may conflict with
+    // method declared in protos. The main cases are methods
+    // that take no arguments, or setFoo:/hasFoo: type methods.
+    "clear", "data", "delimitedData", "descriptor", "extensionRegistry",
+    "extensionsCurrentlySet", "initialized", "isInitialized", "serializedSize",
+    "sortedExtensionsInUse", "unknownFields",
 
-  // C88+ specs call for these to be macros, so depending on what they are
-  // defined to be it can lead to odd errors for some Xcode/SDK versions.
-  "stdin", "stdout", "stderr",
-
-  // Objective-C Runtime typedefs
-  // From <obc/runtime.h>
-  "Category", "Ivar", "Method", "Protocol",
-
-  // GPBMessage Methods
-  // Only need to add instance methods that may conflict with
-  // method declared in protos. The main cases are methods
-  // that take no arguments, or setFoo:/hasFoo: type methods.
-  "clear", "data", "delimitedData", "descriptor", "extensionRegistry",
-  "extensionsCurrentlySet", "initialized", "isInitialized", "serializedSize",
-  "sortedExtensionsInUse", "unknownFields",
-
-  // MacTypes.h names
-  "Fixed", "Fract", "Size", "LogicalAddress", "PhysicalAddress", "ByteCount",
-  "ByteOffset", "Duration", "AbsoluteTime", "OptionBits", "ItemCount",
-  "PBVersion", "ScriptCode", "LangCode", "RegionCode", "OSType",
-  "ProcessSerialNumber", "Point", "Rect", "FixedPoint", "FixedRect", "Style",
-  "StyleParameter", "StyleField", "TimeScale", "TimeBase", "TimeRecord",
+    // MacTypes.h names
+    "Fixed", "Fract", "Size", "LogicalAddress", "PhysicalAddress", "ByteCount",
+    "ByteOffset", "Duration", "AbsoluteTime", "OptionBits", "ItemCount",
+    "PBVersion", "ScriptCode", "LangCode", "RegionCode", "OSType",
+    "ProcessSerialNumber", "Point", "Rect", "FixedPoint", "FixedRect", "Style",
+    "StyleParameter", "StyleField", "TimeScale", "TimeBase", "TimeRecord",
 };
 
-// returns true is input starts with __ or _[A-Z] which are reserved identifiers
-// in C/ C++. All calls should go through UnderscoresToCamelCase before getting here
-// but this verifies and allows for future expansion if we decide to redefine what a
-// reserved C identifier is (for example the GNU list
-// https://www.gnu.org/software/libc/manual/html_node/Reserved-Names.html )
-bool IsReservedCIdentifier(const TProtoStringType& input) {
-  if (input.length() > 2) {
-    if (input.at(0) == '_') {
-      if (isupper(input.at(1)) || input.at(1) == '_') {
-        return true;
-      }
-    }
-  }
-  return false;
-}
+hash_set<string> kReservedWords =
+    MakeWordsMap(kReservedWordList, GOOGLE_ARRAYSIZE(kReservedWordList));
 
-TProtoStringType SanitizeNameForObjC(const TProtoStringType& prefix,
-                           const TProtoStringType& input,
-                           const TProtoStringType& extension,
-                           TProtoStringType* out_suffix_added) {
-  static const std::unordered_set<TProtoStringType> kReservedWords =
-      MakeWordsMap(kReservedWordList, GOOGLE_ARRAYSIZE(kReservedWordList));
-  static const std::unordered_set<TProtoStringType> kNSObjectMethods =
-      MakeWordsMap(kNSObjectMethodsList, GOOGLE_ARRAYSIZE(kNSObjectMethodsList));
-  TProtoStringType sanitized;
-  // We add the prefix in the cases where the string is missing a prefix.
-  // We define "missing a prefix" as where 'input':
-  // a) Doesn't start with the prefix or
-  // b) Isn't equivalent to the prefix or
-  // c) Has the prefix, but the letter after the prefix is lowercase
-  if (HasPrefixString(input, prefix)) {
-    if (input.length() == prefix.length() || !ascii_isupper(input[prefix.length()])) {
-      sanitized = prefix + input;
-    } else {
-      sanitized = input;
-    }
-  } else {
-    sanitized = prefix + input;
-  }
-  if (IsReservedCIdentifier(sanitized) ||
-      (kReservedWords.count(sanitized) > 0) ||
-      (kNSObjectMethods.count(sanitized) > 0)) {
+string SanitizeNameForObjC(const string& input,
+                           const string& extension,
+                           string* out_suffix_added) {
+  if (kReservedWords.count(input) > 0) {
     if (out_suffix_added) *out_suffix_added = extension;
-    return sanitized + extension;
+    return input + extension;
   }
   if (out_suffix_added) out_suffix_added->clear();
-  return sanitized;
+  return input;
 }
 
-TProtoStringType NameFromFieldDescriptor(const FieldDescriptor* field) {
+string NameFromFieldDescriptor(const FieldDescriptor* field) {
   if (field->type() == FieldDescriptor::TYPE_GROUP) {
     return field->message_type()->name();
   } else {
@@ -295,10 +234,9 @@ TProtoStringType NameFromFieldDescriptor(const FieldDescriptor* field) {
   }
 }
 
-void PathSplit(const TProtoStringType& path, TProtoStringType* directory,
-               TProtoStringType* basename) {
-  TProtoStringType::size_type last_slash = path.rfind('/');
-  if (last_slash == TProtoStringType::npos) {
+void PathSplit(const string& path, string* directory, string* basename) {
+  string::size_type last_slash = path.rfind('/');
+  if (last_slash == string::npos) {
     if (directory) {
       *directory = "";
     }
@@ -315,7 +253,7 @@ void PathSplit(const TProtoStringType& path, TProtoStringType* directory,
   }
 }
 
-bool IsSpecialName(const TProtoStringType& name, const TProtoStringType* special_names,
+bool IsSpecialName(const string& name, const string* special_names,
                    size_t count) {
   for (size_t i = 0; i < count; ++i) {
     size_t length = special_names[i].length();
@@ -333,7 +271,7 @@ bool IsSpecialName(const TProtoStringType& name, const TProtoStringType* special
   return false;
 }
 
-TProtoStringType GetZeroEnumNameForFlagType(const FlagType flag_type) {
+string GetZeroEnumNameForFlagType(const FlagType flag_type) {
   switch(flag_type) {
     case FLAGTYPE_DESCRIPTOR_INITIALIZATION:
       return "GPBDescriptorInitializationFlag_None";
@@ -347,7 +285,7 @@ TProtoStringType GetZeroEnumNameForFlagType(const FlagType flag_type) {
   }
 }
 
-TProtoStringType GetEnumNameForFlagType(const FlagType flag_type) {
+string GetEnumNameForFlagType(const FlagType flag_type) {
   switch(flag_type) {
     case FLAGTYPE_DESCRIPTOR_INITIALIZATION:
       return "GPBDescriptorInitializationFlags";
@@ -357,18 +295,26 @@ TProtoStringType GetEnumNameForFlagType(const FlagType flag_type) {
       return "GPBFieldFlags";
     default:
       GOOGLE_LOG(FATAL) << "Can't get here.";
-      return TProtoStringType();
+      return string();
   }
 }
 
 }  // namespace
 
 // Escape C++ trigraphs by escaping question marks to \?
-TProtoStringType EscapeTrigraphs(const TProtoStringType& to_escape) {
+string EscapeTrigraphs(const string& to_escape) {
   return StringReplace(to_escape, "?", "\\?", true);
 }
 
-void TrimWhitespace(StringPiece* input) {
+string StripProto(const string& filename) {
+  if (HasSuffixString(filename, ".protodevel")) {
+    return StripSuffixString(filename, ".protodevel");
+  } else {
+    return StripSuffixString(filename, ".proto");
+  }
+}
+
+void StringPieceTrimWhitespace(StringPiece* input) {
   while (!input->empty() && ascii_isspace(*input->data())) {
     input->remove_prefix(1);
   }
@@ -377,37 +323,38 @@ void TrimWhitespace(StringPiece* input) {
   }
 }
 
-bool IsRetainedName(const TProtoStringType& name) {
+
+bool IsRetainedName(const string& name) {
   // List of prefixes from
   // http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmRules.html
-  static const TProtoStringType retained_names[] = {"new", "alloc", "copy",
-                                               "mutableCopy"};
+  static const string retained_names[] = {"new", "alloc", "copy",
+                                          "mutableCopy"};
   return IsSpecialName(name, retained_names,
                        sizeof(retained_names) / sizeof(retained_names[0]));
 }
 
-bool IsInitName(const TProtoStringType& name) {
-  static const TProtoStringType init_names[] = {"init"};
+bool IsInitName(const string& name) {
+  static const string init_names[] = {"init"};
   return IsSpecialName(name, init_names,
                        sizeof(init_names) / sizeof(init_names[0]));
 }
 
-TProtoStringType BaseFileName(const FileDescriptor* file) {
-  TProtoStringType basename;
+string BaseFileName(const FileDescriptor* file) {
+  string basename;
   PathSplit(file->name(), NULL, &basename);
   return basename;
 }
 
-TProtoStringType FileClassPrefix(const FileDescriptor* file) {
+string FileClassPrefix(const FileDescriptor* file) {
   // Default is empty string, no need to check has_objc_class_prefix.
-  TProtoStringType result = file->options().objc_class_prefix();
+  string result = file->options().objc_class_prefix();
   return result;
 }
 
-TProtoStringType FilePath(const FileDescriptor* file) {
-  TProtoStringType output;
-  TProtoStringType basename;
-  TProtoStringType directory;
+string FilePath(const FileDescriptor* file) {
+  string output;
+  string basename;
+  string directory;
   PathSplit(file->name(), &directory, &basename);
   if (directory.length() > 0) {
     output = directory + "/";
@@ -421,10 +368,10 @@ TProtoStringType FilePath(const FileDescriptor* file) {
   return output;
 }
 
-TProtoStringType FilePathBasename(const FileDescriptor* file) {
-  TProtoStringType output;
-  TProtoStringType basename;
-  TProtoStringType directory;
+string FilePathBasename(const FileDescriptor* file) {
+  string output;
+  string basename;
+  string directory;
   PathSplit(file->name(), &directory, &basename);
   basename = StripProto(basename);
 
@@ -434,17 +381,17 @@ TProtoStringType FilePathBasename(const FileDescriptor* file) {
   return output;
 }
 
-TProtoStringType FileClassName(const FileDescriptor* file) {
-  const TProtoStringType prefix = FileClassPrefix(file);
-  const TProtoStringType name =
-      UnderscoresToCamelCase(StripProto(BaseFileName(file)), true) + "Root";
+string FileClassName(const FileDescriptor* file) {
+  string name = FileClassPrefix(file);
+  name += UnderscoresToCamelCase(StripProto(BaseFileName(file)), true);
+  name += "Root";
   // There aren't really any reserved words that end in "Root", but playing
   // it safe and checking.
-  return SanitizeNameForObjC(prefix, name, "_RootClass", NULL);
+  return SanitizeNameForObjC(name, "_RootClass", NULL);
 }
 
-TProtoStringType ClassNameWorker(const Descriptor* descriptor) {
-  TProtoStringType name;
+string ClassNameWorker(const Descriptor* descriptor) {
+  string name;
   if (descriptor->containing_type() != NULL) {
     name = ClassNameWorker(descriptor->containing_type());
     name += "_";
@@ -452,8 +399,8 @@ TProtoStringType ClassNameWorker(const Descriptor* descriptor) {
   return name + descriptor->name();
 }
 
-TProtoStringType ClassNameWorker(const EnumDescriptor* descriptor) {
-  TProtoStringType name;
+string ClassNameWorker(const EnumDescriptor* descriptor) {
+  string name;
   if (descriptor->containing_type() != NULL) {
     name = ClassNameWorker(descriptor->containing_type());
     name += "_";
@@ -461,20 +408,19 @@ TProtoStringType ClassNameWorker(const EnumDescriptor* descriptor) {
   return name + descriptor->name();
 }
 
-TProtoStringType ClassName(const Descriptor* descriptor) {
+string ClassName(const Descriptor* descriptor) {
   return ClassName(descriptor, NULL);
 }
 
-TProtoStringType ClassName(const Descriptor* descriptor,
-                      TProtoStringType* out_suffix_added) {
+string ClassName(const Descriptor* descriptor, string* out_suffix_added) {
   // 1. Message names are used as is (style calls for CamelCase, trust it).
   // 2. Check for reserved word at the very end and then suffix things.
-  const TProtoStringType prefix = FileClassPrefix(descriptor->file());
-  const TProtoStringType name = ClassNameWorker(descriptor);
-  return SanitizeNameForObjC(prefix, name, "_Class", out_suffix_added);
+  string prefix = FileClassPrefix(descriptor->file());
+  string name = ClassNameWorker(descriptor);
+  return SanitizeNameForObjC(prefix + name, "_Class", out_suffix_added);
 }
 
-TProtoStringType EnumName(const EnumDescriptor* descriptor) {
+string EnumName(const EnumDescriptor* descriptor) {
   // 1. Enum names are used as is (style calls for CamelCase, trust it).
   // 2. Check for reserved word at the every end and then suffix things.
   //      message Fixed {
@@ -483,28 +429,27 @@ TProtoStringType EnumName(const EnumDescriptor* descriptor) {
   //      ...
   //      }
   //    yields Fixed_Class, Fixed_Size.
-  const TProtoStringType prefix = FileClassPrefix(descriptor->file());
-  const TProtoStringType name = ClassNameWorker(descriptor);
-  return SanitizeNameForObjC(prefix, name, "_Enum", NULL);
+  string name = FileClassPrefix(descriptor->file());
+  name += ClassNameWorker(descriptor);
+  return SanitizeNameForObjC(name, "_Enum", NULL);
 }
 
-TProtoStringType EnumValueName(const EnumValueDescriptor* descriptor) {
+string EnumValueName(const EnumValueDescriptor* descriptor) {
   // Because of the Switch enum compatibility, the name on the enum has to have
   // the suffix handing, so it slightly diverges from how nested classes work.
   //   enum Fixed {
   //     FOO = 1
   //   }
   // yields Fixed_Enum and Fixed_Enum_Foo (not Fixed_Foo).
-  const TProtoStringType class_name = EnumName(descriptor->type());
-  const TProtoStringType value_str =
-      UnderscoresToCamelCase(descriptor->name(), true);
-  const TProtoStringType name = class_name + "_" + value_str;
+  const string& class_name = EnumName(descriptor->type());
+  const string& value_str = UnderscoresToCamelCase(descriptor->name(), true);
+  const string& name = class_name + "_" + value_str;
   // There aren't really any reserved words with an underscore and a leading
   // capital letter, but playing it safe and checking.
-  return SanitizeNameForObjC("", name, "_Value", NULL);
+  return SanitizeNameForObjC(name, "_Value", NULL);
 }
 
-TProtoStringType EnumValueShortName(const EnumValueDescriptor* descriptor) {
+string EnumValueShortName(const EnumValueDescriptor* descriptor) {
   // Enum value names (EnumValueName above) are the enum name turned into
   // a class name and then the value name is CamelCased and concatenated; the
   // whole thing then gets sanitized for reserved words.
@@ -517,14 +462,14 @@ TProtoStringType EnumValueShortName(const EnumValueDescriptor* descriptor) {
   // So the right way to get the short name is to take the full enum name
   // and then strip off the enum name (leaving the value name and anything
   // done by sanitize).
-  const TProtoStringType class_name = EnumName(descriptor->type());
-  const TProtoStringType long_name_prefix = class_name + "_";
-  const TProtoStringType long_name = EnumValueName(descriptor);
+  const string& class_name = EnumName(descriptor->type());
+  const string& long_name_prefix = class_name + "_";
+  const string& long_name = EnumValueName(descriptor);
   return StripPrefixString(long_name, long_name_prefix);
 }
 
-TProtoStringType UnCamelCaseEnumShortName(const TProtoStringType& name) {
-  TProtoStringType result;
+string UnCamelCaseEnumShortName(const string& name) {
+  string result;
   for (int i = 0; i < name.size(); i++) {
     char c = name[i];
     if (i > 0 && ascii_isupper(c)) {
@@ -535,15 +480,15 @@ TProtoStringType UnCamelCaseEnumShortName(const TProtoStringType& name) {
   return result;
 }
 
-TProtoStringType ExtensionMethodName(const FieldDescriptor* descriptor) {
-  const TProtoStringType name = NameFromFieldDescriptor(descriptor);
-  const TProtoStringType result = UnderscoresToCamelCase(name, false);
-  return SanitizeNameForObjC("", result, "_Extension", NULL);
+string ExtensionMethodName(const FieldDescriptor* descriptor) {
+  const string& name = NameFromFieldDescriptor(descriptor);
+  const string& result = UnderscoresToCamelCase(name, false);
+  return SanitizeNameForObjC(result, "_Extension", NULL);
 }
 
-TProtoStringType FieldName(const FieldDescriptor* field) {
-  const TProtoStringType name = NameFromFieldDescriptor(field);
-  TProtoStringType result = UnderscoresToCamelCase(name, false);
+string FieldName(const FieldDescriptor* field) {
+  const string& name = NameFromFieldDescriptor(field);
+  string result = UnderscoresToCamelCase(name, false);
   if (field->is_repeated() && !field->is_map()) {
     // Add "Array" before do check for reserved worlds.
     result += "Array";
@@ -553,53 +498,45 @@ TProtoStringType FieldName(const FieldDescriptor* field) {
       result += "_p";
     }
   }
-  return SanitizeNameForObjC("", result, "_p", NULL);
+  return SanitizeNameForObjC(result, "_p", NULL);
 }
 
-TProtoStringType FieldNameCapitalized(const FieldDescriptor* field) {
+string FieldNameCapitalized(const FieldDescriptor* field) {
   // Want the same suffix handling, so upcase the first letter of the other
   // name.
-  TProtoStringType result = FieldName(field);
+  string result = FieldName(field);
   if (result.length() > 0) {
     result[0] = ascii_toupper(result[0]);
   }
   return result;
 }
 
-TProtoStringType OneofEnumName(const OneofDescriptor* descriptor) {
+string OneofEnumName(const OneofDescriptor* descriptor) {
   const Descriptor* fieldDescriptor = descriptor->containing_type();
-  TProtoStringType name = ClassName(fieldDescriptor);
+  string name = ClassName(fieldDescriptor);
   name += "_" + UnderscoresToCamelCase(descriptor->name(), true) + "_OneOfCase";
   // No sanitize needed because the OS never has names that end in _OneOfCase.
   return name;
 }
 
-TProtoStringType OneofName(const OneofDescriptor* descriptor) {
-  TProtoStringType name = UnderscoresToCamelCase(descriptor->name(), false);
+string OneofName(const OneofDescriptor* descriptor) {
+  string name = UnderscoresToCamelCase(descriptor->name(), false);
   // No sanitize needed because it gets OneOfCase added and that shouldn't
   // ever conflict.
   return name;
 }
 
-TProtoStringType OneofNameCapitalized(const OneofDescriptor* descriptor) {
+string OneofNameCapitalized(const OneofDescriptor* descriptor) {
   // Use the common handling and then up-case the first letter.
-  TProtoStringType result = OneofName(descriptor);
+  string result = OneofName(descriptor);
   if (result.length() > 0) {
     result[0] = ascii_toupper(result[0]);
   }
   return result;
 }
 
-TProtoStringType ObjCClass(const TProtoStringType& class_name) {
-  return TProtoStringType("GPBObjCClass(") + class_name + ")";
-}
-
-TProtoStringType ObjCClassDeclaration(const TProtoStringType& class_name) {
-  return TProtoStringType("GPBObjCClassDeclaration(") + class_name + ");";
-}
-
-TProtoStringType UnCamelCaseFieldName(const TProtoStringType& name, const FieldDescriptor* field) {
-  TProtoStringType worker(name);
+string UnCamelCaseFieldName(const string& name, const FieldDescriptor* field) {
+  string worker(name);
   if (HasSuffixString(worker, "_p")) {
     worker = StripSuffixString(worker, "_p");
   }
@@ -614,7 +551,7 @@ TProtoStringType UnCamelCaseFieldName(const TProtoStringType& name, const FieldD
     }
     return worker;
   } else {
-    TProtoStringType result;
+    string result;
     for (int i = 0; i < worker.size(); i++) {
       char c = worker[i];
       if (ascii_isupper(c)) {
@@ -630,7 +567,7 @@ TProtoStringType UnCamelCaseFieldName(const TProtoStringType& name, const FieldD
   }
 }
 
-TProtoStringType GetCapitalizedType(const FieldDescriptor* field) {
+string GetCapitalizedType(const FieldDescriptor* field) {
   switch (field->type()) {
     case FieldDescriptor::TYPE_INT32:
       return "Int32";
@@ -673,7 +610,7 @@ TProtoStringType GetCapitalizedType(const FieldDescriptor* field) {
   // Some compilers report reaching end of function even though all cases of
   // the enum are handed in the switch.
   GOOGLE_LOG(FATAL) << "Can't get here.";
-  return TProtoStringType();
+  return NULL;
 }
 
 ObjectiveCType GetObjectiveCType(FieldDescriptor::Type field_type) {
@@ -747,8 +684,7 @@ bool IsReferenceType(const FieldDescriptor* field) {
   return !IsPrimitiveType(field);
 }
 
-static TProtoStringType HandleExtremeFloatingPoint(TProtoStringType val,
-                                              bool add_float_suffix) {
+static string HandleExtremeFloatingPoint(string val, bool add_float_suffix) {
   if (val == "nan") {
     return "NAN";
   } else if (val == "inf") {
@@ -757,16 +693,16 @@ static TProtoStringType HandleExtremeFloatingPoint(TProtoStringType val,
     return "-INFINITY";
   } else {
     // float strings with ., e or E need to have f appended
-    if (add_float_suffix && (val.find(".") != TProtoStringType::npos ||
-                             val.find("e") != TProtoStringType::npos ||
-                             val.find("E") != TProtoStringType::npos)) {
+    if (add_float_suffix &&
+        (val.find(".") != string::npos || val.find("e") != string::npos ||
+         val.find("E") != string::npos)) {
       val += "f";
     }
     return val;
   }
 }
 
-TProtoStringType GPBGenericValueFieldName(const FieldDescriptor* field) {
+string GPBGenericValueFieldName(const FieldDescriptor* field) {
   // Returns the field within the GPBGenericValue union to use for the given
   // field.
   if (field->is_repeated()) {
@@ -802,11 +738,11 @@ TProtoStringType GPBGenericValueFieldName(const FieldDescriptor* field) {
   // Some compilers report reaching end of function even though all cases of
   // the enum are handed in the switch.
   GOOGLE_LOG(FATAL) << "Can't get here.";
-  return TProtoStringType();
+  return NULL;
 }
 
 
-TProtoStringType DefaultValue(const FieldDescriptor* field) {
+string DefaultValue(const FieldDescriptor* field) {
   // Repeated fields don't have defaults.
   if (field->is_repeated()) {
     return "nil";
@@ -820,17 +756,17 @@ TProtoStringType DefaultValue(const FieldDescriptor* field) {
       if (field->default_value_int32() == INT_MIN) {
         return "-0x80000000";
       }
-      return StrCat(field->default_value_int32());
+      return SimpleItoa(field->default_value_int32());
     case FieldDescriptor::CPPTYPE_UINT32:
-      return StrCat(field->default_value_uint32()) + "U";
+      return SimpleItoa(field->default_value_uint32()) + "U";
     case FieldDescriptor::CPPTYPE_INT64:
       // gcc and llvm reject the decimal form of kint32min and kint64min.
       if (field->default_value_int64() == LLONG_MIN) {
         return "-0x8000000000000000LL";
       }
-      return StrCat(field->default_value_int64()) + "LL";
+      return SimpleItoa(field->default_value_int64()) + "LL";
     case FieldDescriptor::CPPTYPE_UINT64:
-      return StrCat(field->default_value_uint64()) + "ULL";
+      return SimpleItoa(field->default_value_uint64()) + "ULL";
     case FieldDescriptor::CPPTYPE_DOUBLE:
       return HandleExtremeFloatingPoint(
           SimpleDtoa(field->default_value_double()), false);
@@ -841,7 +777,7 @@ TProtoStringType DefaultValue(const FieldDescriptor* field) {
       return field->default_value_bool() ? "YES" : "NO";
     case FieldDescriptor::CPPTYPE_STRING: {
       const bool has_default_value = field->has_default_value();
-      const TProtoStringType& default_string = field->default_value_string();
+      const string& default_string = field->default_value_string();
       if (!has_default_value || default_string.length() == 0) {
         // If the field is defined as being the empty string,
         // then we will just assign to nil, as the empty string is the
@@ -858,7 +794,7 @@ TProtoStringType DefaultValue(const FieldDescriptor* field) {
         // Must convert to a standard byte order for packing length into
         // a cstring.
         uint32 length = ghtonl(default_string.length());
-        TProtoStringType bytes((const char*)&length, sizeof(length));
+        string bytes((const char*)&length, sizeof(length));
         bytes.append(default_string);
         return "(NSData*)\"" + EscapeTrigraphs(CEscape(bytes)) + "\"";
       } else {
@@ -874,7 +810,7 @@ TProtoStringType DefaultValue(const FieldDescriptor* field) {
   // Some compilers report reaching end of function even though all cases of
   // the enum are handed in the switch.
   GOOGLE_LOG(FATAL) << "Can't get here.";
-  return TProtoStringType();
+  return NULL;
 }
 
 bool HasNonZeroDefaultValue(const FieldDescriptor* field) {
@@ -907,7 +843,7 @@ bool HasNonZeroDefaultValue(const FieldDescriptor* field) {
     case FieldDescriptor::CPPTYPE_BOOL:
       return field->default_value_bool();
     case FieldDescriptor::CPPTYPE_STRING: {
-      const TProtoStringType& default_string = field->default_value_string();
+      const string& default_string = field->default_value_string();
       return default_string.length() != 0;
     }
     case FieldDescriptor::CPPTYPE_ENUM:
@@ -922,14 +858,14 @@ bool HasNonZeroDefaultValue(const FieldDescriptor* field) {
   return false;
 }
 
-TProtoStringType BuildFlagsString(const FlagType flag_type,
-                             const std::vector<TProtoStringType>& strings) {
-  if (strings.empty()) {
+string BuildFlagsString(const FlagType flag_type,
+                        const vector<string>& strings) {
+  if (strings.size() == 0) {
     return GetZeroEnumNameForFlagType(flag_type);
   } else if (strings.size() == 1) {
     return strings[0];
   }
-  TProtoStringType string("(" + GetEnumNameForFlagType(flag_type) + ")(");
+  string string("(" + GetEnumNameForFlagType(flag_type) + ")(");
   for (size_t i = 0; i != strings.size(); ++i) {
     if (i > 0) {
       string.append(" | ");
@@ -940,25 +876,25 @@ TProtoStringType BuildFlagsString(const FlagType flag_type,
   return string;
 }
 
-TProtoStringType BuildCommentsString(const SourceLocation& location,
+string BuildCommentsString(const SourceLocation& location,
                            bool prefer_single_line) {
-  const TProtoStringType& comments = location.leading_comments.empty()
+  const string& comments = location.leading_comments.empty()
                                ? location.trailing_comments
                                : location.leading_comments;
-  std::vector<TProtoStringType> lines;
-  lines = Split(comments, "\n", false);
+  vector<string> lines;
+  SplitStringAllowEmpty(comments, "\n", &lines);
   while (!lines.empty() && lines.back().empty()) {
     lines.pop_back();
   }
   // If there are no comments, just return an empty string.
-  if (lines.empty()) {
+  if (lines.size() == 0) {
     return "";
   }
 
-  TProtoStringType prefix;
-  TProtoStringType suffix;
-  TProtoStringType final_comments;
-  TProtoStringType epilogue;
+  string prefix;
+  string suffix;
+  string final_comments;
+  string epilogue;
 
   bool add_leading_space = false;
 
@@ -974,7 +910,7 @@ TProtoStringType BuildCommentsString(const SourceLocation& location,
   }
 
   for (int i = 0; i < lines.size(); i++) {
-    TProtoStringType line = StripPrefixString(lines[i], " ");
+    string line = StripPrefixString(lines[i], " ");
     // HeaderDoc and appledoc use '\' and '@' for markers; escape them.
     line = StringReplace(line, "\\", "\\\\", true);
     line = StringReplace(line, "@", "\\@", true);
@@ -998,9 +934,9 @@ TProtoStringType BuildCommentsString(const SourceLocation& location,
 // use a different value; so it isn't as simple as a option.
 const char* const ProtobufLibraryFrameworkName = "Protobuf";
 
-TProtoStringType ProtobufFrameworkImportSymbol(const TProtoStringType& framework_name) {
+string ProtobufFrameworkImportSymbol(const string& framework_name) {
   // GPB_USE_[framework_name]_FRAMEWORK_IMPORTS
-  TProtoStringType result = TProtoStringType("GPB_USE_");
+  string result = string("GPB_USE_");
   result += ToUpper(framework_name);
   result += "_FRAMEWORK_IMPORTS";
   return result;
@@ -1010,7 +946,7 @@ bool IsProtobufLibraryBundledProtoFile(const FileDescriptor* file) {
   // We don't check the name prefix or proto package because some files
   // (descriptor.proto), aren't shipped generated by the library, so this
   // seems to be the safest way to only catch the ones shipped.
-  const TProtoStringType name = file->name();
+  const string name = file->name();
   if (name == "google/protobuf/any.proto" ||
       name == "google/protobuf/api.proto" ||
       name == "google/protobuf/duration.proto" ||
@@ -1049,36 +985,37 @@ namespace {
 
 class ExpectedPrefixesCollector : public LineConsumer {
  public:
-  ExpectedPrefixesCollector(std::map<TProtoStringType, TProtoStringType>* inout_package_to_prefix_map)
+  ExpectedPrefixesCollector(std::map<string, string>* inout_package_to_prefix_map)
       : prefix_map_(inout_package_to_prefix_map) {}
 
-  virtual bool ConsumeLine(const StringPiece& line, TProtoStringType* out_error);
+  virtual bool ConsumeLine(const StringPiece& line, string* out_error);
 
  private:
-  std::map<TProtoStringType, TProtoStringType>* prefix_map_;
+  std::map<string, string>* prefix_map_;
 };
 
 bool ExpectedPrefixesCollector::ConsumeLine(
-    const StringPiece& line, TProtoStringType* out_error) {
+    const StringPiece& line, string* out_error) {
   int offset = line.find('=');
   if (offset == StringPiece::npos) {
-    *out_error = TProtoStringType("Expected prefixes file line without equal sign: '") +
-                 TProtoStringType(line) + "'.";
+    *out_error =
+        string("Expected prefixes file line without equal sign: '") +
+        line.ToString() + "'.";
     return false;
   }
-  StringPiece package = line.substr(0, offset);
-  StringPiece prefix = line.substr(offset + 1);
-  TrimWhitespace(&package);
-  TrimWhitespace(&prefix);
+  StringPiece package(line, 0, offset);
+  StringPiece prefix(line, offset + 1, line.length() - offset - 1);
+  StringPieceTrimWhitespace(&package);
+  StringPieceTrimWhitespace(&prefix);
   // Don't really worry about error checking the package/prefix for
   // being valid.  Assume the file is validated when it is created/edited.
-  (*prefix_map_)[TProtoStringType(package)] = TProtoStringType(prefix);
+  (*prefix_map_)[package.ToString()] = prefix.ToString();
   return true;
 }
 
-bool LoadExpectedPackagePrefixes(const Options& generation_options,
-                                 std::map<TProtoStringType, TProtoStringType>* prefix_map,
-                                 TProtoStringType* out_error) {
+bool LoadExpectedPackagePrefixes(const Options &generation_options,
+                                 std::map<string, string>* prefix_map,
+                                 string* out_error) {
   if (generation_options.expected_prefixes_path.empty()) {
     return true;
   }
@@ -1089,18 +1026,19 @@ bool LoadExpectedPackagePrefixes(const Options& generation_options,
 }
 
 bool ValidateObjCClassPrefix(
-    const FileDescriptor* file, const TProtoStringType& expected_prefixes_path,
-    const std::map<TProtoStringType, TProtoStringType>& expected_package_prefixes,
-    TProtoStringType* out_error) {
-  const TProtoStringType prefix = file->options().objc_class_prefix();
-  const TProtoStringType package = file->package();
+    const FileDescriptor* file,
+    const string& expected_prefixes_path,
+    const std::map<string, string>& expected_package_prefixes,
+    string* out_error) {
+  const string prefix = file->options().objc_class_prefix();
+  const string package = file->package();
 
   // NOTE: src/google/protobuf/compiler/plugin.cc makes use of cerr for some
   // error cases, so it seems to be ok to use as a back door for warnings.
 
   // Check: Error - See if there was an expected prefix for the package and
   // report if it doesn't match (wrong or missing).
-  std::map<TProtoStringType, TProtoStringType>::const_iterator package_match =
+  std::map<string, string>::const_iterator package_match =
       expected_package_prefixes.find(package);
   if (package_match != expected_package_prefixes.end()) {
     // There was an entry, and...
@@ -1130,7 +1068,7 @@ bool ValidateObjCClassPrefix(
   // to Apple's rules (the checks above implicitly whitelist anything that
   // doesn't meet these rules).
   if (!ascii_isupper(prefix[0])) {
-    std::cerr
+    std::cerr << std::endl
          << "protoc:0: warning: Invalid 'option objc_class_prefix = \""
          << prefix << "\";' in '" << file->name() << "';"
          << " it should start with a capital letter." << std::endl;
@@ -1139,7 +1077,7 @@ bool ValidateObjCClassPrefix(
   if (prefix.length() < 3) {
     // Apple reserves 2 character prefixes for themselves. They do use some
     // 3 character prefixes, but they haven't updated the rules/docs.
-    std::cerr
+    std::cerr << std::endl
          << "protoc:0: warning: Invalid 'option objc_class_prefix = \""
          << prefix << "\";' in '" << file->name() << "';"
          << " Apple recommends they should be at least 3 characters long."
@@ -1148,9 +1086,8 @@ bool ValidateObjCClassPrefix(
   }
 
   // Look for any other package that uses the same prefix.
-  TProtoStringType other_package_for_prefix;
-  for (std::map<TProtoStringType, TProtoStringType>::const_iterator i =
-           expected_package_prefixes.begin();
+  string other_package_for_prefix;
+  for (std::map<string, string>::const_iterator i = expected_package_prefixes.begin();
        i != expected_package_prefixes.end(); ++i) {
     if (i->second == prefix) {
       other_package_for_prefix = i->first;
@@ -1164,7 +1101,7 @@ bool ValidateObjCClassPrefix(
     // The file does not have a package and ...
     if (other_package_for_prefix.empty()) {
       // ... no other package has declared that prefix.
-      std::cerr
+      std::cerr << std::endl
            << "protoc:0: warning: File '" << file->name() << "' has no "
            << "package. Consider adding a new package to the proto and adding '"
            << "new.package = " << prefix << "' to the expected prefixes file ("
@@ -1172,7 +1109,7 @@ bool ValidateObjCClassPrefix(
       std::cerr.flush();
     } else {
       // ... another package has declared the same prefix.
-      std::cerr
+      std::cerr << std::endl
            << "protoc:0: warning: File '" << file->name() << "' has no package "
            << "and package '" << other_package_for_prefix << "' already uses '"
            << prefix << "' as its prefix. Consider either adding a new package "
@@ -1201,7 +1138,7 @@ bool ValidateObjCClassPrefix(
   // Check: Warning - If the given package/prefix pair wasn't expected, issue a
   // warning issue a warning suggesting it gets added to the file.
   if (!expected_package_prefixes.empty()) {
-    std::cerr
+    std::cerr << std::endl
          << "protoc:0: warning: Found unexpected 'option objc_class_prefix = \""
          << prefix << "\";' in '" << file->name() << "';"
          << " consider adding it to the expected prefixes file ("
@@ -1214,11 +1151,11 @@ bool ValidateObjCClassPrefix(
 
 }  // namespace
 
-bool ValidateObjCClassPrefixes(const std::vector<const FileDescriptor*>& files,
+bool ValidateObjCClassPrefixes(const vector<const FileDescriptor*>& files,
                                const Options& generation_options,
-                               TProtoStringType* out_error) {
+                               string* out_error) {
   // Load the expected package prefixes, if available, to validate against.
-  std::map<TProtoStringType, TProtoStringType> expected_package_prefixes;
+  std::map<string, string> expected_package_prefixes;
   if (!LoadExpectedPackagePrefixes(generation_options,
                                    &expected_package_prefixes,
                                    out_error)) {
@@ -1226,15 +1163,6 @@ bool ValidateObjCClassPrefixes(const std::vector<const FileDescriptor*>& files,
   }
 
   for (int i = 0; i < files.size(); i++) {
-    bool should_skip =
-      (std::find(generation_options.expected_prefixes_suppressions.begin(),
-                 generation_options.expected_prefixes_suppressions.end(),
-                 files[i]->name())
-          != generation_options.expected_prefixes_suppressions.end());
-    if (should_skip) {
-      continue;
-    }
-
     bool is_valid =
         ValidateObjCClassPrefix(files[i],
                                 generation_options.expected_prefixes_path,
@@ -1252,9 +1180,9 @@ TextFormatDecodeData::TextFormatDecodeData() { }
 TextFormatDecodeData::~TextFormatDecodeData() { }
 
 void TextFormatDecodeData::AddString(int32 key,
-                                     const TProtoStringType& input_for_decode,
-                                     const TProtoStringType& desired_output) {
-  for (std::vector<DataEntry>::const_iterator i = entries_.begin();
+                                     const string& input_for_decode,
+                                     const string& desired_output) {
+  for (vector<DataEntry>::const_iterator i = entries_.begin();
        i != entries_.end(); ++i) {
     if (i->first == key) {
       std::cerr << "error: duplicate key (" << key
@@ -1265,12 +1193,12 @@ void TextFormatDecodeData::AddString(int32 key,
     }
   }
 
-  const TProtoStringType& data = TextFormatDecodeData::DecodeDataForString(
+  const string& data = TextFormatDecodeData::DecodeDataForString(
       input_for_decode, desired_output);
   entries_.push_back(DataEntry(key, data));
 }
 
-TProtoStringType TextFormatDecodeData::Data() const {
+string TextFormatDecodeData::Data() const {
   std::ostringstream data_stringstream;
 
   if (num_entries() > 0) {
@@ -1278,7 +1206,7 @@ TProtoStringType TextFormatDecodeData::Data() const {
     io::CodedOutputStream output_stream(&data_outputstream);
 
     output_stream.WriteVarint32(num_entries());
-    for (std::vector<DataEntry>::const_iterator i = entries_.begin();
+    for (vector<DataEntry>::const_iterator i = entries_.begin();
          i != entries_.end(); ++i) {
       output_stream.WriteVarint32(i->first);
       output_stream.WriteString(i->second);
@@ -1301,20 +1229,20 @@ class DecodeDataBuilder {
     Push();
     need_underscore_ = true;
   }
-  TProtoStringType Finish() {
+  string Finish() {
     Push();
     return decode_data_;
   }
 
  private:
-  static constexpr uint8 kAddUnderscore = 0x80;
+  static const uint8 kAddUnderscore = 0x80;
 
-  static constexpr uint8 kOpAsIs = 0x00;
-  static constexpr uint8 kOpFirstUpper = 0x40;
-  static constexpr uint8 kOpFirstLower = 0x20;
-  static constexpr uint8 kOpAllUpper = 0x60;
+  static const uint8 kOpAsIs        = 0x00;
+  static const uint8 kOpFirstUpper  = 0x40;
+  static const uint8 kOpFirstLower  = 0x20;
+  static const uint8 kOpAllUpper    = 0x60;
 
-  static constexpr int kMaxSegmentLen = 0x1f;
+  static const int kMaxSegmentLen     = 0x1f;
 
   void AddChar(const char desired) {
     ++segment_len_;
@@ -1357,7 +1285,7 @@ class DecodeDataBuilder {
   uint8 op_;
   int segment_len_;
 
-  TProtoStringType decode_data_;
+  string decode_data_;
 };
 
 bool DecodeDataBuilder::AddCharacter(const char desired, const char input) {
@@ -1398,8 +1326,8 @@ bool DecodeDataBuilder::AddCharacter(const char desired, const char input) {
 
 // If decode data can't be generated, a directive for the raw string
 // is used instead.
-TProtoStringType DirectDecodeString(const TProtoStringType& str) {
-  TProtoStringType result;
+string DirectDecodeString(const string& str) {
+  string result;
   result += (char)'\0';  // Marker for full string.
   result += str;
   result += (char)'\0';  // End of string.
@@ -1409,17 +1337,17 @@ TProtoStringType DirectDecodeString(const TProtoStringType& str) {
 }  // namespace
 
 // static
-TProtoStringType TextFormatDecodeData::DecodeDataForString(
-    const TProtoStringType& input_for_decode, const TProtoStringType& desired_output) {
-  if (input_for_decode.empty() || desired_output.empty()) {
+string TextFormatDecodeData::DecodeDataForString(const string& input_for_decode,
+                                                 const string& desired_output) {
+  if ((input_for_decode.size() == 0) || (desired_output.size() == 0)) {
     std::cerr << "error: got empty string for making TextFormat data, input: \""
          << input_for_decode << "\", desired: \"" << desired_output << "\"."
          << std::endl;
     std::cerr.flush();
     abort();
   }
-  if ((input_for_decode.find('\0') != TProtoStringType::npos) ||
-      (desired_output.find('\0') != TProtoStringType::npos)) {
+  if ((input_for_decode.find('\0') != string::npos) ||
+      (desired_output.find('\0') != string::npos)) {
     std::cerr << "error: got a null char in a string for making TextFormat data,"
          << " input: \"" << CEscape(input_for_decode) << "\", desired: \""
          << CEscape(desired_output) << "\"." << std::endl;
@@ -1474,21 +1402,21 @@ class Parser {
   bool Finish();
 
   int last_line() const { return line_; }
-  TProtoStringType error_str() const { return error_str_; }
+  string error_str() const { return error_str_; }
 
  private:
   bool ParseLoop();
 
   LineConsumer* line_consumer_;
   int line_;
-  TProtoStringType error_str_;
+  string error_str_;
   StringPiece p_;
-  TProtoStringType leftover_;
+  string leftover_;
 };
 
 bool Parser::ParseChunk(StringPiece chunk) {
   if (!leftover_.empty()) {
-    leftover_ += TProtoStringType(chunk);
+    chunk.AppendToString(&leftover_);
     p_ = StringPiece(leftover_);
   } else {
     p_ = chunk;
@@ -1497,7 +1425,7 @@ bool Parser::ParseChunk(StringPiece chunk) {
   if (p_.empty()) {
     leftover_.clear();
   } else {
-    leftover_ = TProtoStringType(p_);
+    leftover_ = p_.ToString();
   }
   return result;
 }
@@ -1520,8 +1448,8 @@ bool Parser::ParseLoop() {
   while (ReadLine(&p_, &line)) {
     ++line_;
     RemoveComment(&line);
-    TrimWhitespace(&line);
-    if (line.empty()) {
+    StringPieceTrimWhitespace(&line);
+    if (line.size() == 0) {
       continue;  // Blank line.
     }
     if (!line_consumer_->ConsumeLine(line, &error_str_)) {
@@ -1537,15 +1465,15 @@ LineConsumer::LineConsumer() {}
 
 LineConsumer::~LineConsumer() {}
 
-bool ParseSimpleFile(const TProtoStringType& path, LineConsumer* line_consumer,
-                     TProtoStringType* out_error) {
+bool ParseSimpleFile(
+    const string& path, LineConsumer* line_consumer, string* out_error) {
   int fd;
   do {
-    fd = posix::open(path.c_str(), O_RDONLY);
+    fd = open(path.c_str(), O_RDONLY);
   } while (fd < 0 && errno == EINTR);
   if (fd < 0) {
-    *out_error = TProtoStringType("error: Unable to open \"") + path + "\", " +
-                 strerror(errno);
+    *out_error =
+        string("error: Unable to open \"") + path + "\", " + strerror(errno);
     return false;
   }
   io::FileInputStream file_stream(fd);
@@ -1561,8 +1489,8 @@ bool ParseSimpleFile(const TProtoStringType& path, LineConsumer* line_consumer,
 
     if (!parser.ParseChunk(StringPiece(static_cast<const char*>(buf), buf_len))) {
       *out_error =
-          TProtoStringType("error: ") + path +
-          " Line " + StrCat(parser.last_line()) + ", " + parser.error_str();
+          string("error: ") + path +
+          " Line " + SimpleItoa(parser.last_line()) + ", " + parser.error_str();
       return false;
     }
   }
@@ -1570,29 +1498,24 @@ bool ParseSimpleFile(const TProtoStringType& path, LineConsumer* line_consumer,
 }
 
 ImportWriter::ImportWriter(
-    const TProtoStringType& generate_for_named_framework,
-    const TProtoStringType& named_framework_to_proto_path_mappings_path,
-    const TProtoStringType& runtime_import_prefix, bool include_wkt_imports)
+  const string& generate_for_named_framework,
+  const string& named_framework_to_proto_path_mappings_path)
     : generate_for_named_framework_(generate_for_named_framework),
       named_framework_to_proto_path_mappings_path_(
           named_framework_to_proto_path_mappings_path),
-      runtime_import_prefix_(runtime_import_prefix),
-      include_wkt_imports_(include_wkt_imports),
-      need_to_parse_mapping_file_(true) {}
+      need_to_parse_mapping_file_(true) {
+}
 
 ImportWriter::~ImportWriter() {}
 
 void ImportWriter::AddFile(const FileDescriptor* file,
-                           const TProtoStringType& header_extension) {
+                           const string& header_extension) {
+  const string file_path(FilePath(file));
+
   if (IsProtobufLibraryBundledProtoFile(file)) {
-    // The imports of the WKTs are only needed within the library itself,
-    // in other cases, they get skipped because the generated code already
-    // import GPBProtocolBuffers.h and hence proves them.
-    if (include_wkt_imports_) {
-      const TProtoStringType header_name =
-          "GPB" + FilePathBasename(file) + header_extension;
-      protobuf_imports_.push_back(header_name);
-    }
+    protobuf_framework_imports_.push_back(
+        FilePathBasename(file) + header_extension);
+    protobuf_non_framework_imports_.push_back(file_path + header_extension);
     return;
   }
 
@@ -1601,7 +1524,7 @@ void ImportWriter::AddFile(const FileDescriptor* file,
     ParseFrameworkMappings();
   }
 
-  std::map<TProtoStringType, TProtoStringType>::iterator proto_lookup =
+  std::map<string, string>::iterator proto_lookup =
       proto_file_to_framework_name_.find(file->name());
   if (proto_lookup != proto_file_to_framework_name_.end()) {
     other_framework_imports_.push_back(
@@ -1617,93 +1540,70 @@ void ImportWriter::AddFile(const FileDescriptor* file,
     return;
   }
 
-  other_imports_.push_back(FilePath(file) + header_extension);
+  other_imports_.push_back(file_path + header_extension);
 }
 
 void ImportWriter::Print(io::Printer* printer) const {
+  assert(protobuf_non_framework_imports_.size() ==
+         protobuf_framework_imports_.size());
+
   bool add_blank_line = false;
 
-  if (!protobuf_imports_.empty()) {
-    PrintRuntimeImports(printer, protobuf_imports_, runtime_import_prefix_);
+  if (protobuf_framework_imports_.size() > 0) {
+    const string framework_name(ProtobufLibraryFrameworkName);
+    const string cpp_symbol(ProtobufFrameworkImportSymbol(framework_name));
+
+    printer->Print(
+        "#if $cpp_symbol$\n",
+        "cpp_symbol", cpp_symbol);
+    for (vector<string>::const_iterator iter = protobuf_framework_imports_.begin();
+         iter != protobuf_framework_imports_.end(); ++iter) {
+      printer->Print(
+          " #import <$framework_name$/$header$>\n",
+          "framework_name", framework_name,
+          "header", *iter);
+    }
+    printer->Print(
+        "#else\n");
+    for (vector<string>::const_iterator iter = protobuf_non_framework_imports_.begin();
+         iter != protobuf_non_framework_imports_.end(); ++iter) {
+      printer->Print(
+          " #import \"$header$\"\n",
+          "header", *iter);
+    }
+    printer->Print(
+        "#endif\n");
+
     add_blank_line = true;
   }
 
-  if (!other_framework_imports_.empty()) {
+  if (other_framework_imports_.size() > 0) {
     if (add_blank_line) {
       printer->Print("\n");
     }
 
-    for (std::vector<TProtoStringType>::const_iterator iter =
-             other_framework_imports_.begin();
+    for (vector<string>::const_iterator iter = other_framework_imports_.begin();
          iter != other_framework_imports_.end(); ++iter) {
       printer->Print(
-          "#import <$header$>\n",
+          " #import <$header$>\n",
           "header", *iter);
     }
 
     add_blank_line = true;
   }
 
-  if (!other_imports_.empty()) {
+  if (other_imports_.size() > 0) {
     if (add_blank_line) {
       printer->Print("\n");
     }
 
-    for (std::vector<TProtoStringType>::const_iterator iter = other_imports_.begin();
+    for (vector<string>::const_iterator iter = other_imports_.begin();
          iter != other_imports_.end(); ++iter) {
       printer->Print(
-          "#import \"$header$\"\n",
+          " #import \"$header$\"\n",
           "header", *iter);
     }
   }
-}
-
-void ImportWriter::PrintRuntimeImports(
-    io::Printer* printer, const std::vector<TProtoStringType>& header_to_import,
-    const TProtoStringType& runtime_import_prefix, bool default_cpp_symbol) {
-  // Given an override, use that.
-  if (!runtime_import_prefix.empty()) {
-    for (const auto& header : header_to_import) {
-      printer->Print(
-          " #import \"$import_prefix$/$header$\"\n",
-          "import_prefix", runtime_import_prefix,
-          "header", header);
-    }
-    return;
-  }
-
-  const TProtoStringType framework_name(ProtobufLibraryFrameworkName);
-  const TProtoStringType cpp_symbol(ProtobufFrameworkImportSymbol(framework_name));
-
-  if (default_cpp_symbol) {
-    printer->Print(
-        "// This CPP symbol can be defined to use imports that match up to the framework\n"
-        "// imports needed when using CocoaPods.\n"
-        "#if !defined($cpp_symbol$)\n"
-        " #define $cpp_symbol$ 0\n"
-        "#endif\n"
-        "\n",
-        "cpp_symbol", cpp_symbol);
-  }
-
-  printer->Print(
-      "#if $cpp_symbol$\n",
-      "cpp_symbol", cpp_symbol);
-  for (const auto& header : header_to_import) {
-    printer->Print(
-        " #import <$framework_name$/$header$>\n",
-        "framework_name", framework_name,
-        "header", header);
-  }
-  printer->Print(
-      "#else\n");
-  for (const auto& header : header_to_import) {
-    printer->Print(
-        " #import \"$header$\"\n",
-        "header", header);
-  }
-  printer->Print(
-      "#endif\n");
 }
 
 void ImportWriter::ParseFrameworkMappings() {
@@ -1713,7 +1613,7 @@ void ImportWriter::ParseFrameworkMappings() {
   }
 
   ProtoFrameworkCollector collector(&proto_file_to_framework_name_);
-  TProtoStringType parse_error;
+  string parse_error;
   if (!ParseSimpleFile(named_framework_to_proto_path_mappings_path_,
                        &collector, &parse_error)) {
     std::cerr << "error parsing " << named_framework_to_proto_path_mappings_path_
@@ -1723,17 +1623,17 @@ void ImportWriter::ParseFrameworkMappings() {
 }
 
 bool ImportWriter::ProtoFrameworkCollector::ConsumeLine(
-    const StringPiece& line, TProtoStringType* out_error) {
+    const StringPiece& line, string* out_error) {
   int offset = line.find(':');
   if (offset == StringPiece::npos) {
     *out_error =
-        TProtoStringType("Framework/proto file mapping line without colon sign: '") +
-        TProtoStringType(line) + "'.";
+        string("Framework/proto file mapping line without colon sign: '") +
+        line.ToString() + "'.";
     return false;
   }
-  StringPiece framework_name = line.substr(0, offset);
-  StringPiece proto_file_list = line.substr(offset + 1);
-  TrimWhitespace(&framework_name);
+  StringPiece framework_name(line, 0, offset);
+  StringPiece proto_file_list(line, offset + 1, line.length() - offset - 1);
+  StringPieceTrimWhitespace(&framework_name);
 
   int start = 0;
   while (start < proto_file_list.length()) {
@@ -1742,27 +1642,25 @@ bool ImportWriter::ProtoFrameworkCollector::ConsumeLine(
       offset = proto_file_list.length();
     }
 
-    StringPiece proto_file = proto_file_list.substr(start, offset - start);
-    TrimWhitespace(&proto_file);
-    if (!proto_file.empty()) {
-      std::map<TProtoStringType, TProtoStringType>::iterator existing_entry =
-          map_->find(TProtoStringType(proto_file));
+    StringPiece proto_file(proto_file_list, start, offset - start);
+    StringPieceTrimWhitespace(&proto_file);
+    if (proto_file.size() != 0) {
+      std::map<string, string>::iterator existing_entry =
+          map_->find(proto_file.ToString());
       if (existing_entry != map_->end()) {
-        std::cerr << "warning: duplicate proto file reference, replacing "
-                     "framework entry for '"
-                  << TProtoStringType(proto_file) << "' with '" << TProtoStringType(framework_name)
-                  << "' (was '" << existing_entry->second << "')." << std::endl;
+        std::cerr << "warning: duplicate proto file reference, replacing framework entry for '"
+             << proto_file.ToString() << "' with '" << framework_name.ToString()
+             << "' (was '" << existing_entry->second << "')." << std::endl;
         std::cerr.flush();
       }
 
       if (proto_file.find(' ') != StringPiece::npos) {
-        std::cerr << "note: framework mapping file had a proto file with a "
-                     "space in, hopefully that isn't a missing comma: '"
-                  << TProtoStringType(proto_file) << "'" << std::endl;
+        std::cerr << "note: framework mapping file had a proto file with a space in, hopefully that isn't a missing comma: '"
+             << proto_file.ToString() << "'" << std::endl;
         std::cerr.flush();
       }
 
-      (*map_)[TProtoStringType(proto_file)] = TProtoStringType(framework_name);
+      (*map_)[proto_file.ToString()] = framework_name.ToString();
     }
 
     start = offset + 1;
@@ -1770,6 +1668,7 @@ bool ImportWriter::ProtoFrameworkCollector::ConsumeLine(
 
   return true;
 }
+
 
 }  // namespace objectivec
 }  // namespace compiler

@@ -51,7 +51,6 @@ namespace NCB {
         TPathWithScheme BaselineFilePath;
         TPathWithScheme TimestampsFilePath;
         TPathWithScheme FeatureNamesPath;
-        TPathWithScheme PoolMetaInfoPath;
         const TVector<NJson::TJsonValue>& ClassLabels;
         TDsvFormatOptions PoolFormat;
         THolder<ICdProvider> CdProvider;
@@ -59,8 +58,6 @@ namespace NCB {
         EObjectsOrder ObjectsOrder;
         ui32 BlockSize;
         TDatasetSubset DatasetSubset;
-        bool LoadColumnsAsString;
-        bool ForceUnitAutoPairWeights;
         NPar::ILocalExecutor* LocalExecutor;
     };
 

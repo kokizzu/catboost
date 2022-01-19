@@ -47,7 +47,7 @@ Y_UNIT_TEST_SUITE(TMaybeOwningArrayHolder) {
 
         {
             TBufferOutput out(buffer);
-            SerializeToArcadiaStream(out, data);
+            SerializeToStream(out, data);
         }
 
         NCB::TMaybeOwningArrayHolder<T> loadedData;

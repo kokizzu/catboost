@@ -6,7 +6,6 @@
 #include "update_feature_weights.h"
 
 #include <catboost/cuda/cuda_lib/cuda_buffer_helpers/all_reduce.h>
-#include <catboost/cuda/methods/langevin_utils.h>
 
 namespace NCatboostCuda {
     TObliviousTreeModel
@@ -82,14 +81,14 @@ namespace NCatboostCuda {
                 }
                 {
                     if (featuresScoreCalcer) {
-                        featuresScoreCalcer->ComputeOptimalSplit(reducedPartStats.AsConstBuf(),
-                                                                 featureWeights.AsConstBuf(),
+                        featuresScoreCalcer->ComputeOptimalSplit(reducedPartStats,
+                                                                 featureWeights,
                                                                  scoreStdDevMult,
                                                                  random.NextUniformL());
                     }
                     if (simpleCtrScoreCalcer) {
-                        simpleCtrScoreCalcer->ComputeOptimalSplit(reducedPartStats.AsConstBuf(),
-                                                                  featureWeights.AsConstBuf(),
+                        simpleCtrScoreCalcer->ComputeOptimalSplit(reducedPartStats,
+                                                                  featureWeights,
                                                                   scoreStdDevMult,
                                                                   random.NextUniformL());
                     }
@@ -206,14 +205,6 @@ namespace NCatboostCuda {
                                          target->WeightedTarget,
                                          target->Weights,
                                          *indices);
-
-            if (BoostingOptions.Langevin) {
-                auto &seeds = Random.GetGpuSeeds<NCudaLib::TStripeMapping>();
-                AddLangevinNoise(seeds,
-                                 &(target->WeightedTarget),
-                                 BoostingOptions.DiffusionTemperature,
-                                 BoostingOptions.LearningRate);
-            }
         }
     }
 }

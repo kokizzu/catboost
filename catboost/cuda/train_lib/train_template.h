@@ -38,14 +38,11 @@ namespace NCatboostCuda {
     }
 
     template <class TWeakLearner>
-    inline TWeakLearner MakeWeakLearner(
-            TBinarizedFeaturesManager& featureManager,
-            const NCatboostOptions::TBoostingOptions& boostingOptions,
-            const NCatboostOptions::TCatBoostOptions& catBoostOptions,
-            TGpuAwareRandom& random
+    inline TWeakLearner MakeWeakLearner(TBinarizedFeaturesManager& featureManager,
+        const NCatboostOptions::TCatBoostOptions& catBoostOptions
     ) {
         const bool zeroAverage = NeedZeroAverage(catBoostOptions.LossFunctionDescription.Get());
-        return TWeakLearner(featureManager, boostingOptions, catBoostOptions, random, zeroAverage);
+        return TWeakLearner(featureManager, catBoostOptions, zeroAverage);
     }
 
     inline TBoostingProgressTracker MakeBoostingProgressTracker(

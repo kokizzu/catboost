@@ -2,11 +2,7 @@
 
 NEED_CHECK()
 
-PY2_LIBRARY()
-
-PY_SRCS(
-    ymake_conf.py
-)
+PACKAGE()
 
 PEERDIR(
     library/cpp/deprecated/enum_codegen
@@ -16,13 +12,22 @@ PEERDIR(
 
 END()
 
+ADD_TEST(
+    PEP8
+        ymake_conf.py
+)
+
+ADD_TEST(
+    PY_FLAKES
+        ymake_conf.py
+)
+
 RECURSE(
     conf_fatal_error
     config
     docs/empty
     external_resources
     platform/java
-    platform/local_so
     platform/perl
     platform/python
     platform/python/ldflags

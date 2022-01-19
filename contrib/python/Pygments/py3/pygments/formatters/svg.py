@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.formatters.svg
     ~~~~~~~~~~~~~~~~~~~~~~~
@@ -140,8 +141,7 @@ class SvgFormatter(Formatter):
         
         if self.linenos:
             if counter % counter_step == 0:
-                outfile.write('<text x="%s" y="%s" %s text-anchor="end">%s</text>' %
-                    (x+self.linenowidth,y,counter_style,counter))
+                outfile.write('<text x="%s" y="%s" %s text-anchor="end">%s</text>' % (x+self.linenowidth,y,counter_style,counter))
             line_x += self.linenowidth + self.ystep
             counter += 1
 
@@ -159,8 +159,7 @@ class SvgFormatter(Formatter):
                 y += self.ystep
                 outfile.write('</text>\n')
                 if self.linenos and counter % counter_step == 0:
-                    outfile.write('<text x="%s" y="%s" text-anchor="end" %s>%s</text>' %
-                        (x+self.linenowidth,y,counter_style,counter))
+                    outfile.write('<text x="%s" y="%s" text-anchor="end" %s>%s</text>' % (x+self.linenowidth,y,counter_style,counter))
                 
                 counter += 1
                 outfile.write('<text x="%s" y="%s" ' 'xml:space="preserve">' % (line_x,y))

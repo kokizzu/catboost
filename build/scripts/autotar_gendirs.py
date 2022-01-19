@@ -15,11 +15,11 @@ def pack_dir(dir_path, dest_path):
     dir_path = os.path.abspath(dir_path)
     for tar_exe in ('/usr/bin/tar', '/bin/tar'):
         if is_exe(tar_exe):
-            subprocess.check_call([tar_exe, '-cf', dest_path, '-C', os.path.dirname(dir_path), os.path.basename(dir_path)])
+            subprocess.check_call([tar_exe, '-cf', dest_path, '-C', dir_path, '.'])
             break
     else:
         with tarfile.open(dest_path, 'w') as out:
-            out.add(dir_path, arcname=os.path.basename(dir_path))
+            out.add(dir_path, arcname='.')
 
 
 def unpack_dir(tared_dir, dest_path):
@@ -42,22 +42,19 @@ def main(args):
     parser.add_argument('--pack', action='store_true', default=False)
     parser.add_argument('--unpack', action='store_true', default=False)
     parser.add_argument('--ext')
-    parser.add_argument('--outs', nargs='*', default=[])
     parser.add_argument('dirs', nargs='*')
     args = parser.parse_args(args)
 
     if args.pack:
-        if len(args.dirs) != len(args.outs):
-            print("Number and oder of dirs to pack must match to the number and order of outs", file=sys.stderr)
-            return 1
-        for dir, dest in zip(args.dirs, args.outs):
-            pack_dir(dir, dest)
+        for d in args.dirs:
+            dest = d + args.ext
+            pack_dir(d, dest)
     elif args.unpack:
         for tared_dir in args.dirs:
             if not tared_dir.endswith(args.ext):
                 print("Requested to unpack '{}' which do not have required extension '{}'".format(tared_dir, args.ext), file=sys.stderr)
                 return 1
-            dest = os.path.dirname(tared_dir)
+            dest = tared_dir[:-len(args.ext)]
             unpack_dir(tared_dir, dest)
     else:
         print("Neither --pack nor --unpack specified. Don't know what to do.", file=sys.stderr)

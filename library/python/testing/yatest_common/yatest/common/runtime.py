@@ -162,12 +162,7 @@ def work_path(path=None):
 
 def python_path():
     """
-    Get path to the arcadia python.
-
-    Warn: if you are using build with system python (-DUSE_SYSTEM_PYTHON=X) beware that some python bundles
-    are built in a stripped-down form that is needed for building, not running tests.
-    See comments in the file below to find out which version of python is compatible with tests.
-    https://a.yandex-team.ru/arc/trunk/arcadia/build/platform/python/resources.inc
+    Get path to the arcadia python
     :return: absolute path to python
     """
     return _get_ya_plugin_instance().python_path
@@ -236,11 +231,6 @@ def c_compiler_path():
     return os.environ.get("YA_CC")
 
 
-def get_yt_hdd_path(path=None):
-    if 'HDD_PATH' in os.environ:
-        return _join_path(os.environ['HDD_PATH'], path)
-
-
 def cxx_compiler_path():
     """
     Get path to the gdb
@@ -259,8 +249,6 @@ def _register_core(name, binary_path, core_path, bt_path, pbt_path):
     config = _get_ya_config()
 
     with _lock:
-        if not hasattr(config, 'test_cores_count'):
-            config.test_cores_count = 0
         config.test_cores_count += 1
         count_str = '' if config.test_cores_count == 1 else str(config.test_cores_count)
 

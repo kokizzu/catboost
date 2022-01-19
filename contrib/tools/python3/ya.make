@@ -2,9 +2,7 @@ PROGRAM()
 
 
 
-VERSION(3.9.10)
-
-ORIGINAL_SOURCE(https://github.com/python/cpython)
+VERSION(3.9.2)
 
 LICENSE(Python-2.0)
 

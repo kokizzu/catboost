@@ -5,9 +5,27 @@ IF (USE_PREBUILT_TOOLS)
 ENDIF()
 
 IF (NOT PREBUILT)
-    INCLUDE(${ARCADIA_ROOT}/contrib/tools/flatc/bin/ya.make)
-ENDIF()
+    PROGRAM()
 
-RECURSE(
-    bin
-)
+    NO_UTIL()
+
+    ADDINCL(
+        contrib/libs/flatbuffers/include
+    )
+
+    PEERDIR(
+        contrib/libs/flatbuffers/flatc
+    )
+
+    SRCDIR(
+        contrib/libs/flatbuffers/src
+    )
+
+    SRCS(
+        flatc_main.cpp
+    )
+
+    INCLUDE(${ARCADIA_ROOT}/build/prebuilt/contrib/tools/flatc/ya.make.induced_deps)
+
+    END()
+ENDIF()

@@ -34,7 +34,9 @@ PEERDIR(
     contrib/python/graphviz
     contrib/python/numpy
     contrib/python/pandas
-    contrib/python/scipy
+    contrib/python/scipy/scipy/integrate
+    contrib/python/scipy/scipy/sparse
+    contrib/python/scipy/scipy/special
 )
 
 IF(PYTHON2)
@@ -43,7 +45,7 @@ IF(PYTHON2)
     )
 ENDIF()
 
-IF(NOT OPENSOURCE)
+IF(NOT CATBOOST_OPENSOURCE)
     PEERDIR(
         catboost//private/libs/for_python_package
         contrib/python/matplotlib
@@ -80,8 +82,6 @@ IF(NOT OS_ANDROID OR PYTHON2)
         version.py
         core.py
         datasets.py
-        plot_helpers.py
-        metrics.py
         monoforest.py
         text_processing.py
         utils.py
@@ -102,5 +102,7 @@ IF(NOT OS_ANDROID OR PYTHON2)
         eval/utils.py
     )
 ENDIF()
+
+NO_LINT()
 
 END()

@@ -78,8 +78,7 @@ public:
     template <typename Callable>
     TThread(Callable&& callable)
         : TThread(TPrivateCtor{},
-                  MakeHolder<TCallableParams<Callable>>(std::forward<Callable>(callable)))
-    {
+                  MakeHolder<TCallableParams<Callable>>(std::forward<Callable>(callable))) {
     }
 
     TThread(TParams&& params)
@@ -103,12 +102,6 @@ public:
 
     static TId ImpossibleThreadId() noexcept;
     static TId CurrentThreadId() noexcept;
-
-    /*
-     * Returns numeric thread id, as visible in e. g. htop.
-     * Consider using this value for logging.
-     */
-    static TId CurrentThreadNumericId() noexcept;
 
     // NOTE: Content of `name` will be copied.
     //

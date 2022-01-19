@@ -63,5 +63,5 @@ namespace {
             }
         }
     };
-    const TBrotliRegistrar Registrar{};
+    static const TBrotliRegistrar Registrar{};
 }

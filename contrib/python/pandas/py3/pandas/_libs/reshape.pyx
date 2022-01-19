@@ -41,20 +41,20 @@ ctypedef fused reshape_t:
 @cython.boundscheck(False)
 def unstack(reshape_t[:, :] values, const uint8_t[:] mask,
             Py_ssize_t stride, Py_ssize_t length, Py_ssize_t width,
-            reshape_t[:, :] new_values, uint8_t[:, :] new_mask) -> None:
+            reshape_t[:, :] new_values, uint8_t[:, :] new_mask):
     """
     Transform long values to wide new_values.
 
     Parameters
     ----------
     values : typed ndarray
-    mask : np.ndarray[bool]
+    mask : boolean ndarray
     stride : int
     length : int
     width : int
-    new_values : np.ndarray[bool]
+    new_values : typed ndarray
         result array
-    new_mask : np.ndarray[bool]
+    new_mask : boolean ndarray
         result mask
     """
     cdef:
@@ -111,10 +111,7 @@ def explode(ndarray[object] values):
 
     Returns
     -------
-    ndarray[object]
-        result
-    ndarray[int64_t]
-        counts
+    tuple(values, counts)
     """
     cdef:
         Py_ssize_t i, j, count, n

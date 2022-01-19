@@ -102,7 +102,7 @@ namespace NCB::NModelEvaluation {
                 ExtFeatureLayout = featureLayout;
             }
 
-            size_t GetTreeCount() const override {
+            size_t GetTreeCount() const {
                 return ModelTrees->GetTreeCount();
             }
 
@@ -291,18 +291,6 @@ namespace NCB::NModelEvaluation {
                 );
             }
 
-            void CalcWithHashedCatAndText(
-                TConstArrayRef<TConstArrayRef<float>> floatFeatures,
-                TConstArrayRef<TConstArrayRef<int>> catFeatures,
-                TConstArrayRef<TConstArrayRef<TStringBuf>> textFeatures,
-                size_t treeStart,
-                size_t treeEnd,
-                TArrayRef<double> results,
-                const TFeatureLayout* featureInfo
-            ) const override {
-                Calc(floatFeatures, catFeatures, textFeatures, treeStart, treeEnd, results, featureInfo);
-            }
-
             void Calc(
                 TConstArrayRef<TConstArrayRef<float>> floatFeatures,
                 TConstArrayRef<TConstArrayRef<int>> catFeatures,
@@ -373,7 +361,7 @@ namespace NCB::NModelEvaluation {
                 size_t treeEnd,
                 TArrayRef<double> results,
                 const TFeatureLayout* featureInfo
-            ) const override {
+            ) const {
                 if (!featureInfo) {
                     featureInfo = ExtFeatureLayout.Get();
                 }
@@ -598,15 +586,6 @@ namespace NCB::NModelEvaluation {
                     indexesWritePtr += indexCountInBlock;
                 }
             }
-
-            void Quantize(
-            TConstArrayRef<TConstArrayRef<float>> features,
-            IQuantizedData* quantizedData
-        ) const override {
-            Y_UNUSED(features);
-            Y_UNUSED(quantizedData);
-            CB_ENSURE(false, "Unimplemented method called, please contact catboost developers via GitHub issue or in support chat");
-        }
 
         private:
             template <typename TCatFeatureContainer = TConstArrayRef<int>>

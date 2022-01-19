@@ -33,9 +33,9 @@
 //  Sanjay Ghemawat, Jeff Dean, and others.
 
 #include <algorithm>
+#include <google/protobuf/stubs/hash.h>
 #include <limits>
 #include <vector>
-#include <sstream>
 
 #include <google/protobuf/compiler/csharp/csharp_helpers.h>
 #include <google/protobuf/compiler/csharp/csharp_names.h>
@@ -43,6 +43,7 @@
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/wire_format.h>
 #include <google/protobuf/stubs/strutil.h>
+#include <google/protobuf/stubs/substitute.h>
 
 #include <google/protobuf/compiler/csharp/csharp_field_base.h>
 #include <google/protobuf/compiler/csharp/csharp_enum_field.h>
@@ -133,17 +134,11 @@ TProtoStringType GetReflectionClassUnqualifiedName(const FileDescriptor* descrip
   return GetFileNameBase(descriptor) + "Reflection";
 }
 
-TProtoStringType GetExtensionClassUnqualifiedName(const FileDescriptor* descriptor) {
-  // TODO: Detect collisions with existing messages,
-  // and append an underscore if necessary.
-  return GetFileNameBase(descriptor) + "Extensions";
-}
-
 // TODO(jtattermusch): can we reuse a utility function?
 TProtoStringType UnderscoresToCamelCase(const TProtoStringType& input,
                                    bool cap_next_letter,
                                    bool preserve_period) {
-  TProtoStringType result;
+  string result;
   // Note:  I distrust ctype.h due to locales.
   for (int i = 0; i < input.size(); i++) {
     if ('a' <= input[i] && input[i] <= 'z') {
@@ -174,7 +169,7 @@ TProtoStringType UnderscoresToCamelCase(const TProtoStringType& input,
     }
   }
   // Add a trailing "_" if the name should be altered.
-  if (input.size() > 0 && input[input.size() - 1] == '#') {
+  if (input[input.size() - 1] == '#') {
     result += '_';
   }
   return result;
@@ -195,14 +190,14 @@ TProtoStringType UnderscoresToPascalCase(const TProtoStringType& input) {
 // Lower letter                  Alphanumeric              Same as current
 // Upper letter                  Alphanumeric              Lower
 TProtoStringType ShoutyToPascalCase(const TProtoStringType& input) {
-  TProtoStringType result;
+  string result;
   // Simple way of implementing "always start with upper"
   char previous = '_';
   for (int i = 0; i < input.size(); i++) {
     char current = input[i];
     if (!ascii_isalnum(current)) {
       previous = current;
-      continue;
+      continue;      
     }
     if (!ascii_isalnum(previous)) {
       result += ascii_toupper(current);
@@ -232,7 +227,7 @@ TProtoStringType TryRemovePrefix(const TProtoStringType& prefix, const TProtoStr
       prefix_to_match += ascii_tolower(prefix[i]);
     }
   }
-
+  
   // This keeps track of how much of value we've consumed
   size_t prefix_index, value_index;
   for (prefix_index = 0, value_index = 0;
@@ -282,50 +277,12 @@ TProtoStringType GetEnumValueName(const TProtoStringType& enum_name, const TProt
   return result;
 }
 
-uint GetGroupEndTag(const Descriptor* descriptor) {
-  const Descriptor* containing_type = descriptor->containing_type();
-  if (containing_type != NULL) {
-    const FieldDescriptor* field;
-    for (int i = 0; i < containing_type->field_count(); i++) {
-      field = containing_type->field(i);
-      if (field->type() == FieldDescriptor::Type::TYPE_GROUP &&
-          field->message_type() == descriptor) {
-        return internal::WireFormatLite::MakeTag(
-            field->number(), internal::WireFormatLite::WIRETYPE_END_GROUP);
-      }
-    }
-    for (int i = 0; i < containing_type->extension_count(); i++) {
-      field = containing_type->extension(i);
-      if (field->type() == FieldDescriptor::Type::TYPE_GROUP &&
-          field->message_type() == descriptor) {
-        return internal::WireFormatLite::MakeTag(
-            field->number(), internal::WireFormatLite::WIRETYPE_END_GROUP);
-      }
-    }
-  } else {
-    const FileDescriptor* containing_file = descriptor->file();
-    if (containing_file != NULL) {
-      const FieldDescriptor* field;
-      for (int i = 0; i < containing_file->extension_count(); i++) {
-        field = containing_file->extension(i);
-        if (field->type() == FieldDescriptor::Type::TYPE_GROUP &&
-            field->message_type() == descriptor) {
-          return internal::WireFormatLite::MakeTag(
-              field->number(), internal::WireFormatLite::WIRETYPE_END_GROUP);
-        }
-      }
-    }
-  }
-
-  return 0;
-}
-
 TProtoStringType ToCSharpName(const TProtoStringType& name, const FileDescriptor* file) {
   TProtoStringType result = GetFileNamespace(file);
-  if (!result.empty()) {
+  if (result != "") {
     result += '.';
   }
-  TProtoStringType classname;
+  string classname;
   if (file->package().empty()) {
     classname = name;
   } else {
@@ -344,15 +301,6 @@ TProtoStringType GetReflectionClassName(const FileDescriptor* descriptor) {
   }
   result += GetReflectionClassUnqualifiedName(descriptor);
   return "global::" + result;
-}
-
-TProtoStringType GetFullExtensionName(const FieldDescriptor* descriptor) {
-  if (descriptor->extension_scope()) {
-    return GetClassName(descriptor->extension_scope()) + ".Extensions." + GetPropertyName(descriptor);
-  }
-  else {
-    return GetExtensionClassUnqualifiedName(descriptor->file())  + "." + GetPropertyName(descriptor);
-  }
 }
 
 TProtoStringType GetClassName(const Descriptor* descriptor) {
@@ -393,23 +341,24 @@ TProtoStringType GetPropertyName(const FieldDescriptor* descriptor) {
   return property_name;
 }
 
-TProtoStringType GetOutputFile(const FileDescriptor* descriptor,
-                          const TProtoStringType file_extension,
-                          const bool generate_directories,
-                          const TProtoStringType base_namespace,
-                          TProtoStringType* error) {
-  TProtoStringType relative_filename = GetFileNameBase(descriptor) + file_extension;
+TProtoStringType GetOutputFile(
+    const google::protobuf::FileDescriptor* descriptor,
+    const TProtoStringType file_extension,
+    const bool generate_directories,
+    const TProtoStringType base_namespace,
+    string* error) {
+  string relative_filename = GetFileNameBase(descriptor) + file_extension;
   if (!generate_directories) {
     return relative_filename;
   }
-  TProtoStringType ns = GetFileNamespace(descriptor);
-  TProtoStringType namespace_suffix = ns;
+  string ns = GetFileNamespace(descriptor);
+  string namespace_suffix = ns;
   if (!base_namespace.empty()) {
     // Check that the base_namespace is either equal to or a leading part of
     // the file namespace. This isn't just a simple prefix; "Foo.B" shouldn't
     // be regarded as a prefix of "Foo.Bar". The simplest option is to add "."
     // to both.
-    TProtoStringType extended_ns = ns + ".";
+    string extended_ns = ns + ".";
     if (extended_ns.find(base_namespace + ".") != 0) {
       *error = "Namespace " + ns + " is not a prefix namespace of base namespace " + base_namespace;
       return ""; // This will be ignored, because we've set an error.
@@ -420,7 +369,7 @@ TProtoStringType GetOutputFile(const FileDescriptor* descriptor,
     }
   }
 
-  TProtoStringType namespace_dir = StringReplace(namespace_suffix, ".", "/", true);
+  string namespace_dir = StringReplace(namespace_suffix, ".", "/", true);
   if (!namespace_dir.empty()) {
     namespace_dir += "/";
   }
@@ -503,86 +452,52 @@ TProtoStringType FileDescriptorToBase64(const FileDescriptor* descriptor) {
 }
 
 FieldGeneratorBase* CreateFieldGenerator(const FieldDescriptor* descriptor,
-                                         int presenceIndex,
+                                         int fieldOrdinal,
                                          const Options* options) {
   switch (descriptor->type()) {
     case FieldDescriptor::TYPE_GROUP:
     case FieldDescriptor::TYPE_MESSAGE:
       if (descriptor->is_repeated()) {
         if (descriptor->is_map()) {
-          return new MapFieldGenerator(descriptor, presenceIndex, options);
+          return new MapFieldGenerator(descriptor, fieldOrdinal, options);
         } else {
-          return new RepeatedMessageFieldGenerator(descriptor, presenceIndex, options);
+          return new RepeatedMessageFieldGenerator(descriptor, fieldOrdinal, options);
         }
       } else {
         if (IsWrapperType(descriptor)) {
-          if (descriptor->real_containing_oneof()) {
-            return new WrapperOneofFieldGenerator(descriptor, presenceIndex, options);
+          if (descriptor->containing_oneof()) {
+            return new WrapperOneofFieldGenerator(descriptor, fieldOrdinal, options);
           } else {
-            return new WrapperFieldGenerator(descriptor, presenceIndex, options);
+            return new WrapperFieldGenerator(descriptor, fieldOrdinal, options);
           }
         } else {
-          if (descriptor->real_containing_oneof()) {
-            return new MessageOneofFieldGenerator(descriptor, presenceIndex, options);
+          if (descriptor->containing_oneof()) {
+            return new MessageOneofFieldGenerator(descriptor, fieldOrdinal, options);
           } else {
-            return new MessageFieldGenerator(descriptor, presenceIndex, options);
+            return new MessageFieldGenerator(descriptor, fieldOrdinal, options);
           }
         }
       }
     case FieldDescriptor::TYPE_ENUM:
       if (descriptor->is_repeated()) {
-        return new RepeatedEnumFieldGenerator(descriptor, presenceIndex, options);
+        return new RepeatedEnumFieldGenerator(descriptor, fieldOrdinal, options);
       } else {
-        if (descriptor->real_containing_oneof()) {
-          return new EnumOneofFieldGenerator(descriptor, presenceIndex, options);
+        if (descriptor->containing_oneof()) {
+          return new EnumOneofFieldGenerator(descriptor, fieldOrdinal, options);
         } else {
-          return new EnumFieldGenerator(descriptor, presenceIndex, options);
+          return new EnumFieldGenerator(descriptor, fieldOrdinal, options);
         }
       }
     default:
       if (descriptor->is_repeated()) {
-        return new RepeatedPrimitiveFieldGenerator(descriptor, presenceIndex, options);
+        return new RepeatedPrimitiveFieldGenerator(descriptor, fieldOrdinal, options);
       } else {
-        if (descriptor->real_containing_oneof()) {
-          return new PrimitiveOneofFieldGenerator(descriptor, presenceIndex, options);
+        if (descriptor->containing_oneof()) {
+          return new PrimitiveOneofFieldGenerator(descriptor, fieldOrdinal, options);
         } else {
-          return new PrimitiveFieldGenerator(descriptor, presenceIndex, options);
+          return new PrimitiveFieldGenerator(descriptor, fieldOrdinal, options);
         }
       }
-  }
-}
-
-bool IsNullable(const FieldDescriptor* descriptor) {
-  if (descriptor->is_repeated()) {
-    return true;
-  }
-
-  switch (descriptor->type()) {
-    case FieldDescriptor::TYPE_ENUM:
-    case FieldDescriptor::TYPE_DOUBLE:
-    case FieldDescriptor::TYPE_FLOAT:
-    case FieldDescriptor::TYPE_INT64:
-    case FieldDescriptor::TYPE_UINT64:
-    case FieldDescriptor::TYPE_INT32:
-    case FieldDescriptor::TYPE_FIXED64:
-    case FieldDescriptor::TYPE_FIXED32:
-    case FieldDescriptor::TYPE_BOOL:
-    case FieldDescriptor::TYPE_UINT32:
-    case FieldDescriptor::TYPE_SFIXED32:
-    case FieldDescriptor::TYPE_SFIXED64:
-    case FieldDescriptor::TYPE_SINT32:
-    case FieldDescriptor::TYPE_SINT64:
-      return false;
-
-    case FieldDescriptor::TYPE_MESSAGE:
-    case FieldDescriptor::TYPE_GROUP:
-    case FieldDescriptor::TYPE_STRING:
-    case FieldDescriptor::TYPE_BYTES:
-      return true;
-
-    default:
-      GOOGLE_LOG(FATAL) << "Unknown field type.";
-      return true;
   }
 }
 

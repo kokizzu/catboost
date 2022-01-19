@@ -88,7 +88,6 @@ Y_UNIT_TEST_SUITE(TrainModelTests) {
                 nullptr,
                 {},
                 {},
-                Nothing(),
                 std::move(dataProviders),
                 /*initModel*/ Nothing(),
                 /*initLearnProgress*/ nullptr,

@@ -267,7 +267,7 @@ namespace {
             Signal();
         }
 
-        size_t QueueSize() override {
+        virtual size_t QueueSize() override {
             return JQ_.Size();
         }
 
@@ -351,7 +351,7 @@ namespace {
             MC_->Shutdown();
         }
 
-        size_t QueueSize() override {
+        virtual size_t QueueSize() override {
             return MC_->QueueSize();
         }
 

@@ -722,14 +722,8 @@ bool Regexp::RequiredPrefixForAccel(std::string* prefix, bool* foldcase) {
   *foldcase = false;
 
   // No need for a walker: the regexp must either begin with or be
-  // a literal char or string. We "see through" capturing groups,
-  // but make no effort to glue multiple prefix fragments together.
+  // a literal char or string.
   Regexp* re = op_ == kRegexpConcat && nsub_ > 0 ? sub()[0] : this;
-  while (re->op_ == kRegexpCapture) {
-    re = re->sub()[0];
-    if (re->op_ == kRegexpConcat && re->nsub_ > 0)
-      re = re->sub()[0];
-  }
   if (re->op_ != kRegexpLiteral &&
       re->op_ != kRegexpLiteralString)
     return false;
@@ -919,7 +913,7 @@ void CharClassBuilder::Negate() {
 // The ranges are allocated in the same block as the header,
 // necessitating a special allocator and Delete method.
 
-CharClass* CharClass::New(size_t maxranges) {
+CharClass* CharClass::New(int maxranges) {
   CharClass* cc;
   uint8_t* data = new uint8_t[sizeof *cc + maxranges*sizeof cc->ranges_[0]];
   cc = reinterpret_cast<CharClass*>(data);
@@ -936,7 +930,7 @@ void CharClass::Delete() {
 }
 
 CharClass* CharClass::Negate() {
-  CharClass* cc = CharClass::New(static_cast<size_t>(nranges_+1));
+  CharClass* cc = CharClass::New(nranges_+1);
   cc->folds_ascii_ = folds_ascii_;
   cc->nrunes_ = Runemax + 1 - nrunes_;
   int n = 0;
@@ -955,7 +949,7 @@ CharClass* CharClass::Negate() {
   return cc;
 }
 
-bool CharClass::Contains(Rune r) const {
+bool CharClass::Contains(Rune r) {
   RuneRange* rr = ranges_;
   int n = nranges_;
   while (n > 0) {
@@ -973,7 +967,7 @@ bool CharClass::Contains(Rune r) const {
 }
 
 CharClass* CharClassBuilder::GetCharClass() {
-  CharClass* cc = CharClass::New(ranges_.size());
+  CharClass* cc = CharClass::New(static_cast<int>(ranges_.size()));
   int n = 0;
   for (iterator it = begin(); it != end(); ++it)
     cc->ranges_[n++] = *it;

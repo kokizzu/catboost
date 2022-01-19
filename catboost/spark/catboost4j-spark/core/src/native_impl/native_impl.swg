@@ -19,7 +19,7 @@
 
 %include <bindings/swiglib/stroka.swg>
 
-DECLARE_TVECTOR(TVector_TString, TString)
+%template(TVector_TString) TVector<TString>;
 
 %include "maybe.i"
 %include "string.i"
@@ -39,7 +39,6 @@ DECLARE_TVECTOR(TVector_TString, TString)
 %include "data_provider_builders.i"
 %include "pairs.i"
 %include "quantization.i"
-%include "target.i"
 
 %include "ctrs.i"
 
@@ -52,9 +51,7 @@ DECLARE_TVECTOR(TVector_TString, TString)
 %include "master.i"
 %include "worker.i"
 
-%include "model_application.i"
-
-%include "calc_fstr.i"
+%include "apply_result_iterator.i"
 
 %pragma(java) jniclasscode=%{
   static {

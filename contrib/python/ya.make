@@ -3,9 +3,7 @@
 RECURSE(
     atomicwrites
     attrs
-    backcall
-    backports.functools-lru-cache
-    backports.shutil-get-terminal-size
+    backports-shutil_get_terminal_size
     colorama
     configparser
     contextlib2
@@ -13,44 +11,35 @@ RECURSE(
     decorator
     enum34
     faulthandler
-    filelock
     funcsigs
     graphviz
     importlib-metadata
     ipdb
     ipython
-    ipython-genutils
-    jedi
+    ipython_genutils
     Jinja2
-    joblib
     MarkupSafe
-    matplotlib-inline
     more-itertools
-    mypy-protobuf
     numpy
     pandas
-    parso
     path.py
     pathlib2
     pexpect
     pickleshare
     pluggy
-    prompt-toolkit
-    protobuf
+    prompt_toolkit
     ptyprocess
     py
     Pygments
     pytest
     pytz
     scandir
-    scikit-learn
     scipy
     setuptools
     simplegeneric
     six
     subprocess32
     testpath
-    tornado
     traitlets
     wcwidth
 )

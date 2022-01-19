@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers._scilab_builtins
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

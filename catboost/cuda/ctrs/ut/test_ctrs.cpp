@@ -238,7 +238,7 @@ Y_UNIT_TEST_SUITE(TCtrTest) {
                     auto targets = BuildRandomBins<ui8>(rand, numClasses, size);
                     auto targetsGpu = TMirrorBuffer<ui8>::CopyMapping(indices);
                     targetsGpu.Write(targets);
-                    builder.SetBinarizedSample(targetsGpu.AsConstBuf());
+                    builder.SetBinarizedSample(targetsGpu);
 
                     const float prior = 0.5;
 

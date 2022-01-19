@@ -12,7 +12,6 @@
 #include <catboost/libs/helpers/restorable_rng.h>
 #include <catboost/libs/helpers/serialization.h>
 #include <catboost/libs/metrics/metric.h>
-#include <catboost/private/libs/labels/label_converter.h>
 #include <catboost/private/libs/options/catboost_options.h>
 #include <catboost/private/libs/options/enums.h>
 #include <catboost/private/libs/options/load_options.h>
@@ -54,7 +53,7 @@ namespace NCatboostDistributed {
         {
         }
 
-        SAVELOAD_OVERRIDE_WITHOUT_BASE(TrainData);
+        SAVELOAD(TrainData);
 
         OBJECT_NOCOPY_METHODS(TTrainData);
     };
@@ -83,10 +82,8 @@ namespace NCatboostDistributed {
         NCatboostOptions::TPoolLoadParams PoolLoadOptions;
         TString TrainOptions;
         NCB::EObjectsOrder ObjectsOrder;
-        NCB::TObjectsGrouping LearnObjectsGrouping;
-        TVector<NCB::TObjectsGrouping> TestObjectsGroupings;
+        NCB::TObjectsGrouping ObjectsGrouping;
         NCB::TFeaturesLayout FeaturesLayout;
-        TLabelConverter LabelConverter;
         ui64 RandomSeed;
 
     public:
@@ -94,47 +91,9 @@ namespace NCatboostDistributed {
             PoolLoadOptions,
             TrainOptions,
             ObjectsOrder,
-            LearnObjectsGrouping,
-            TestObjectsGroupings,
+            ObjectsGrouping,
             FeaturesLayout,
-            LabelConverter,
             RandomSeed);
-    };
-
-    struct TApproxReconstructorParams {
-        TMaybe<int> BestIteration;
-        TVector<std::variant<TSplitTree, TNonSymmetricTreeStructure>> TreeStruct;
-        TVector<TVector<TVector<double>>> LeafValues;
-
-    public:
-        SAVELOAD(BestIteration, TreeStruct, LeafValues);
-    };
-
-    struct TApproxGetterParams {
-        bool ReturnLearnApprox;
-        bool ReturnTestApprox;
-        bool ReturnBestTestApprox;
-
-    public:
-        SAVELOAD(ReturnLearnApprox, ReturnTestApprox, ReturnBestTestApprox);
-    };
-
-    struct TApproxesResult {
-        TVector<TVector<double>> LearnApprox;         //       [dim][docIdx]
-        TVector<TVector<TVector<double>>> TestApprox; // [test][dim][docIdx]
-        TVector<TVector<double>> BestTestApprox;      //       [dim][docIdx]
-
-    public:
-        SAVELOAD(LearnApprox, TestApprox, BestTestApprox);
-    };
-
-    struct TErrorCalcerParams {
-        bool CalcOnlyBacktrackingObjective;
-        bool CalcAllMetrics;
-        bool CalcErrorTrackerMetric;
-
-    public:
-        SAVELOAD(CalcOnlyBacktrackingObjective, CalcAllMetrics, CalcErrorTrackerMetric);
     };
 
     struct TLocalTensorSearchData {

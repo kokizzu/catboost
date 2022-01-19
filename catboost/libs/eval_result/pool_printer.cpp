@@ -63,9 +63,12 @@ namespace NCB {
         }
     }
 
-    std::type_index TDSVPoolColumnsPrinter::GetOutputFeatureType(ui32 featureId) {
+    size_t TDSVPoolColumnsPrinter::GetOutputFeatureType(ui32 featureId) {
         const auto columnType = ColumnsMetaInfo->Columns[FromExternalIdToColumnId[featureId]].Type;
-        return columnType == EColumn::Num ? typeid(double) : typeid(TString);
+        if (columnType == EColumn::Num) {
+            return GetOutputTypeIndex<double>();
+        }
+        return GetOutputTypeIndex<TString>();
     }
 
     const TString& TDSVPoolColumnsPrinter::GetCell(ui64 docId, ui32 colId) {
@@ -142,7 +145,7 @@ namespace NCB {
         CB_ENSURE(false, "Not Implemented for Quantized Pools");
     }
 
-    std::type_index TQuantizedPoolColumnsPrinter::GetOutputFeatureType(ui32 /*featureId*/) {
+    size_t TQuantizedPoolColumnsPrinter::GetOutputFeatureType(ui32 /*featureId*/) {
         CB_ENSURE(false, "Not Implemented for Quantized Pools");
     }
 

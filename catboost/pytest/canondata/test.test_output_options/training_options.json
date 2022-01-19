@@ -18,9 +18,6 @@
         "permutation_count" : 4,
         "learning_rate" : 0.133344993
     },
-    "pool_metainfo_options" : {
-        "tags" : { }
-    },
     "metrics" : {
         "objective_metric" : {
             "type" : "Logloss",
@@ -140,17 +137,8 @@
             "1"
         ],
         "class_weights" : [ ],
-        "embedding_processing_options" : {
-            "embedding_processing" : {
-                "default" : [
-                    "LDA",
-                    "KNN"
-                ]
-            }
-        },
         "target_border" : null,
         "dev_leafwise_scoring" : false,
-        "force_unit_auto_pair_weights" : false,
         "dev_sparse_array_indexing" : "Indices",
         "auto_class_weights" : "None",
         "float_features_binarization" : {

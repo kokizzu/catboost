@@ -15,7 +15,6 @@ SRCS(
     data_processing_options.cpp
     dataset_reading_params.cpp
     defaults_helper.cpp
-    embedding_processing_options.cpp
     enum_helpers.cpp
     feature_eval_options.cpp
     feature_penalties_options.cpp
@@ -30,10 +29,8 @@ SRCS(
     option.cpp
     output_file_options.cpp
     overfitting_detector_options.cpp
-    path_helpers.cpp
     parse_per_feature_options.cpp
     plain_options_helper.cpp
-    pool_metainfo_options.cpp
     runtime_text_options.cpp
     runtime_embedding_options.cpp
     split_params.cpp
@@ -43,7 +40,6 @@ SRCS(
 
 PEERDIR(
     library/cpp/json
-    catboost/libs/column_description
     catboost/libs/helpers
     catboost/libs/logging
     catboost/private/libs/ctr_description

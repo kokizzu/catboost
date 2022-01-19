@@ -1,6 +1,5 @@
-#include <catboost/private/libs/feature_estimator/base_text_feature_estimator.h>
-#include <catboost/private/libs/feature_estimator/classification_target.h>
 #include <catboost/private/libs/feature_estimator/text_feature_estimators.h>
+#include <catboost/private/libs/feature_estimator/base_text_feature_estimator.h>
 
 #include <catboost/private/libs/options/text_processing_options.h>
 #include <catboost/private/libs/text_features/bow.h>
@@ -42,7 +41,7 @@ Y_UNIT_TEST_SUITE(TestFeatureEstimators) {
 
         class TIdentityVisitor final : public ITextCalcerVisitor {
         public:
-            void Update(ui32 classIdx, const TText& text, TTextFeatureCalcer* calcer) override {
+            void Update(ui32 classIdx, const TText& text, TTextFeatureCalcer* calcer) {
                 auto identityCalcer = dynamic_cast<TIdentityCalcer*>(calcer);
                 Y_ASSERT(identityCalcer);
 
@@ -54,7 +53,7 @@ Y_UNIT_TEST_SUITE(TestFeatureEstimators) {
         class TSampleCountEstimator : public TTextBaseEstimator<TIdentityCalcer, TIdentityVisitor> {
         public:
             TSampleCountEstimator(
-                TClassificationTargetPtr target,
+                TTextClassificationTargetPtr target,
                 TTextDataSetPtr learnTexts,
                 TArrayRef<TTextDataSetPtr> testText)
                 : TTextBaseEstimator(std::move(target), std::move(learnTexts), testText)
@@ -88,7 +87,7 @@ Y_UNIT_TEST_SUITE(TestFeatureEstimators) {
         for (ui32 i: xrange(numSamples)) {
             classes[i] = i + 1;
         }
-        TClassificationTargetPtr target = MakeIntrusive<TClassificationTarget>(
+        TTextClassificationTargetPtr target = MakeIntrusive<TTextClassificationTarget>(
             std::move(classes),
             numClasses
         );
@@ -149,7 +148,7 @@ Y_UNIT_TEST_SUITE(TestFeatureEstimators) {
         for (ui32 i: xrange(numSamples)) {
             classes[i] = i % numClasses;
         }
-        TClassificationTargetPtr target = MakeIntrusive<TClassificationTarget>(
+        TTextClassificationTargetPtr target = MakeIntrusive<TTextClassificationTarget>(
             std::move(classes),
             numClasses
         );

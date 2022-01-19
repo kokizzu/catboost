@@ -1,14 +1,11 @@
-import re
 import sys
 
 import __res
 
 from importlib.abc import ResourceReader
-from importlib.metadata import Distribution, DistributionFinder, PackageNotFoundError, Prepared
+from importlib.metadata import Distribution, DistributionFinder, PackageNotFoundError
 
 ResourceReader.register(__res._ResfsResourceReader)
-
-METADATA_NAME = re.compile('^Name: (.*)$', re.MULTILINE)
 
 
 class ArcadiaDistribution(Distribution):
@@ -20,7 +17,6 @@ class ArcadiaDistribution(Distribution):
         data = __res.resfs_read(f'{self.prefix}{filename}')
         if data:
             return data.decode('utf-8')
-    read_text.__doc__ = Distribution.read_text.__doc__
 
     def locate_file(self, path):
         return f'{self.prefix}{path}'
@@ -41,13 +37,12 @@ class ArcadiaMetadataFinder(DistributionFinder):
 
         for resource in __res.resfs_files():
             resource = resource.decode('utf-8')
-            if not resource.endswith('METADATA'):
+            if not resource.endswith('top_level.txt'):
                 continue
             data = __res.resfs_read(resource).decode('utf-8')
-            metadata_name = METADATA_NAME.search(data)
-            if metadata_name:
-                metadata_name = Prepared(metadata_name.group(1))
-                cls.prefixes[metadata_name.normalized] = resource[:-len('METADATA')]
+            for top_level in data.split('\n'):
+                if top_level:
+                    cls.prefixes[top_level.lower()] = resource[:-len('top_level.txt')]
 
     @classmethod
     def _search_prefixes(cls, name):
@@ -56,11 +51,11 @@ class ArcadiaMetadataFinder(DistributionFinder):
 
         if name:
             try:
-                yield cls.prefixes[Prepared(name).normalized]
+                yield cls.prefixes[name.lower().replace('-', '_')]
             except KeyError:
                 raise PackageNotFoundError(name)
         else:
-            for prefix in sorted(cls.prefixes.values()):
+            for prefix in sorted(set(cls.prefixes.values())):
                 yield prefix
 
 

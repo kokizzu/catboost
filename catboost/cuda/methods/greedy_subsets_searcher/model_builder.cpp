@@ -174,18 +174,18 @@ namespace NCatboostCuda {
             }
 
             TLeaf& GetLeaf() {
-                return std::get<TLeaf>(Value);
+                return Get<TLeaf>(Value);
             }
 
             TBinarySplit& GetSplit() {
-                return std::get<TBinarySplit>(Value);
+                return Get<TBinarySplit>(Value);
             }
 
             bool IsTerminal() const {
-                return std::holds_alternative<TLeaf>(Value);
+                return HoldsAlternative<TLeaf>(Value);
             };
 
-            std::variant<TLeaf, TBinarySplit> Value;
+            TVariant<TLeaf, TBinarySplit> Value;
         };
 
         using TNodePtr = TSimpleSharedPtr<TNode>;

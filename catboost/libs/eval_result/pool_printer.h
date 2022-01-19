@@ -12,8 +12,6 @@
 #include <util/stream/output.h>
 #include <util/system/types.h>
 
-#include <typeindex>
-
 
 namespace NCB {
 
@@ -23,7 +21,7 @@ namespace NCB {
         virtual void OutputFeatureColumnByIndex(IOutputStream* outstream, ui64 docId, ui32 featureId) = 0;
         virtual void UpdateColumnTypeInfo(const TMaybe<TDataColumnsMetaInfo>& /*columnsMetaInfo*/) {}
         virtual ~IPoolColumnsPrinter() = default;
-        virtual std::type_index GetOutputFeatureType(ui32 featureId) = 0;
+        virtual size_t GetOutputFeatureType(ui32 featureId) = 0;
         bool HasDocIdColumn = false;
     private:
         // TODO(nikitxskv): Temporary solution until MLTOOLS-140 is implemented.
@@ -49,7 +47,7 @@ namespace NCB {
         void OutputColumnByType(IOutputStream* outStream, ui64 docId, EColumn columnType) override;
         void OutputFeatureColumnByIndex(IOutputStream* outStream, ui64 docId, ui32 featureId) override;
         void UpdateColumnTypeInfo(const TMaybe<TDataColumnsMetaInfo>& columnsMetaInfo) override;
-        std::type_index GetOutputFeatureType(ui32 columnId) override;
+        size_t GetOutputFeatureType(ui32 columnId) override;
 
     private:
         const TString& GetCell(ui64 docId, ui32 colId);
@@ -68,7 +66,7 @@ namespace NCB {
         TQuantizedPoolColumnsPrinter(const TPathWithScheme& testSetPath);
         void OutputColumnByType(IOutputStream* outStream, ui64 docId, EColumn columnType) override;
         void OutputFeatureColumnByIndex(IOutputStream* outStream, ui64 docId, ui32 featureId) override;
-        std::type_index GetOutputFeatureType(ui32 featureId) override;
+        size_t GetOutputFeatureType(ui32 featureId) override;
 
     private:
         struct ColumnInfo {

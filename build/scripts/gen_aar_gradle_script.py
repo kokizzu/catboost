@@ -7,14 +7,6 @@ MAVEN_REPO_TEMPLATE='maven {{ url "{repo}" }}\n'
 KEYSTORE_TEMLATE='signingConfigs {{ debug {{ storeFile file("{keystore}") }} }}\n'
 
 ENABLE_JAVADOC = 'tasks["bundle${suffix}Aar"].dependsOn packageJavadocTask'
-DO_NOT_STRIP = '''\
-    packagingOptions {
-        doNotStrip "*/arm64-v8a/*.so"
-        doNotStrip "*/armeabi-v7a/*.so"
-        doNotStrip "*/x86_64/*.so"
-        doNotStrip "*/x86/*.so"
-    }
-'''
 
 AAR_TEMPLATE = """\
 ext.jniLibsDirs = [
@@ -45,14 +37,10 @@ ext.androidArs = [
     {aars}
 ]
 
-ext.compileOnlyAndroidArs = [
-    {compile_only_aars}
-]
-
-def minVersion = 18
-def compileVersion = 30
-def targetVersion = 30
-def buildVersion = '30.0.3'
+def minVersion = 15
+def compileVersion = 28
+def targetVersion = 28
+def buildVersion = '28.0.3'
 
 import com.android.build.gradle.LibraryPlugin
 import java.nio.file.Files
@@ -80,7 +68,7 @@ buildscript {{
     }}
 
     dependencies {{
-        classpath 'com.android.tools.build:gradle:4.0.2'
+        classpath 'com.android.tools.build:gradle:3.5.3'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
     }}
 }}
@@ -128,8 +116,6 @@ android {{
         androidTest.setRoot('bundle/tests')
     }}
 
-    {do_not_strip}
-
     dependencies {{
         for (bundle in bundles)
             compile("$bundle") {{
@@ -139,8 +125,6 @@ android {{
             compile(bundle) {{
                 transitive = true
             }}
-        for (bundle in compileOnlyAndroidArs)
-            compileOnly(bundle)
     }}
 
     android.libraryVariants.all {{ variant ->
@@ -267,7 +251,6 @@ private def extractClassesJar(aarPath, outputPath) {{
 
 """
 
-
 def gen_build_script(args):
 
     def wrap(items):
@@ -300,50 +283,41 @@ def gen_build_script(args):
     else:
         enable_javadoc = ''
 
-    if args.do_not_strip:
-        do_not_strip = DO_NOT_STRIP
-    else:
-        do_not_strip = ''
-
     return AAR_TEMPLATE.format(
-        aars=wrap(args.aars),
-        compile_only_aars=wrap(args.compile_only_aars),
-        aidl_dirs=wrap(args.aidl_dirs),
-        assets_dirs=wrap(args.assets_dirs),
-        bundles=wrap(bundles),
-        do_not_strip=do_not_strip,
-        enable_javadoc=enable_javadoc,
-        flat_dirs_repo=flat_dirs_repo,
-        java_dirs=wrap(args.java_dirs),
         jni_libs_dirs=wrap(args.jni_libs_dirs),
-        keystore=keystore,
+        res_dirs=wrap(args.res_dirs),
+        assets_dirs=wrap(args.assets_dirs),
+        java_dirs=wrap(args.java_dirs),
+        aidl_dirs=wrap(args.aidl_dirs),
+        aars=wrap(args.aars),
+        proguard_rules=args.proguard_rules,
         manifest=args.manifest,
         maven_repos=maven_repos,
-        proguard_rules=args.proguard_rules,
-        res_dirs=wrap(args.res_dirs),
+        bundles=wrap(bundles),
+        flat_dirs_repo=flat_dirs_repo,
+        keystore=keystore,
+        enable_javadoc=enable_javadoc,
     )
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--aars', nargs='*', default=[])
-    parser.add_argument('--compile-only-aars', nargs='*', default=[])
     parser.add_argument('--aidl-dirs', nargs='*', default=[])
+    parser.add_argument('--aars', nargs='*', default=[])
     parser.add_argument('--assets-dirs', nargs='*', default=[])
-    parser.add_argument('--bundle-name', nargs='?', default='default-bundle-name')
     parser.add_argument('--bundles', nargs='*', default=[])
-    parser.add_argument('--do-not-strip', action='store_true')
-    parser.add_argument('--flat-repos', nargs='*', default=[])
-    parser.add_argument('--generate-doc', action='store_true')
     parser.add_argument('--java-dirs', nargs='*', default=[])
     parser.add_argument('--jni-libs-dirs', nargs='*', default=[])
-    parser.add_argument('--keystore', default=None)
     parser.add_argument('--manifest', required=True)
+    parser.add_argument('--flat-repos', nargs='*', default=[])
     parser.add_argument('--maven-repos', nargs='*', default=[])
     parser.add_argument('--output-dir', required=True)
-    parser.add_argument('--peers', nargs='*', default=[])
     parser.add_argument('--proguard-rules', nargs='?', default=None)
+    parser.add_argument('--bundle-name', nargs='?', default='default-bundle-name')
     parser.add_argument('--res-dirs', nargs='*', default=[])
+    parser.add_argument('--peers', nargs='*', default=[])
+    parser.add_argument('--keystore', default=None)
+    parser.add_argument('--generate-doc', action='store_true')
     args = parser.parse_args()
 
     if args.proguard_rules is None:
@@ -360,14 +334,10 @@ if __name__ == '__main__':
 
     args.build_gradle = os.path.join(args.output_dir, 'build.gradle')
     args.settings_gradle = os.path.join(args.output_dir, 'settings.gradle')
-    args.gradle_properties = os.path.join(args.output_dir, 'gradle.properties')
 
     content = gen_build_script(args)
     with open(args.build_gradle, 'w') as f:
         f.write(content)
-
-    with open(args.gradle_properties, 'w') as f:
-        f.write('android.useAndroidX=true')
 
     if args.bundle_name:
         with open(args.settings_gradle, 'w') as f:

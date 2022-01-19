@@ -57,7 +57,7 @@ private:
     struct Inner: public TThrRefBase {
         T* Data_ = nullptr;
         ui64 Size_ = 0;
-        EMemoryType Type = EMemoryType::Device;
+        EMemoryType Type;
 
         Inner()
             : Data_(nullptr)

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.bibtex
     ~~~~~~~~~~~~~~~~~~~~~~
@@ -13,7 +14,7 @@ import re
 from pygments.lexer import RegexLexer, ExtendedRegexLexer, include, default, \
     words
 from pygments.token import Name, Comment, String, Error, Number, Text, \
-    Keyword, Punctuation, Whitespace
+    Keyword, Punctuation
 
 __all__ = ['BibTeXLexer', 'BSTLexer']
 
@@ -26,7 +27,7 @@ class BibTeXLexer(ExtendedRegexLexer):
     """
 
     name = 'BibTeX'
-    aliases = ['bibtex', 'bib']
+    aliases = ['bib', 'bibtex']
     filenames = ['*.bib']
     mimetypes = ["text/x-bibtex"]
     flags = re.IGNORECASE
@@ -55,7 +56,7 @@ class BibTeXLexer(ExtendedRegexLexer):
     tokens = {
         'root': [
             include('whitespace'),
-            (r'@comment(?!ary)', Comment),
+            ('@comment', Comment),
             ('@preamble', Name.Class, ('closing-brace', 'value', 'opening-brace')),
             ('@string', Name.Class, ('closing-brace', 'field', 'opening-brace')),
             ('@' + IDENTIFIER, Name.Class,
@@ -108,7 +109,7 @@ class BibTeXLexer(ExtendedRegexLexer):
             (r'[^\{\}]+', String),
         ],
         'whitespace': [
-            (r'\s+', Whitespace),
+            (r'\s+', Text),
         ],
     }
 
@@ -153,7 +154,7 @@ class BSTLexer(RegexLexer):
             default('#pop'),
         ],
         'whitespace': [
-            (r'\s+', Whitespace),
-            ('%.*?$', Comment.Single),
+            (r'\s+', Text),
+            ('%.*?$', Comment.SingleLine),
         ],
     }

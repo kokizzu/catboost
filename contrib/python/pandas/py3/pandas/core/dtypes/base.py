@@ -2,34 +2,17 @@
 Extend pandas with custom array types.
 """
 
-from __future__ import annotations
-
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    TypeVar,
-)
+from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Type, Union
 
 import numpy as np
 
-from pandas._libs.hashtable import object_hash
-from pandas._typing import (
-    DtypeObj,
-    type_t,
-)
+from pandas._typing import DtypeObj
 from pandas.errors import AbstractMethodError
 
-from pandas.core.dtypes.generic import (
-    ABCDataFrame,
-    ABCIndex,
-    ABCSeries,
-)
+from pandas.core.dtypes.generic import ABCDataFrame, ABCIndexClass, ABCSeries
 
 if TYPE_CHECKING:
     from pandas.core.arrays import ExtensionArray
-
-    # To parameterize on same ExtensionDtype
-    E = TypeVar("E", bound="ExtensionDtype")
 
 
 class ExtensionDtype:
@@ -49,7 +32,6 @@ class ExtensionDtype:
 
     * type
     * name
-    * construct_array_type
 
     The following attributes and methods influence the behavior of the dtype in
     pandas operations
@@ -57,6 +39,12 @@ class ExtensionDtype:
     * _is_numeric
     * _is_boolean
     * _get_common_dtype
+
+    Optionally one can override construct_array_type for construction
+    with the name of this dtype via the Registry. See
+    :meth:`extensions.register_extension_dtype`.
+
+    * construct_array_type
 
     The `na_value` class attribute can be used to set the default NA value
     for this type. :attr:`numpy.nan` is used by default.
@@ -76,6 +64,11 @@ class ExtensionDtype:
     ``__eq__`` or ``__hash__``, the default implementations here will not
     work.
 
+    .. versionchanged:: 0.24.0
+
+       Added ``_metadata``, ``__hash__``, and changed the default definition
+       of ``__eq__``.
+
     For interaction with Apache Arrow (pyarrow), a ``__from_arrow__`` method
     can be implemented: this method receives a pyarrow Array or ChunkedArray
     as only argument and is expected to return the appropriate pandas
@@ -94,7 +87,7 @@ class ExtensionDtype:
     provided for registering virtual subclasses.
     """
 
-    _metadata: tuple[str, ...] = ()
+    _metadata: Tuple[str, ...] = ()
 
     def __str__(self) -> str:
         return self.name
@@ -129,9 +122,7 @@ class ExtensionDtype:
         return False
 
     def __hash__(self) -> int:
-        # for python>=3.10, different nan objects have different hashes
-        # we need  to avoid that und thus use hash function with old behavior
-        return object_hash(tuple(getattr(self, attr) for attr in self._metadata))
+        return hash(tuple(getattr(self, attr) for attr in self._metadata))
 
     def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
@@ -148,7 +139,7 @@ class ExtensionDtype:
         return np.nan
 
     @property
-    def type(self) -> type_t[Any]:
+    def type(self) -> Type:
         """
         The scalar type for the array, e.g. ``int``
 
@@ -185,7 +176,7 @@ class ExtensionDtype:
         raise AbstractMethodError(self)
 
     @property
-    def names(self) -> list[str] | None:
+    def names(self) -> Optional[List[str]]:
         """
         Ordered list of field names, or None if there are no fields.
 
@@ -195,7 +186,7 @@ class ExtensionDtype:
         return None
 
     @classmethod
-    def construct_array_type(cls) -> type_t[ExtensionArray]:
+    def construct_array_type(cls) -> Type["ExtensionArray"]:
         """
         Return the array type associated with this dtype.
 
@@ -203,7 +194,7 @@ class ExtensionDtype:
         -------
         type
         """
-        raise AbstractMethodError(cls)
+        raise NotImplementedError
 
     @classmethod
     def construct_from_string(cls, string: str):
@@ -286,7 +277,7 @@ class ExtensionDtype:
         """
         dtype = getattr(dtype, "dtype", dtype)
 
-        if isinstance(dtype, (ABCSeries, ABCIndex, ABCDataFrame, np.dtype)):
+        if isinstance(dtype, (ABCSeries, ABCIndexClass, ABCDataFrame, np.dtype)):
             # https://github.com/pandas-dev/pandas/issues/22960
             # avoid passing data to `construct_from_string`. This could
             # cause a FutureWarning from numpy about failing elementwise
@@ -332,7 +323,7 @@ class ExtensionDtype:
         """
         return False
 
-    def _get_common_dtype(self, dtypes: list[DtypeObj]) -> DtypeObj | None:
+    def _get_common_dtype(self, dtypes: List[DtypeObj]) -> Optional[DtypeObj]:
         """
         Return the common dtype, if one exists.
 
@@ -360,17 +351,12 @@ class ExtensionDtype:
         else:
             return None
 
-    @property
-    def _can_hold_na(self) -> bool:
-        """
-        Can arrays of this dtype hold NA values?
-        """
-        return True
 
-
-def register_extension_dtype(cls: type[E]) -> type[E]:
+def register_extension_dtype(cls: Type[ExtensionDtype]) -> Type[ExtensionDtype]:
     """
     Register an ExtensionType with pandas as class decorator.
+
+    .. versionadded:: 0.24.0
 
     This enables operations like ``.astype(name)`` for the name
     of the ExtensionDtype.
@@ -388,7 +374,7 @@ def register_extension_dtype(cls: type[E]) -> type[E]:
     ... class MyExtensionDtype(ExtensionDtype):
     ...     name = "myextension"
     """
-    _registry.register(cls)
+    registry.register(cls)
     return cls
 
 
@@ -409,9 +395,9 @@ class Registry:
     """
 
     def __init__(self):
-        self.dtypes: list[type[ExtensionDtype]] = []
+        self.dtypes: List[Type[ExtensionDtype]] = []
 
-    def register(self, dtype: type[ExtensionDtype]) -> None:
+    def register(self, dtype: Type[ExtensionDtype]) -> None:
         """
         Parameters
         ----------
@@ -422,7 +408,9 @@ class Registry:
 
         self.dtypes.append(dtype)
 
-    def find(self, dtype: type[ExtensionDtype] | str) -> type[ExtensionDtype] | None:
+    def find(
+        self, dtype: Union[Type[ExtensionDtype], str]
+    ) -> Optional[Type[ExtensionDtype]]:
         """
         Parameters
         ----------
@@ -450,4 +438,4 @@ class Registry:
         return None
 
 
-_registry = Registry()
+registry = Registry()

@@ -15,8 +15,7 @@ namespace NCatboostCuda {
                             TStripeBuffer<ui32>&& bins,
                             TStripeBuffer<ui32>&& partOffsets,
                             TStripeBuffer<float>&& cursor,
-                            ui32 binCount,
-                            TGpuAwareRandom& random);
+                            ui32 binCount);
 
         virtual ~TBinOptimizedOracle() {
         }
@@ -51,9 +50,6 @@ namespace NCatboostCuda {
 
         TVector<float> EstimateExact() final;
 
-        void AddLangevinNoiseToDerivatives(TVector<double>* derivatives,
-                                           NPar::ILocalExecutor* localExecutor) final;
-
     private:
         ui32 SingleBinDim() const {
             const ui32 cursorDim = Cursor.GetColumnCount();
@@ -76,8 +72,6 @@ namespace NCatboostCuda {
         TVector<double> WeightsCpu;
         TMaybe<TVector<double>> DerAtPoint;
         TMaybe<TVector<double>> Der2AtPoint;
-
-        TGpuAwareRandom& Random;
     };
 
     template <class TObjective>
@@ -87,8 +81,7 @@ namespace NCatboostCuda {
                                                        TStripeBuffer<const float>&& baseline,
                                                        TStripeBuffer<ui32>&& bins,
                                                        ui32 binCount,
-                                                       const TLeavesEstimationConfig& estimationConfig,
-                                                       TGpuAwareRandom& random) {
+                                                       const TLeavesEstimationConfig& estimationConfig) {
             auto offsets = TStripeBuffer<ui32>::Create(NCudaLib::TStripeMapping::RepeatOnAllDevices(binCount + 1));
             auto cursor = TStripeBuffer<float>::CopyMappingAndColumnCount(baseline);
 
@@ -99,15 +92,14 @@ namespace NCatboostCuda {
             Gather(cursor, baseline, indices);
             UpdatePartitionOffsets(bins, offsets);
 
-            auto derCalcer = CreatePermutationDerCalcer(TObjective(target), indices.AsConstBuf());
+            auto derCalcer = CreatePermutationDerCalcer(TObjective(target), std::move(indices));
 
             return THolder<ILeavesEstimationOracle>(new TOracle(estimationConfig,
                                std::move(derCalcer),
                                std::move(bins),
                                std::move(offsets),
                                std::move(cursor),
-                               binCount,
-                               random));
+                               binCount));
         }
 
     private:
@@ -116,15 +108,13 @@ namespace NCatboostCuda {
                 TStripeBuffer<ui32>&& bins,
                 TStripeBuffer<ui32>&& offsets,
                 TStripeBuffer<float>&& cursor,
-                ui32 binCount,
-                TGpuAwareRandom& random)
+                ui32 binCount)
             : TBinOptimizedOracle(estimationConfig,
                                   std::move(derCalcer),
                                   std::move(bins),
                                   std::move(offsets),
                                   std::move(cursor),
-                                  binCount,
-                                  random) {
+                                  binCount) {
         }
     };
 

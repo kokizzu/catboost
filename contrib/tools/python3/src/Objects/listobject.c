@@ -165,10 +165,9 @@ PyList_New(Py_ssize_t size)
 static PyObject *
 list_new_prealloc(Py_ssize_t size)
 {
-    assert(size > 0);
     PyListObject *op = (PyListObject *) PyList_New(0);
-    if (op == NULL) {
-        return NULL;
+    if (size == 0 || op == NULL) {
+        return (PyObject *) op;
     }
     assert(op->ob_item == NULL);
     op->ob_item = PyMem_New(PyObject *, size);
@@ -447,9 +446,6 @@ list_slice(PyListObject *a, Py_ssize_t ilow, Py_ssize_t ihigh)
     PyObject **src, **dest;
     Py_ssize_t i, len;
     len = ihigh - ilow;
-    if (len <= 0) {
-        return PyList_New(0);
-    }
     np = (PyListObject *) list_new_prealloc(len);
     if (np == NULL)
         return NULL;
@@ -504,9 +500,6 @@ list_concat(PyListObject *a, PyObject *bb)
     if (Py_SIZE(a) > PY_SSIZE_T_MAX - Py_SIZE(b))
         return PyErr_NoMemory();
     size = Py_SIZE(a) + Py_SIZE(b);
-    if (size == 0) {
-        return PyList_New(0);
-    }
     np = (PyListObject *) list_new_prealloc(size);
     if (np == NULL) {
         return NULL;
@@ -2012,7 +2005,7 @@ safe_object_compare(PyObject *v, PyObject *w, MergeState *ms)
     return PyObject_RichCompareBool(v, w, Py_LT);
 }
 
-/* Homogeneous compare: safe for any two comparable objects of the same type.
+/* Homogeneous compare: safe for any two compareable objects of the same type.
  * (ms->key_richcompare is set to ob_type->tp_richcompare in the
  *  pre-sort check.)
  */

@@ -1,10 +1,13 @@
+import os
 import sys
 
 from subprocess import Popen, PIPE
 
 def get_output_error_code(cmd):
     """Get stdout, stderr, and exit code from running a command"""
-    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    env = os.environ.copy()
+    env['Y_PYTHON_ENTRY_POINT'] = ':main'
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE, env=env)
     out, err = p.communicate()
     out = out.decode('utf8', 'replace')
     err = err.decode('utf8', 'replace')

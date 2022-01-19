@@ -36,7 +36,7 @@ namespace NCudaLib {
         int deviceCount = NCudaHelpers::GetDeviceCount();
         int deviceCountTypeBytes = sizeof(decltype(deviceCount));
 
-        MpiProxyThread = MakeHolder<std::thread>([this]() {
+        MpiProxyThread = new std::thread([this]() {
             this->ProceedRequests();
         });
 

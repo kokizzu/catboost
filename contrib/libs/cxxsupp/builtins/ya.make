@@ -10,17 +10,9 @@ LIBRARY()
 # os_version_check.c was patched from git repository https://github.com/apple/llvm-project.git revision a02454b91d2aec347b9ce03020656c445f3b2841
 
 LICENSE(
-    Apache-2.0 AND
-    Apache-2.0 WITH LLVM-exception AND
-    MIT AND
-    NCSA
+    MIT
+    Apache-2.0 WITH LLVM-exception
 )
-
-LICENSE_TEXTS(.yandex_meta/licenses.list.txt)
-
-VERSION(2016-03-03-08f0372c351a57b01afee6c64066961203da28c5)
-
-ORIGINAL_SOURCE(https://github.com/llvm/llvm-project)
 
 
 
@@ -39,11 +31,8 @@ IF (MUSL)
 ENDIF()
 
 NO_UTIL()
-
 NO_RUNTIME()
-
 NO_PLATFORM()
-
 NO_COMPILER_WARNINGS()
 
 IF (GCC OR CLANG)
@@ -53,6 +42,7 @@ IF (GCC OR CLANG)
     # as they contain unresolved symbols. But code generation is already done,
     # object files actually are not ELFs but an LLVM bytecode and we get
     # "member at xxxxx is not an ELF object" errors from the linker.
+
     # Just generate native code from the beginning.
     DISABLE(USE_LTO)
 ENDIF()
@@ -77,7 +67,6 @@ SRCS(
     fixunssfti.c
     fixunstfdi.c
     fixunstfsi.c
-    fixunstfti.c
     fixunsxfti.c
     floatditf.c
     floatsitf.c
@@ -106,9 +95,7 @@ SRCS(
 )
 
 IF (OS_DARWIN OR OS_IOS)
-    SRCS(
-        os_version_check.c
-    )
+    SRCS(os_version_check.c)
 ENDIF()
 
 IF (ARCH_ARM)

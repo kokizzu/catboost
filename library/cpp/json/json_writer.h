@@ -119,9 +119,6 @@ namespace NJson {
         void Write(const TString& value) {
             Write(TStringBuf(value));
         }
-        void Write(const std::string& value) {
-            Write(TStringBuf(value));
-        }
 
         // write raw json without checks
         void UnsafeWrite(const TStringBuf& value) {
@@ -169,10 +166,6 @@ namespace NJson {
         }
 
         void WriteKey(const TString& key) {
-            WriteKey(TStringBuf{key});
-        }
-
-        void WriteKey(const std::string& key) {
             WriteKey(TStringBuf{key});
         }
 

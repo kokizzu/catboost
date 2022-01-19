@@ -48,7 +48,7 @@ namespace NNeh {
 
     bool TTcp2Options::Set(TStringBuf name, TStringBuf value) {
 #define TCP2_TRY_SET(optType, optName)        \
-    if (name == TStringBuf(#optName)) {      \
+    if (name == AsStringBuf(#optName)) {      \
         optName = FromString<optType>(value); \
     }
 
@@ -453,11 +453,11 @@ namespace {
                 }
 
             private:
-                TRequest(THandleRef& h, TMessage msg, TClient& clnt)
+                TRequest(THandleRef& h, const TMessage& msg, TClient& clnt)
                     : Hndl_(h)
                     , Clnt_(clnt)
-                    , Msg_(std::move(msg))
-                    , Loc_(Msg_.Addr)
+                    , Msg_(msg)
+                    , Loc_(msg.Addr)
                     , Addr_(CachedResolve(TResolveInfo(Loc_.Host, Loc_.GetPort())))
                     , Canceled_(false)
                     , Id_(0)

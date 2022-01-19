@@ -76,9 +76,10 @@ void TJsonTraceConsumer::AddEvent(const TMetadataEvent& event, const TEventArgs*
 }
 
 NJsonWriter::TPairContext TJsonTraceConsumer::BeginEvent(char type, const TEventOrigin& origin) {
+    const char ph[2] = {type, 0};
     return Json.BeginObject()
         .WriteKey(TStringBuf("ph"))
-        .WriteString(TStringBuf(&type, 1))
+        .WriteString(AsStringBuf(ph))
         .WriteKey(TStringBuf("pid"))
         .WriteULongLong(origin.ProcessId)
         .WriteKey(TStringBuf("tid"))
@@ -112,7 +113,7 @@ void TJsonTraceConsumer::WriteArgs(const TEventArgs& args) {
     Json.WriteKey(TStringBuf("args")).BeginObject();
     for (const auto& item : args.Items) {
         Json.WriteKey(item.Name);
-        std::visit(TWriteArg{&Json}, item.Value);
+        Visit(TWriteArg{&Json}, item.Value);
     }
     Json.EndObject();
 }

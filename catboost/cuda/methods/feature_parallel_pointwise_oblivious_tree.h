@@ -14,7 +14,6 @@
 #include <catboost/cuda/gpu_data/bootstrap.h>
 #include <catboost/cuda/targets/target_func.h>
 #include <catboost/private/libs/options/catboost_options.h>
-#include <catboost/private/libs/options/boosting_options.h>
 
 namespace NCatboostCuda {
     class TFeatureParallelPointwiseObliviousTree {
@@ -23,16 +22,12 @@ namespace NCatboostCuda {
         using TWeakModelStructure = TObliviousTreeStructure;
 
         TFeatureParallelPointwiseObliviousTree(TBinarizedFeaturesManager& featuresManager,
-                                               const NCatboostOptions::TBoostingOptions& boostingOptions,
                                                const NCatboostOptions::TCatBoostOptions& config,
-                                               TGpuAwareRandom& random,
                                                bool makeZeroAverage = false)
             : FeaturesManager(featuresManager)
-            , BoostingOptions(boostingOptions)
             , TreeConfig(config.ObliviousTreeOptions)
             , LossDescription(config.LossFunctionDescription.Get())
             , MakeZeroAverage(makeZeroAverage)
-            , Random(random)
         {
         }
 
@@ -60,20 +55,16 @@ namespace NCatboostCuda {
 
             return TFeatureParallelObliviousTreeSearcher(cache,
                                                          FeaturesManager,
-                                                         BoostingOptions,
                                                          dataSet,
                                                          *Bootstrap,
-                                                         TreeConfig,
-                                                         Random);
+                                                         TreeConfig);
         }
 
         TObliviousTreeLeavesEstimator CreateEstimator() {
             return TObliviousTreeLeavesEstimator(FeaturesManager,
                                                  CreateLeavesEstimationConfig(TreeConfig,
                                                                               MakeZeroAverage,
-                                                                              LossDescription,
-                                                                              BoostingOptions),
-                                                 Random);
+                                                                              LossDescription));
         }
 
         template <class TDataSet>
@@ -87,10 +78,8 @@ namespace NCatboostCuda {
     private:
         THolder<TBootstrap<NCudaLib::TMirrorMapping>> Bootstrap;
         TBinarizedFeaturesManager& FeaturesManager;
-        const NCatboostOptions::TBoostingOptions& BoostingOptions;
         const NCatboostOptions::TObliviousTreeLearnerOptions& TreeConfig;
         const NCatboostOptions::TLossDescription& LossDescription;
         bool MakeZeroAverage = false;
-        TGpuAwareRandom& Random;
     };
 }

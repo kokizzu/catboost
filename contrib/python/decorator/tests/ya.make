@@ -1,4 +1,6 @@
-PY23_TEST()
+PY23_LIBRARY()
+
+LICENSE(BSD-3-Clause)
 
 
 
@@ -19,3 +21,8 @@ TEST_SRCS(
 NO_LINT()
 
 END()
+
+RECURSE_FOR_TESTS(
+    py2
+    py3
+)

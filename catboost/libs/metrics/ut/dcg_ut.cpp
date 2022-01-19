@@ -79,7 +79,7 @@ Y_UNIT_TEST_SUITE(NdcgTests) {
 
         NPar::TLocalExecutor executor;
         const auto ndcg = std::move(CreateMetricsFromDescription({metricDescription}, 1).front());
-        const auto metric = dynamic_cast<const ISingleTargetEval*>(ndcg.Get())->Eval(
+        const auto metric = ndcg->Eval(
             approxes,
             targets,
             dummyWeights,

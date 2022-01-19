@@ -140,7 +140,7 @@ inline static void ExtractBucketIndex(
 template <typename TBucketIndexType>
 inline static void ExtractBucketIndex(
     const TCalcScoreFold& fold,
-    const TQuantizedObjectsDataProvider& objectsDataProvider,
+    const TQuantizedForCPUObjectsDataProvider& objectsDataProvider,
     const std::tuple<const TOnlineCtrBase&, const TOnlineCtrBase&>& allCtrs,
     const TSplitEnsemble& splitEnsemble,
     TIndexRange<ui32> docIndexRange,
@@ -267,7 +267,7 @@ inline void CalcStatsKernel(
 
 template <typename TBucketIndexType, typename TScoreCalcer>
 static void CalcScoresForSubCandidate(
-    const NCB::TQuantizedObjectsDataProvider& objectsDataProvider,
+    const NCB::TQuantizedForCPUObjectsDataProvider& objectsDataProvider,
     const TCandidateInfo& candidateInfo,
     int bucketCount,
     const TCalcScoreFold& fold,
@@ -441,7 +441,7 @@ static void CalcScoresForSubCandidate(
 
 template <typename TScoreCalcer>
 static TVector<TVector<double>> CalcScoresForOneCandidateImpl(
-    const NCB::TQuantizedObjectsDataProvider& objectsDataProvider,
+    const NCB::TQuantizedForCPUObjectsDataProvider& objectsDataProvider,
     const TCandidatesInfoList& candidate,
     const TCalcScoreFold& fold,
     const TFold& initialFold,
@@ -519,7 +519,7 @@ static TVector<TVector<double>> CalcScoresForOneCandidateImpl(
 }
 
 TVector<TVector<double>> CalcScoresForOneCandidate(
-    const NCB::TQuantizedObjectsDataProvider& data,
+    const NCB::TQuantizedForCPUObjectsDataProvider& data,
     const TCandidatesInfoList& candidate,
     const TCalcScoreFold& fold,
     const TFold& initialFold,

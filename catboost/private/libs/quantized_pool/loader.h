@@ -54,7 +54,6 @@ namespace NCB {
         TPathWithScheme BaselinePath;
         TPathWithScheme TimestampsPath;
         TPathWithScheme FeatureNamesPath;
-        TPathWithScheme PoolMetaInfoPath;
         TDataMetaInfo DataMetaInfo;
         EObjectsOrder ObjectsOrder;
         TDatasetSubset DatasetSubset;

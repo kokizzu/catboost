@@ -1,6 +1,5 @@
 #pragma once
 
-#include "fwd.h"
 #include "pathsplit.h"
 
 #include <util/generic/ptr.h>
@@ -28,11 +27,6 @@ public:
     TFsPath(const TString& path);
     TFsPath(const TStringBuf path);
     TFsPath(const char* path);
-
-    TFsPath(const std::string& path)
-        : TFsPath(TStringBuf(path))
-    {
-    }
 
     void CheckDefined() const;
 
@@ -109,12 +103,12 @@ public:
      * @return True if this is a subpath of that or they are equivalent and false otherwise.
      */
     bool IsNonStrictSubpathOf(const TFsPath& that) const;
-
+    
     bool IsContainerOf(const TFsPath& that) const {
         return that.IsSubpathOf(*this);
     }
 
-    TFsPath RelativeTo(const TFsPath& root) const; //must be subpath of root
+    TFsPath RelativeTo(const TFsPath& root) const;   //must be subpath of root
 
     /**
      * @returns relative path or empty path if root equals to this.

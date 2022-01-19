@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.console
     ~~~~~~~~~~~~~~~~~~~~~~~
@@ -10,7 +11,7 @@
 
 from pygments.lexer import RegexLexer, include, bygroups
 from pygments.token import Generic, Comment, String, Text, Keyword, Name, \
-    Punctuation, Number, Whitespace
+    Punctuation, Number
 
 __all__ = ['VCTreeStatusLexer', 'PyPyLogLexer']
 
@@ -36,8 +37,7 @@ class VCTreeStatusLexer(RegexLexer):
             (r'^D\s+', Generic.Deleted),
             (r'^[?!]\s+', Comment.Preproc),
             (r'      >\s+.*\n', Comment.Preproc),
-            (r'\S+', Text),
-            (r'\s+', Whitespace),
+            (r'.*\n', Text)
         ]
     }
 
@@ -108,7 +108,7 @@ class PyPyLogLexer(RegexLexer):
             include("extra-stuff"),
         ],
         "extra-stuff": [
-            (r"\s+", Whitespace),
+            (r"\s+", Text),
             (r"#.*?$", Comment),
         ],
     }

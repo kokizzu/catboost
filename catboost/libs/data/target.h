@@ -57,7 +57,7 @@ namespace NCB {
     );
 
     // Integer target type is stored as ITypedSequencePtr<float>
-    using TRawTarget = std::variant<ITypedSequencePtr<float>, TVector<TString>>;
+    using TRawTarget = TVariant<ITypedSequencePtr<float>, TVector<TString>>;
 
 
     // for use while building
@@ -100,7 +100,6 @@ namespace NCB {
             TObjectsGroupingPtr objectsGrouping,
             TRawTargetData&& data,
             bool skipCheck,
-            bool forceUnitAutoPairWeights,
 
             // used only if skipCheck == false, it's ok to pass nullptr if skipCheck is true
             TMaybe<NPar::ILocalExecutor*> localExecutor
@@ -110,7 +109,6 @@ namespace NCB {
             }
             ObjectsGrouping = std::move(objectsGrouping);
             Data = std::move(data);
-            ForceUnitAutoPairWeights = forceUnitAutoPairWeights;
             SetBaselineViewFromBaseline();
         }
 
@@ -155,10 +153,6 @@ namespace NCB {
 
         ui32 GetTargetDimension() const {
             return Data.Target.size();
-        }
-
-        bool IsForceUnitAutoPairWeights() const {
-            return ForceUnitAutoPairWeights;
         }
 
         // can return empty array
@@ -221,7 +215,6 @@ namespace NCB {
     private:
         TObjectsGroupingPtr ObjectsGrouping;
         TRawTargetData Data;
-        bool ForceUnitAutoPairWeights;
 
         // for returning from GetBaseline
         TVector<TConstArrayRef<float>> BaselineView; // [approxIdx][objectIdx]
@@ -312,7 +305,7 @@ namespace NCB {
         TMaybeData<TConstArrayRef<float>> GetOneDimensionalTarget(const TString& name = "") const { // [targetIdx][objectIdx]
             const auto target = GetTarget(name);
             if (target) {
-                CB_ENSURE(target->size() == 1, "Attempt to use multi-dimensional target as one-dimensional");
+                CB_ENSURE(target->size() == 1, "Attempt to use multidimintional target as one-dimensional");
                 return target.GetRef()[0];
             } else {
                 return Nothing();

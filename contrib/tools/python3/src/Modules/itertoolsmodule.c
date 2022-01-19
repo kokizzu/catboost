@@ -729,7 +729,7 @@ static PyObject *
 tee_fromiterable(PyObject *iterable)
 {
     teeobject *to;
-    PyObject *it;
+    PyObject *it = NULL;
 
     it = PyObject_GetIter(iterable);
     if (it == NULL)
@@ -739,22 +739,21 @@ tee_fromiterable(PyObject *iterable)
         goto done;
     }
 
-    PyObject *dataobj = teedataobject_newinternal(it);
-    if (!dataobj) {
+    to = PyObject_GC_New(teeobject, &tee_type);
+    if (to == NULL)
+        goto done;
+    to->dataobj = (teedataobject *)teedataobject_newinternal(it);
+    if (!to->dataobj) {
+        PyObject_GC_Del(to);
         to = NULL;
         goto done;
     }
-    to = PyObject_GC_New(teeobject, &tee_type);
-    if (to == NULL) {
-        Py_DECREF(dataobj);
-        goto done;
-    }
-    to->dataobj = (teedataobject *)dataobj;
+
     to->index = 0;
     to->weakreflist = NULL;
     PyObject_GC_Track(to);
 done:
-    Py_DECREF(it);
+    Py_XDECREF(it);
     return (PyObject *)to;
 }
 

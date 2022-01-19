@@ -1,4 +1,4 @@
-PY2_LIBRARY()
+PY23_LIBRARY()
 
 LICENSE(BSD-3-Clause)
 
@@ -7,22 +7,25 @@ VERSION(5.9.0)
 
 
 PEERDIR(
-    contrib/python/backports.shutil-get-terminal-size
     contrib/python/decorator
     contrib/python/pickleshare
     contrib/python/simplegeneric
     contrib/python/traitlets
     contrib/python/path.py
     contrib/python/pathlib2
-    contrib/python/prompt-toolkit
+    contrib/python/prompt_toolkit/py2
     contrib/python/Pygments
 )
 
 IF (OS_WINDOWS)
     PEERDIR(
         contrib/python/colorama
-        contrib/python/win_unicode_console
     )
+    IF (PYTHON2)
+        PEERDIR(
+            contrib/python/win_unicode_console
+        )
+    ENDIF()
 ELSE ()
     PEERDIR(
         contrib/python/pexpect
@@ -34,6 +37,12 @@ IF (OS_DARWIN)
         contrib/python/appnope
     )
 ENDIF ()
+
+IF (PYTHON2)
+    PEERDIR(
+        contrib/python/backports-shutil_get_terminal_size
+    )
+ENDIF()
 
 NO_CHECK_IMPORTS(IPython.*)
 
@@ -261,8 +270,6 @@ PY_SRCS(
 
 RESOURCE_FILES(
     PREFIX contrib/python/ipython/py2/
-    .dist-info/METADATA
-    .dist-info/top_level.txt
     IPython/core/profile/README_STARTUP
 )
 

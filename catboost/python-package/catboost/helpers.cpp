@@ -126,7 +126,7 @@ TVector<double> EvalMetricsForUtils(
             metric->UseWeights.SetDefaultValue(true);
         }
     }
-    NCB::TObjectsGrouping objectGrouping = NCB::CreateObjectsGroupingFromGroupIds<TGroupId>(
+    NCB::TObjectsGrouping objectGrouping = NCB::CreateObjectsGroupingFromGroupIds(
         label[0].size(),
         groupId.empty() ? Nothing() : NCB::TMaybeData<TConstArrayRef<TGroupId>>(groupId)
     );
@@ -197,7 +197,7 @@ size_t GetNumPairs(const NCB::TDataProvider& dataProvider) {
     size_t result = 0;
     const NCB::TMaybeData<NCB::TRawPairsData>& maybePairsData = dataProvider.RawTargetData.GetPairs();
     if (maybePairsData) {
-        std::visit([&](const auto& pairs) { result = pairs.size(); }, *maybePairsData);
+        Visit([&](const auto& pairs) { result = pairs.size(); }, *maybePairsData);
     }
     return result;
 }
@@ -207,10 +207,10 @@ TConstArrayRef<TPair> GetUngroupedPairs(const NCB::TDataProvider& dataProvider) 
     const NCB::TMaybeData<NCB::TRawPairsData>& maybePairsData = dataProvider.RawTargetData.GetPairs();
     if (maybePairsData) {
         CB_ENSURE(
-            std::holds_alternative<TFlatPairsInfo>(*maybePairsData),
+            HoldsAlternative<TFlatPairsInfo>(*maybePairsData),
             "Cannot get ungrouped pairs: pairs data is grouped"
         );
-        result = std::get<TFlatPairsInfo>(*maybePairsData);
+        result = Get<TFlatPairsInfo>(*maybePairsData);
     }
     return result;
 }

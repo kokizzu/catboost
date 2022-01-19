@@ -5,15 +5,19 @@
 #include "backend.h"
 #include <util/generic/ptr.h>
 
+template <class TBaseBackend>
 class TFilteredLogBackend: public TLogBackend {
-    THolder<TLogBackend> Backend;
+    THolder<TBaseBackend> Backend;
     ELogPriority Level;
 
 public:
-    TFilteredLogBackend(THolder<TLogBackend>&& t, ELogPriority level = LOG_MAX_PRIORITY) noexcept
-        : Backend(std::move(t))
+    TFilteredLogBackend(TBaseBackend* t, ELogPriority level = LOG_MAX_PRIORITY) noexcept
+        : Backend(t)
         , Level(level)
     {
+    }
+
+    ~TFilteredLogBackend() override {
     }
 
     ELogPriority FiltrationLevel() const override {

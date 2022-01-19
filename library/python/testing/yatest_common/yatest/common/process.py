@@ -85,10 +85,6 @@ class SignalInterruptionError(Exception):
         self.res = None
 
 
-class InvalidCommandError(Exception):
-    pass
-
-
 class _Execution(object):
 
     def __init__(self, command, process, out_file, err_file, process_progress_listener=None, cwd=None, collect_cores=True, check_sanitizer=True, started=0, user_stdout=False, user_stderr=False):
@@ -271,7 +267,7 @@ class _Execution(object):
                 self._backtrace = cores.get_gdb_full_backtrace(self.command[0], core_path, runtime.gdb_path())
                 bt_filename = path.get_unique_file_path(runtime.output_path(), "{}.{}.backtrace".format(os.path.basename(self.command[0]), self._process.pid))
                 with open(bt_filename, "wb") as afile:
-                    afile.write(six.ensure_binary(self._backtrace))
+                    afile.write(self._backtrace)
                 # generate pretty html version of backtrace aka Tri Korochki
                 pbt_filename = bt_filename + ".html"
                 backtrace_to_html(bt_filename, pbt_filename)
@@ -400,19 +396,7 @@ class _Execution(object):
                 yatest_logger.debug("'%s' doesn't belong to '%s' - no check for sanitize errors", self.command[0], build_path)
 
 
-def on_timeout_gen_coredump(exec_obj, _):
-    """
-    Function can be passed to the execute(..., timeout=X, on_timeout=on_timeout_gen_coredump)
-    to generate core dump file, backtrace ahd html-version of the backtrace in case of timeout.
-    All files will be available in the testing_out_stuff and via links.
-    """
-    try:
-        os.kill(exec_obj.process.pid, signal.SIGQUIT)
-    except OSError:
-        # process might be already terminated
-        pass
-
-
+# Don't forget to sync changes in the interface and defaults with yatest.yt.process.execute
 def execute(
     command, check_exit_code=True,
     shell=False, timeout=None,
@@ -443,7 +427,7 @@ def execute(
     :param preexec_fn: subrpocess.Popen preexec_fn arg
     :param on_timeout: on_timeout(<execution object>, <timeout value>) callback
 
-    :return _Execution: Execution object
+    :return: Execution object
     """
     if env is None:
         env = os.environ.copy()
@@ -493,21 +477,6 @@ def execute(
     if shell:
         collect_cores = False
         check_sanitizer = False
-    else:
-        if isinstance(command, (list, tuple)):
-            executable = command[0]
-        else:
-            executable = command
-        if os.path.isabs(executable):
-            if not os.path.isfile(executable) and not os.path.isfile(executable + ".exe"):
-                exists = os.path.exists(executable)
-                if exists:
-                    stat = os.stat(executable)
-                else:
-                    stat = None
-                raise InvalidCommandError("Target program is not a file: {} (exists: {} stat: {})".format(executable, exists, stat))
-            if not os.access(executable, os.X_OK) and not os.access(executable + ".exe", os.X_OK):
-                raise InvalidCommandError("Target program is not executable: {}".format(executable))
 
     if check_sanitizer:
         env["LSAN_OPTIONS"] = environment.extend_env_var(os.environ, "LSAN_OPTIONS", "exitcode=100")
@@ -584,7 +553,7 @@ def py_execute(
     :param creationflags: command creation flags
     :param wait: should wait until the command finishes
     :param process_progress_listener=object that is polled while execution is in progress
-    :return _Execution: Execution object
+    :return: Execution object
     """
     if isinstance(command, six.string_types):
         command = [command]
@@ -707,9 +676,9 @@ def check_glibc_version(binary_path):
 
 def backtrace_to_html(bt_filename, output):
     try:
-        from library.python import coredump_filter
+        from library.python.coredump_filter import core_proc
         with open(output, "wb") as afile:
-            coredump_filter.filter_stackdump(bt_filename, stream=afile)
+            core_proc.filter_stackdump(bt_filename, stream=afile)
     except ImportError as e:
         yatest_logger.debug("Failed to import coredump_filter: %s", e)
         with open(output, "wb") as afile:

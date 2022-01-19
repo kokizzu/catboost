@@ -3,12 +3,11 @@
 #include "features_layout.h"
 
 #include <catboost/libs/column_description/cd_parser.h>
-#include <catboost/libs/helpers/mem_usage.h>
-#include <catboost/libs/helpers/sparse_array.h>
 #include <catboost/private/libs/data_util/exists_checker.h>
 #include <catboost/private/libs/data_util/line_data_reader.h>
 #include <catboost/private/libs/labels/helpers.h>
-#include <catboost/private/libs/options/pool_metainfo_options.h>
+#include <catboost/libs/helpers/mem_usage.h>
+#include <catboost/libs/helpers/sparse_array.h>
 
 #include <library/cpp/object_factory/object_factory.h>
 
@@ -87,8 +86,6 @@ namespace NCB {
                   "TLibSvmDataLoader:TimestampsFilePath does not exist");
         CB_ENSURE(!Args.FeatureNamesPath.Inited() || CheckExists(Args.FeatureNamesPath),
                   "TLibSvmDataLoader:FeatureNamesPath does not exist");
-        CB_ENSURE(!Args.PoolMetaInfoPath.Inited() || CheckExists(Args.PoolMetaInfoPath),
-                  "TLibSvmDataLoader:PoolMetaInfoPath does not exist");
 
         TString firstLine;
         CB_ENSURE(LineDataReader->ReadLine(&firstLine), "TLibSvmDataLoader: no data rows");
@@ -110,7 +107,6 @@ namespace NCB {
         }
 
         const TVector<TString> featureNames = GetFeatureNames(featureNamesFromColumns, Args.FeatureNamesPath);
-        const auto poolMetaInfoOptions = NCatboostOptions::LoadPoolMetaInfoOptions(Args.PoolMetaInfoPath);
 
         auto featuresLayout = MakeIntrusive<TFeaturesLayout>(
             (ui32)featureNames.size(),
@@ -118,7 +114,6 @@ namespace NCB {
             /*textFeatures*/ TVector<ui32>{},
             /*embeddingFeatures*/ TVector<ui32>{},
             featureNames,
-            poolMetaInfoOptions.Tags.Get(),
             /*allFeaturesAreSparse*/ true
         );
 
@@ -167,7 +162,7 @@ namespace NCB {
 
         const auto& featuresLayout = *DataMetaInfo.FeaturesLayout;
         for (auto catFeatureExternalIdx : featuresLayout.GetCatFeatureInternalIdxToExternalIdx()) {
-            visitor->AddCatFeatureDefaultValue(catFeatureExternalIdx, TStringBuf("0"));
+            visitor->AddCatFeatureDefaultValue(catFeatureExternalIdx, AsStringBuf("0"));
         }
     }
 
@@ -218,7 +213,7 @@ namespace NCB {
                         TStringBuf right;
                         token.Split(':', left, right);
 
-                        CB_ENSURE(left == "qid"sv, "line does not contain 'qid' field");
+                        CB_ENSURE(left == AsStringBuf("qid"), "line does not contain 'qid' field");
                         TGroupId groupId;
                         CB_ENSURE(TryFromString(right, groupId), "'qid' value must be integer");
                         visitor->AddGroupId(lineIdx, groupId);
@@ -369,7 +364,7 @@ namespace NCB {
             return false;
         }
 
-        if ((*lineIterator).Token().Before(':') == "qid"sv) {
+        if ((*lineIterator).Token().Before(':') == AsStringBuf("qid")) {
             return true;
         }
 

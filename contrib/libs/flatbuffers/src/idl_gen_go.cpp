@@ -255,30 +255,17 @@ class GoGenerator : public BaseGenerator {
   void NewRootTypeFromBuffer(const StructDef &struct_def,
                              std::string *code_ptr) {
     std::string &code = *code_ptr;
-    std::string size_prefix[] = { "", "SizePrefixed" };
 
-    for (int i = 0; i < 2; i++) {
-      code += "func Get" + size_prefix[i] + "RootAs";
-      code += struct_def.name;
-      code += "(buf []byte, offset flatbuffers.UOffsetT) ";
-      code += "*" + struct_def.name + "";
-      code += " {\n";
-      if (i == 0) {
-        code += "\tn := flatbuffers.GetUOffsetT(buf[offset:])\n";
-      } else {
-        code +=
-            "\tn := "
-            "flatbuffers.GetUOffsetT(buf[offset+flatbuffers.SizeUint32:])\n";
-      }
-      code += "\tx := &" + struct_def.name + "{}\n";
-      if (i == 0) {
-        code += "\tx.Init(buf, n+offset)\n";
-      } else {
-        code += "\tx.Init(buf, n+offset+flatbuffers.SizeUint32)\n";
-      }
-      code += "\treturn x\n";
-      code += "}\n\n";
-    }
+    code += "func GetRootAs";
+    code += struct_def.name;
+    code += "(buf []byte, offset flatbuffers.UOffsetT) ";
+    code += "*" + struct_def.name + "";
+    code += " {\n";
+    code += "\tn := flatbuffers.GetUOffsetT(buf[offset:])\n";
+    code += "\tx := &" + struct_def.name + "{}\n";
+    code += "\tx.Init(buf, n+offset)\n";
+    code += "\treturn x\n";
+    code += "}\n\n";
   }
 
   // Initialize an existing object with other data, to avoid an allocation.
@@ -471,7 +458,7 @@ class GoGenerator : public BaseGenerator {
                            "(a + flatbuffers.UOffsetT(j*" +
                            NumToString(InlineSize(vectortype)) + "))");
     code += "\n\t}\n";
-    if (IsString(vectortype)) {
+    if (vectortype.base_type == BASE_TYPE_STRING) {
       code += "\treturn nil\n";
     } else if (vectortype.base_type == BASE_TYPE_BOOL) {
       code += "\treturn false\n";
@@ -653,7 +640,7 @@ class GoGenerator : public BaseGenerator {
         default: FLATBUFFERS_ASSERT(0);
       }
     }
-    if (IsVector(field.value.type)) {
+    if (field.value.type.base_type == BASE_TYPE_VECTOR) {
       GetVectorLen(struct_def, field, code_ptr);
       if (field.value.type.element == BASE_TYPE_UCHAR) {
         GetUByteSlice(struct_def, field, code_ptr);
@@ -721,7 +708,7 @@ class GoGenerator : public BaseGenerator {
       } else {
         MutateScalarFieldOfTable(struct_def, field, code_ptr);
       }
-    } else if (IsVector(field.value.type)) {
+    } else if (field.value.type.base_type == BASE_TYPE_VECTOR) {
       if (IsScalar(field.value.type.element)) {
         MutateElementOfVectorOfNonStruct(struct_def, field, code_ptr);
       }
@@ -739,7 +726,7 @@ class GoGenerator : public BaseGenerator {
 
       auto offset = it - struct_def.fields.vec.begin();
       BuildFieldOfTable(struct_def, field, offset, code_ptr);
-      if (IsVector(field.value.type)) {
+      if (field.value.type.base_type == BASE_TYPE_VECTOR) {
         BuildVectorOfTable(struct_def, field, code_ptr);
       }
     }
@@ -882,10 +869,10 @@ class GoGenerator : public BaseGenerator {
 
       std::string offset = MakeCamel(field.name, false) + "Offset";
 
-      if (IsString(field.value.type)) {
+      if (field.value.type.base_type == BASE_TYPE_STRING) {
         code += "\t" + offset + " := builder.CreateString(t." +
                 MakeCamel(field.name) + ")\n";
-      } else if (IsVector(field.value.type) &&
+      } else if (field.value.type.base_type == BASE_TYPE_VECTOR &&
                  field.value.type.element == BASE_TYPE_UCHAR &&
                  field.value.type.enum_def == nullptr) {
         code += "\t" + offset + " := flatbuffers.UOffsetT(0)\n";
@@ -893,7 +880,7 @@ class GoGenerator : public BaseGenerator {
         code += "\t\t" + offset + " = builder.CreateByteString(t." +
                 MakeCamel(field.name) + ")\n";
         code += "\t}\n";
-      } else if (IsVector(field.value.type)) {
+      } else if (field.value.type.base_type == BASE_TYPE_VECTOR) {
         code += "\t" + offset + " := flatbuffers.UOffsetT(0)\n";
         code += "\tif t." + MakeCamel(field.name) + " != nil {\n";
         std::string length = MakeCamel(field.name, false) + "Length";
@@ -997,23 +984,21 @@ class GoGenerator : public BaseGenerator {
           continue;
         code +=
             "\tt." + field_name_camel + " = rcv." + field_name_camel + "()\n";
-      } else if (IsString(field.value.type)) {
+      } else if (field.value.type.base_type == BASE_TYPE_STRING) {
         code += "\tt." + field_name_camel + " = string(rcv." +
                 field_name_camel + "())\n";
-      } else if (IsVector(field.value.type) &&
+      } else if (field.value.type.base_type == BASE_TYPE_VECTOR &&
                  field.value.type.element == BASE_TYPE_UCHAR &&
                  field.value.type.enum_def == nullptr) {
         code += "\tt." + field_name_camel + " = rcv." + field_name_camel +
                 "Bytes()\n";
-      } else if (IsVector(field.value.type)) {
+      } else if (field.value.type.base_type == BASE_TYPE_VECTOR) {
         code += "\t" + length + " := rcv." + field_name_camel + "Length()\n";
         code += "\tt." + field_name_camel + " = make(" +
                 NativeType(field.value.type) + ", " + length + ")\n";
         code += "\tfor j := 0; j < " + length + "; j++ {\n";
         if (field.value.type.element == BASE_TYPE_STRUCT) {
-          code += "\t\tx := " +
-                  WrapInNameSpaceAndTrack(*field.value.type.struct_def) +
-                  "{}\n";
+          code += "\t\tx := " + field.value.type.struct_def->name + "{}\n";
           code += "\t\trcv." + field_name_camel + "(&x, j)\n";
         }
         code += "\t\tt." + field_name_camel + "[j] = ";
@@ -1240,9 +1225,9 @@ class GoGenerator : public BaseGenerator {
       } else {
         return GetEnumTypeName(*type.enum_def);
       }
-    } else if (IsString(type)) {
+    } else if (type.base_type == BASE_TYPE_STRING) {
       return "string";
-    } else if (IsVector(type)) {
+    } else if (type.base_type == BASE_TYPE_VECTOR) {
       return "[]" + NativeType(type.VectorType());
     } else if (type.base_type == BASE_TYPE_STRUCT) {
       return "*" + WrapInNameSpaceAndTrack(type.struct_def->defined_namespace,

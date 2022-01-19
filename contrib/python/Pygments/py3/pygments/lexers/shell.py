@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.shell
     ~~~~~~~~~~~~~~~~~~~~~
@@ -37,7 +38,6 @@ class BashLexer(RegexLexer):
     filenames = ['*.sh', '*.ksh', '*.bash', '*.ebuild', '*.eclass',
                  '*.exheres-0', '*.exlib', '*.zsh',
                  '.bashrc', 'bashrc', '.bash_*', 'bash_*', 'zshrc', '.zshrc',
-                 '.kshrc', 'kshrc',
                  'PKGBUILD']
     mimetypes = ['application/x-sh', 'application/x-shellscript', 'text/x-shellscript']
 
@@ -169,6 +169,10 @@ class ShellSessionBaseLexer(Lexer):
 
         for match in line_re.finditer(text):
             line = match.group()
+            if backslash_continuation:
+                curcode += line
+                backslash_continuation = curcode.endswith('\\\n')
+                continue
 
             venv_match = self._venv.match(line)
             if venv_match:
@@ -193,13 +197,10 @@ class ShellSessionBaseLexer(Lexer):
                                    [(0, Generic.Prompt, m.group(1))]))
                 curcode += m.group(2)
                 backslash_continuation = curcode.endswith('\\\n')
-            elif backslash_continuation:
-                if line.startswith(self._ps2):
-                    insertions.append((len(curcode),
-                                    [(0, Generic.Prompt, line[:len(self._ps2)])]))
-                    curcode += line[len(self._ps2):]
-                else:
-                    curcode += line
+            elif line.startswith(self._ps2):
+                insertions.append((len(curcode),
+                                   [(0, Generic.Prompt, line[:len(self._ps2)])]))
+                curcode += line[len(self._ps2):]
                 backslash_continuation = curcode.endswith('\\\n')
             else:
                 if insertions:
@@ -232,7 +233,7 @@ class BashSessionLexer(ShellSessionBaseLexer):
     _ps1rgx = re.compile(
         r'^((?:(?:\[.*?\])|(?:\(\S+\))?(?:| |sh\S*?|\w+\S+[@:]\S+(?:\s+\S+)' \
         r'?|\[\S+[@:][^\n]+\].+))\s*[$#%]\s*)(.*\n?)')
-    _ps2 = '> '
+    _ps2 = '>'
 
 
 class BatchLexer(RegexLexer):
@@ -242,7 +243,7 @@ class BatchLexer(RegexLexer):
     .. versionadded:: 0.7
     """
     name = 'Batchfile'
-    aliases = ['batch', 'bat', 'dosbatch', 'winbatch']
+    aliases = ['bat', 'batch', 'dosbatch', 'winbatch']
     filenames = ['*.bat', '*.cmd']
     mimetypes = ['application/x-dos-batch']
 
@@ -656,7 +657,7 @@ class PowerShellLexer(RegexLexer):
     .. versionadded:: 1.5
     """
     name = 'PowerShell'
-    aliases = ['powershell', 'pwsh', 'posh', 'ps1', 'psm1']
+    aliases = ['powershell', 'posh', 'ps1', 'psm1']
     filenames = ['*.ps1', '*.psm1']
     mimetypes = ['text/x-powershell']
 
@@ -734,7 +735,7 @@ class PowerShellLexer(RegexLexer):
             (r'\[[a-z_\[][\w. `,\[\]]*\]', Name.Constant),  # .net [type]s
             (r'-[a-z_]\w*', Name),
             (r'\w+', Name),
-            (r'[.,;:@{}\[\]$()=+*/\\&%!~?^`|<>-]', Punctuation),
+            (r'[.,;@{}\[\]$()=+*/\\&%!~?^`|<>-]|::', Punctuation),
         ],
         'child': [
             (r'\)', Punctuation, '#pop'),
@@ -772,7 +773,7 @@ class PowerShellSessionLexer(ShellSessionBaseLexer):
     """
 
     name = 'PowerShell Session'
-    aliases = ['pwsh-session', 'ps1con']
+    aliases = ['ps1con']
     filenames = []
     mimetypes = []
 

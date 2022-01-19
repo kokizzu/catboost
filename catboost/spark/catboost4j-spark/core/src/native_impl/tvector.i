@@ -29,14 +29,14 @@ public:
     void reserve(size_t new_cap);
 
     %extend {
-        const T& getImpl(jint index) const {
+        const T& getImpl(jint index) const throw (std::out_of_range) {
             if ((index < 0) || (index >= (jint)self->size())) {
                 throw std::out_of_range("TVector index is out of range");
             }
             return (*self)[index];
         }
 
-        T setImpl(jint index, const T& element) {
+        T setImpl(jint index, const T& element) throw (std::out_of_range) {
             if ((index < 0) || (index >= (jint)self->size())) {
                 throw std::out_of_range("TVector index is out of range");
             }
@@ -45,7 +45,7 @@ public:
             return oldValue;
         }
 
-        jint sizeImpl() const {
+        jint sizeImpl() const throw (std::out_of_range) {
             size_t size = self->size();
             if (size > Max<jint>()) {
                 throw std::out_of_range("TVector size cannot be represented by JVM's int type");
@@ -53,18 +53,18 @@ public:
             return (jint)size;
         }
 
-        void addImpl(const T& element) {
+        void addImpl(const T& element) throw (std::exception) {
             self->push_back(element);
         }
 
-        void addImpl(jint index, const T& element) {
+        void addImpl(jint index, const T& element) throw (std::out_of_range) {
             if ((index < 0) || (index > (jint)self->size())) {
                 throw std::out_of_range("TVector index is out of range");
             }
             self->insert(self->begin() + index, element);
         }
 
-        T removeImpl(jint index) {
+        T removeImpl(jint index) throw (std::out_of_range) {
             if ((index < 0) || (index >= (jint)self->size())) {
                 throw std::out_of_range("TVector index is out of range");
             }
@@ -143,24 +143,9 @@ public:
     ADD_EQUALS_WITH_IMPL_AND_HASH_CODE_METHODS(TVector<T>)
 };
 
-%define DECLARE_TVECTOR(NAME, CPPTYPE)
-
-    %catches(std::exception) TVector_##CPPTYPE::yresize(size_t new_size);
-    %catches(std::exception) TVector_##CPPTYPE::reserve(size_t new_cap);
-    %catches(std::out_of_range) TVector_##CPPTYPE::getImpl(jint index);
-    %catches(std::out_of_range) TVector_##CPPTYPE::sizeImpl() const;
-    %catches(std::exception) TVector_##CPPTYPE::addImpl(const T& element);
-    %catches(std::out_of_range) TVector_##CPPTYPE::addImpl(jint index, const T& element);
-    %catches(std::out_of_range) TVector_##CPPTYPE::removeImpl(jint index);
-    %catches(std::exception) TVector_##CPPTYPE::equalsImpl(const TVector_##CPPTYPE& rhs);
-
-    %template(NAME) TVector<CPPTYPE>;
-
-%enddef
-
 
 %define EXTEND_FOR_PRIMITIVE_TYPE(CPPTYPE, JNITYPE, JAVATYPE)
-    DECLARE_TVECTOR(TVector_##CPPTYPE, CPPTYPE);
+    %template(TVector_##CPPTYPE) TVector<CPPTYPE>;
 
     %native (toPrimitiveArrayImpl_##CPPTYPE) JNITYPE##Array toPrimitiveArrayImpl_##CPPTYPE(const TVector<CPPTYPE>& v);
     %native (asDirectByteBufferImpl_##CPPTYPE) jobject asDirectByteBufferImpl_##CPPTYPE(const TVector<CPPTYPE>& v);

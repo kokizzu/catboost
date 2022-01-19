@@ -28,9 +28,6 @@ namespace NCatboostOptions {
 
         NCB::TPathWithScheme PairsFilePath;
         NCB::TPathWithScheme FeatureNamesPath;
-        NCB::TPathWithScheme PoolMetaInfoPath;
-
-        bool ForceUnitAutoPairWeights;
 
         TVector<ui32> IgnoredFeatures;
     };

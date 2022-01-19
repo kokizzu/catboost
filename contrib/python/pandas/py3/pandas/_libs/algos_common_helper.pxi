@@ -18,8 +18,7 @@ def ensure_platform_int(object arr):
         if (<ndarray>arr).descr.type_num == PLATFORM_INT:
             return arr
         else:
-            # equiv: arr.astype(np.intp)
-            return cnp.PyArray_Cast(<ndarray>arr, PLATFORM_INT)
+            return arr.astype(np.intp)
     else:
         return np.array(arr, dtype=np.intp)
 
@@ -29,8 +28,7 @@ def ensure_object(object arr):
         if (<ndarray>arr).descr.type_num == NPY_OBJECT:
             return arr
         else:
-            # equiv: arr.astype(object)
-            return cnp.PyArray_Cast(<ndarray>arr, NPY_OBJECT)
+            return arr.astype(np.object_)
     else:
         return np.array(arr, dtype=np.object_)
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.haxe
     ~~~~~~~~~~~~~~~~~~~~
@@ -26,7 +27,7 @@ class HaxeLexer(ExtendedRegexLexer):
     """
 
     name = 'Haxe'
-    aliases = ['haxe', 'hxsl', 'hx']
+    aliases = ['hx', 'haxe', 'hxsl']
     filenames = ['*.hx', '*.hxsl']
     mimetypes = ['text/haxe', 'text/x-haxe', 'text/x-hx']
 
@@ -103,7 +104,7 @@ class HaxeLexer(ExtendedRegexLexer):
 
         # space/tab/comment/preproc
         'spaces': [
-            (r'\s+', Whitespace),
+            (r'\s+', Text),
             (r'//[^\n\r]*', Comment.Single),
             (r'/\*.*?\*/', Comment.Multiline),
             (r'(#)(if|elseif|else|end|error)\b', preproc_callback),
@@ -163,14 +164,14 @@ class HaxeLexer(ExtendedRegexLexer):
         ],
 
         'preproc-error': [
-            (r'\s+', Whitespace),
+            (r'\s+', Comment.Preproc),
             (r"'", String.Single, ('#pop', 'string-single')),
             (r'"', String.Double, ('#pop', 'string-double')),
             default('#pop'),
         ],
 
         'preproc-expr': [
-            (r'\s+', Whitespace),
+            (r'\s+', Comment.Preproc),
             (r'\!', Comment.Preproc),
             (r'\(', Comment.Preproc, ('#pop', 'preproc-parenthesis')),
 
@@ -193,20 +194,20 @@ class HaxeLexer(ExtendedRegexLexer):
         ],
 
         'preproc-parenthesis': [
-            (r'\s+', Whitespace),
+            (r'\s+', Comment.Preproc),
             (r'\)', Comment.Preproc, '#pop'),
             default('preproc-expr-in-parenthesis'),
         ],
 
         'preproc-expr-chain': [
-            (r'\s+', Whitespace),
+            (r'\s+', Comment.Preproc),
             (binop, Comment.Preproc, ('#pop', 'preproc-expr-in-parenthesis')),
             default('#pop'),
         ],
 
         # same as 'preproc-expr' but able to chain 'preproc-expr-chain'
         'preproc-expr-in-parenthesis': [
-            (r'\s+', Whitespace),
+            (r'\s+', Comment.Preproc),
             (r'\!', Comment.Preproc),
             (r'\(', Comment.Preproc,
              ('#pop', 'preproc-expr-chain', 'preproc-parenthesis')),
@@ -919,7 +920,7 @@ class HxmlLexer(RegexLexer):
              bygroups(Punctuation, Keyword, Whitespace, String)),
             # Options that take only numerical arguments
             (r'(-)(swf-version)( +)(\d+)',
-             bygroups(Punctuation, Keyword, Whitespace, Number.Integer)),
+             bygroups(Punctuation, Keyword, Number.Integer)),
             # An Option that defines the size, the fps and the background
             # color of an flash movie
             (r'(-)(swf-header)( +)(\d+)(:)(\d+)(:)(\d+)(:)([A-Fa-f0-9]{6})',

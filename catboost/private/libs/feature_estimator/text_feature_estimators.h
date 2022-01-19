@@ -1,6 +1,5 @@
 #pragma once
 
-#include "classification_target.h"
 #include "feature_estimator.h"
 
 #include <catboost/private/libs/options/enums.h>
@@ -10,7 +9,7 @@
 namespace NCB {
     TVector<TOnlineFeatureEstimatorPtr> CreateTextEstimators(
         TConstArrayRef<NCatboostOptions::TFeatureCalcerDescription> featureCalcerDescription,
-        TClassificationTargetPtr target,
+        TTextClassificationTargetPtr target,
         TTextDataSetPtr learnTexts,
         TArrayRef<TTextDataSetPtr> testText
     );

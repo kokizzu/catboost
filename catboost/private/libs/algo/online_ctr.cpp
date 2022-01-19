@@ -51,7 +51,7 @@ TConstArrayRef<ui8> TPrecomputedOnlineCtr::GetData(const TCtr& ctr, ui32 dataset
         ctr.PriorIdx
     };
 
-    const TQuantizedObjectsDataProvider& dataProvider
+    const TQuantizedForCPUObjectsDataProvider& dataProvider
         = (datasetIdx == 0) ? *(Data.DataProviders.Learn) : *(Data.DataProviders.Test[datasetIdx - 1]);
 
     const IQuantizedFloatValuesHolder& column
@@ -62,7 +62,7 @@ TConstArrayRef<ui8> TPrecomputedOnlineCtr::GetData(const TCtr& ctr, ui32 dataset
 
     Y_ASSERT(columnImpl.GetBitsPerKey() == 8);
     TConstPtrArraySubset<ui8> arraySubset = columnImpl.GetArrayData<ui8>();
-    Y_ASSERT(std::holds_alternative<TFullSubset<ui32>>(*arraySubset.GetSubsetIndexing()));
+    Y_ASSERT(HoldsAlternative<TFullSubset<ui32>>(*arraySubset.GetSubsetIndexing()));
     return TConstArrayRef<ui8>(*arraySubset.GetSrc(), dataProvider.GetObjectCount());
 }
 

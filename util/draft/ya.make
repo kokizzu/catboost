@@ -1,7 +1,6 @@
 LIBRARY()
 
 
-SUBSCRIBER(g:util-subscribers)
 
 NO_UTIL()
 

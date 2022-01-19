@@ -122,7 +122,7 @@ namespace {
             SampleInvertedSubset = GetInvertedIndexing(SampleSubset, ObjectCount, LocalExecutor);
             IsFullSubset = SampleSubset.IsFullSubset();
             if (!IsFullSubset) {
-                auto* indexedSubset = ::std::get_if<TInvertedIndexedSubset<ui32>>(&SampleInvertedSubset);
+                auto* indexedSubset = ::GetIf<TInvertedIndexedSubset<ui32>>(&SampleInvertedSubset);
                 CB_ENSURE_INTERNAL(
                     indexedSubset != nullptr,
                     "inverted subset should be either indexed or full");
@@ -177,18 +177,6 @@ namespace {
                 return;
             }
             DataVisitor->AddSubgroupId(sampleIdx, value);
-        }
-
-        void AddGroupId(ui32 /*localObjectIdx*/, const TString& /*value*/) override {
-            CB_ENSURE_INTERNAL(false, "unsupported function");
-        }
-
-        void AddSubgroupId(ui32 /*localObjectIdx*/, const TString& /*value*/) override {
-            CB_ENSURE_INTERNAL(false, "unsupported function");
-        }
-
-        void AddSampleId(ui32 /*localObjectIdx*/, const TString& /*value*/) override {
-            CB_ENSURE_INTERNAL(false, "unsupported function");
         }
 
         void AddTimestamp(ui32 localObjectIdx, ui64 value) override {
@@ -758,7 +746,6 @@ TDataProviderPtr NCB::ReadAndQuantizeDataset(
     const TPathWithScheme& timestampsFilePath,   // can be uninited
     const TPathWithScheme& baselineFilePath,     // can be uninited
     const TPathWithScheme& featureNamesPath,     // can be uninited
-    const TPathWithScheme& poolMetaInfoPath,     // can be uninited
     const TPathWithScheme& inputBordersPath,     // can be uninited
     const NCatboostOptions::TColumnarPoolFormatParams& columnarPoolFormatParams,
     const TVector<ui32>& ignoredFeatures,
@@ -784,23 +771,17 @@ TDataProviderPtr NCB::ReadAndQuantizeDataset(
         classLabels = &emptyClassLabels;
     }
 
-    NJson::TJsonValue jsonParams;
-    NJson::TJsonValue outputJsonParams;
-    NCatboostOptions::PlainJsonToOptions(plainJsonParams, &jsonParams, &outputJsonParams);
-    NCatboostOptions::TCatBoostOptions catBoostOptions(NCatboostOptions::LoadOptions(jsonParams));
-
     auto datasetLoader = GetProcessor<IDatasetLoader>(
         poolPath, // for choosing processor
         // processor args
         TDatasetLoaderPullArgs{
             poolPath,
-            TDatasetLoaderCommonArgs {
+            TDatasetLoaderCommonArgs{
                 pairsFilePath,
                 groupWeightsFilePath,
                 baselineFilePath,
                 timestampsFilePath,
                 featureNamesPath,
-                poolMetaInfoPath,
                 **classLabels,
                 columnarPoolFormatParams.DsvFormat,
                 MakeCdProviderFromFile(columnarPoolFormatParams.CdFilePath),
@@ -808,8 +789,6 @@ TDataProviderPtr NCB::ReadAndQuantizeDataset(
                 objectsOrder,
                 *blockSize,
                 loadSubset,
-                /*LoadColumnsAsString*/ false,
-                catBoostOptions.DataProcessingOptions->ForceUnitAutoPairWeights,
                 localExecutor}});
 
     CB_ENSURE(
@@ -818,6 +797,11 @@ TDataProviderPtr NCB::ReadAndQuantizeDataset(
     CB_ENSURE_INTERNAL(
         datasetLoader->GetVisitorType() == EDatasetVisitorType::RawObjectsOrder,
         "dataset should be loaded by RawObjectsOrder loader");
+
+    NJson::TJsonValue jsonParams;
+    NJson::TJsonValue outputJsonParams;
+    NCatboostOptions::PlainJsonToOptions(plainJsonParams, &jsonParams, &outputJsonParams);
+    NCatboostOptions::TCatBoostOptions catBoostOptions(NCatboostOptions::LoadOptions(jsonParams));
 
     TRestorableFastRng64 rand(catBoostOptions.RandomSeed);
 
@@ -853,7 +837,6 @@ TDataProviderPtr NCB::ReadAndQuantizeDataset(
     params.ColumnarPoolFormatParams = columnarPoolFormatParams;
     params.PoolPath = poolPath;
     params.FeatureNamesPath = featureNamesPath;
-    params.PoolMetaInfoPath = poolMetaInfoPath;
     params.ClassLabels = **classLabels;
     params.IgnoredFeatures = secondPassQuantizer.GetIgnoredFeatures();
     ReadAndProceedPoolInBlocks(
@@ -872,7 +855,6 @@ TDataProviderPtr NCB::ReadAndQuantizeDataset(
     const TPathWithScheme& timestampsFilePath,   // can be uninited
     const TPathWithScheme& baselineFilePath,     // can be uninited
     const TPathWithScheme& featureNamesPath,     // can be uninited
-    const TPathWithScheme& poolMetaInfoPath,     // can be uninited
     const TPathWithScheme& inputBordersPath,     // can be uninited
     const NCatboostOptions::TColumnarPoolFormatParams& columnarPoolFormatParams,
     const TVector<ui32>& ignoredFeatures,
@@ -896,7 +878,6 @@ TDataProviderPtr NCB::ReadAndQuantizeDataset(
         timestampsFilePath,
         baselineFilePath,
         featureNamesPath,
-        poolMetaInfoPath,
         inputBordersPath,
         columnarPoolFormatParams,
         ignoredFeatures,

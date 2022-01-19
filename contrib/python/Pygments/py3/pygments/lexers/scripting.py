@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.scripting
     ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -168,9 +169,9 @@ class MoonScriptLexer(LuaLexer):
     .. versionadded:: 1.5
     """
 
-    name = 'MoonScript'
-    aliases = ['moonscript', 'moon']
-    filenames = ['*.moon']
+    name = "MoonScript"
+    aliases = ["moon", "moonscript"]
+    filenames = ["*.moon"]
     mimetypes = ['text/x-moonscript', 'application/x-moonscript']
 
     tokens = {
@@ -184,7 +185,7 @@ class MoonScriptLexer(LuaLexer):
             (r'(?i)\d+e[+-]?\d+', Number.Float),
             (r'(?i)0x[0-9a-f]*', Number.Hex),
             (r'\d+', Number.Integer),
-            (r'\n', Whitespace),
+            (r'\n', Text),
             (r'[^\S\n]+', Text),
             (r'(?s)\[(=*)\[.*?\]\1\]', String),
             (r'(->|=>)', Name.Function),
@@ -213,11 +214,11 @@ class MoonScriptLexer(LuaLexer):
         ],
         'sqs': [
             ("'", String.Single, '#pop'),
-            ("[^']+", String)
+            (".", String)
         ],
         'dqs': [
             ('"', String.Double, '#pop'),
-            ('[^"]+', String)
+            (".", String)
         ]
     }
 
@@ -237,7 +238,7 @@ class ChaiscriptLexer(RegexLexer):
     """
 
     name = 'ChaiScript'
-    aliases = ['chaiscript', 'chai']
+    aliases = ['chai', 'chaiscript']
     filenames = ['*.chai']
     mimetypes = ['text/x-chaiscript', 'application/x-chaiscript']
 
@@ -719,7 +720,7 @@ class RexxLexer(RegexLexer):
 
     tokens = {
         'root': [
-            (r'\s+', Whitespace),
+            (r'\s', Whitespace),
             (r'/\*', Comment.Multiline, 'comment'),
             (r'"', String, 'string_double'),
             (r"'", String, 'string_single'),
@@ -766,7 +767,7 @@ class RexxLexer(RegexLexer):
             (r'\n', Text, '#pop'),  # Stray linefeed also terminates strings.
         ],
         'string_single': [
-            (r'[^\'\n]+', String),
+            (r'[^\'\n]', String),
             (r'\'\'', String),
             (r'\'', String, '#pop'),
             (r'\n', Text, '#pop'),  # Stray linefeed also terminates strings.
@@ -1236,9 +1237,9 @@ class MiniScriptLexer(RegexLexer):
     .. versionadded:: 2.6
     """
 
-    name = 'MiniScript'
-    aliases = ['miniscript', 'ms']
-    filenames = ['*.ms']
+    name = "MiniScript"
+    aliases = ["ms", "miniscript"]
+    filenames = ["*.ms"]
     mimetypes = ['text/x-minicript', 'application/x-miniscript']
 
     tokens = {

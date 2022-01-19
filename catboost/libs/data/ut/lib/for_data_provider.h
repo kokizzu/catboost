@@ -23,7 +23,7 @@ namespace NCB {
     namespace NDataNewUT {
 
     template <class TValue>
-    using TExpectedFeatureColumn = std::variant<TVector<TValue>, TConstPolymorphicValuesSparseArray<TValue, ui32>>;
+    using TExpectedFeatureColumn = TVariant<TVector<TValue>, TConstPolymorphicValuesSparseArray<TValue, ui32>>;
 
     template <
         class TGroupIdData,
@@ -103,6 +103,12 @@ namespace NCB {
 
     void CompareObjectsData(
         const TQuantizedObjectsDataProvider& objectsData,
+        const TExpectedQuantizedData& expectedData,
+        bool catFeaturesHashCanContainExtraData = false
+    );
+
+    void CompareObjectsData(
+        const TQuantizedForCPUObjectsDataProvider& objectsData,
         const TExpectedQuantizedData& expectedData,
         bool catFeaturesHashCanContainExtraData = false
     );

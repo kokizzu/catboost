@@ -1,6 +1,6 @@
 
 
-G_BENCHMARK()
+Y_BENCHMARK()
 
 SRCS(
     main.cpp

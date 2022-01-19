@@ -52,7 +52,7 @@ public:
     // objectsData must be from the corresponding source data for this split
     TSplit GetSplit(
         int binId,
-        const NCB::TQuantizedObjectsDataProvider& objectsData,
+        const NCB::TQuantizedForCPUObjectsDataProvider& objectsData,
         ui32 oneHotMaxSize
     ) const;
 };
@@ -93,7 +93,7 @@ struct TCandidatesContext {
 void Bootstrap(
     const NCatboostOptions::TCatBoostOptions& params,
     bool hasOfflineEstimatedFeatures,
-    TConstArrayRef<TIndexType> indices,
+    const TVector<TIndexType>& indices,
     const TVector<TVector<TVector<double>>>& leafValues,
     TFold* fold,
     TCalcScoreFold* sampledDocs,

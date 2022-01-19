@@ -179,18 +179,14 @@ namespace {
     private:
 
         static ETargetType GetTargetType(ELossFunction lossFunction) {
-            switch (lossFunction) {
-                case ELossFunction::Logloss:
-                case ELossFunction::MultiLogloss:
-                case ELossFunction::MultiCrossEntropy:
-                    return ETargetType::Logloss;
-                case ELossFunction::MultiClass:
-                    return ETargetType::MultiClass;
-                case ELossFunction::RMSE:
-                    return ETargetType::RMSE;
-                default:
-                    return ETargetType::Unknown;
+            if (lossFunction == ELossFunction::Logloss) {
+                return ETargetType::Logloss;
+            } else if (lossFunction == ELossFunction::MultiClass) {
+                return ETargetType::MultiClass;
+            } else if (lossFunction == ELossFunction::RMSE) {
+                return ETargetType::RMSE;
             }
+            return ETargetType::Unknown;
         }
 
     public:
@@ -365,7 +361,7 @@ static void AdjustBoostFromAverageDefaultValue(
         && EqualToOneOf(
             catBoostOptions->LossFunctionDescription->GetLossFunction(),
             ELossFunction::RMSE, ELossFunction::MAE, ELossFunction::Quantile, ELossFunction::MAPE,
-            ELossFunction::MultiRMSE, ELossFunction::MultiRMSEWithMissingValues)
+            ELossFunction::MultiRMSE)
     ) {
         catBoostOptions->BoostingOptions->BoostFromAverage.Set(true);
     }
@@ -415,7 +411,6 @@ void SetDataDependentDefaults(
     const bool hasTestPairs = testDataMetaInfo.Defined() && testDataMetaInfo->HasPairs;
     UpdateUseBestModel(testPoolSize, isConstTestTarget, hasTestPairs, outputFilesOptions);
     UpdateBoostingTypeOption(learnPoolSize, catBoostOptions);
-    AdjustBoostFromAverageDefaultValue(trainDataMetaInfo, testDataMetaInfo, continueFromModel, catBoostOptions);
     UpdateLearningRate(learnPoolSize, outputFilesOptions->UseBestModel.Get(), catBoostOptions);
     UpdateOneHotMaxSize(
         trainDataMetaInfo.MaxCatFeaturesUniqValuesOnLearn,
@@ -430,6 +425,7 @@ void SetDataDependentDefaults(
     UpdateLeavesEstimationIterations(trainDataMetaInfo, catBoostOptions);
     UpdateAndValidateMonotoneConstraints(*trainDataMetaInfo.FeaturesLayout.Get(), catBoostOptions);
     DropModelShrinkageIfBaselineUsed(trainDataMetaInfo, continueFromModel || continueFromProgress, catBoostOptions);
+    AdjustBoostFromAverageDefaultValue(trainDataMetaInfo, testDataMetaInfo, continueFromModel, catBoostOptions);
     UpdateDictionaryDefaults(learnPoolSize, catBoostOptions);
     UpdateSampleRateOption(learnPoolSize, catBoostOptions);
     AdjustPosteriorSamplingDeafultValues(trainDataMetaInfo, continueFromModel || continueFromProgress, catBoostOptions);

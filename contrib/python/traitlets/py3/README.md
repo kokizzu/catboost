@@ -1,7 +1,6 @@
 # Traitlets
 
-[![Tests](https://github.com/ipython/traitlets/actions/workflows/tests.yml/badge.svg)](https://github.com/ipython/traitlets/actions/workflows/tests.yml)
-[![Test downstream projects](https://github.com/ipython/traitlets/actions/workflows/downstream.yml/badge.svg)](https://github.com/ipython/traitlets/actions/workflows/downstream.yml)
+[![Build Status](https://travis-ci.org/ipython/traitlets.svg?branch=master)](https://travis-ci.org/ipython/traitlets)
 [![Documentation Status](https://readthedocs.org/projects/traitlets/badge/?version=latest)](https://traitlets.readthedocs.io/en/latest/?badge=latest)
 
 |               |                                        |
@@ -25,7 +24,7 @@ Traitlets is a pure Python library enabling:
 
 Its implementation relies on the [descriptor](https://docs.python.org/howto/descriptor.html)
 pattern, and it is a lightweight pure-python alternative of the
-[*traits* library](https://docs.enthought.com/traits/).
+[*traits* library](http://code.enthought.com/pages/traits.html).
 
 Traitlets powers the configuration system of IPython and Jupyter
 and the declarative API of IPython interactive widgets.
@@ -156,8 +155,6 @@ However, we **recommend** that custom cross-validators don't modify the state
 of the HasTraits instance.
 
 ### Release build:
-
-Releases should be automatically build and pushed to Pypi when a tag is marked and pushed to GitHub.
 
 ```bash
 $ pip install build

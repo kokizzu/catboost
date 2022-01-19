@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.styles.sas
     ~~~~~~~~~~~~~~~~~~~
@@ -28,7 +29,7 @@ class SasStyle(Style):
         Whitespace:            '#bbbbbb',
         Comment:               'italic #008800',
         String:                '#800080',
-        Number:                'bold #2c8553',
+        Number:                'bold #2e8b57',
         Other:                 'bg:#ffffe0',
         Keyword:               '#2c2cff',
         Keyword.Reserved:      'bold #353580',

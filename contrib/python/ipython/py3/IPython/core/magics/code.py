@@ -20,7 +20,7 @@ import re
 import sys
 import ast
 from itertools import chain
-from urllib.request import Request, urlopen
+from urllib.request import urlopen
 from urllib.parse import urlencode
 
 # Our own packages
@@ -28,7 +28,6 @@ from IPython.core.error import TryNext, StdinNotImplementedError, UsageError
 from IPython.core.macro import Macro
 from IPython.core.magic import Magics, magics_class, line_magic
 from IPython.core.oinspect import find_file, find_source_lines
-from IPython.core.release import version
 from IPython.testing.skipdoctest import skip_doctest
 from IPython.utils.contexts import preserve_keys
 from IPython.utils.path import get_py_filename
@@ -245,22 +244,20 @@ class CodeMagics(Magics):
 
     @line_magic
     def pastebin(self, parameter_s=''):
-        """Upload code to dpaste.com, returning the URL.
+        """Upload code to dpaste's paste bin, returning the URL.
 
         Usage:\\
-          %pastebin [-d "Custom description"][-e 24] 1-7
+          %pastebin [-d "Custom description"] 1-7
 
         The argument can be an input history range, a filename, or the name of a
         string or macro.
 
         Options:
 
-          -d: Pass a custom description. The default will say
+          -d: Pass a custom description for the gist. The default will say
               "Pasted from IPython".
-          -e: Pass number of days for the link to be expired.
-              The default will be 7 days.
         """
-        opts, args = self.parse_options(parameter_s, "d:e:")
+        opts, args = self.parse_options(parameter_s, 'd:')
 
         try:
             code = self.shell.find_user_code(args)
@@ -268,30 +265,13 @@ class CodeMagics(Magics):
             print(e.args[0])
             return
 
-        expiry_days = 7
-        try:
-            expiry_days = int(opts.get("e", 7))
-        except ValueError as e:
-            print(e.args[0].capitalize())
-            return
-        if expiry_days < 1 or expiry_days > 365:
-            print("Expiry days should be in range of 1 to 365")
-            return
+        post_data = urlencode({
+          "title": opts.get('d', "Pasted from IPython"),
+          "syntax": "python3",
+          "content": code
+        }).encode('utf-8')
 
-        post_data = urlencode(
-            {
-                "title": opts.get("d", "Pasted from IPython"),
-                "syntax": "python",
-                "content": code,
-                "expiry_days": expiry_days,
-            }
-        ).encode("utf-8")
-
-        request = Request(
-            "https://dpaste.com/api/v2/",
-            headers={"User-Agent": "IPython v{}".format(version)},
-        )
-        response = urlopen(request, post_data)
+        response = urlopen("http://dpaste.com/api/v2/", post_data)
         return response.headers.get('Location')
 
     @line_magic

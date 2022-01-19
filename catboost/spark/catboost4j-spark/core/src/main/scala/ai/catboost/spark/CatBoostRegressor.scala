@@ -97,13 +97,13 @@ class CatBoostRegressionModel (
   }
 
   protected override def getResultIteratorForApply(
-    objectsDataProvider: native_impl.SWIGTYPE_p_NCB__TObjectsDataProviderPtr,
+    rawObjectsDataProvider: native_impl.SWIGTYPE_p_NCB__TRawObjectsDataProviderPtr,
     dstRows: mutable.ArrayBuffer[Array[Any]], // guaranteed to be non-empty
     localExecutor: native_impl.TLocalExecutor
   ) : Iterator[Row] = {
     val applyResults = new native_impl.TApplyResultIterator(
       nativeModel,
-      objectsDataProvider,
+      rawObjectsDataProvider,
       native_impl.EPredictionType.RawFormulaVal,
       localExecutor
     ).GetSingleDimensionalResults.toPrimitiveArray
@@ -140,7 +140,7 @@ object CatBoostRegressionModel extends MLReadable[CatBoostRegressionModel] {
     fileName: String, 
     format: EModelType = native_impl.EModelType.CatboostBinary
   ): CatBoostRegressionModel = {
-    new CatBoostRegressionModel(native_impl.native_impl.ReadModel(fileName, format))
+    new CatBoostRegressionModel(native_impl.native_impl.ReadModelWrapper(fileName, format))
   }
 }
 

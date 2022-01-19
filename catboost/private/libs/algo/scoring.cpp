@@ -159,7 +159,7 @@ static void GetIndexingParams(
 }
 
 static void GetBitsPerValueAndRawPtr(
-    const TQuantizedObjectsDataProvider& objectsDataProvider,
+    const TQuantizedForCPUObjectsDataProvider& objectsDataProvider,
     const std::tuple<const TOnlineCtrBase&, const TOnlineCtrBase&>& allCtrs,
     const TSplitEnsemble& splitEnsemble,
     size_t* bitsPerValue,
@@ -334,7 +334,7 @@ inline static void FixUpStats(
 
 static void CalcStatsPairwise(
     const TCalcScoreFold& fold,
-    const TQuantizedObjectsDataProvider& objectsDataProvider,
+    const TQuantizedForCPUObjectsDataProvider& objectsDataProvider,
     const TFlatPairsInfo& pairs,
     const std::tuple<const TOnlineCtrBase&, const TOnlineCtrBase&>& allCtrs,
     const TSplitEnsemble& splitEnsemble,
@@ -771,7 +771,7 @@ static void CalculateNonPairwiseScore(
 
 
 void CalcStatsAndScores(
-    const TQuantizedObjectsDataProvider& objectsDataProvider,
+    const TQuantizedForCPUObjectsDataProvider& objectsDataProvider,
     const std::tuple<const TOnlineCtrBase&, const TOnlineCtrBase&>& allCtrs,
     const TCalcScoreFold& fold,
     const TCalcScoreFold& prevLevelData,

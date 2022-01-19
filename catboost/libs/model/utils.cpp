@@ -13,8 +13,7 @@ NJson::TJsonValue GetPlainJsonWithAllOptions(const TFullModel& model) {
     CB_ENSURE(!cleanedOptions.GetMapSafe().empty(), "problems with copy constructor.");
     bool hasCatFeatures = !model.ModelTrees->GetCatFeatures().empty();
     bool hasTextFeatures = !model.ModelTrees->GetTextFeatures().empty();
-    bool hasEmbeddingFeatures = !model.ModelTrees->GetEmbeddingFeatures().empty();
-    NCatboostOptions::CleanPlainJson(hasCatFeatures, &cleanedOptions, hasTextFeatures, hasEmbeddingFeatures);
+    NCatboostOptions::CleanPlainJson(hasCatFeatures, &cleanedOptions, hasTextFeatures);
     CB_ENSURE(!cleanedOptions.GetMapSafe().empty(), "cleanedOptions should not be empty.");
     return cleanedOptions;
 }

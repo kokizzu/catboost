@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.styles.native
     ~~~~~~~~~~~~~~~~~~~~~~
@@ -20,7 +21,6 @@ class NativeStyle(Style):
 
     background_color = '#202020'
     highlight_color = '#404040'
-    line_number_color = '#aaaaaa'
 
     styles = {
         Token:              '#d0d0d0',

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.tnt
     ~~~~~~~~~~~~~~~~~~~
@@ -12,7 +13,7 @@ import re
 
 from pygments.lexer import Lexer
 from pygments.token import Text, Comment, Operator, Keyword, Name, Number, \
-    Punctuation, Error
+     Punctuation, Error
 
 __all__ = ['TNTLexer']
 
@@ -66,16 +67,15 @@ class TNTLexer(Lexer):
                 end += 1
         except IndexError:
             end = len(text)
-        if required and end == start:
-            raise AssertionError
+        if required:
+            assert end != start
         if end != start:
             self.cur.append((start, Text, text[start:end]))
         return end
 
     def variable(self, start, text):
         """Tokenize a variable."""
-        if text[start] not in self.VARIABLES:
-            raise AssertionError
+        assert text[start] in self.VARIABLES
         end = start+1
         while text[end] in self.PRIMES:
             end += 1
@@ -98,12 +98,10 @@ class TNTLexer(Lexer):
         if text[start] == '(':  # (...+...)
             self.cur.append((start, Punctuation, text[start]))
             start = self.term(start+1, text)
-            if text[start] not in self.OPERATORS:
-                raise AssertionError
+            assert text[start] in self.OPERATORS
             self.cur.append((start, Operator, text[start]))
             start = self.term(start+1, text)
-            if text[start] != ')':
-                raise AssertionError
+            assert text[start] == ')'
             self.cur.append((start, Punctuation, text[start]))
             return start+1
         raise AssertionError  # no matches
@@ -119,25 +117,21 @@ class TNTLexer(Lexer):
         if text[start] in self.QUANTIFIERS:  # Aa:<...>
             self.cur.append((start, Keyword.Declaration, text[start]))
             start = self.variable(start+1, text)
-            if text[start] != ':':
-                raise AssertionError
+            assert text[start] == ':'
             self.cur.append((start, Punctuation, text[start]))
             return self.formula(start+1, text)
         if text[start] == '<':  # <...&...>
             self.cur.append((start, Punctuation, text[start]))
             start = self.formula(start+1, text)
-            if text[start] not in self.LOGIC:
-                raise AssertionError
+            assert text[start] in self.LOGIC
             self.cur.append((start, Operator, text[start]))
             start = self.formula(start+1, text)
-            if text[start] != '>':
-                raise AssertionError
+            assert text[start] == '>'
             self.cur.append((start, Punctuation, text[start]))
             return start+1
         # ...=...
         start = self.term(start, text)
-        if text[start] != '=':
-            raise AssertionError
+        assert text[start] == '='
         self.cur.append((start, Operator, text[start]))
         start = self.term(start+1, text)
         return start
@@ -145,8 +139,7 @@ class TNTLexer(Lexer):
     def rule(self, start, text):
         """Tokenize a rule."""
         match = self.RULES.match(text, start)
-        if match is None:
-            raise AssertionError
+        assert match is not None
         groups = sorted(match.regs[1:])  # exclude whole match
         for group in groups:
             if group[0] >= 0:  # this group matched
@@ -170,10 +163,8 @@ class TNTLexer(Lexer):
         self.cur.append((start+1, Text, text[start+1:end]))
         start = end
         match = self.LINENOS.match(text, start)
-        if match is None:
-            raise AssertionError
-        if text[match.end()] != ')':
-            raise AssertionError
+        assert match is not None
+        assert text[match.end()] == ')'
         self.cur.append((match.start(), Number.Integer, match.group(0)))
         self.cur.append((match.end(), Punctuation, text[match.end()]))
         return match.end() + 1
@@ -229,7 +220,7 @@ class TNTLexer(Lexer):
                     orig = len(self.cur)
                     try:
                         start = end = self.formula(start, text)
-                    except (AssertionError, RecursionError):  # not well-formed
+                    except AssertionError:  # not well-formed
                         del self.cur[orig:]
                         while text[end] not in self.WHITESPACE:
                             end += 1
@@ -267,6 +258,6 @@ class TNTLexer(Lexer):
                 try:
                     del self.cur[orig:]
                 except NameError:
-                    pass  # if orig was never defined, fine
+                    pass # if orig was never defined, fine
                 self.error_till_line_end(start, text)
         return self.cur

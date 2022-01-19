@@ -17,10 +17,8 @@ namespace NCatboostCuda {
         const TFeaturesLayout& featuresLayout,
         const TVector<NCB::TExclusiveFeaturesBundle>& learnExclusiveFeatureBundles,
         TQuantizedFeaturesInfoPtr quantizedFeaturesInfo,
-        ui32 maxObjectsCount,
         bool enableShuffling)
-        : MaxObjectsCount(maxObjectsCount)
-        , CatFeatureOptions(catFeatureOptions)
+        : CatFeatureOptions(catFeatureOptions)
         , EnableShuffling(enableShuffling)
         , QuantizedFeaturesInfo(quantizedFeaturesInfo)
         , FeatureEstimators(estimators)
@@ -57,7 +55,6 @@ namespace NCatboostCuda {
         , EstimatedFeatureUpperBoundHints(featureManager.EstimatedFeatureUpperBoundHints)
         , FeatureManagerIdToEstimatedFeatureId(featureManager.FeatureManagerIdToEstimatedFeatureId)
         , Cursor(featureManager.Cursor)
-        , MaxObjectsCount(featureManager.MaxObjectsCount)
         , CtrBinarizationOptions(featureManager.CtrBinarizationOptions)
         , TargetBorders(featureManager.TargetBorders)
         , CatFeatureOptions(featureManager.CatFeatureOptions)

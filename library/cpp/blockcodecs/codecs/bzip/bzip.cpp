@@ -58,5 +58,5 @@ namespace {
             RegisterAlias("bzip2", "bzip2-6");
         }
     };
-    const TBZipRegistrar Registrar{};
+    static const TBZipRegistrar Registrar{};
 }

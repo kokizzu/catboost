@@ -5,9 +5,10 @@ RECURSE(
     brotli
     clapack
     coreml
+    cppdemangle
     crcutil
     cxxsupp/libcxx
-    cxxsupp/libcxxabi-parts
+    cxxsupp/libcxx-filesystem
     expat
     fastlz
     flatbuffers
@@ -24,27 +25,24 @@ RECURSE(
     lz4
     lz4/generated
     lzmasdk
-    mimalloc
     nayuki_md5
-    nvidia
     onnx
     openssl
+    openssl/apps
+    openssl/dynamic
     protobuf
     protobuf/python
+    protobuf/python/test
     pugixml
     python
     python/ut
-    qhull
     r-lang
     re2
     snappy
     sqlite3
     tbb
-    tcmalloc
-    tcmalloc/dynamic
     tensorboard
     xxhash
-    xz
     zlib
     zstd
     zstd06
@@ -91,12 +89,6 @@ IF (OS_ANDROID)
 ENDIF()
 
 IF (OS_IOS AND ARCH_ARM64 OR OS_DARWIN)
-    RECURSE(
-    
-)
-ENDIF()
-
-IF (MUSL)
     RECURSE(
     
 )

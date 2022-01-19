@@ -84,14 +84,8 @@ typedef enum {
     QUOTE_NONE
 } QuoteStyle;
 
-typedef enum {
-    ERROR,
-    WARN,
-    SKIP
-} BadLineHandleMethod;
-
 typedef void *(*io_callback)(void *src, size_t nbytes, size_t *bytes_read,
-                             int *status, const char *encoding_errors);
+                             int *status);
 typedef int (*io_cleanup)(void *src);
 
 typedef struct parser_t {
@@ -138,11 +132,13 @@ typedef struct parser_t {
 
     char commentchar;
     int allow_embedded_newline;
+    int strict; /* raise exception on bad CSV */
 
     int usecols;  // Boolean: 1: usecols provided, 0: none provided
 
     int expected_fields;
-    BadLineHandleMethod on_bad_lines;
+    int error_bad_lines;
+    int warn_bad_lines;
 
     // floating point options
     char decimal;
@@ -201,9 +197,9 @@ void parser_del(parser_t *self);
 
 void parser_set_default_options(parser_t *self);
 
-int tokenize_nrows(parser_t *self, size_t nrows, const char *encoding_errors);
+int tokenize_nrows(parser_t *self, size_t nrows);
 
-int tokenize_all_rows(parser_t *self, const char *encoding_errors);
+int tokenize_all_rows(parser_t *self);
 
 // Have parsed / type-converted a chunk of data
 // and want to free memory from the token stream

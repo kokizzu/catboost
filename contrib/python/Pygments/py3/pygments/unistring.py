@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.unistring
     ~~~~~~~~~~~~~~~~~~
@@ -10,6 +11,8 @@
     :copyright: Copyright 2006-2021 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
+
+import sys
 
 Cc = '\x00-\x1f\x7f-\x9f'
 

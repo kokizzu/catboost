@@ -20,8 +20,6 @@ namespace NCatboostCuda {
                                                 treeConfig.MaxDepth,
                                                 treeConfig.ScoreFunction,
                                                 treeConfig.L2Reg,
-                                                treeConfig.MetaL2Exponent,
-                                                treeConfig.MetaL2Frequency,
                                                 treeConfig.FoldSizeLossNormalization,
                                                 requestStream);
     };

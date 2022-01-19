@@ -133,7 +133,6 @@ namespace NJsonWriter {
         void WriteBareString(const TStringBuf s, EHtmlEscapeMode hem);
         void WriteComma();
         void PrintIndentation(bool closing);
-        void PrintWhitespaces(size_t count, bool prependWithNewLine);
         void WriteHexEscape(unsigned char c);
 
         void StackPush(EJsonEntity e);

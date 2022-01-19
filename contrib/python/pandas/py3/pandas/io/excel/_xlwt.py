@@ -1,18 +1,10 @@
-from __future__ import annotations
-
-from typing import (
-    TYPE_CHECKING,
-    Any,
-)
+from typing import TYPE_CHECKING, Dict
 
 import pandas._libs.json as json
 from pandas._typing import StorageOptions
 
 from pandas.io.excel._base import ExcelWriter
-from pandas.io.excel._util import (
-    combine_kwargs,
-    validate_freeze_panes,
-)
+from pandas.io.excel._util import validate_freeze_panes
 
 if TYPE_CHECKING:
     from xlwt import XFStyle
@@ -26,29 +18,21 @@ class XlwtWriter(ExcelWriter):
         self,
         path,
         engine=None,
-        date_format=None,
-        datetime_format=None,
         encoding=None,
         mode: str = "w",
         storage_options: StorageOptions = None,
-        if_sheet_exists: str | None = None,
-        engine_kwargs: dict[str, Any] | None = None,
-        **kwargs,
+        **engine_kwargs,
     ):
         # Use the xlwt module as the Excel writer.
         import xlwt
 
-        engine_kwargs = combine_kwargs(engine_kwargs, kwargs)
+        engine_kwargs["engine"] = engine
 
         if mode == "a":
             raise ValueError("Append mode is not supported with xlwt!")
 
         super().__init__(
-            path,
-            mode=mode,
-            storage_options=storage_options,
-            if_sheet_exists=if_sheet_exists,
-            engine_kwargs=engine_kwargs,
+            path, mode=mode, storage_options=storage_options, **engine_kwargs
         )
 
         if encoding is None:
@@ -82,7 +66,7 @@ class XlwtWriter(ExcelWriter):
             wks.set_horz_split_pos(freeze_panes[0])
             wks.set_vert_split_pos(freeze_panes[1])
 
-        style_dict: dict[str, XFStyle] = {}
+        style_dict: Dict[str, XFStyle] = {}
 
         for cell in cells:
             val, fmt = self._value_with_fmt(cell.val)

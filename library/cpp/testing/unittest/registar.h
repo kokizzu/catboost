@@ -8,6 +8,7 @@
 #include <util/generic/map.h>
 #include <util/generic/ptr.h>
 #include <util/generic/set.h>
+#include <util/generic/type_name.h>
 #include <util/generic/typetraits.h>
 #include <util/generic/vector.h>
 #include <util/generic/yexception.h>
@@ -17,7 +18,7 @@
 #include <util/string/printf.h>
 
 #include <util/system/defaults.h>
-#include <util/system/type_name.h>
+#include <util/system/demangle.h>
 #include <util/system/spinlock.h>
 #include <util/system/src_location.h>
 
@@ -135,7 +136,7 @@ namespace NUnitTest {
         // Should execute a test whitin suite?
         virtual bool CheckAccessTest(TString /*suite*/, const char* /*name*/);
 
-        virtual void Run(std::function<void()> f, const TString& /*suite*/, const char* /*name*/, bool /*forceFork*/);
+        virtual void Run(std::function<void()> f, const TString& /*suite*/, const char* /*name*/, const bool /*forceFork*/);
 
         // This process is forked for current test
         virtual bool GetIsForked() const;
@@ -219,11 +220,11 @@ namespace NUnitTest {
 
         void AtEnd();
 
-        void Run(std::function<void()> f, const TString& suite, const char* name, bool forceFork);
+        void Run(std::function<void()> f, const TString suite, const char* name, const bool forceFork);
 
         class TCleanUp {
         public:
-            explicit TCleanUp(TTestBase* base);
+            TCleanUp(TTestBase* base);
 
             ~TCleanUp();
 
@@ -282,8 +283,8 @@ private:                                                   \
         this->AtStart();
 
 #ifndef UT_SKIP_EXCEPTIONS
-#define CATCH_REACTION(FN, e, context) this->AddError(("(" + TypeName(e) + ") " + e.what()).data(), context)
-#define CATCH_REACTION_BT(FN, e, context) this->AddError(("(" + TypeName(e) + ") " + e.what()).data(), (e.BackTrace() ? e.BackTrace()->PrintToString() : TString()), context)
+#define CATCH_REACTION(FN, e, context) this->AddError(("(" + TypeName(&e) + ") " + e.what()).data(), context)
+#define CATCH_REACTION_BT(FN, e, context) this->AddError(("(" + TypeName(&e) + ") " + e.what()).data(), (e.BackTrace() ? e.BackTrace()->PrintToString() : TString()), context)
 #else
 #define CATCH_REACTION(FN, e, context) throw
 #define CATCH_REACTION_BT(FN, e, context) throw
@@ -778,11 +779,6 @@ public:                       \
     };
 
     struct TBaseTestCase {
-        // NOTE: since EACH test case is instantiated for listing tests, its
-        // ctor/dtor are not the best place to do heavy preparations in test fixtures.
-        //
-        // Consider using SetUp()/TearDown() methods instead
-
         inline TBaseTestCase()
             : TBaseTestCase(nullptr, nullptr, false)
         {
@@ -790,27 +786,12 @@ public:                       \
 
         inline TBaseTestCase(const char* name, std::function<void(TTestContext&)> body, bool forceFork)
             : Name_(name)
-            , Body_(std::move(body))
+            , Body_(body)
             , ForceFork_(forceFork)
         {
         }
 
         virtual ~TBaseTestCase() = default;
-
-        // Each test case is executed in 3 steps:
-        //
-        // 1. SetUp() (from fixture)
-        // 2. Execute_() (test body from Y_UNIT_TEST macro)
-        // 3. TearDown() (from fixture)
-        //
-        // Both SetUp() and TearDown() may use UNIT_* check macros and are only
-        // called when the test is executed.
-
-        virtual void SetUp(TTestContext& /* context */) {
-        }
-
-        virtual void TearDown(TTestContext& /* context */) {
-        }
 
         virtual void Execute_(TTestContext& context) {
             Body_(context);
@@ -833,7 +814,7 @@ public:                       \
                 Parent->SetHandler();
             }
 
-            TInvokeGuard(TInvokeGuard&& guard) noexcept
+            TInvokeGuard(TInvokeGuard&& guard)
                 : Parent(guard.Parent)
             {
                 guard.Parent = nullptr;
@@ -895,7 +876,7 @@ public:                       \
     };
 
 #define UNIT_TEST_SUITE_REGISTRATION(T) \
-    static const ::NUnitTest::TTestBaseFactory<T> Y_GENERATE_UNIQUE_ID(UTREG_);
+    static ::NUnitTest::TTestBaseFactory<T> Y_GENERATE_UNIQUE_ID(UTREG_);
 
 #define Y_UNIT_TEST_SUITE_IMPL_F(N, T, F)                                                                          \
     namespace NTestSuite##N {                                                                                           \
@@ -919,9 +900,7 @@ public:                       \
                 return StaticName();                                                                                    \
             }                                                                                                           \
                                                                                                                         \
-            static void AddTest(const char* name,                                                                       \
-                const std::function<void(NUnitTest::TTestContext&)>& body, bool forceFork)                              \
-            {                                                                                                           \
+            static void AddTest(const char* name, std::function<void(NUnitTest::TTestContext&)> body, bool forceFork) { \
                 Tests().push_back([=]{ return MakeHolder<NUnitTest::TBaseTestCase>(name, body, forceFork); });          \
             }                                                                                                           \
                                                                                                                         \
@@ -941,12 +920,7 @@ public:                       \
                         this->BeforeTest(i->Name_);                                                                     \
                         {                                                                                               \
                             TCleanUp cleaner(this);                                                                     \
-                            auto testCase = [&i, &context] {                                                            \
-                                i->SetUp(context);                                                                      \
-                                i->Execute_(context);                                                                   \
-                                i->TearDown(context);                                                                   \
-                            };                                                                                          \
-                            this->T::Run(testCase, StaticName(), i->Name_, i->ForceFork_);                              \
+                            this->T::Run([&i, &context]() { i->Execute_(context); }, StaticName(), i->Name_, i->ForceFork_);\
                         }                                                                                               \
                     } catch (const ::NUnitTest::TAssertException&) {                                                    \
                     } catch (const yexception& e) {                                                                     \
@@ -988,7 +962,7 @@ public:                       \
             TCurrentTest::AddTest(TTestCase##N::Create);    \
         }                                                   \
     };                                                      \
-    static const TTestRegistration##N testRegistration##N;
+    static TTestRegistration##N testRegistration##N;
 
 #define Y_UNIT_TEST_IMPL(N, FF, F)      \
     Y_UNIT_TEST_IMPL_REGISTER(N, FF, F) \

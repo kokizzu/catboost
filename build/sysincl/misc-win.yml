@@ -5,6 +5,7 @@
 
 - source_filter: "^contrib/libs/jemalloc"
   includes:
+  - stdbool.h:     contrib/libs/jemalloc/include/msvc_compat/stdbool.h
   - strings.h:     contrib/libs/jemalloc/include/msvc_compat/strings.h
 
 - source_filter: "^contrib/libs/libgit2"
@@ -64,3 +65,4 @@
 - includes:
     - sys/queue.h:   contrib/libs/libc_compat/include/windows/sys/queue.h
     - sys/uio.h:     contrib/libs/libc_compat/include/windows/sys/uio.h
+

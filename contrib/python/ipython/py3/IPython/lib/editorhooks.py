@@ -6,6 +6,7 @@ Contributions are *very* welcome.
 """
 
 import os
+import pipes
 import shlex
 import subprocess
 import sys
@@ -46,9 +47,9 @@ def install_editor(template, wait=False):
     def call_editor(self, filename, line=0):
         if line is None:
             line = 0
-        cmd = template.format(filename=shlex.quote(filename), line=line)
+        cmd = template.format(filename=pipes.quote(filename), line=line)
         print(">", cmd)
-        # shlex.quote doesn't work right on Windows, but it does after splitting
+        # pipes.quote doesn't work right on Windows, but it does after splitting
         if sys.platform.startswith('win'):
             cmd = shlex.split(cmd)
         proc = subprocess.Popen(cmd, shell=True)

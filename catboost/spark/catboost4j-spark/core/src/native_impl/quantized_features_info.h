@@ -11,24 +11,23 @@
 
 NCB::TQuantizedFeaturesInfoPtr MakeQuantizedFeaturesInfo(
     const NCB::TFeaturesLayout& featuresLayout
-);
+) throw(yexception);
 
-NCB::TQuantizedFeaturesInfoPtr MakeEstimatedQuantizedFeaturesInfo(i32 featureCount);
+NCB::TQuantizedFeaturesInfoPtr MakeEstimatedQuantizedFeaturesInfo(i32 featureCount) throw(yexception);
 
 void UpdateCatFeaturesInfo(
     TConstArrayRef<i32> catFeaturesUniqValueCounts, // [flatFeatureIdx]
-    bool isInitialization,
     NCB::TQuantizedFeaturesInfo* quantizedFeaturesInfo
-);
+) throw(yexception);
 
 i32 CalcMaxCategoricalFeaturesUniqueValuesCountOnLearn(
     const NCB::TQuantizedFeaturesInfo& quantizedFeaturesInfo
-);
+) throw(yexception);
 
-// returned vector is indexed by flatFeatureIdx, non-categorical or non-available features will contain 0
+// returned vector is indexed by flatFeatureIdx
 TVector<i32> GetCategoricalFeaturesUniqueValuesCounts(
     const NCB::TQuantizedFeaturesInfo& quantizedFeaturesInfo
-);
+) throw(yexception);
 
 
 void DbgDump(const NCB::TQuantizedFeaturesInfo& quantizedFeaturesInfo, const TString& fileName);

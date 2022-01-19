@@ -75,8 +75,7 @@ TVector<double> MakeConfusionMatrix(const TFullModel& model, const TDataProvider
         EPredictionType::RawFormulaVal,
         0,
         SafeIntegerCast<int>(model.GetTreeCount()),
-        &localExecutor,
-        processedData.TargetData->GetBaseline()
+        &localExecutor
     );
 
     return MakeConfusionMatrix(approxes, *processedData.TargetData->GetOneDimensionalTarget(), &localExecutor);

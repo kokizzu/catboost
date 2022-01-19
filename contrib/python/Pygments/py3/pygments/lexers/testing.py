@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.testing
     ~~~~~~~~~~~~~~~~~~~~~~~
@@ -21,7 +22,7 @@ class GherkinLexer(RegexLexer):
     .. versionadded:: 1.2
     """
     name = 'Gherkin'
-    aliases = ['gherkin', 'cucumber']
+    aliases = ['cucumber', 'gherkin']
     filenames = ['*.feature']
     mimetypes = ['text/x-gherkin']
 
@@ -128,9 +129,6 @@ class GherkinLexer(RegexLexer):
             (r'(\s|.)', Name.Function),
         ]
     }
-
-    def analyse_text(self, text):
-        return
 
 
 class TAPLexer(RegexLexer):

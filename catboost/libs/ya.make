@@ -1,7 +1,6 @@
 
 
 RECURSE(
-    calc_metrics
     data
     data/ut
     data/benchmarks_ut

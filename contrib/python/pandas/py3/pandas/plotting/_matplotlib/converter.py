@@ -1,31 +1,18 @@
-from __future__ import annotations
-
 import contextlib
 import datetime as pydt
-from datetime import (
-    datetime,
-    timedelta,
-    tzinfo,
-)
+from datetime import datetime, timedelta, tzinfo
 import functools
-from typing import Any
+from typing import Any, Dict, List, Optional, Tuple
 
 from dateutil.relativedelta import relativedelta
 import matplotlib.dates as dates
-from matplotlib.ticker import (
-    AutoLocator,
-    Formatter,
-    Locator,
-)
+from matplotlib.ticker import AutoLocator, Formatter, Locator
 from matplotlib.transforms import nonsingular
 import matplotlib.units as units
 import numpy as np
 
 from pandas._libs import lib
-from pandas._libs.tslibs import (
-    Timestamp,
-    to_offset,
-)
+from pandas._libs.tslibs import Timestamp, to_offset
 from pandas._libs.tslibs.dtypes import FreqGroup
 from pandas._libs.tslibs.offsets import BaseOffset
 
@@ -37,18 +24,10 @@ from pandas.core.dtypes.common import (
     is_nested_list_like,
 )
 
-from pandas import (
-    Index,
-    Series,
-    get_option,
-)
+from pandas import Index, Series, get_option
 import pandas.core.common as com
 from pandas.core.indexes.datetimes import date_range
-from pandas.core.indexes.period import (
-    Period,
-    PeriodIndex,
-    period_range,
-)
+from pandas.core.indexes.period import Period, PeriodIndex, period_range
 import pandas.core.tools.datetimes as tools
 
 # constants
@@ -59,7 +38,7 @@ SEC_PER_MIN = 60.0
 SEC_PER_HOUR = SEC_PER_MIN * MIN_PER_HOUR
 SEC_PER_DAY = SEC_PER_HOUR * HOURS_PER_DAY
 
-MUSEC_PER_DAY = 10 ** 6 * SEC_PER_DAY
+MUSEC_PER_DAY = 1e6 * SEC_PER_DAY
 
 _mpl_units = {}  # Cache for units overwritten by us
 
@@ -137,7 +116,7 @@ def deregister():
 
 
 def _to_ordinalf(tm: pydt.time) -> float:
-    tot_sec = tm.hour * 3600 + tm.minute * 60 + tm.second + tm.microsecond / 10 ** 6
+    tot_sec = tm.hour * 3600 + tm.minute * 60 + tm.second + float(tm.microsecond / 1e6)
     return tot_sec
 
 
@@ -165,7 +144,7 @@ class TimeConverter(units.ConversionInterface):
         return value
 
     @staticmethod
-    def axisinfo(unit, axis) -> units.AxisInfo | None:
+    def axisinfo(unit, axis) -> Optional[units.AxisInfo]:
         if unit != "time":
             return None
 
@@ -203,7 +182,7 @@ class TimeFormatter(Formatter):
         """
         fmt = "%H:%M:%S.%f"
         s = int(x)
-        msus = round((x - s) * 10 ** 6)
+        msus = int(round((x - s) * 1e6))
         ms = msus // 1000
         us = msus % 1000
         m, s = divmod(s, 60)
@@ -315,7 +294,7 @@ class DatetimeConverter(dates.DateConverter):
         return values
 
     @staticmethod
-    def axisinfo(unit: tzinfo | None, axis) -> units.AxisInfo:
+    def axisinfo(unit: Optional[tzinfo], axis) -> units.AxisInfo:
         """
         Return the :class:`~matplotlib.units.AxisInfo` for *unit*.
 
@@ -353,8 +332,8 @@ class PandasAutoDateLocator(dates.AutoDateLocator):
             locator = MilliSecondLocator(self.tz)
             locator.set_axis(self.axis)
 
-            locator.axis.set_view_interval(*self.axis.get_view_interval())
-            locator.axis.set_data_interval(*self.axis.get_data_interval())
+            locator.set_view_interval(*self.axis.get_view_interval())
+            locator.set_data_interval(*self.axis.get_data_interval())
             return locator
 
         return dates.AutoDateLocator.get_locator(self, dmin, dmax)
@@ -443,14 +422,14 @@ class MilliSecondLocator(dates.DateLocator):
         return self.nonsingular(vmin, vmax)
 
 
-def _from_ordinal(x, tz: tzinfo | None = None) -> datetime:
+def _from_ordinal(x, tz: Optional[tzinfo] = None) -> datetime:
     ix = int(x)
     dt = datetime.fromordinal(ix)
     remainder = float(x) - ix
     hour, remainder = divmod(24 * remainder, 1)
     minute, remainder = divmod(60 * remainder, 1)
     second, remainder = divmod(60 * remainder, 1)
-    microsecond = int(1_000_000 * remainder)
+    microsecond = int(1e6 * remainder)
     if microsecond < 10:
         microsecond = 0  # compensate for rounding errors
     dt = datetime(
@@ -460,7 +439,7 @@ def _from_ordinal(x, tz: tzinfo | None = None) -> datetime:
         dt = dt.astimezone(tz)
 
     if microsecond > 999990:  # compensate for rounding errors
-        dt += timedelta(microseconds=1_000_000 - microsecond)
+        dt += timedelta(microseconds=1e6 - microsecond)
 
     return dt
 
@@ -472,7 +451,7 @@ def _from_ordinal(x, tz: tzinfo | None = None) -> datetime:
 # -------------------------------------------------------------------------
 
 
-def _get_default_annual_spacing(nyears) -> tuple[int, int]:
+def _get_default_annual_spacing(nyears) -> Tuple[int, int]:
     """
     Returns a default spacing between consecutive ticks for annual data.
     """
@@ -502,7 +481,7 @@ def period_break(dates: PeriodIndex, period: str) -> np.ndarray:
     ----------
     dates : PeriodIndex
         Array of intervals to monitor.
-    period : str
+    period : string
         Name of the period to monitor.
     """
     current = getattr(dates, period)
@@ -531,28 +510,28 @@ def _daily_finder(vmin, vmax, freq: BaseOffset):
 
     periodsperday = -1
 
-    if dtype_code >= FreqGroup.FR_HR.value:
-        if dtype_code == FreqGroup.FR_NS.value:
+    if dtype_code >= FreqGroup.FR_HR:
+        if dtype_code == FreqGroup.FR_NS:
             periodsperday = 24 * 60 * 60 * 1000000000
-        elif dtype_code == FreqGroup.FR_US.value:
+        elif dtype_code == FreqGroup.FR_US:
             periodsperday = 24 * 60 * 60 * 1000000
-        elif dtype_code == FreqGroup.FR_MS.value:
+        elif dtype_code == FreqGroup.FR_MS:
             periodsperday = 24 * 60 * 60 * 1000
-        elif dtype_code == FreqGroup.FR_SEC.value:
+        elif dtype_code == FreqGroup.FR_SEC:
             periodsperday = 24 * 60 * 60
-        elif dtype_code == FreqGroup.FR_MIN.value:
+        elif dtype_code == FreqGroup.FR_MIN:
             periodsperday = 24 * 60
-        elif dtype_code == FreqGroup.FR_HR.value:
+        elif dtype_code == FreqGroup.FR_HR:
             periodsperday = 24
         else:  # pragma: no cover
             raise ValueError(f"unexpected frequency: {dtype_code}")
         periodsperyear = 365 * periodsperday
         periodspermonth = 28 * periodsperday
 
-    elif dtype_code == FreqGroup.FR_BUS.value:
+    elif dtype_code == FreqGroup.FR_BUS:
         periodsperyear = 261
         periodspermonth = 19
-    elif dtype_code == FreqGroup.FR_DAY.value:
+    elif dtype_code == FreqGroup.FR_DAY:
         periodsperyear = 365
         periodspermonth = 28
     elif FreqGroup.get_freq_group(dtype_code) == FreqGroup.FR_WK:
@@ -632,27 +611,27 @@ def _daily_finder(vmin, vmax, freq: BaseOffset):
             info_fmt[day_start] = "%H:%M:%S\n%d-%b"
             info_fmt[year_start] = "%H:%M:%S\n%d-%b\n%Y"
 
-        if span < periodsperday / 12000:
+        if span < periodsperday / 12000.0:
             _second_finder(1)
-        elif span < periodsperday / 6000:
+        elif span < periodsperday / 6000.0:
             _second_finder(2)
-        elif span < periodsperday / 2400:
+        elif span < periodsperday / 2400.0:
             _second_finder(5)
-        elif span < periodsperday / 1200:
+        elif span < periodsperday / 1200.0:
             _second_finder(10)
-        elif span < periodsperday / 800:
+        elif span < periodsperday / 800.0:
             _second_finder(15)
-        elif span < periodsperday / 400:
+        elif span < periodsperday / 400.0:
             _second_finder(30)
-        elif span < periodsperday / 150:
+        elif span < periodsperday / 150.0:
             _minute_finder(1)
-        elif span < periodsperday / 70:
+        elif span < periodsperday / 70.0:
             _minute_finder(2)
-        elif span < periodsperday / 24:
+        elif span < periodsperday / 24.0:
             _minute_finder(5)
-        elif span < periodsperday / 12:
+        elif span < periodsperday / 12.0:
             _minute_finder(15)
-        elif span < periodsperday / 6:
+        elif span < periodsperday / 6.0:
             _minute_finder(30)
         elif span < periodsperday / 2.5:
             _hour_finder(1, False)
@@ -682,7 +661,7 @@ def _daily_finder(vmin, vmax, freq: BaseOffset):
     elif span <= periodsperyear // 4:
         month_start = period_break(dates_, "month")
         info_maj[month_start] = True
-        if dtype_code < FreqGroup.FR_HR.value:
+        if dtype_code < FreqGroup.FR_HR:
             info["min"] = True
         else:
             day_start = period_break(dates_, "day")
@@ -893,15 +872,14 @@ def _annual_finder(vmin, vmax, freq):
 def get_finder(freq: BaseOffset):
     dtype_code = freq._period_dtype_code
     fgroup = (dtype_code // 1000) * 1000
-    fgroup = FreqGroup(fgroup)
 
     if fgroup == FreqGroup.FR_ANN:
         return _annual_finder
     elif fgroup == FreqGroup.FR_QTR:
         return _quarterly_finder
-    elif dtype_code == FreqGroup.FR_MTH.value:
+    elif dtype_code == FreqGroup.FR_MTH:
         return _monthly_finder
-    elif (dtype_code >= FreqGroup.FR_BUS.value) or fgroup == FreqGroup.FR_WK:
+    elif (dtype_code >= FreqGroup.FR_BUS) or fgroup == FreqGroup.FR_WK:
         return _daily_finder
     else:  # pragma: no cover
         raise NotImplementedError(f"Unsupported frequency: {dtype_code}")
@@ -1023,8 +1001,8 @@ class TimeSeries_DateFormatter(Formatter):
         freq = to_offset(freq)
         self.format = None
         self.freq = freq
-        self.locs: list[Any] = []  # unused, for matplotlib compat
-        self.formatdict: dict[Any, Any] | None = None
+        self.locs: List[Any] = []  # unused, for matplotlib compat
+        self.formatdict: Optional[Dict[Any, Any]] = None
         self.isminor = minor_locator
         self.isdynamic = dynamic_mode
         self.offset = 0
@@ -1080,7 +1058,7 @@ class TimeSeries_TimedeltaFormatter(Formatter):
         """
         Convert seconds to 'D days HH:MM:SS.F'
         """
-        s, ns = divmod(x, 10 ** 9)
+        s, ns = divmod(x, 1e9)
         m, s = divmod(s, 60)
         h, m = divmod(m, 60)
         d, h = divmod(h, 24)
@@ -1094,7 +1072,7 @@ class TimeSeries_TimedeltaFormatter(Formatter):
 
     def __call__(self, x, pos=0) -> str:
         (vmin, vmax) = tuple(self.axis.get_view_interval())
-        n_decimals = int(np.ceil(np.log10(100 * 10 ** 9 / abs(vmax - vmin))))
+        n_decimals = int(np.ceil(np.log10(100 * 1e9 / abs(vmax - vmin))))
         if n_decimals > 9:
             n_decimals = 9
         return self.format_timedelta_ticks(x, pos, n_decimals)

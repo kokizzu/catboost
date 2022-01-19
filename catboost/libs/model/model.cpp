@@ -1016,19 +1016,6 @@ void TFullModel::Calc(
     GetCurrentEvaluator()->Calc(floatFeatures, catFeatures, treeStart, treeEnd, results, featureInfo);
 }
 
-void TFullModel::CalcWithHashedCatAndText(
-    TConstArrayRef<TConstArrayRef<float>> floatFeatures,
-    TConstArrayRef<TConstArrayRef<int>> catFeatures,
-    TConstArrayRef<TVector<TStringBuf>> textFeatures,
-    size_t treeStart,
-    size_t treeEnd,
-    TArrayRef<double> results,
-    const TFeatureLayout* featureInfo
-) const {
-    TVector<TConstArrayRef<TStringBuf>> stringbufTextVecRefs{textFeatures.begin(), textFeatures.end()};
-    GetCurrentEvaluator()->CalcWithHashedCatAndText(floatFeatures, catFeatures, stringbufTextVecRefs, treeStart, treeEnd, results, featureInfo);
-}
-
 void TFullModel::Calc(
     TConstArrayRef<TConstArrayRef<float>> floatFeatures,
     TConstArrayRef<TVector<TStringBuf>> catFeatures,
@@ -1343,22 +1330,6 @@ TString TFullModel::GetLossFunctionName() const {
 }
 
 
-double TFullModel::GetBinClassProbabilityThreshold() const {
-    double threshold = DEFAULT_BINCLASS_PROBABILITY_THRESHOLD;
-    if (ModelInfo.contains("binclass_probability_threshold")) {
-        if (!TryFromString<double>(ModelInfo.at("binclass_probability_threshold"), threshold)) {
-            CATBOOST_WARNING_LOG << "Float number at metadata key binclass_probability_threshold cannot be parsed" << Endl;
-        }
-    }
-    return threshold;
-}
-
-
-double TFullModel::GetBinClassLogitThreshold() const {
-    return NCB::Logit(GetBinClassProbabilityThreshold());
-}
-
-
 static TVector<NJson::TJsonValue> GetSequentialIntegerClassLabels(size_t classCount) {
     TVector<NJson::TJsonValue> classLabels;
     classLabels.reserve(classCount);
@@ -1466,21 +1437,21 @@ namespace {
 
     struct TFlatFeature {
 
-        std::variant<TUnknownFeature, TFloatFeature, TCatFeature> FeatureVariant;
+        TVariant<TUnknownFeature, TFloatFeature, TCatFeature> FeatureVariant;
 
     public:
         TFlatFeature() = default;
 
         template <class TFeatureType>
         void SetOrCheck(const TFeatureType& other) {
-            if (std::holds_alternative<TUnknownFeature>(FeatureVariant)) {
+            if (HoldsAlternative<TUnknownFeature>(FeatureVariant)) {
                 FeatureVariant = other;
             }
-            CB_ENSURE(std::holds_alternative<TFeatureType>(FeatureVariant),
+            CB_ENSURE(HoldsAlternative<TFeatureType>(FeatureVariant),
                 "Feature type mismatch: Categorical != Float for flat feature index: " <<
                 other.Position.FlatIndex
             );
-            TFeatureType& feature = std::get<TFeatureType>(FeatureVariant);
+            TFeatureType& feature = Get<TFeatureType>(FeatureVariant);
             CB_ENSURE(feature.Position.FlatIndex == other.Position.FlatIndex);
             CB_ENSURE(
                 feature.Position.Index == other.Position.Index,
@@ -1742,7 +1713,7 @@ TFullModel SumModels(
     }
     TFlatFeatureMergerVisitor merger;
     for (auto& flatFeature: flatFeatureInfoVector) {
-        std::visit(merger, flatFeature.FeatureVariant);
+        Visit(merger, flatFeature.FeatureVariant);
     }
     TObliviousTreeBuilder builder(merger.MergedFloatFeatures, merger.MergedCatFeatures, {}, {}, approxDimension);
     TVector<double> totalBias(approxDimension);

@@ -287,7 +287,7 @@ namespace NCB {
                     *approximateBlockSize
                     : CeilDiv(size, SafeIntegerCast<ui32>(localExecutor.GetThreadCount()) + 1);
 
-            std::visit(
+            Visit(
                 [&] (const auto& subsetIndexingAlternative) {
                     CreateSubRangesIterators(
                         subsetIndexingAlternative,

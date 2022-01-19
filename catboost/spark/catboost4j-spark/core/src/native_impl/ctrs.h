@@ -42,15 +42,14 @@ struct TTargetStatsForCtrs {
 TCtrHelper GetCtrHelper(
     const NCatboostOptions::TCatBoostOptions& catBoostOptions,
     const NCB::TFeaturesLayout& layout,
-    const TVector<float>& preprocessedLearnTarget,
-    const TVector<i8>& serializedLabelConverter
-);
+    TConstArrayRef<float> learnTarget // can be empty if there's no target data
+) throw (yexception);
 
 TTargetStatsForCtrs ComputeTargetStatsForCtrs(
     const TCtrHelper& ctrHelper,
-    const TVector<float>& preprocessedLearnTarget,
+    TConstArrayRef<float> learnTarget,  // can be empty if there's no target data
     NPar::TLocalExecutor* localExecutor
-);
+) throw (yexception);
 
 
 // only Learn and Test in the result are set
@@ -63,7 +62,7 @@ void ComputeEstimatedCtrFeatures(
     NPar::TLocalExecutor* localExecutor,
     NCB::TEstimatedForCPUObjectsDataProviders* outputData,
     NCB::TPrecomputedOnlineCtrMetaData* outputMeta
-);
+) throw (yexception);
 
 
 class TFinalCtrsCalcer {
@@ -72,26 +71,25 @@ public:
         TFullModel* modelWithoutCtrData, // moved into
         const NCatboostOptions::TCatBoostOptions* catBoostOptions,
         const NCB::TQuantizedFeaturesInfo& quantizedFeaturesInfo,
-        TVector<float>* preprocessedLearnTarget,  // moved into, can be empty if there's no target data
+        TConstArrayRef<float> learnTarget,
         TTargetStatsForCtrs* targetStatsForCtrs, // moved into
         const TCtrHelper& ctrHelper,
         NPar::TLocalExecutor* localExecutor
-    );
+    ) throw(yexception);
 
-    TVector<i32> GetCatFeatureFlatIndicesUsedForCtrs() const;
+    TVector<i32> GetCatFeatureFlatIndicesUsedForCtrs() const throw(yexception);
 
     void ProcessForFeature(
         i32 catFeatureFlatIdx,
         const NCB::TQuantizedObjectsDataProviderPtr& learnData,
         const TVector<NCB::TQuantizedObjectsDataProviderPtr>& testData
-    );
+    ) throw(yexception);
 
-    TFullModel GetModelWithCtrData();
+    TFullModel GetModelWithCtrData() throw(yexception);
 
 private:
     TFullModel Model;
     NCB::TFeaturesLayoutPtr FeaturesLayout;
-    TVector<float> PreprocessedLearnTarget;
     TTargetStatsForCtrs TargetStatsForCtrs;
     NPar::TLocalExecutor* LocalExecutor;
     TTempFile CtrDataFile;
@@ -100,13 +98,6 @@ private:
     THashMap<i32, TVector<TModelCtrBase>> CatFeatureFlatIndexToModelCtrsBases;
     TDatasetDataForFinalCtrs DatasetDataForFinalCtrs;
     NCB::TFeaturesArraySubsetIndexing LearnFeaturesSubsetIndexing;
-
-    // universal because it is the same for all cat features in Spark now
-    TVector<ui32> UniversalPerfectHashedToHashedCatValuesMap;
-
-    /* used as a buffer to temporary borrow from UniversalPerfectHashedToHashedCatValuesMap
-       for the needed feature
-     */
     NCB::TPerfectHashedToHashedCatValuesMap PerfectHashedToHashedCatValuesMap;
 
     const NCatboostOptions::TCatBoostOptions* CatBoostOptions;

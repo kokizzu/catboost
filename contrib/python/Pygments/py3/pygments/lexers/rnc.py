@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.rnc
     ~~~~~~~~~~~~~~~~~~~
@@ -23,7 +24,7 @@ class RNCCompactLexer(RegexLexer):
     """
 
     name = 'Relax-NG Compact'
-    aliases = ['rng-compact', 'rnc']
+    aliases = ['rnc', 'rng-compact']
     filenames = ['*.rnc']
 
     tokens = {

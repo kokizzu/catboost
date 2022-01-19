@@ -6,8 +6,6 @@ LIBRARY()
 
 VERSION(3.3)
 
-ORIGINAL_SOURCE(https://sourceware.org/pub/libffi/libffi-3.3.tar.gz)
-
 LICENSE(MIT)
 
 ADDINCL(
@@ -38,16 +36,6 @@ IF (ARCH_ARM64 AND OS_ANDROID)
     ADDINCL(
         contrib/restricted/libffi/configs/aarch64-unknown-linux-android21
         GLOBAL contrib/restricted/libffi/configs/aarch64-unknown-linux-android21/include
-    )
-
-    SRCS(
-        src/aarch64/ffi.c
-        src/aarch64/sysv.S
-    )
-ELSEIF (ARCH_ARM64 AND OS_DARWIN)
-    ADDINCL(
-        contrib/restricted/libffi/configs/aarch64-apple-macos
-        GLOBAL contrib/restricted/libffi/configs/aarch64-apple-macos/include
     )
 
     SRCS(

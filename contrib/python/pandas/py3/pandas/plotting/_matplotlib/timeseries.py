@@ -1,20 +1,11 @@
 # TODO: Use the fact that axis can have units to simplify the process
 
-from __future__ import annotations
-
 import functools
-from typing import (
-    TYPE_CHECKING,
-    cast,
-)
+from typing import TYPE_CHECKING, Optional, cast
 
 import numpy as np
 
-from pandas._libs.tslibs import (
-    BaseOffset,
-    Period,
-    to_offset,
-)
+from pandas._libs.tslibs import BaseOffset, Period, to_offset
 from pandas._libs.tslibs.dtypes import FreqGroup
 from pandas._typing import FrameOrSeriesUnion
 
@@ -30,26 +21,18 @@ from pandas.plotting._matplotlib.converter import (
     TimeSeries_DateLocator,
     TimeSeries_TimedeltaFormatter,
 )
-from pandas.tseries.frequencies import (
-    get_period_alias,
-    is_subperiod,
-    is_superperiod,
-)
+from pandas.tseries.frequencies import get_period_alias, is_subperiod, is_superperiod
 
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
 
-    from pandas import (
-        DatetimeIndex,
-        Index,
-        Series,
-    )
+    from pandas import DatetimeIndex, Index, Series
 
 # ---------------------------------------------------------------------
 # Plotting functions and monkey patches
 
 
-def maybe_resample(series: Series, ax: Axes, kwargs):
+def maybe_resample(series: "Series", ax: "Axes", kwargs):
     # resample against axes freq if necessary
     freq, ax_freq = _get_freq(ax, series)
 
@@ -92,7 +75,7 @@ def _is_sup(f1: str, f2: str) -> bool:
     )
 
 
-def _upsample_others(ax: Axes, freq, kwargs):
+def _upsample_others(ax: "Axes", freq, kwargs):
     legend = ax.get_legend()
     lines, labels = _replot_ax(ax, freq, kwargs)
     _replot_ax(ax, freq, kwargs)
@@ -115,7 +98,7 @@ def _upsample_others(ax: Axes, freq, kwargs):
         ax.legend(lines, labels, loc="best", title=title)
 
 
-def _replot_ax(ax: Axes, freq, kwargs):
+def _replot_ax(ax: "Axes", freq, kwargs):
     data = getattr(ax, "_plot_data", None)
 
     # clear current axes and data
@@ -145,7 +128,7 @@ def _replot_ax(ax: Axes, freq, kwargs):
     return lines, labels
 
 
-def decorate_axes(ax: Axes, freq, kwargs):
+def decorate_axes(ax: "Axes", freq, kwargs):
     """Initialize axes for time-series plotting"""
     if not hasattr(ax, "_plot_data"):
         ax._plot_data = []
@@ -161,7 +144,7 @@ def decorate_axes(ax: Axes, freq, kwargs):
     ax.date_axis_info = None
 
 
-def _get_ax_freq(ax: Axes):
+def _get_ax_freq(ax: "Axes"):
     """
     Get the freq attribute of the ax object if set.
     Also checks shared axes (eg when using secondary yaxis, sharex=True
@@ -185,14 +168,14 @@ def _get_ax_freq(ax: Axes):
     return ax_freq
 
 
-def _get_period_alias(freq) -> str | None:
+def _get_period_alias(freq) -> Optional[str]:
     freqstr = to_offset(freq).rule_code
 
     freq = get_period_alias(freqstr)
     return freq
 
 
-def _get_freq(ax: Axes, series: Series):
+def _get_freq(ax: "Axes", series: "Series"):
     # get frequency from data
     freq = getattr(series.index, "freq", None)
     if freq is None:
@@ -210,7 +193,7 @@ def _get_freq(ax: Axes, series: Series):
     return freq, ax_freq
 
 
-def use_dynamic_x(ax: Axes, data: FrameOrSeriesUnion) -> bool:
+def use_dynamic_x(ax: "Axes", data: FrameOrSeriesUnion) -> bool:
     freq = _get_index_freq(data.index)
     ax_freq = _get_ax_freq(ax)
 
@@ -232,13 +215,13 @@ def use_dynamic_x(ax: Axes, data: FrameOrSeriesUnion) -> bool:
     if isinstance(data.index, ABCDatetimeIndex):
         base = to_offset(freq)._period_dtype_code
         x = data.index
-        if base <= FreqGroup.FR_DAY.value:
+        if base <= FreqGroup.FR_DAY:
             return x[:1].is_normalized
         return Period(x[0], freq).to_timestamp().tz_localize(x.tz) == x[0]
     return True
 
 
-def _get_index_freq(index: Index) -> BaseOffset | None:
+def _get_index_freq(index: "Index") -> Optional[BaseOffset]:
     freq = getattr(index, "freq", None)
     if freq is None:
         freq = getattr(index, "inferred_freq", None)
@@ -252,7 +235,7 @@ def _get_index_freq(index: Index) -> BaseOffset | None:
     return freq
 
 
-def maybe_convert_index(ax: Axes, data):
+def maybe_convert_index(ax: "Axes", data):
     # tsplot converts automatically, but don't want to convert index
     # over and over for DataFrames
     if isinstance(data.index, (ABCDatetimeIndex, ABCPeriodIndex)):

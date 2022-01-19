@@ -1,26 +1,16 @@
-from __future__ import print_function
-
 import os
 import platform
 import sys
 import shutil
-import errno
 
 import process_command_files as pcf
 
 
 def link_or_copy(src, dst):
-    try:
-        if platform.system().lower() == 'windows':
-            shutil.copy(src, dst)
-        else:
-            os.link(src, dst)
-    except OSError as e:
-        if e.errno == errno.EEXIST:
-            print('link_or_copy: destination file already exists: {}'.format(dst), file=sys.stderr)
-        if e.errno == errno.ENOENT:
-            print('link_or_copy: source file doesn\'t exists: {}'.format(src), file=sys.stderr)
-        raise
+    if platform.system().lower() == 'windows':
+        shutil.copy(src, dst)
+    else:
+        os.link(src, dst)
 
 
 if __name__ == '__main__':
@@ -82,13 +72,8 @@ if __name__ == '__main__':
         link_or_copy(args[0], args[1])
     elif mode == 'link_or_copy_to_dir':
         assert len(args) > 1
-        start = 0
-        if args[0] == '--no-check':
-            if args == 2:
-                sys.exit()
-            start = 1
         dst = args[-1]
-        for src in args[start:-1]:
+        for src in args[0:-1]:
             link_or_copy(src, os.path.join(dst, os.path.basename(src)))
     elif mode == 'cat':
         with open(args[0], 'w') as dst:

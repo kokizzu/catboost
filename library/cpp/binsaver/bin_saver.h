@@ -133,7 +133,7 @@ private:
             data.clear();
             TStoredSize nSize;
             Add(3, &nSize);
-            TVector<typename AM::key_type, typename std::allocator_traits<typename AM::allocator_type>::template rebind_alloc<typename AM::key_type>> indices;
+            TVector<typename AM::key_type, typename AM::allocator_type::template rebind<typename AM::key_type>::other> indices;
             indices.resize(nSize);
             for (TStoredSize i = 0; i < nSize; ++i)
                 Add(1, &indices[i]);
@@ -144,7 +144,7 @@ private:
             CheckOverflow(nSize, data.size());
             Add(3, &nSize);
 
-            TVector<typename AM::key_type, typename std::allocator_traits<typename AM::allocator_type>::template rebind_alloc<typename AM::key_type>> indices;
+            TVector<typename AM::key_type, typename AM::allocator_type::template rebind<typename AM::key_type>::other> indices;
             indices.resize(nSize);
             TStoredSize i = 1;
             for (auto pos = data.begin(); pos != data.end(); ++pos, ++i)
@@ -163,7 +163,7 @@ private:
             data.clear();
             TStoredSize nSize;
             Add(3, &nSize);
-            TVector<typename AMM::key_type, typename std::allocator_traits<typename AMM::allocator_type>::template rebind_alloc<typename AMM::key_type>> indices;
+            TVector<typename AMM::key_type, typename AMM::allocator_type::template rebind<typename AMM::key_type>::other> indices;
             indices.resize(nSize);
             for (TStoredSize i = 0; i < nSize; ++i)
                 Add(1, &indices[i]);
@@ -471,13 +471,13 @@ public:
     };
 
     template <class... TVariantTypes>
-    int Add(const chunk_id, std::variant<TVariantTypes...>* pData) {
-        static_assert(std::variant_size_v<std::variant<TVariantTypes...>> < Max<ui32>());
+    int Add(const chunk_id, TVariant<TVariantTypes...>* pData) {
+        static_assert(::TVariantSize<TVariant<TVariantTypes...>>::value < Max<ui32>());
 
         ui32 index;
         if (IsReading()) {
             Add(1, &index);
-            TLoadFromTypeFromListHelper<std::variant<TVariantTypes...>>::template Do<TVariantTypes...>(
+            TLoadFromTypeFromListHelper<TVariant<TVariantTypes...>>::template Do<TVariantTypes...>(
                 *this,
                 index,
                 pData
@@ -485,7 +485,7 @@ public:
         } else {
             index = pData->index(); // type cast is safe because of static_assert check above
             Add(1, &index);
-            std::visit([&](auto& dst) -> void { Add(2, &dst); }, *pData);
+            ::Visit([&](auto& dst) -> void { Add(2, &dst); }, *pData);
         }
         return 0;
     }
@@ -625,17 +625,11 @@ struct TRegisterSaveLoadType {
         return 0;                 \
     }
 
-#define SAVELOAD_OVERRIDE_WITHOUT_BASE(...) \
-    int operator&(IBinSaver& f) override {  \
-        f.AddMulti(__VA_ARGS__);            \
-        return 0;                           \
-    }
-
-#define SAVELOAD_OVERRIDE(base, ...)       \
-    int operator&(IBinSaver& f) override { \
-        base::operator&(f);                \
-        f.AddMulti(__VA_ARGS__);           \
-        return 0;                          \
+#define SAVELOAD_OVERRIDE(base, ...)      \
+    int operator&(IBinSaver& f)override { \
+        base::operator&(f);               \
+        f.AddMulti(__VA_ARGS__);          \
+        return 0;                         \
     }
 
 #define SAVELOAD_BASE(...)        \

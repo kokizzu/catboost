@@ -92,9 +92,6 @@ namespace NNeh {
         //enable TCP_QUICKACK
         static bool QuickAck;
 
-        // enable write to socket via ScheduleOp
-        static bool UseAsyncSendRequest;
-
         //set option, - return false, if option name not recognized
         static bool Set(TStringBuf name, TStringBuf value);
     };

@@ -23,7 +23,7 @@ namespace NCB {
 
     class TEvalResult {
     public:
-        TEvalResult(size_t ensemblesCount = 1) : EnsemblesCount(ensemblesCount){
+        TEvalResult() {
             RawValues.resize(1);
         }
 
@@ -33,10 +33,8 @@ namespace NCB {
 
         /// *Move* data from `rawValues` to `RawValues[0]`
         void SetRawValuesByMove(TVector<TVector<double>>& rawValues);
-        size_t GetEnsemblesCount() const;
 
     private:
-        size_t EnsemblesCount;
         TVector<TVector<TVector<double>>> RawValues; // [evalIter][dim][docIdx]
     };
 
@@ -61,8 +59,7 @@ namespace NCB {
         TIntrusivePtr<IPoolColumnsPrinter> poolColumnsPrinter,
         std::pair<int, int> testFileWhichOf,
         ui64 docIdOffset,
-        TMaybe<std::pair<size_t, size_t>> evalParameters = TMaybe<std::pair<size_t, size_t>>(),
-        double binClassLogitThreshold = DEFAULT_BINCLASS_LOGIT_THRESHOLD);
+        TMaybe<std::pair<size_t, size_t>> evalParameters = TMaybe<std::pair<size_t, size_t>>());
 
     void OutputEvalResultToFile(
         const TEvalResult& evalResult,
@@ -76,8 +73,7 @@ namespace NCB {
         std::pair<int, int> testFileWhichOf,
         bool writeHeader = true,
         ui64 docIdOffset = 0,
-        TMaybe<std::pair<size_t, size_t>> evalParameters = TMaybe<std::pair<size_t, size_t>>(),
-        double binClassLogitThreshold = DEFAULT_BINCLASS_LOGIT_THRESHOLD);
+        TMaybe<std::pair<size_t, size_t>> evalParameters = TMaybe<std::pair<size_t, size_t>>());
 
     void OutputEvalResultToFile(
         const TEvalResult& evalResult,
@@ -91,7 +87,6 @@ namespace NCB {
         std::pair<int, int> testFileWhichOf,
         const NCB::TDsvFormatOptions& testSetFormat,
         bool writeHeader = true,
-        ui64 docIdOffset = 0,
-        double binClassLogitThreshold = DEFAULT_BINCLASS_LOGIT_THRESHOLD);
+        ui64 docIdOffset = 0);
 
 } // namespace NCB

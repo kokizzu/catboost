@@ -181,8 +181,6 @@ The list of parameters
         \item 'PrecisionAt'
         \item 'RecallAt'
         \item 'MAP'
-        \item 'MRR'
-        \item 'ERR'
       }
 
       Supported parameters:
@@ -252,8 +250,6 @@ The list of parameters
         \item 'PrecisionAt'
         \item 'RecallAt'
         \item 'MAP'
-        \item 'MRR'
-        \item 'ERR'
       }
 
       Format:
@@ -1035,7 +1031,6 @@ The list of parameters
 }
 }
 \examples{
-\dontrun{
 train_pool_path <- system.file("extdata", "adult_train.1000", package = "catboost")
 test_pool_path <- system.file("extdata", "adult_test.1000", package = "catboost")
 cd_path <- system.file("extdata", "adult.cd", package = "catboost")
@@ -1051,7 +1046,6 @@ fit_params <- list(
     l2_leaf_reg = 3.5,
     train_dir = 'train_dir')
 model <- catboost.train(train_pool, test_pool, fit_params)
-}
 }
 \seealso{
 \url{https://catboost.ai/docs/concepts/r-reference_catboost-train.html}

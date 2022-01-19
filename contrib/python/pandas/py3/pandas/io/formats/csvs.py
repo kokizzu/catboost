@@ -2,18 +2,9 @@
 Module for formatting output data into CSV files.
 """
 
-from __future__ import annotations
-
 import csv as csvlib
 import os
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Hashable,
-    Iterator,
-    Sequence,
-    cast,
-)
+from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Sequence, Union
 
 import numpy as np
 
@@ -23,12 +14,13 @@ from pandas._typing import (
     FilePathOrBuffer,
     FloatFormatType,
     IndexLabel,
+    Label,
     StorageOptions,
 )
 
 from pandas.core.dtypes.generic import (
     ABCDatetimeIndex,
-    ABCIndex,
+    ABCIndexClass,
     ABCMultiIndex,
     ABCPeriodIndex,
 )
@@ -43,26 +35,24 @@ if TYPE_CHECKING:
 
 
 class CSVFormatter:
-    cols: np.ndarray
-
     def __init__(
         self,
-        formatter: DataFrameFormatter,
-        path_or_buf: FilePathOrBuffer[str] | FilePathOrBuffer[bytes] = "",
+        formatter: "DataFrameFormatter",
+        path_or_buf: FilePathOrBuffer[str] = "",
         sep: str = ",",
-        cols: Sequence[Hashable] | None = None,
-        index_label: IndexLabel | None = None,
+        cols: Optional[Sequence[Label]] = None,
+        index_label: Optional[IndexLabel] = None,
         mode: str = "w",
-        encoding: str | None = None,
+        encoding: Optional[str] = None,
         errors: str = "strict",
         compression: CompressionOptions = "infer",
-        quoting: int | None = None,
+        quoting: Optional[int] = None,
         line_terminator="\n",
-        chunksize: int | None = None,
-        quotechar: str | None = '"',
-        date_format: str | None = None,
+        chunksize: Optional[int] = None,
+        quotechar: Optional[str] = '"',
+        date_format: Optional[str] = None,
         doublequote: bool = True,
-        escapechar: str | None = None,
+        escapechar: Optional[str] = None,
         storage_options: StorageOptions = None,
     ):
         self.fmt = formatter
@@ -92,7 +82,7 @@ class CSVFormatter:
         return self.fmt.na_rep
 
     @property
-    def float_format(self) -> FloatFormatType | None:
+    def float_format(self) -> Optional["FloatFormatType"]:
         return self.fmt.float_format
 
     @property
@@ -100,36 +90,36 @@ class CSVFormatter:
         return self.fmt.decimal
 
     @property
-    def header(self) -> bool | Sequence[str]:
+    def header(self) -> Union[bool, Sequence[str]]:
         return self.fmt.header
 
     @property
     def index(self) -> bool:
         return self.fmt.index
 
-    def _initialize_index_label(self, index_label: IndexLabel | None) -> IndexLabel:
+    def _initialize_index_label(self, index_label: Optional[IndexLabel]) -> IndexLabel:
         if index_label is not False:
             if index_label is None:
                 return self._get_index_label_from_obj()
-            elif not isinstance(index_label, (list, tuple, np.ndarray, ABCIndex)):
+            elif not isinstance(index_label, (list, tuple, np.ndarray, ABCIndexClass)):
                 # given a string for a DF with Index
                 return [index_label]
         return index_label
 
-    def _get_index_label_from_obj(self) -> list[str]:
+    def _get_index_label_from_obj(self) -> List[str]:
         if isinstance(self.obj.index, ABCMultiIndex):
             return self._get_index_label_multiindex()
         else:
             return self._get_index_label_flat()
 
-    def _get_index_label_multiindex(self) -> list[str]:
+    def _get_index_label_multiindex(self) -> List[str]:
         return [name or "" for name in self.obj.index.names]
 
-    def _get_index_label_flat(self) -> list[str]:
+    def _get_index_label_flat(self) -> List[str]:
         index_label = self.obj.index.name
         return [""] if index_label is None else [index_label]
 
-    def _initialize_quotechar(self, quotechar: str | None) -> str | None:
+    def _initialize_quotechar(self, quotechar: Optional[str]) -> Optional[str]:
         if self.quoting != csvlib.QUOTE_NONE:
             # prevents crash in _csv
             return quotechar
@@ -139,7 +129,7 @@ class CSVFormatter:
     def has_mi_columns(self) -> bool:
         return bool(isinstance(self.obj.columns, ABCMultiIndex))
 
-    def _initialize_columns(self, cols: Sequence[Hashable] | None) -> np.ndarray:
+    def _initialize_columns(self, cols: Optional[Sequence[Label]]) -> Sequence[Label]:
         # validate mi options
         if self.has_mi_columns:
             if cols is not None:
@@ -147,7 +137,7 @@ class CSVFormatter:
                 raise TypeError(msg)
 
         if cols is not None:
-            if isinstance(cols, ABCIndex):
+            if isinstance(cols, ABCIndexClass):
                 cols = cols._format_native_types(**self._number_format)
             else:
                 cols = list(cols)
@@ -156,15 +146,18 @@ class CSVFormatter:
         # update columns to include possible multiplicity of dupes
         # and make sure cols is just a list of labels
         new_cols = self.obj.columns
-        return new_cols._format_native_types(**self._number_format)
+        if isinstance(new_cols, ABCIndexClass):
+            return new_cols._format_native_types(**self._number_format)
+        else:
+            return list(new_cols)
 
-    def _initialize_chunksize(self, chunksize: int | None) -> int:
+    def _initialize_chunksize(self, chunksize: Optional[int]) -> int:
         if chunksize is None:
             return (100000 // (len(self.cols) or 1)) or 1
         return int(chunksize)
 
     @property
-    def _number_format(self) -> dict[str, Any]:
+    def _number_format(self) -> Dict[str, Any]:
         """Dictionary used for storing number formatting settings."""
         return {
             "na_rep": self.na_rep,
@@ -195,14 +188,14 @@ class CSVFormatter:
 
     @property
     def _has_aliases(self) -> bool:
-        return isinstance(self.header, (tuple, list, np.ndarray, ABCIndex))
+        return isinstance(self.header, (tuple, list, np.ndarray, ABCIndexClass))
 
     @property
     def _need_to_save_header(self) -> bool:
         return bool(self._has_aliases or self.header)
 
     @property
-    def write_cols(self) -> Sequence[Hashable]:
+    def write_cols(self) -> Sequence[Label]:
         if self._has_aliases:
             assert not isinstance(self.header, bool)
             if len(self.header) != len(self.cols):
@@ -212,13 +205,11 @@ class CSVFormatter:
             else:
                 return self.header
         else:
-            # self.cols is an ndarray derived from Index._format_native_types,
-            #  so its entries are strings, i.e. hashable
-            return cast(Sequence[Hashable], self.cols)
+            return self.cols
 
     @property
-    def encoded_labels(self) -> list[Hashable]:
-        encoded_labels: list[Hashable] = []
+    def encoded_labels(self) -> List[Label]:
+        encoded_labels: List[Label] = []
 
         if self.index and self.index_label:
             assert isinstance(self.index_label, Sequence)
@@ -268,7 +259,7 @@ class CSVFormatter:
             for row in self._generate_multiindex_header_rows():
                 self.writer.writerow(row)
 
-    def _generate_multiindex_header_rows(self) -> Iterator[list[Hashable]]:
+    def _generate_multiindex_header_rows(self) -> Iterator[List[Label]]:
         columns = self.obj.columns
         for i in range(columns.nlevels):
             # we need at least 1 index column to write our col names
@@ -291,7 +282,7 @@ class CSVFormatter:
 
     def _save_body(self) -> None:
         nrows = len(self.data_index)
-        chunks = (nrows // self.chunksize) + 1
+        chunks = int(nrows / self.chunksize) + 1
         for i in range(chunks):
             start_i = i * self.chunksize
             end_i = min(start_i + self.chunksize, nrows)
@@ -308,10 +299,4 @@ class CSVFormatter:
         data = [res.iget_values(i) for i in range(len(res.items))]
 
         ix = self.data_index[slicer]._format_native_types(**self._number_format)
-        libwriters.write_csv_rows(
-            data,
-            ix,
-            self.nlevels,
-            self.cols,
-            self.writer,
-        )
+        libwriters.write_csv_rows(data, ix, self.nlevels, self.cols, self.writer)

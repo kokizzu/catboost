@@ -2,25 +2,25 @@
 
 LIBRARY()
 
-LICENSE(
-    BSD-1-Clause AND
-    BSD-2-Clause AND
-    BSD-3-Clause AND
-    ISC
-)
-
-LICENSE_TEXTS(.yandex_meta/licenses.list.txt)
+LICENSE(BSD-3-Clause)
 
 NO_COMPILER_WARNINGS()
-
 NO_UTIL()
-
 NO_RUNTIME()
 
 IF (NOT OS_WINDOWS)
     SRCS(
         string.c
     )
+ENDIF()
+
+IF (OS_LINUX)
+    IF (NOT MUSL)
+        SRCS(
+            strlcat.c
+            strlcpy.c
+        )
+    ENDIF()
 ENDIF()
 
 # Android libc function appearance is documented here:
@@ -55,7 +55,7 @@ ENDIF()
 
 IF (OS_WINDOWS OR OS_DARWIN OR OS_IOS)
     SRCS(
-        memrchr.c
+       memrchr.c
     )
 ENDIF()
 
@@ -66,9 +66,8 @@ IF (OS_DARWIN)
 ENDIF()
 
 IF (OS_WINDOWS)
-    ADDINCL(
-        GLOBAL contrib/libs/libc_compat/include/windows
-    )
+    ADDINCL(GLOBAL contrib/libs/libc_compat/include/windows)
+
     SRCS(
         reallocarray.c
         stpcpy.c
@@ -80,43 +79,14 @@ IF (OS_WINDOWS)
     )
 ENDIF()
 
-IF (OS_LINUX)
-    ADDINCL(
-        GLOBAL contrib/libs/libc_compat/include/readpassphrase
-    )
-    SRCS(
-        readpassphrase.c
-    )
+IF (OS_LINUX AND NOT MUSL AND OS_SDK == "ubuntu-12")
+    ADDINCL(GLOBAL contrib/libs/libc_compat/include/uchar)
 ENDIF()
 
-IF (OS_LINUX AND NOT MUSL)
-    IF (OS_SDK == "ubuntu-12")
-        ADDINCL(
-            # uchar.h was introduced in glibc=2.16
-            GLOBAL contrib/libs/libc_compat/include/uchar
-        )
-    ENDIF()
-    IF (OS_SDK == "ubuntu-12" OR OS_SDK == "ubuntu-14" OR OS_SDK == "ubuntu-16")
-        ADDINCL(
-            GLOBAL contrib/libs/libc_compat/include/random
-        )
-        SRCS(
-            # getrandom was added in glibc=2.25
-            getrandom.c
-            # memfd_create was added in glibc=2.27
-            memfd_create.c
-        )
-    ENDIF()
-    IF (OS_SDK != "ubuntu-20")
-        SRCS(
-            # reallocarray was added in glibc=2.29
-            reallocarray.c
-        )
-    ENDIF()
+IF (OS_LINUX AND NOT MUSL AND OS_SDK != "ubuntu-20")
     SRCS(
-        # glibc does not offer strlcat / strlcpy yet
-        strlcat.c
-        strlcpy.c
+        # reallocarray was added in glibc=2.29
+        reallocarray.c
     )
 ENDIF()
 

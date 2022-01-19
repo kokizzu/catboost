@@ -48,5 +48,5 @@ namespace {
             RegisterCodec(MakeHolder<TSnappyCodec>());
         }
     };
-    const TSnappyRegistrar Registrar{};
+    static const TSnappyRegistrar Registrar{};
 }

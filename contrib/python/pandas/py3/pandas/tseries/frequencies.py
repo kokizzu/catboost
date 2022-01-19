@@ -1,14 +1,10 @@
-from __future__ import annotations
-
+from typing import Optional
 import warnings
 
 import numpy as np
 
 from pandas._libs.algos import unique_deltas
-from pandas._libs.tslibs import (
-    Timestamp,
-    tzconversion,
-)
+from pandas._libs.tslibs import Timestamp, tzconversion
 from pandas._libs.tslibs.ccalendar import (
     DAYS,
     MONTH_ALIASES,
@@ -16,10 +12,7 @@ from pandas._libs.tslibs.ccalendar import (
     MONTHS,
     int_to_weekday,
 )
-from pandas._libs.tslibs.fields import (
-    build_field_sarray,
-    month_position_check,
-)
+from pandas._libs.tslibs.fields import build_field_sarray, month_position_check
 from pandas._libs.tslibs.offsets import (  # noqa:F401
     DateOffset,
     Day,
@@ -94,7 +87,7 @@ for _d in DAYS:
     _offset_to_period_map[f"W-{_d}"] = f"W-{_d}"
 
 
-def get_period_alias(offset_str: str) -> str | None:
+def get_period_alias(offset_str: str) -> Optional[str]:
     """
     Alias to closest period strings BQ->Q etc.
     """
@@ -124,7 +117,7 @@ def get_offset(name: str) -> DateOffset:
 # Period codes
 
 
-def infer_freq(index, warn: bool = True) -> str | None:
+def infer_freq(index, warn: bool = True) -> Optional[str]:
     """
     Infer the most likely frequency given the input index. If the frequency is
     uncertain, a warning will be printed.
@@ -146,12 +139,6 @@ def infer_freq(index, warn: bool = True) -> str | None:
         If the index is not datetime-like.
     ValueError
         If there are fewer than three values.
-
-    Examples
-    --------
-    >>> idx = pd.date_range(start='2020/12/01', end='2020/12/30', periods=30)
-    >>> pd.infer_freq(idx)
-    'D'
     """
     import pandas as pd
 
@@ -240,7 +227,7 @@ class _FrequencyInferer:
     def is_unique_asi8(self) -> bool:
         return len(self.deltas_asi8) == 1
 
-    def get_freq(self) -> str | None:
+    def get_freq(self) -> Optional[str]:
         """
         Find the appropriate frequency string to describe the inferred
         frequency of self.i8values
@@ -253,17 +240,16 @@ class _FrequencyInferer:
             return None
 
         delta = self.deltas[0]
-        if delta and _is_multiple(delta, _ONE_DAY):
+        if _is_multiple(delta, _ONE_DAY):
             return self._infer_daily_rule()
 
         # Business hourly, maybe. 17: one day / 65: one weekend
         if self.hour_deltas in ([1, 17], [1, 65], [1, 17, 65]):
             return "BH"
-
         # Possibly intraday frequency.  Here we use the
         # original .asi8 values as the modified values
         # will not work around DST transitions.  See #8772
-        if not self.is_unique_asi8:
+        elif not self.is_unique_asi8:
             return None
 
         delta = self.deltas_asi8[0]
@@ -314,7 +300,7 @@ class _FrequencyInferer:
     def ydiffs(self):
         return unique_deltas(self.fields["Y"].astype("i8"))
 
-    def _infer_daily_rule(self) -> str | None:
+    def _infer_daily_rule(self) -> Optional[str]:
         annual_rule = self._get_annual_rule()
         if annual_rule:
             nyears = self.ydiffs[0]
@@ -346,7 +332,7 @@ class _FrequencyInferer:
 
         return None
 
-    def _get_daily_rule(self) -> str | None:
+    def _get_daily_rule(self) -> Optional[str]:
         days = self.deltas[0] / _ONE_DAY
         if days % 7 == 0:
             # Weekly
@@ -356,7 +342,7 @@ class _FrequencyInferer:
         else:
             return _maybe_add_count("D", days)
 
-    def _get_annual_rule(self) -> str | None:
+    def _get_annual_rule(self) -> Optional[str]:
         if len(self.ydiffs) > 1:
             return None
 
@@ -366,7 +352,7 @@ class _FrequencyInferer:
         pos_check = self.month_position_check()
         return {"cs": "AS", "bs": "BAS", "ce": "A", "be": "BA"}.get(pos_check)
 
-    def _get_quarterly_rule(self) -> str | None:
+    def _get_quarterly_rule(self) -> Optional[str]:
         if len(self.mdiffs) > 1:
             return None
 
@@ -376,7 +362,7 @@ class _FrequencyInferer:
         pos_check = self.month_position_check()
         return {"cs": "QS", "bs": "BQS", "ce": "Q", "be": "BQ"}.get(pos_check)
 
-    def _get_monthly_rule(self) -> str | None:
+    def _get_monthly_rule(self) -> Optional[str]:
         if len(self.mdiffs) > 1:
             return None
         pos_check = self.month_position_check()
@@ -392,13 +378,12 @@ class _FrequencyInferer:
         shifts = np.diff(self.index.asi8)
         shifts = np.floor_divide(shifts, _ONE_DAY)
         weekdays = np.mod(first_weekday + np.cumsum(shifts), 7)
-        # error: Incompatible return value type (got "bool_", expected "bool")
-        return np.all(  # type: ignore[return-value]
+        return np.all(
             ((weekdays == 0) & (shifts == 3))
             | ((weekdays > 0) & (weekdays <= 4) & (shifts == 1))
         )
 
-    def _get_wom_rule(self) -> str | None:
+    def _get_wom_rule(self) -> Optional[str]:
         # FIXME: dont leave commented-out
         #         wdiffs = unique(np.diff(self.index.week))
         # We also need -47, -49, -48 to catch index spanning year boundary
@@ -565,7 +550,7 @@ def _maybe_coerce_freq(code) -> str:
 
     Parameters
     ----------
-    source : str or DateOffset
+    source : string or DateOffset
         Frequency converting from
 
     Returns

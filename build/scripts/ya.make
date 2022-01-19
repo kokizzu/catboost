@@ -1,6 +1,6 @@
 
 
-PY2TEST()
+PYTEST()
 
 TEST_SRCS(
     build_dll_and_java.py
@@ -17,22 +17,17 @@ TEST_SRCS(
     compile_cuda.py
     compile_java.py
     compile_jsrc.py
-    compile_pysrc.py
     configure_file.py
-    copy_files_to_dir.py
     copy_to_dir.py
     coverage-info.py
-    cpp_flatc_wrapper.py
     create_jcoverage_report.py
     extract_asrc.py
-    extract_docs.py
     extract_jacoco_report.py
     f2c.py
     fail_module_cmd.py
     fetch_from.py
     fetch_from_external.py
     fetch_from_mds.py
-    fetch_from_npm.py
     fetch_from_sandbox.py
     fetch_resource.py
     filter_zip.py
@@ -61,12 +56,10 @@ TEST_SRCS(
     merge_coverage_data.py
     merge_files.py
     mkdir.py
-    mkdocs_builder_wrapper.py
     mkver.py
     pack_ios.py
     pack_jcoverage_resources.py
     perl_wrapper.py
-    postprocess_go_fbs.py
     preprocess.py
     py_compile.py
     run_ios_simulator.py
@@ -75,11 +68,9 @@ TEST_SRCS(
     run_llvm_dsymutil.py
     run_msvc_wine.py
     run_tool.py
-    sky.py
     stdout2stderr.py
     symlink.py
     tar_directory.py
-    tar_sources.py
     tared_protoc.py
     touch.py
     unpacking_jtest_runner.py
@@ -94,5 +85,7 @@ TEST_SRCS(
     yield_line.py
     yndexer.py
 )
+
+NO_LINT()
 
 END()

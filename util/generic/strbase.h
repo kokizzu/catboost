@@ -18,6 +18,7 @@
 #include <string>
 #include <string_view>
 
+
 namespace NStringPrivate {
     template <class TCharType>
     size_t GetStringLengthWithLimit(const TCharType* s, size_t maxlen) {
@@ -49,7 +50,6 @@ public:
     static constexpr size_t npos = size_t(-1);
 
     using const_iterator = const TCharType*;
-    using const_reference = const TCharType&;
 
     template <typename TBase>
     struct TReverseIteratorBase {
@@ -106,7 +106,8 @@ public:
     };
     using const_reverse_iterator = TReverseIteratorBase<const_iterator>;
 
-    static constexpr size_t StrLen(const TCharType* s) noexcept {
+    _LIBCPP_CONSTEXPR_AFTER_CXX14
+    static inline size_t StrLen(const TCharType* s) noexcept {
         if (Y_LIKELY(s)) {
             return TTraits::length(s);
         }
@@ -189,7 +190,8 @@ public:
         return *Ptr() == 0;
     }
 
-    Y_PURE_FUNCTION constexpr inline bool empty() const noexcept {
+    Y_PURE_FUNCTION
+    constexpr inline bool empty() const noexcept {
         return Len() == 0;
     }
 
@@ -206,7 +208,8 @@ public: // style-guide compliant methods
         return Len();
     }
 
-    Y_PURE_FUNCTION constexpr bool Empty() const noexcept {
+    Y_PURE_FUNCTION
+    constexpr bool Empty() const noexcept {
         return 0 == Len();
     }
 
@@ -233,7 +236,8 @@ public:
     }
 
     static int compare(const TStringView s1, const TStringView s2) noexcept {
-        return TStringViewWithTraits(s1.data(), s1.size()).compare(TStringViewWithTraits(s2.data(), s2.size()));
+        return TStringViewWithTraits(s1.data(), s1.size()).compare(
+                TStringViewWithTraits(s2.data(), s2.size()));
     }
 
     template <class T>
@@ -339,7 +343,7 @@ public:
         return equal(*this, pc);
     }
 
-#ifndef __cpp_impl_three_way_comparison
+    #ifndef __cpp_impl_three_way_comparison
     friend bool operator==(const TCharType* pc, const TSelf& s) noexcept {
         return equal(pc, s);
     }
@@ -360,7 +364,7 @@ public:
     friend bool operator!=(const TCharType* pc, const TSelf& s) noexcept {
         return !(pc == s);
     }
-#endif
+    #endif
 
     template <typename TDerived2, typename TTraits2>
     friend bool operator<(const TSelf& s1, const TStringBase<TDerived2, TChar, TTraits2>& s2) noexcept {

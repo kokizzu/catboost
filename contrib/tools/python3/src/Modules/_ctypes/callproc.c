@@ -839,7 +839,7 @@ static int _call_function_pointer(int flags,
 #      define HAVE_FFI_PREP_CIF_VAR_RUNTIME false
 #   endif
 
-    /* Even on Apple-arm64 the calling convention for variadic functions coincides
+    /* Even on Apple-arm64 the calling convention for variadic functions conincides
      * with the standard calling convention in the case that the function called
      * only with its fixed arguments.   Thus, we do not need a special flag to be
      * set on variadic functions.   We treat a function as variadic if it is called
@@ -1359,10 +1359,7 @@ static PyObject *load_library(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "U|i:LoadLibrary", &nameobj, &load_flags))
         return NULL;
 
-_Py_COMP_DIAG_PUSH
-_Py_COMP_DIAG_IGNORE_DEPR_DECLS
     name = _PyUnicode_AsUnicode(nameobj);
-_Py_COMP_DIAG_POP
     if (!name)
         return NULL;
 
@@ -1450,49 +1447,26 @@ copy_com_pointer(PyObject *self, PyObject *args)
     return r;
 }
 #else
-#ifdef __APPLE__
+
 #ifdef HAVE_DYLD_SHARED_CACHE_CONTAINS_PATH
-#define HAVE_DYLD_SHARED_CACHE_CONTAINS_PATH_RUNTIME \
-    __builtin_available(macOS 11.0, iOS 14.0, tvOS 14.0, watchOS 7.0, *)
-#else
-// Support the deprecated case of compiling on an older macOS version
-static void *libsystem_b_handle;
-static bool (*_dyld_shared_cache_contains_path)(const char *path);
-
-__attribute__((constructor)) void load_dyld_shared_cache_contains_path(void) {
-    libsystem_b_handle = dlopen("/usr/lib/libSystem.B.dylib", RTLD_LAZY);
-    if (libsystem_b_handle != NULL) {
-        _dyld_shared_cache_contains_path = dlsym(libsystem_b_handle, "_dyld_shared_cache_contains_path");
-    }
-}
-
-__attribute__((destructor)) void unload_dyld_shared_cache_contains_path(void) {
-    if (libsystem_b_handle != NULL) {
-        dlclose(libsystem_b_handle);
-    }
-}
-#define HAVE_DYLD_SHARED_CACHE_CONTAINS_PATH_RUNTIME \
-    _dyld_shared_cache_contains_path != NULL
-#endif
-
 static PyObject *py_dyld_shared_cache_contains_path(PyObject *self, PyObject *args)
 {
      PyObject *name, *name2;
      char *name_str;
 
-     if (HAVE_DYLD_SHARED_CACHE_CONTAINS_PATH_RUNTIME) {
+     if (__builtin_available(macOS 11.0, iOS 14.0, tvOS 14.0, watchOS 7.0, *)) {
          int r;
 
          if (!PyArg_ParseTuple(args, "O", &name))
              return NULL;
-
+    
          if (name == Py_None)
              Py_RETURN_FALSE;
-
+    
          if (PyUnicode_FSConverter(name, &name2) == 0)
              return NULL;
          name_str = PyBytes_AS_STRING(name2);
-
+    
          r = _dyld_shared_cache_contains_path(name_str);
          Py_DECREF(name2);
 
@@ -2023,7 +1997,7 @@ PyMethodDef _ctypes_module_methods[] = {
     {"dlclose", py_dl_close, METH_VARARGS, "dlclose a library"},
     {"dlsym", py_dl_sym, METH_VARARGS, "find symbol in shared library"},
 #endif
-#ifdef __APPLE__
+#ifdef HAVE_DYLD_SHARED_CACHE_CONTAINS_PATH
      {"_dyld_shared_cache_contains_path", py_dyld_shared_cache_contains_path, METH_VARARGS, "check if path is in the shared cache"},
 #endif
     {"alignment", align_func, METH_O, alignment_doc},

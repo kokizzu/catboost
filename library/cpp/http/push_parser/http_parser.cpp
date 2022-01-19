@@ -268,11 +268,7 @@ bool THttpParser::DecodeContent() {
 
     TMemoryInput in(Content_.data(), Content_.size());
     if (ContentEncoding_ == "gzip") {
-        auto decompressor = TZLibDecompress(&in, ZLib::GZip);
-        if (!GzipAllowMultipleStreams_) {
-            decompressor.SetAllowMultipleStreams(false);
-        }
-        DecodedContent_ = decompressor.ReadAll();
+        DecodedContent_ = TZLibDecompress(&in, ZLib::GZip).ReadAll();
     } else if (ContentEncoding_ == "deflate") {
 
         //https://tools.ietf.org/html/rfc1950

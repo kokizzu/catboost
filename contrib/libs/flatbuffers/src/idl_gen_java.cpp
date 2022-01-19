@@ -60,7 +60,7 @@ class JavaGenerator : public BaseGenerator {
         one_file_code += enumcode;
       } else {
         if (!SaveType(enum_def.name, *enum_def.defined_namespace, enumcode,
-                      /* needs_includes= */ false))
+                      false))
           return false;
       }
     }
@@ -76,14 +76,14 @@ class JavaGenerator : public BaseGenerator {
         one_file_code += declcode;
       } else {
         if (!SaveType(struct_def.name, *struct_def.defined_namespace, declcode,
-                      /* needs_includes= */ true))
+                      true))
           return false;
       }
     }
 
     if (parser_.opts.one_file) {
       return SaveType(file_name_, *parser_.current_namespace_, one_file_code,
-                      /* needs_includes= */ true);
+                      true);
     }
     return true;
   }
@@ -112,9 +112,11 @@ class JavaGenerator : public BaseGenerator {
       if (parser_.opts.java_checkerframework) {
         code += "\nimport org.checkerframework.dataflow.qual.Pure;\n";
       }
-      code += "\n";
+      code += "\n@SuppressWarnings(\"unused\")\n";
     }
-
+    if (parser_.opts.gen_generated) {
+      code += "\n@javax.annotation.Generated(value=\"flatc\")\n";
+    }
     code += classcode;
     if (!namespace_name.empty()) code += "";
     auto filename = NamespaceDir(ns) + defname + ".java";
@@ -224,7 +226,9 @@ class JavaGenerator : public BaseGenerator {
   // Cast statements for mutator method parameters.
   // In Java, parameters representing unsigned numbers need to be cast down to
   // their respective type. For example, a long holding an unsigned int value
-  // would be cast down to int before being put onto the buffer.
+  // would be cast down to int before being put onto the buffer. In C#, one cast
+  // directly cast an Enum to its underlying type, which is essential before
+  // putting it onto the buffer.
   std::string SourceCast(const Type &type, bool castFromDest) const {
     if (IsSeries(type)) {
       return SourceCast(type.VectorType(), castFromDest);
@@ -264,26 +268,21 @@ class JavaGenerator : public BaseGenerator {
 
   std::string GenDefaultValue(const FieldDef &field) const {
     auto &value = field.value;
-    auto constant = field.IsScalarOptional() ? "0" : value.constant;
     auto longSuffix = "L";
     switch (value.type.base_type) {
-      case BASE_TYPE_BOOL: return constant == "0" ? "false" : "true";
+      case BASE_TYPE_BOOL: return value.constant == "0" ? "false" : "true";
       case BASE_TYPE_ULONG: {
         // Converts the ulong into its bits signed equivalent
-        uint64_t defaultValue = StringToUInt(constant.c_str());
+        uint64_t defaultValue = StringToUInt(value.constant.c_str());
         return NumToString(static_cast<int64_t>(defaultValue)) + longSuffix;
       }
       case BASE_TYPE_UINT:
-      case BASE_TYPE_LONG: return constant + longSuffix;
+      case BASE_TYPE_LONG: return value.constant + longSuffix;
       default:
-        if (IsFloat(value.type.base_type)) {
-          if (field.IsScalarOptional()) {
-            return value.type.base_type == BASE_TYPE_DOUBLE ? "0.0" : "0f";
-          }
+        if (IsFloat(value.type.base_type))
           return JavaFloatGen.GenFloatConstant(field);
-        } else {
-          return constant;
-        }
+        else
+          return value.constant;
     }
   }
 
@@ -306,6 +305,7 @@ class JavaGenerator : public BaseGenerator {
 
     if (enum_def.attributes.Lookup("private")) {
       // For Java, we leave the enum unmarked to indicate package-private
+      // For C# we mark the enum as internal
     } else {
       code += "public ";
     }
@@ -316,7 +316,7 @@ class JavaGenerator : public BaseGenerator {
       auto &ev = **it;
       GenComment(ev.doc_comment, code_ptr, &comment_config, "  ");
       code += "  public static final ";
-      code += GenTypeBasic(DestinationType(enum_def.underlying_type, false));
+      code += GenTypeBasic(enum_def.underlying_type);
       code += " ";
       code += ev.name + " = ";
       code += enum_def.ToString(ev);
@@ -324,6 +324,7 @@ class JavaGenerator : public BaseGenerator {
     }
 
     // Generate a generate string table for enum values.
+    // We do not do that for C# where this functionality is native.
     // Problem is, if values are very sparse that could generate really big
     // tables. Ideally in that case we generate a map lookup instead, but for
     // the moment we simply don't output a table at all.
@@ -353,7 +354,10 @@ class JavaGenerator : public BaseGenerator {
     }
 
     // Close the class
-    code += "}\n\n";
+    code += "}";
+    // Java does not need the closing semi-colon on class definitions.
+    code += "";
+    code += "\n\n";
   }
 
   // Returns the function name that is able to read a value of the given type.
@@ -522,7 +526,7 @@ class JavaGenerator : public BaseGenerator {
     key_getter += "int tableOffset = ";
     key_getter += "__indirect(vectorLocation + 4 * (start + middle)";
     key_getter += ", bb);\n      ";
-    if (IsString(key_field->value.type)) {
+    if (key_field->value.type.base_type == BASE_TYPE_STRING) {
       key_getter += "int comp = ";
       key_getter += "compareStrings(";
       key_getter += GenOffsetGetter(key_field);
@@ -539,7 +543,7 @@ class JavaGenerator : public BaseGenerator {
   std::string GenKeyGetter(flatbuffers::FieldDef *key_field) const {
     std::string key_getter = "";
     auto data_buffer = "_bb";
-    if (IsString(key_field->value.type)) {
+    if (key_field->value.type.base_type == BASE_TYPE_STRING) {
       key_getter += " return ";
       key_getter += "";
       key_getter += "compareStrings(";
@@ -571,17 +575,14 @@ class JavaGenerator : public BaseGenerator {
     //   int o = __offset(offset); return o != 0 ? bb.getType(o + i) : default;
     // }
     GenComment(struct_def.doc_comment, code_ptr, &comment_config);
-
-    if (parser_.opts.gen_generated) {
-      code += "@javax.annotation.Generated(value=\"flatc\")\n";
-    }
-    code += "@SuppressWarnings(\"unused\")\n";
     if (struct_def.attributes.Lookup("private")) {
       // For Java, we leave the struct unmarked to indicate package-private
+      // For C# we mark the struct as internal
     } else {
       code += "public ";
     }
-    code += "final class " + struct_def.name;
+    code += "final ";
+    code += "class " + struct_def.name;
     code += " extends ";
     code += struct_def.fixed ? "Struct" : "Table";
     code += " {\n";
@@ -591,7 +592,7 @@ class JavaGenerator : public BaseGenerator {
       // Force compile time error if not using the same version runtime.
       code += "  public static void ValidateVersion() {";
       code += " Constants.";
-      code += "FLATBUFFERS_2_0_0(); ";
+      code += "FLATBUFFERS_1_12_0(); ";
       code += "}\n";
 
       // Generate a special accessor for the table that when used as the root
@@ -649,7 +650,7 @@ class JavaGenerator : public BaseGenerator {
       std::string src_cast = SourceCast(field.value.type);
       std::string method_start =
           "  public " +
-          (field.IsRequired() ? "" : GenNullableAnnotation(field.value.type)) +
+          (field.required ? "" : GenNullableAnnotation(field.value.type)) +
           GenPureAnnotation(field.value.type) + type_name_dest + optional +
           " " + MakeCamel(field.name, false);
       std::string obj = "obj";
@@ -668,7 +669,7 @@ class JavaGenerator : public BaseGenerator {
         code += MakeCamel(field.name, false);
         code += "(new ";
         code += type_name + "()); }\n";
-      } else if (IsVector(field.value.type) &&
+      } else if (field.value.type.base_type == BASE_TYPE_VECTOR &&
                  field.value.type.element == BASE_TYPE_STRUCT) {
         // Accessors for vectors of structs also take accessor objects, this
         // generates a variant without that argument.
@@ -677,7 +678,6 @@ class JavaGenerator : public BaseGenerator {
         code += "(new " + type_name + "(), j); }\n";
       }
 
-      if (field.IsScalarOptional()) { code += GenOptionalScalarCheck(field); }
       std::string getter = dest_cast + GenGetter(field.value.type);
       code += method_start;
       std::string default_cast = "";
@@ -772,7 +772,7 @@ class JavaGenerator : public BaseGenerator {
       }
       code += member_suffix;
       code += "}\n";
-      if (IsVector(field.value.type)) {
+      if (field.value.type.base_type == BASE_TYPE_VECTOR) {
         code += "  public int " + MakeCamel(field.name, false);
         code += "Length";
         code += "()";
@@ -813,7 +813,7 @@ class JavaGenerator : public BaseGenerator {
         }
       }
       // Generate the accessors for vector of structs with vector access object
-      if (IsVector(field.value.type)) {
+      if (field.value.type.base_type == BASE_TYPE_VECTOR) {
         std::string vector_type_name;
         const auto &element_base_type = field.value.type.VectorType().base_type;
         if (IsScalar(element_base_type)) {
@@ -842,15 +842,15 @@ class JavaGenerator : public BaseGenerator {
         code += "bb) : null" + member_suffix + "}\n";
       }
       // Generate a ByteBuffer accessor for strings & vectors of scalars.
-      if ((IsVector(field.value.type) &&
+      if ((field.value.type.base_type == BASE_TYPE_VECTOR &&
            IsScalar(field.value.type.VectorType().base_type)) ||
-          IsString(field.value.type)) {
+          field.value.type.base_type == BASE_TYPE_STRING) {
         code += "  public ByteBuffer ";
         code += MakeCamel(field.name, false);
         code += "AsByteBuffer() { return ";
         code += "__vector_as_bytebuffer(";
         code += NumToString(field.value.offset) + ", ";
-        code += NumToString(IsString(field.value.type)
+        code += NumToString(field.value.type.base_type == BASE_TYPE_STRING
                                 ? 1
                                 : InlineSize(field.value.type.VectorType()));
         code += "); }\n";
@@ -859,7 +859,7 @@ class JavaGenerator : public BaseGenerator {
         code += "InByteBuffer(ByteBuffer _bb) { return ";
         code += "__vector_in_bytebuffer(_bb, ";
         code += NumToString(field.value.offset) + ", ";
-        code += NumToString(IsString(field.value.type)
+        code += NumToString(field.value.type.base_type == BASE_TYPE_STRING
                                 ? 1
                                 : InlineSize(field.value.type.VectorType()));
         code += "); }\n";
@@ -1036,7 +1036,7 @@ class JavaGenerator : public BaseGenerator {
         code += SourceCastBasic(field.value.type);
         code += GenDefaultValue(field);
         code += "); }\n";
-        if (IsVector(field.value.type)) {
+        if (field.value.type.base_type == BASE_TYPE_VECTOR) {
           auto vector_type = field.value.type.VectorType();
           auto alignment = InlineAlignment(vector_type);
           auto elem_size = InlineSize(vector_type);
@@ -1095,7 +1095,7 @@ class JavaGenerator : public BaseGenerator {
       for (auto it = struct_def.fields.vec.begin();
            it != struct_def.fields.vec.end(); ++it) {
         auto &field = **it;
-        if (!field.deprecated && field.IsRequired()) {
+        if (!field.deprecated && field.required) {
           code += "    builder.required(o, ";
           code += NumToString(field.value.offset);
           code += ");  // " + field.name + "\n";
@@ -1132,7 +1132,7 @@ class JavaGenerator : public BaseGenerator {
       code += "int vectorLocation, ";
       code += GenTypeNameDest(key_field->value.type);
       code += " key, ByteBuffer bb) {\n";
-      if (IsString(key_field->value.type)) {
+      if (key_field->value.type.base_type == BASE_TYPE_STRING) {
         code += "    byte[] byteKey = ";
         code += "key.getBytes(java.nio.charset.StandardCharsets.UTF_8);\n";
       }
@@ -1159,13 +1159,6 @@ class JavaGenerator : public BaseGenerator {
     GenVectorAccessObject(struct_def, code_ptr);
     code += "}";
     code += "\n\n";
-  }
-
-  std::string GenOptionalScalarCheck(FieldDef &field) const {
-    if (!field.IsScalarOptional()) return "";
-    return "  public boolean has" + MakeCamel(field.name, true) +
-           "() { return 0 != __offset(" + NumToString(field.value.offset) +
-           "); }\n";
   }
 
   void GenVectorAccessObject(StructDef &struct_def,

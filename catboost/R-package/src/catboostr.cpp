@@ -7,7 +7,6 @@
 #include <catboost/libs/helpers/int_cast.h>
 #include <catboost/libs/helpers/mem_usage.h>
 #include <catboost/libs/logging/logging.h>
-#include <catboost/libs/metrics/metric.h>
 #include <catboost/libs/model/model.h>
 #include <catboost/libs/model/model_export/model_exporter.h>
 #include <catboost/libs/model/utils.h>
@@ -15,13 +14,9 @@
 #include <catboost/libs/train_lib/cross_validation.h>
 #include <catboost/private/libs/algo/apply.h>
 #include <catboost/private/libs/algo/helpers.h>
-#include <catboost/private/libs/algo/mvs.h>
-#include <catboost/private/libs/algo/plot.h>
 #include <catboost/private/libs/documents_importance/docs_importance.h>
 #include <catboost/private/libs/documents_importance/enums.h>
 #include <catboost/private/libs/options/cross_validation_params.h>
-#include <catboost/private/libs/options/enum_helpers.h>
-#include <catboost/private/libs/target/data_providers.h>
 
 #include <util/generic/cast.h>
 #include <util/generic/mem_copy.h>
@@ -36,20 +31,20 @@
 #undef SIZEOF_SIZE_T
 #endif
 
-#include "catboostr.h"
+#include <Rinternals.h>
 
 
 using namespace NCB;
 
 
-#define R_API_BEGIN()                                                           \
-    auto loggingFunc = [](const char* str, size_t len, TCustomLoggingObject) {  \
-        TString slicedStr(str, 0, len);                                         \
-        Rprintf("%s", slicedStr.c_str());                                       \
-    };                                                                          \
-    SetCustomLoggingFunction(loggingFunc, loggingFunc);                         \
-    *Singleton<TRPackageInitializer>();                                         \
-    try {                                                                       \
+#define R_API_BEGIN()                                               \
+    auto loggingFunc = [](const char* str, size_t len) {            \
+        TString slicedStr(str, 0, len);                             \
+        Rprintf("%s", slicedStr.c_str());                           \
+    };                                                               \
+    SetCustomLoggingFunction(loggingFunc, loggingFunc);             \
+    *Singleton<TRPackageInitializer>();                             \
+    try {                                                           \
 
 
 #define R_API_END()                                                 \
@@ -57,6 +52,12 @@ using namespace NCB;
         error(e.what());                                            \
     }                                                               \
     RestoreOriginalLogger();                                        \
+
+#if defined(_WIN32)
+#define EXPORT_FUNCTION __declspec(dllexport) SEXP
+#else
+#define EXPORT_FUNCTION SEXP
+#endif
 
 typedef TDataProvider* TPoolHandle;
 typedef TDataProviderPtr TPoolPtr;
@@ -155,13 +156,11 @@ EXPORT_FUNCTION CatBoostCreateFromFile_R(SEXP poolFileParam,
                                            /*baselineFilePath=*/TPathWithScheme(),
                                            !featureNamesPathWithScheme.empty() ?
                                                 TPathWithScheme(featureNamesPathWithScheme, "dsv") : TPathWithScheme(),
-                                           /*poolMetaInfoPath=*/TPathWithScheme(),
                                            columnarPoolFormatParams,
                                            TVector<ui32>(),
                                            EObjectsOrder::Undefined,
                                            UpdateThreadCount(asInteger(threadCountParam)),
                                            asLogical(verboseParam),
-                                           /*forceUnitAutoPairWeights*/ false,
                                            /*classLabels=*/Nothing());
     result = PROTECT(R_MakeExternalPtr(poolPtr.Get(), R_NilValue, R_NilValue));
     R_RegisterCFinalizerEx(result, _Finalizer<TPoolHandle>, TRUE);
@@ -171,11 +170,9 @@ EXPORT_FUNCTION CatBoostCreateFromFile_R(SEXP poolFileParam,
     return result;
 }
 
-EXPORT_FUNCTION CatBoostCreateFromMatrix_R(SEXP floatAndCatMatrixParam,
+EXPORT_FUNCTION CatBoostCreateFromMatrix_R(SEXP matrixParam,
                                 SEXP targetParam,
-                                SEXP catFeaturesIndicesParam,
-                                SEXP textMatrixParam,
-                                SEXP textFeaturesIndicesParam,
+                                SEXP catFeaturesParam,
                                 SEXP pairsParam,
                                 SEXP weightParam,
                                 SEXP groupIdParam,
@@ -186,15 +183,9 @@ EXPORT_FUNCTION CatBoostCreateFromMatrix_R(SEXP floatAndCatMatrixParam,
                                 SEXP featureNamesParam) {
     SEXP result = NULL;
     R_API_BEGIN();
-    SEXP dataDim = floatAndCatMatrixParam != R_NilValue ?
-                   getAttrib(floatAndCatMatrixParam, R_DimSymbol) :
-                   getAttrib(textMatrixParam, R_DimSymbol);
+    SEXP dataDim = getAttrib(matrixParam, R_DimSymbol);
     ui32 dataRows = SafeIntegerCast<ui32>(INTEGER(dataDim)[0]);
-    ui32 floatAndCatColumns = floatAndCatMatrixParam == R_NilValue ? 0 :
-                       SafeIntegerCast<ui32>(INTEGER(getAttrib(floatAndCatMatrixParam, R_DimSymbol))[1]);
-    ui32 textColumns = textMatrixParam == R_NilValue ? 0 :
-                       SafeIntegerCast<ui32>(INTEGER(getAttrib(textMatrixParam, R_DimSymbol))[1]);
-    ui32 dataColumns = floatAndCatColumns + textColumns;
+    ui32 dataColumns = SafeIntegerCast<ui32>(INTEGER(dataDim)[1]);
     SEXP targetDim = getAttrib(targetParam, R_DimSymbol);
     ui32 targetRows = 0;
     ui32 targetColumns = 0;
@@ -222,8 +213,8 @@ EXPORT_FUNCTION CatBoostCreateFromMatrix_R(SEXP floatAndCatMatrixParam,
 
         metaInfo.FeaturesLayout = MakeIntrusive<TFeaturesLayout>(
             dataColumns,
-            ToUnsigned(GetVectorFromSEXP<int>(catFeaturesIndicesParam)),
-            ToUnsigned(GetVectorFromSEXP<int>(textFeaturesIndicesParam)),
+            ToUnsigned(GetVectorFromSEXP<int>(catFeaturesParam)),
+            TVector<ui32>{}, // TODO(d-kruchinin) support text features in R
             TVector<ui32>{}, // TODO(akhropov) support embedding features in R
             featureId);
 
@@ -238,7 +229,7 @@ EXPORT_FUNCTION CatBoostCreateFromMatrix_R(SEXP floatAndCatMatrixParam,
 
         visitor->Start(metaInfo, dataRows, EObjectsOrder::Undefined, {});
 
-        double *ptr_targetParam = Rf_isNull(targetParam)? nullptr : REAL(targetParam);
+        double *ptr_targetParam = REAL(targetParam);
         for (auto targetIdx : xrange(targetColumns)) {
             TVector<float> target(targetRows);
             for (auto docIdx : xrange(targetRows)) {
@@ -252,10 +243,10 @@ EXPORT_FUNCTION CatBoostCreateFromMatrix_R(SEXP floatAndCatMatrixParam,
         TVector<float> weights(metaInfo.HasWeights ? dataRows : 0);
         TVector<float> groupWeights(metaInfo.HasGroupWeight ? dataRows : 0);
 
-        int *ptr_groupIdParam = Rf_isNull(groupIdParam)? nullptr : INTEGER(groupIdParam);
-        int *ptr_subgroupIdParam = Rf_isNull(subgroupIdParam)? nullptr : INTEGER(subgroupIdParam);
-        double *ptr_weightParam = Rf_isNull(weightParam)? nullptr : REAL(weightParam);
-        double *ptr_groupWeightParam = Rf_isNull(groupWeightParam)? nullptr : REAL(groupWeightParam);
+        int *ptr_groupIdParam = INTEGER(groupIdParam);
+        int *ptr_subgroupIdParam = INTEGER(subgroupIdParam);
+        double *ptr_weightParam = REAL(weightParam);
+        double *ptr_groupWeightParam = REAL(groupWeightParam);
         for (ui32 i = 0; i < dataRows; ++i) {
             if (metaInfo.HasGroupId) {
                 visitor->AddGroupId(i, static_cast<uint32_t>(ptr_groupIdParam[i]));
@@ -279,7 +270,7 @@ EXPORT_FUNCTION CatBoostCreateFromMatrix_R(SEXP floatAndCatMatrixParam,
         }
         if (metaInfo.BaselineCount) {
             TVector<float> baseline(dataRows);
-            double *ptr_baselineParam = Rf_isNull(baselineParam)? nullptr : REAL(baselineParam);
+            double *ptr_baselineParam = REAL(baselineParam);
             for (size_t j = 0; j < baselineColumns; ++j) {
                 for (ui32 i = 0; i < dataRows; ++i) {
                     baseline[i] = static_cast<float>(ptr_baselineParam[i + baselineRows * j]);
@@ -288,43 +279,30 @@ EXPORT_FUNCTION CatBoostCreateFromMatrix_R(SEXP floatAndCatMatrixParam,
             }
         }
 
-        double *ptr_floatAndCatMatrixParam = Rf_isNull(floatAndCatMatrixParam)? nullptr : REAL(floatAndCatMatrixParam);
-        size_t indexTextMatrix = 0;
-        size_t indexFloatAndCatMatrix = 0;
-        for (size_t j = 0; j < dataColumns; ++j){
-            if (metaInfo.FeaturesLayout->GetExternalFeatureType(j) == EFeatureType::Text) {
-                TVector<TString> textValues;
-                textValues.yresize(dataRows);
+        double *ptr_matrixParam = REAL(matrixParam);
+        for (size_t j = 0; j < dataColumns; ++j) {
+            if (metaInfo.FeaturesLayout->GetExternalFeatureType(j) == EFeatureType::Categorical) {
+                TVector<ui32> catValues;
+                catValues.yresize(dataRows);
                 for (ui32 i = 0; i < dataRows; ++i) {
-                    textValues[i] = CHAR(STRING_PTR(textMatrixParam)[i + dataRows * indexTextMatrix]);
+                    catValues[i] =
+                        ConvertFloatCatFeatureToIntHash(static_cast<float>(ptr_matrixParam[i + dataRows * j]));
                 }
-                visitor->AddTextFeature(j, TMaybeOwningConstArrayHolder<TString>::CreateOwning(std::move(textValues)));
-                indexTextMatrix++;
+                visitor->AddCatFeature(j, TMaybeOwningConstArrayHolder<ui32>::CreateOwning(std::move(catValues)));
             } else {
-                if (metaInfo.FeaturesLayout->GetExternalFeatureType(j) == EFeatureType::Categorical) {
-                    TVector<ui32> catValues;
-                    catValues.yresize(dataRows);
-                    for (ui32 i = 0; i < dataRows; ++i) {
-                        catValues[i] =
-                            ConvertFloatCatFeatureToIntHash(static_cast<float>(ptr_floatAndCatMatrixParam[i + dataRows * indexFloatAndCatMatrix]));
-                    }
-                    visitor->AddCatFeature(j, TMaybeOwningConstArrayHolder<ui32>::CreateOwning(std::move(catValues)));
-                } else {
-                    TVector<float> floatValues;
-                    floatValues.yresize(dataRows);
-                    for (ui32 i = 0; i < dataRows; ++i) {
-                        floatValues[i] = static_cast<float>(ptr_floatAndCatMatrixParam[i + dataRows * indexFloatAndCatMatrix]);
-                    }
-                    visitor->AddFloatFeature(j, MakeTypeCastArrayHolderFromVector<float, float>(floatValues));
+                TVector<float> floatValues;
+                floatValues.yresize(dataRows);
+                for (ui32 i = 0; i < dataRows; ++i) {
+                    floatValues[i] = static_cast<float>(ptr_matrixParam[i + dataRows * j]);
                 }
-                indexFloatAndCatMatrix++;
+                visitor->AddFloatFeature(j, MakeTypeCastArrayHolderFromVector<float, float>(floatValues));
             }
         }
 
         if (pairsParam != R_NilValue) {
             TVector<TPair> pairs;
             size_t pairsCount = static_cast<size_t>(INTEGER(getAttrib(pairsParam, R_DimSymbol))[0]);
-            double *ptr_pairsWeightParam = Rf_isNull(pairsWeightParam)? nullptr : REAL(pairsWeightParam);
+            double *ptr_pairsWeightParam = REAL(pairsWeightParam);
             int *ptr_pairsParam = INTEGER(pairsParam);
             for (size_t i = 0; i < pairsCount; ++i) {
                 float weight = 1;
@@ -406,15 +384,6 @@ EXPORT_FUNCTION CatBoostIsOblivious_R(SEXP modelParam) {
     return result;
 }
 
-EXPORT_FUNCTION CatBoostIsGroupwiseMetric_R(SEXP modelParam) {
-    SEXP result = NULL;
-    R_API_BEGIN();
-    TFullModelHandle model = reinterpret_cast<TFullModelHandle>(R_ExternalPtrAddr(modelParam));
-    result = ScalarLogical(static_cast<int>(IsGroupwiseMetric(model->GetLossFunctionName())));
-    R_API_END();
-    return result;
-}
-
 EXPORT_FUNCTION CatBoostPoolSlice_R(SEXP poolParam, SEXP sizeParam, SEXP offsetParam) {
     SEXP result = NULL;
     size_t size, offset;
@@ -430,7 +399,7 @@ EXPORT_FUNCTION CatBoostPoolSlice_R(SEXP poolParam, SEXP sizeParam, SEXP offsetP
 
     CB_ENSURE(
         featuresLayout.GetExternalFeatureCount() == featuresLayout.GetFloatFeatureCount(),
-        "Dataset slicing error: non-numeric features present, slicing datasets with categorical and text features is not supported"
+        "Cannot slice non-numeric features data"
     );
 
     result = PROTECT(allocVector(VECSXP, size));
@@ -471,7 +440,7 @@ EXPORT_FUNCTION CatBoostPoolSlice_R(SEXP poolParam, SEXP sizeParam, SEXP offsetP
 
     for (auto targetIdx : xrange(targetCount)) {
         if (const ITypedSequencePtr<float>* typedSequence
-                = std::get_if<ITypedSequencePtr<float>>(&((*target)[targetIdx])))
+                = GetIf<ITypedSequencePtr<float>>(&((*target)[targetIdx])))
         {
             TIntrusivePtr<ITypedArraySubset<float>> subset = (*typedSequence)->GetSubset(
                 &objectsGroupingSubset.GetObjectsIndexing()
@@ -482,7 +451,7 @@ EXPORT_FUNCTION CatBoostPoolSlice_R(SEXP poolParam, SEXP sizeParam, SEXP offsetP
                 }
             );
         } else {
-            TConstArrayRef<TString> stringTargetPart = std::get<TVector<TString>>((*target)[targetIdx]);
+            TConstArrayRef<TString> stringTargetPart = Get<TVector<TString>>((*target)[targetIdx]);
 
             for (size_t i = offset; i < sliceEnd; ++i) {
                 rows[i - offset][targetIdx] = FromString<double>(stringTargetPart[i]);
@@ -536,7 +505,6 @@ EXPORT_FUNCTION CatBoostFit_R(SEXP learnPoolParam, SEXP testPoolParam, SEXP fitP
             nullptr,
             Nothing(),
             Nothing(),
-            Nothing(),
             pools,
             /*initModel*/ Nothing(),
             /*initLearnProgress*/ nullptr,
@@ -549,7 +517,6 @@ EXPORT_FUNCTION CatBoostFit_R(SEXP learnPoolParam, SEXP testPoolParam, SEXP fitP
         TrainModel(
             fitParams,
             nullptr,
-            Nothing(),
             Nothing(),
             Nothing(),
             pools,
@@ -771,9 +738,9 @@ EXPORT_FUNCTION CatBoostPredictMulti_R(SEXP modelParam, SEXP poolParam, SEXP ver
     TFullModelHandle model = reinterpret_cast<TFullModelHandle>(R_ExternalPtrAddr(modelParam));
     TPoolHandle pool = reinterpret_cast<TPoolHandle>(R_ExternalPtrAddr(poolParam));
     EPredictionType predictionType;
-    CB_ENSURE(TryFromString<EPredictionType>(CHAR(asChar(typeParam)), predictionType) &&
-              !IsUncertaintyPredictionType(predictionType) && predictionType != EPredictionType::InternalRawFormulaVal,
-              "Unsupported prediction type: 'Probability', 'LogProbability', 'Class', 'RawFormulaVal', 'Exponent' or 'RMSEWithUncertainty' was expected");
+    CB_ENSURE(TryFromString<EPredictionType>(CHAR(asChar(typeParam)), predictionType),
+              "unsupported prediction type: 'Probability', 'Class' or 'RawFormulaVal' was expected");
+
     TVector<TVector<double>> prediction = ApplyModelMulti(*model,
                                                           *pool,
                                                           asLogical(verboseParam),
@@ -799,7 +766,7 @@ EXPORT_FUNCTION CatBoostPrepareEval_R(SEXP approxParam, SEXP typeParam, SEXP los
     SEXP dataDim = getAttrib(approxParam, R_DimSymbol);
     size_t dataRows = static_cast<size_t>(INTEGER(dataDim)[0]) / asInteger(columnCountParam);
     TVector<TVector<double>> prediction(asInteger(columnCountParam), TVector<double>(dataRows));
-    double *ptr_approxParam = Rf_isNull(approxParam)? nullptr : REAL(approxParam);
+    double *ptr_approxParam = REAL(approxParam);
     for (size_t i = 0, k = 0; i < dataRows; ++i) {
         for (size_t j = 0; j < prediction.size(); ++j) {
             prediction[j][i] = static_cast<double>(ptr_approxParam[k++]);
@@ -811,7 +778,7 @@ EXPORT_FUNCTION CatBoostPrepareEval_R(SEXP approxParam, SEXP typeParam, SEXP los
     EPredictionType predictionType;
     CB_ENSURE(TryFromString<EPredictionType>(CHAR(asChar(typeParam)), predictionType),
               "unsupported prediction type: 'Probability', 'Class' or 'RawFormulaVal' was expected");
-    prediction = PrepareEval(predictionType, /* virtualEnsemblesCount*/ 1, CHAR(asChar(lossFunctionName)), prediction, &executor);
+    prediction = PrepareEval(predictionType, CHAR(asChar(lossFunctionName)), prediction, &executor);
 
     size_t predictionSize = prediction.size() * dataRows;
     result = PROTECT(allocVector(REALSXP, predictionSize));
@@ -819,34 +786,6 @@ EXPORT_FUNCTION CatBoostPrepareEval_R(SEXP approxParam, SEXP typeParam, SEXP los
     for (size_t i = 0, k = 0; i < dataRows; ++i) {
         for (size_t j = 0; j < prediction.size(); ++j) {
             ptr_result[k++] = prediction[j][i];
-        }
-    }
-    R_API_END();
-    UNPROTECT(1);
-    return result;
-}
-
-EXPORT_FUNCTION CatBoostPredictVirtualEnsembles_R(SEXP modelParam, SEXP poolParam, SEXP verboseParam,
-                            SEXP typeParam, SEXP treeCountEndParam, SEXP virtualEnsemblesCountParam, SEXP threadCountParam) {
-    SEXP result = NULL;
-    R_API_BEGIN();
-    TFullModelHandle model = reinterpret_cast<TFullModelHandle>(R_ExternalPtrAddr(modelParam));
-    TPoolHandle pool = reinterpret_cast<TPoolHandle>(R_ExternalPtrAddr(poolParam));
-    EPredictionType predictionType;
-    CB_ENSURE(TryFromString<EPredictionType>(CHAR(asChar(typeParam)), predictionType) && IsUncertaintyPredictionType(predictionType),
-              "Unsupported virtual ensembles prediction type: 'VirtEnsembles' or 'TotalUncertainty' was expected");
-    TVector<TVector<double>> prediction = ApplyUncertaintyPredictions(*model,
-                                                                      *pool,
-                                                                      asLogical(verboseParam),
-                                                                      predictionType,
-                                                                      asInteger(treeCountEndParam),
-                                                                      asInteger(virtualEnsemblesCountParam),
-                                                                      UpdateThreadCount(asInteger(threadCountParam)));
-    size_t predictionSize = prediction.size() * pool->ObjectsGrouping->GetObjectCount();
-    result = PROTECT(allocVector(REALSXP, predictionSize));
-    for (size_t i = 0, k = 0; i < pool->ObjectsGrouping->GetObjectCount(); ++i) {
-        for (size_t j = 0; j < prediction.size(); ++j) {
-            REAL(result)[k++] = prediction[j][i];
         }
     }
     R_API_END();
@@ -1017,114 +956,5 @@ EXPORT_FUNCTION CatBoostEvaluateObjectImportances_R(
 
 EXPORT_FUNCTION CatBoostIsNullHandle_R(SEXP handleParam) {
     return ScalarLogical(!R_ExternalPtrAddr(handleParam));
-}
-
-EXPORT_FUNCTION CatBoostEvalMetrics_R(
-        SEXP modelParam,
-        SEXP poolParam,
-        SEXP metricsParam,
-        SEXP treeCountStartParam,
-        SEXP treeCountEndParam,
-        SEXP evalPeriodParam,
-        SEXP threadCountParam,
-        SEXP tmpDirParam,
-        SEXP resultDirParam) {
-
-    SEXP result = NULL;
-    size_t protectedCount = 0;
-
-    R_API_BEGIN()
-    auto treeCountStart = asInteger(treeCountStartParam);
-    auto treeCountEnd = asInteger(treeCountEndParam);
-    auto evalPeriod = asInteger(evalPeriodParam);
-    CB_ENSURE(treeCountStart >= 0, "Tree start index should be greater or equal zero");
-    CB_ENSURE(treeCountStart < treeCountEnd, "Tree start index should be less than tree end index");
-    CB_ENSURE(evalPeriod <= (treeCountEnd - treeCountStart), "Eval period should be less or equal than number of trees");
-    CB_ENSURE(evalPeriod > 0, "Eval period should be more than zero");
-
-    size_t metricsParamLen = length(metricsParam);
-    size_t treeCount = treeCountEnd - treeCountStart;
-    size_t numberOfIterations = treeCount / evalPeriod;
-    if (treeCountStart + (numberOfIterations - 1) * evalPeriod != static_cast<size_t>(treeCountEnd) - 1) {
-        ++numberOfIterations;
-    }
-
-    result = PROTECT(allocVector(VECSXP, metricsParamLen));
-    ++protectedCount;
-    SEXP metricNames = PROTECT(allocVector(STRSXP, metricsParamLen));
-    ++protectedCount;
-
-    for (size_t metricIdx = 0; metricIdx < metricsParamLen; ++metricIdx) {
-        SEXP metricScore = PROTECT(allocVector(REALSXP, numberOfIterations));
-        ++protectedCount;
-        SET_VECTOR_ELT(result, metricIdx, metricScore);
-    }
-
-    TFullModelHandle model = reinterpret_cast<TFullModelHandle>(R_ExternalPtrAddr(modelParam));
-    TPoolHandle pool = reinterpret_cast<TPoolHandle>(R_ExternalPtrAddr(poolParam));
-
-    TVector<TString> metricDescriptions;
-    TVector<NCatboostOptions::TLossDescription> metricLossDescriptions;
-    metricDescriptions.reserve(metricsParamLen);
-    metricLossDescriptions.reserve(metricsParamLen);
-    for (size_t i = 0; i < metricsParamLen; ++i) {
-        TString metricDescription = CHAR(asChar(VECTOR_ELT(metricsParam, i)));
-        metricDescriptions.push_back(metricDescription);
-        metricLossDescriptions.emplace_back(NCatboostOptions::ParseLossDescription(metricDescription));
-    }
-    auto metrics = CreateMetrics(metricLossDescriptions, model->GetDimensionsCount());
-
-    NPar::TLocalExecutor executor;
-    executor.RunAdditionalThreads(UpdateThreadCount(asInteger(threadCountParam)) - 1);
-
-    TMetricsPlotCalcer plotCalcer = CreateMetricCalcer(
-        *model,
-        treeCountStart,
-        treeCountEnd,
-        evalPeriod,
-        /*processedIterationsStep=*/50,
-        CHAR(asChar(tmpDirParam)),
-        metrics,
-        &executor
-    );
-
-    TRestorableFastRng64 rand(0);
-    auto processedDataProvider = CreateModelCompatibleProcessedDataProvider(
-        *pool,
-        metricLossDescriptions,
-        *model,
-        GetMonopolisticFreeCpuRam(),
-        &rand,
-        &executor
-    );
-
-    if (plotCalcer.HasAdditiveMetric()) {
-        plotCalcer.ProceedDataSetForAdditiveMetrics(processedDataProvider);
-    }
-    if (plotCalcer.HasNonAdditiveMetric()) {
-        while (!plotCalcer.AreAllIterationsProcessed()) {
-            plotCalcer.ProceedDataSetForNonAdditiveMetrics(processedDataProvider);
-            plotCalcer.FinishProceedDataSetForNonAdditiveMetrics();
-        }
-    }
-
-    TVector<TVector<double>> metricsScore = plotCalcer.GetMetricsScore();
-    plotCalcer.SaveResult(CHAR(asChar(resultDirParam)), /*metricsFile=*/"", /*saveMetrics*/ false, /*saveStats=*/true).ClearTempFiles();
-
-    auto metricsResult = CreateMetricsFromDescription(metricDescriptions, model->GetDimensionsCount());
-    for (size_t metricIdx = 0; metricIdx < metricsParamLen; ++metricIdx) {
-        TString metricName = metricsResult[metricIdx]->GetDescription();
-        SEXP metricScoreResult = VECTOR_ELT(result, metricIdx);
-        for (size_t i = 0; i < numberOfIterations; ++i) {
-            REAL(metricScoreResult)[i] = metricsScore[metricIdx][i];
-        }
-        SET_STRING_ELT(metricNames, metricIdx, mkChar(metricName.c_str()));
-    }
-
-    setAttrib(result, R_NamesSymbol, metricNames);
-
-    R_API_END();
-    UNPROTECT(protectedCount);
-    return result;
 }
 }

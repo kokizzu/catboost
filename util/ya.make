@@ -65,7 +65,6 @@ JOIN_SRCS(
     folder/dirut.cpp
     folder/filelist.cpp
     folder/fts.cpp
-    folder/fwd.cpp
     folder/iterator.cpp
     folder/path.cpp
     folder/pathsplit.cpp
@@ -115,7 +114,6 @@ JOIN_SRCS(
     generic/mem_copy.cpp
     generic/noncopyable.cpp
     generic/object_counter.cpp
-    generic/overloaded.cpp
     generic/ptr.cpp
     generic/queue.cpp
     generic/refcount.cpp
@@ -129,6 +127,7 @@ JOIN_SRCS(
     generic/strfcpy.cpp
     generic/string.cpp
     generic/typelist.cpp
+    generic/type_name.cpp
     generic/typetraits.cpp
     generic/utility.cpp
     generic/va_args.cpp
@@ -251,14 +250,17 @@ JOIN_SRCS(
     system/atexit.cpp
     system/backtrace.cpp
     system/compat.cpp
+    system/compiler.cpp
     system/condvar.cpp
     system/context.cpp
     system/daemon.cpp
     system/datetime.cpp
     system/defaults.c
+    system/demangle.cpp
     system/direct_io.cpp
     system/dynlib.cpp
     system/env.cpp
+    system/err.cpp
     system/error.cpp
     system/event.cpp
     system/execpath.cpp
@@ -275,10 +277,6 @@ JOIN_SRCS(
     system/hp_timer.cpp
     system/info.cpp
 )
-
-IF (OS_WINDOWS)
-    SRCS(system/err.cpp)
-ENDIF()
 
 JOIN_SRCS(
     all_system_2.cpp
@@ -317,15 +315,12 @@ JOIN_SRCS(
     system/thread.cpp
     system/tls.cpp
     system/types.cpp
-    system/type_name.cpp
     system/unaligned_mem.cpp
     system/user.cpp
     system/utime.cpp
     system/yassert.cpp
     system/yield.cpp
 )
-
-SRC(system/compiler.cpp -fno-lto)
 
 IF (OS_WINDOWS)
     SRCS(

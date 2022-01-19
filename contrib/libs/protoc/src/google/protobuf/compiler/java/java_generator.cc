@@ -34,8 +34,10 @@
 
 #include <google/protobuf/compiler/java/java_generator.h>
 
-
 #include <memory>
+#ifndef _SHARED_PTR_H
+#error #include <google/protobuf/stubs/shared_ptr.h>
+#endif
 
 #include <google/protobuf/compiler/java/java_file.h>
 #include <google/protobuf/compiler/java/java_generator_factory.h>
@@ -43,9 +45,9 @@
 #include <google/protobuf/compiler/java/java_name_resolver.h>
 #include <google/protobuf/compiler/java/java_options.h>
 #include <google/protobuf/compiler/java/java_shared_code_generator.h>
-#include <google/protobuf/descriptor.pb.h>
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/io/zero_copy_stream.h>
+#include <google/protobuf/descriptor.pb.h>
 
 #include <google/protobuf/stubs/strutil.h>
 
@@ -58,18 +60,15 @@ namespace java {
 JavaGenerator::JavaGenerator() {}
 JavaGenerator::~JavaGenerator() {}
 
-uint64_t JavaGenerator::GetSupportedFeatures() const {
-  return CodeGenerator::Feature::FEATURE_PROTO3_OPTIONAL;
-}
-
 bool JavaGenerator::Generate(const FileDescriptor* file,
-                             const TProtoStringType& parameter,
+                             const string& parameter,
                              GeneratorContext* context,
-                             TProtoStringType* error) const {
+                             string* error) const {
   // -----------------------------------------------------------------
   // parse generator options
 
-  std::vector<std::pair<TProtoStringType, TProtoStringType> > options;
+
+  std::vector<std::pair<string, string> > options;
   ParseGeneratorParameter(parameter, &options);
   Options file_options;
 
@@ -82,10 +81,6 @@ bool JavaGenerator::Generate(const FileDescriptor* file,
       file_options.generate_mutable_code = true;
     } else if (options[i].first == "shared") {
       file_options.generate_shared_code = true;
-    } else if (options[i].first == "lite") {
-      // Note: Java Lite does not guarantee API/ABI stability. We may choose to
-      // break existing API in order to boost performance / reduce code size.
-      file_options.enforce_lite = true;
     } else if (options[i].first == "annotate_code") {
       file_options.annotate_code = true;
     } else if (options[i].first == "annotation_list_file") {
@@ -112,8 +107,8 @@ bool JavaGenerator::Generate(const FileDescriptor* file,
   // -----------------------------------------------------------------
 
 
-  std::vector<TProtoStringType> all_files;
-  std::vector<TProtoStringType> all_annotations;
+  std::vector<string> all_files;
+  std::vector<string> all_annotations;
 
 
   std::vector<FileGenerator*> file_generators;
@@ -125,7 +120,6 @@ bool JavaGenerator::Generate(const FileDescriptor* file,
     file_generators.push_back(new FileGenerator(file, file_options,
                                                 /* mutable = */ false));
   }
-
   for (int i = 0; i < file_generators.size(); ++i) {
     if (!file_generators[i]->Validate(error)) {
       for (int j = 0; j < file_generators.size(); ++j) {
@@ -138,26 +132,26 @@ bool JavaGenerator::Generate(const FileDescriptor* file,
   for (int i = 0; i < file_generators.size(); ++i) {
     FileGenerator* file_generator = file_generators[i];
 
-    TProtoStringType package_dir = JavaPackageToDir(file_generator->java_package());
+    string package_dir = JavaPackageToDir(file_generator->java_package());
 
-    TProtoStringType java_filename = package_dir;
+    string java_filename = package_dir;
     java_filename += file_generator->classname();
     java_filename += ".java";
     all_files.push_back(java_filename);
-    TProtoStringType info_full_path = java_filename + ".pb.meta";
+    string info_full_path = java_filename + ".pb.meta";
     if (file_options.annotate_code) {
       all_annotations.push_back(info_full_path);
     }
 
     // Generate main java file.
-    std::unique_ptr<io::ZeroCopyOutputStream> output(
+    google::protobuf::scoped_ptr<io::ZeroCopyOutputStream> output(
         context->Open(java_filename));
     GeneratedCodeInfo annotations;
     io::AnnotationProtoCollector<GeneratedCodeInfo> annotation_collector(
         &annotations);
-    io::Printer printer(
-        output.get(), '$',
-        file_options.annotate_code ? &annotation_collector : NULL);
+    io::Printer printer(output.get(), '$', file_options.annotate_code
+                                               ? &annotation_collector
+                                               : NULL);
 
     file_generator->Generate(&printer);
 
@@ -166,12 +160,11 @@ bool JavaGenerator::Generate(const FileDescriptor* file,
                                      &all_annotations);
 
     if (file_options.annotate_code) {
-      std::unique_ptr<io::ZeroCopyOutputStream> info_output(
+      google::protobuf::scoped_ptr<io::ZeroCopyOutputStream> info_output(
           context->Open(info_full_path));
       annotations.SerializeToZeroCopyStream(info_output.get());
     }
   }
-
 
   for (int i = 0; i < file_generators.size(); ++i) {
     delete file_generators[i];
@@ -182,7 +175,7 @@ bool JavaGenerator::Generate(const FileDescriptor* file,
   if (!file_options.output_list_file.empty()) {
     // Generate output list.  This is just a simple text file placed in a
     // deterministic location which lists the .java files being generated.
-    std::unique_ptr<io::ZeroCopyOutputStream> srclist_raw_output(
+    google::protobuf::scoped_ptr<io::ZeroCopyOutputStream> srclist_raw_output(
         context->Open(file_options.output_list_file));
     io::Printer srclist_printer(srclist_raw_output.get(), '$');
     for (int i = 0; i < all_files.size(); i++) {
@@ -193,7 +186,7 @@ bool JavaGenerator::Generate(const FileDescriptor* file,
   if (!file_options.annotation_list_file.empty()) {
     // Generate output list.  This is just a simple text file placed in a
     // deterministic location which lists the .java files being generated.
-    std::unique_ptr<io::ZeroCopyOutputStream> annotation_list_raw_output(
+    google::protobuf::scoped_ptr<io::ZeroCopyOutputStream> annotation_list_raw_output(
         context->Open(file_options.annotation_list_file));
     io::Printer annotation_list_printer(annotation_list_raw_output.get(), '$');
     for (int i = 0; i < all_annotations.size(); i++) {

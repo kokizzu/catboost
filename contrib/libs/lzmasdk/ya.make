@@ -1,13 +1,10 @@
 LIBRARY()
 
-LICENSE(Public-Domain)
-
-LICENSE_TEXTS(.yandex_meta/licenses.list.txt)
+LICENSE(PD)
 
 
 
-# https://www.7-zip.org/sdk.html
-VERSION(19.00)
+VERSION(19.00) # https://www.7-zip.org/sdk.html
 
 CFLAGS(-D_7ZIP_ST=1)
 

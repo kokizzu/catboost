@@ -7,16 +7,16 @@
 
 class TIncrementOnDestroy {
 private:
-    int* Ptr_;
+    int* Ptr;
 
 public:
     TIncrementOnDestroy(int* ptr) noexcept
-        : Ptr_(ptr)
+        : Ptr(ptr)
     {
     }
 
     ~TIncrementOnDestroy() {
-        ++*Ptr_;
+        ++*Ptr;
     }
 };
 
@@ -971,14 +971,10 @@ Y_UNIT_TEST_SUITE(TMaybeTest) {
             bool FromMaybeConstructorApplied;
 
             explicit TDst(TSrc)
-                : FromMaybeConstructorApplied(false)
-            {
-            }
+                : FromMaybeConstructorApplied(false) {}
 
             explicit TDst(TMaybe<TSrc>)
-                : FromMaybeConstructorApplied(true)
-            {
-            }
+                : FromMaybeConstructorApplied(true) {}
 
             TDst& operator=(TSrc) {
                 FromMaybeConstructorApplied = false;
@@ -997,10 +993,5 @@ Y_UNIT_TEST_SUITE(TMaybeTest) {
         m = TMaybe<TSrc>();
         UNIT_ASSERT(m.Defined());
         UNIT_ASSERT(m->FromMaybeConstructorApplied);
-    }
-
-    Y_UNIT_TEST(TestOnEmptyException) {
-        TMaybe<TStringBuf> v;
-        UNIT_ASSERT_EXCEPTION_CONTAINS(v.GetRef(), yexception, "StringBuf");
     }
 }

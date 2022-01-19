@@ -17,7 +17,7 @@ using namespace NCB;
 
 TQuantizedFeaturesInfoPtr MakeQuantizedFeaturesInfo(
     const TFeaturesLayout& featuresLayout
-) {
+) throw(yexception) {
     return MakeIntrusive<TQuantizedFeaturesInfo>(
         featuresLayout,
         /*ignoredFeatures*/ TConstArrayRef<ui32>(),
@@ -25,7 +25,7 @@ TQuantizedFeaturesInfoPtr MakeQuantizedFeaturesInfo(
     );
 }
 
-TQuantizedFeaturesInfoPtr MakeEstimatedQuantizedFeaturesInfo(i32 featureCount) {
+TQuantizedFeaturesInfoPtr MakeEstimatedQuantizedFeaturesInfo(i32 featureCount) throw(yexception) {
     /* In fact they are 1/256, 2/256 ... 255/256 but they are not really used now so they are left
      * constant for simplicity
      */
@@ -45,13 +45,11 @@ TQuantizedFeaturesInfoPtr MakeEstimatedQuantizedFeaturesInfo(i32 featureCount) {
 
 void UpdateCatFeaturesInfo(
     TConstArrayRef<i32> catFeaturesUniqValueCounts,
-    bool isInitialization,
     NCB::TQuantizedFeaturesInfo* quantizedFeaturesInfo
-) {
+) throw(yexception) {
     TVector<ui32> integerValueHashes; // hashes for "0", "1" ... etc.
 
-    auto& featuresLayout = *(quantizedFeaturesInfo->GetFeaturesLayout());
-
+    const auto& featuresLayout = *(quantizedFeaturesInfo->GetFeaturesLayout());
     featuresLayout.IterateOverAvailableFeatures<EFeatureType::Categorical>(
         [&] (TCatFeatureIdx catFeatureIdx) {
             auto flatFeatureIdx = featuresLayout.GetExternalFeatureIdx(
@@ -75,15 +73,10 @@ void UpdateCatFeaturesInfo(
             {
                 TWriteGuard guard(quantizedFeaturesInfo->GetRWMutex());
 
-                if (isInitialization && (uniqValuesCount == 1)) {
-                    // it is safe - we've already got to this element in iteration
-                    featuresLayout.IgnoreExternalFeature(flatFeatureIdx);
-                } else {
-                    quantizedFeaturesInfo->UpdateCategoricalFeaturesPerfectHash(
-                        catFeatureIdx,
-                        std::move(catFeaturePerfectHash)
-                    );
-                }
+                quantizedFeaturesInfo->UpdateCategoricalFeaturesPerfectHash(
+                    catFeatureIdx,
+                    std::move(catFeaturePerfectHash)
+                );
             }
         }
     );
@@ -91,13 +84,13 @@ void UpdateCatFeaturesInfo(
 
 i32 CalcMaxCategoricalFeaturesUniqueValuesCountOnLearn(
     const TQuantizedFeaturesInfo& quantizedFeaturesInfo
-) {
+) throw(yexception) {
     return SafeIntegerCast<i32>(quantizedFeaturesInfo.CalcMaxCategoricalFeaturesUniqueValuesCountOnLearn());
 }
 
 TVector<i32> GetCategoricalFeaturesUniqueValuesCounts(
     const NCB::TQuantizedFeaturesInfo& quantizedFeaturesInfo
-) {
+) throw(yexception) {
     const auto& featuresLayout = *(quantizedFeaturesInfo.GetFeaturesLayout());
 
     TVector<i32> catFeaturesUniqueValuesCounts(featuresLayout.GetExternalFeatureCount(), 0);

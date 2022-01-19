@@ -8,4 +8,4 @@
 %include "tvector.i"
 
 
-DECLARE_TVECTOR(TVector_TColumn, TColumn)
+%template(TVector_TColumn) TVector<TColumn>;

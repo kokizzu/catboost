@@ -72,8 +72,13 @@ wrapperdescr_repr(PyWrapperDescrObject *descr)
 }
 
 static int
-descr_check(PyDescrObject *descr, PyObject *obj)
+descr_check(PyDescrObject *descr, PyObject *obj, PyObject **pres)
 {
+    if (obj == NULL) {
+        Py_INCREF(descr);
+        *pres = (PyObject *)descr;
+        return 1;
+    }
     if (!PyObject_TypeCheck(obj, descr->d_type)) {
         PyErr_Format(PyExc_TypeError,
                      "descriptor '%V' for '%.100s' objects "
@@ -81,7 +86,8 @@ descr_check(PyDescrObject *descr, PyObject *obj)
                      descr_name((PyDescrObject *)descr), "?",
                      descr->d_type->tp_name,
                      Py_TYPE(obj)->tp_name);
-        return -1;
+        *pres = NULL;
+        return 1;
     }
     return 0;
 }
@@ -131,13 +137,10 @@ classmethod_get(PyMethodDescrObject *descr, PyObject *obj, PyObject *type)
 static PyObject *
 method_get(PyMethodDescrObject *descr, PyObject *obj, PyObject *type)
 {
-    if (obj == NULL) {
-        Py_INCREF(descr);
-        return (PyObject *)descr;
-    }
-    if (descr_check((PyDescrObject *)descr, obj) < 0) {
-        return NULL;
-    }
+    PyObject *res;
+
+    if (descr_check((PyDescrObject *)descr, obj, &res))
+        return res;
     if (descr->d_method->ml_flags & METH_METHOD) {
         if (PyType_Check(type)) {
             return PyCMethod_New(descr->d_method, obj, NULL, descr->d_common.d_type);
@@ -156,13 +159,10 @@ method_get(PyMethodDescrObject *descr, PyObject *obj, PyObject *type)
 static PyObject *
 member_get(PyMemberDescrObject *descr, PyObject *obj, PyObject *type)
 {
-    if (obj == NULL) {
-        Py_INCREF(descr);
-        return (PyObject *)descr;
-    }
-    if (descr_check((PyDescrObject *)descr, obj) < 0) {
-        return NULL;
-    }
+    PyObject *res;
+
+    if (descr_check((PyDescrObject *)descr, obj, &res))
+        return res;
 
     if (descr->d_member->flags & READ_RESTRICTED) {
         if (PySys_Audit("object.__getattr__", "Os",
@@ -177,13 +177,10 @@ member_get(PyMemberDescrObject *descr, PyObject *obj, PyObject *type)
 static PyObject *
 getset_get(PyGetSetDescrObject *descr, PyObject *obj, PyObject *type)
 {
-    if (obj == NULL) {
-        Py_INCREF(descr);
-        return (PyObject *)descr;
-    }
-    if (descr_check((PyDescrObject *)descr, obj) < 0) {
-        return NULL;
-    }
+    PyObject *res;
+
+    if (descr_check((PyDescrObject *)descr, obj, &res))
+        return res;
     if (descr->d_getset->get != NULL)
         return descr->d_getset->get(obj, descr->d_getset->closure);
     PyErr_Format(PyExc_AttributeError,
@@ -196,18 +193,16 @@ getset_get(PyGetSetDescrObject *descr, PyObject *obj, PyObject *type)
 static PyObject *
 wrapperdescr_get(PyWrapperDescrObject *descr, PyObject *obj, PyObject *type)
 {
-    if (obj == NULL) {
-        Py_INCREF(descr);
-        return (PyObject *)descr;
-    }
-    if (descr_check((PyDescrObject *)descr, obj) < 0) {
-        return NULL;
-    }
+    PyObject *res;
+
+    if (descr_check((PyDescrObject *)descr, obj, &res))
+        return res;
     return PyWrapper_New((PyObject *)descr, obj);
 }
 
 static int
-descr_setcheck(PyDescrObject *descr, PyObject *obj, PyObject *value)
+descr_setcheck(PyDescrObject *descr, PyObject *obj, PyObject *value,
+               int *pres)
 {
     assert(obj != NULL);
     if (!PyObject_TypeCheck(obj, descr->d_type)) {
@@ -217,7 +212,8 @@ descr_setcheck(PyDescrObject *descr, PyObject *obj, PyObject *value)
                      descr_name(descr), "?",
                      descr->d_type->tp_name,
                      Py_TYPE(obj)->tp_name);
-        return -1;
+        *pres = -1;
+        return 1;
     }
     return 0;
 }
@@ -225,22 +221,23 @@ descr_setcheck(PyDescrObject *descr, PyObject *obj, PyObject *value)
 static int
 member_set(PyMemberDescrObject *descr, PyObject *obj, PyObject *value)
 {
-    if (descr_setcheck((PyDescrObject *)descr, obj, value) < 0) {
-        return -1;
-    }
+    int res;
+
+    if (descr_setcheck((PyDescrObject *)descr, obj, value, &res))
+        return res;
     return PyMember_SetOne((char *)obj, descr->d_member, value);
 }
 
 static int
 getset_set(PyGetSetDescrObject *descr, PyObject *obj, PyObject *value)
 {
-    if (descr_setcheck((PyDescrObject *)descr, obj, value) < 0) {
-        return -1;
-    }
-    if (descr->d_getset->set != NULL) {
+    int res;
+
+    if (descr_setcheck((PyDescrObject *)descr, obj, value, &res))
+        return res;
+    if (descr->d_getset->set != NULL)
         return descr->d_getset->set(obj, value,
                                     descr->d_getset->closure);
-    }
     PyErr_Format(PyExc_AttributeError,
                  "attribute '%V' of '%.100s' objects is not writable",
                  descr_name((PyDescrObject *)descr), "?",
@@ -267,7 +264,8 @@ method_check_args(PyObject *func, PyObject *const *args, Py_ssize_t nargs, PyObj
         return -1;
     }
     PyObject *self = args[0];
-    if (descr_check((PyDescrObject *)func, self) < 0) {
+    PyObject *dummy;
+    if (descr_check((PyDescrObject *)func, self, &dummy)) {
         return -1;
     }
     if (kwnames && PyTuple_GET_SIZE(kwnames)) {

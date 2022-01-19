@@ -9,11 +9,9 @@
 #include <cstdarg>
 #include <cstdlib>
 
-#include <util/generic/string.h>
-
 #ifdef _win_
-    #include "winint.h"
-    #include <io.h>
+#include "winint.h"
+#include <io.h>
 #endif
 
 #ifndef HAVE_NATIVE_GETPROGNAME
@@ -32,7 +30,7 @@ void usleep(i64 len) {
     Sleep((unsigned long)len / 1000);
 }
 
-    #include <fcntl.h>
+#include <fcntl.h>
 int ftruncate(int fd, i64 length) {
     return _chsize_s(fd, length);
 }

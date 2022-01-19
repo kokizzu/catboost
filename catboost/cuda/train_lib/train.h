@@ -19,7 +19,7 @@
 #include <util/generic/ptr.h>
 
 namespace NCatboostCuda {
-    using TGpuTrainResult = std::variant<
+    using TGpuTrainResult = TVariant<
         THolder<TAdditiveModel<TObliviousTreeModel>>,
         THolder<TAdditiveModel<TNonSymmetricTree>>
     >;

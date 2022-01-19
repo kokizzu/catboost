@@ -10,7 +10,6 @@
 #include <util/string/cast.h>
 
 #include <cmath>
-#include <variant>
 
 class IInputStream;
 class IOutputStream;
@@ -57,7 +56,7 @@ private:
         bool operator==(const TUndefined&) const;
     };
 
-    using TValue = std::variant<
+    using TValue = ::TVariant<
         bool,
         i64,
         ui64,
@@ -106,8 +105,8 @@ public:
     TNode(const TNode& rhs);
     TNode& operator=(const TNode& rhs);
 
-    TNode(TNode&& rhs) noexcept;
-    TNode& operator=(TNode&& rhs) noexcept;
+    TNode(TNode&& rhs);
+    TNode& operator=(TNode&& rhs);
 
     ~TNode();
 
@@ -495,17 +494,17 @@ inline T& TNode::ChildAs(size_t index) {
 
 template<typename T>
 inline bool TNode::IsOfType() const noexcept {
-    return std::holds_alternative<T>(Value_);
+    return ::HoldsAlternative<T>(Value_);
 }
 
 template<typename T>
 inline T& TNode::As() {
-    return std::get<T>(Value_);
+    return ::Get<T>(Value_);
 }
 
 template<typename T>
 inline const T& TNode::As() const {
-    return std::get<T>(Value_);
+    return ::Get<T>(Value_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

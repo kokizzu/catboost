@@ -39,6 +39,7 @@ PEERDIR(
     library/cpp/fast_exp
     library/cpp/json
     library/cpp/object_factory
+    library/cpp/svnversion
 )
 
 GENERATE_ENUM_SERIALIZATION(ctr_provider.h)

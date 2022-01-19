@@ -27,8 +27,8 @@ namespace NCB {
         {
             CB_ENSURE(BlockSize, "TAsyncRowProcessor: blockSize == 0");
 
-            ReadBuffer.resize(blockSize);
-            ParseBuffer.resize(blockSize);
+            ReadBuffer.yresize(blockSize);
+            ParseBuffer.yresize(blockSize);
         }
 
         ~TAsyncRowProcessor() {
@@ -77,8 +77,7 @@ namespace NCB {
          */
         template <class TReadDataFunc>
         bool ReadBlock(TReadDataFunc readFunc) {
-            const bool haveReadFuture = ReadFuture.Initialized();
-            if (haveReadFuture) { // ReadFuture is not used if there's only one thread
+            if (ReadFuture.Initialized()) { // ReadFuture is not used if there's only one thread
                 ReadFuture.GetValueSync(); // will rethrow if there was an exception during read
             }
             ReadBuffer.swap(ParseBuffer);
@@ -86,9 +85,7 @@ namespace NCB {
                 ReadBlockAsync(readFunc);
             } else {
                 ReadBuffer.resize(0);
-                if (haveReadFuture) {
-                    ReadFuture = NThreading::TFuture<void>();
-                }
+                ReadFuture = NThreading::TFuture<void>();
             }
             return !!ParseBuffer;
         }

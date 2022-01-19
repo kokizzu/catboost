@@ -117,8 +117,8 @@ static std::string FormatCapture(const StringPiece& text,
   if (s.data() == NULL)
     return "(?,?)";
   return StringPrintf("(%td,%td)",
-                      BeginPtr(s) - BeginPtr(text),
-                      EndPtr(s) - BeginPtr(text));
+                      s.begin() - text.begin(),
+                      s.end() - text.begin());
 }
 
 // Returns whether text contains non-ASCII (>= 0x80) bytes.
@@ -403,7 +403,7 @@ void TestInstance::RunSearch(Engine type,
     case kEngineRE2:
     case kEngineRE2a:
     case kEngineRE2b: {
-      if (!re2_ || EndPtr(text) != EndPtr(context)) {
+      if (!re2_ || text.end() != context.end()) {
         result->skipped = true;
         break;
       }
@@ -418,8 +418,8 @@ void TestInstance::RunSearch(Engine type,
 
       result->matched = re2_->Match(
           context,
-          static_cast<size_t>(BeginPtr(text) - BeginPtr(context)),
-          static_cast<size_t>(EndPtr(text) - BeginPtr(context)),
+          static_cast<size_t>(text.begin() - context.begin()),
+          static_cast<size_t>(text.end() - context.begin()),
           re_anchor,
           result->submatch,
           nsubmatch);
@@ -428,8 +428,8 @@ void TestInstance::RunSearch(Engine type,
     }
 
     case kEnginePCRE: {
-      if (!re_ || BeginPtr(text) != BeginPtr(context) ||
-          EndPtr(text) != EndPtr(context)) {
+      if (!re_ || text.begin() != context.begin() ||
+          text.end() != context.end()) {
         result->skipped = true;
         break;
       }
@@ -606,9 +606,9 @@ void TestInstance::LogMatch(const char* prefix, Engine e,
     << " text "
     << CEscape(text)
     << " ("
-    << BeginPtr(text) - BeginPtr(context)
+    << text.begin() - context.begin()
     << ","
-    << EndPtr(text) - BeginPtr(context)
+    << text.end() - context.begin()
     << ") of context "
     << CEscape(context)
     << " (" << FormatKind(kind_)

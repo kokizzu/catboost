@@ -1,24 +1,20 @@
-PY23_TEST()
+PY23_LIBRARY()
+
+LICENSE(BSD-3-Clause)
 
 
 
 PEERDIR(
     contrib/python/dateutil
+    contrib/python/pytest
+    contrib/python/six
     contrib/python/freezegun
     contrib/python/hypothesis
 )
 
-ENV(LC_ALL=ru_RU.UTF-8)
-ENV(LANG=ru_RU.UTF-8)
-# because we cannot change TZ in arcadia CI
-ENV(DATEUTIL_MAY_NOT_CHANGE_TZ_VAR=1)
-
-SRCDIR(contrib/python/dateutil/dateutil/test)
-
 TEST_SRCS(
     property/test_isoparse_prop.py
     property/test_parser_prop.py
-    # property/test_tz_prop.py
     __init__.py
     _common.py
     conftest.py
@@ -37,3 +33,8 @@ TEST_SRCS(
 NO_LINT()
 
 END()
+
+RECURSE_FOR_TESTS(
+    py2
+    py3
+)

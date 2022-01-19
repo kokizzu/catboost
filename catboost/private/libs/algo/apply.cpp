@@ -15,7 +15,6 @@
 #include <util/generic/array_ref.h>
 #include <util/generic/cast.h>
 #include <util/generic/utility.h>
-#include <util/system/rwlock.h>
 
 #include <cmath>
 
@@ -125,40 +124,19 @@ namespace {
     };
 }
 
-static void PrepareObjectsDataProviderForEvaluation(const TObjectsDataProvider& objectsData) {
-    if (auto* quantizedObjectsData = dynamic_cast<const TQuantizedObjectsDataProvider*>(&objectsData)) {
-        auto quantizedFeaturesInfo = quantizedObjectsData->GetQuantizedFeaturesInfo();
-        TWriteGuard guard(quantizedFeaturesInfo->GetRWMutex());
-        quantizedFeaturesInfo->LoadCatFeaturePerfectHashToRam();
-    }
-}
-
-
 TVector<TVector<double>> ApplyModelMulti(
     const TFullModel& model,
     const TObjectsDataProvider& objectsData,
     const EPredictionType predictionType,
     int begin, /*= 0*/
     int end,   /*= 0*/
-    ILocalExecutor* executor,
-    const NCB::TMaybeData<TConstArrayRef<TConstArrayRef<float>>>& baseline)
+    ILocalExecutor* executor)
 {
-    if (baseline) {
-        // TODO: only one dimension of baseline is checked, what about others?
-        CB_ENSURE(
-            baseline->size() == model.GetDimensionsCount(),
-            "Baseline should have the same dimension count as model: expected " << model.GetDimensionsCount()
-                                                                                << " got " << baseline->size()
-        );
-    }
-
     const int docCount = SafeIntegerCast<int>(objectsData.GetObjectCount());
     const int approxesDimension = model.GetDimensionsCount();
     TVector<double> approxesFlat(docCount * approxesDimension);
     if (docCount > 0) {
         FixupTreeEnd(model.GetTreeCount(), begin, &end);
-        PrepareObjectsDataProviderForEvaluation(objectsData);
-
         const int executorThreadCount = executor ? executor->GetThreadCount() : 0;
         auto blockParams = GetBlockParams(executorThreadCount, docCount, end - begin);
 
@@ -190,13 +168,7 @@ TVector<TVector<double>> ApplyModelMulti(
             };
         }
     }
-    if (baseline) {
-        for (int i = 0; i < approxesDimension; ++i) {
-            for (int j = 0; j < docCount; ++j) {
-                approxes[i][j] += (*baseline)[i][j];
-            }
-        }
-    }
+
     if (predictionType == EPredictionType::InternalRawFormulaVal) {
         //shortcut
         return approxes;
@@ -212,8 +184,7 @@ TVector<TVector<double>> ApplyModelMulti(
     const EPredictionType predictionType,
     int begin,
     int end,
-    int threadCount,
-    const NCB::TMaybeData<TConstArrayRef<TConstArrayRef<float>>>& baseline)
+    int threadCount)
 {
     TSetLoggingVerboseOrSilent inThisScope(verbose);
 
@@ -223,7 +194,7 @@ TVector<TVector<double>> ApplyModelMulti(
 
     NPar::TLocalExecutor executor;
     executor.RunAdditionalThreads(Min<int>(threadCount, blockParams.GetBlockCount()) - 1);
-    const auto& result = ApplyModelMulti(model, objectsData, predictionType, begin, end, &executor, baseline);
+    const auto& result = ApplyModelMulti(model, objectsData, predictionType, begin, end, &executor);
     return result;
 }
 
@@ -236,7 +207,22 @@ TVector<TVector<double>> ApplyModelMulti(
     int end,
     int threadCount)
 {
-    auto approxes = ApplyModelMulti(model, *data.ObjectsData, verbose, predictionType, begin, end, threadCount, data.RawTargetData.GetBaseline());
+    const auto baseline = data.RawTargetData.GetBaseline();
+    if(baseline) {
+        CB_ENSURE(
+            baseline->size() == model.GetDimensionsCount(),
+            "Baseline should have the same dimension count as model: expected " << model.GetDimensionsCount()
+                                                                                << " got " << baseline->size()
+        );
+    }
+    auto approxes = ApplyModelMulti(model, *data.ObjectsData, verbose, predictionType, begin, end, threadCount);
+    if (baseline) {
+        for (size_t i = 0; i < approxes.size(); ++i) {
+            for (size_t j = 0; j < approxes[0].size(); ++j) {
+                approxes[i][j] += (*baseline)[i][j];
+            }
+        }
+    }
     return approxes;
 }
 
@@ -248,7 +234,7 @@ TMinMax<double> ApplyModelForMinMax(
     NPar::ILocalExecutor* executor)
 {
     CB_ENSURE(model.GetTreeCount(), "Bad usage: empty model");
-    CB_ENSURE(model.GetDimensionsCount() == 1, "Bad usage: multiclass/multitarget model, dim=" << model.GetDimensionsCount());
+    CB_ENSURE(model.GetDimensionsCount() == 1, "Bad usage: multiclass/multiregression model, dim=" << model.GetDimensionsCount());
     FixupTreeEnd(model.GetTreeCount(), treeBegin, &treeEnd);
     CB_ENSURE(objectsData.GetObjectCount(), "Bad usage: empty dataset");
 
@@ -257,8 +243,6 @@ TMinMax<double> ApplyModelForMinMax(
     TMutex result_guard;
 
     if (docCount > 0) {
-        PrepareObjectsDataProviderForEvaluation(objectsData);
-
         const int executorThreadCount = executor ? executor->GetThreadCount() : 0;
         auto blockParams = GetBlockParams(executorThreadCount, docCount, treeEnd - treeBegin);
 
@@ -351,8 +335,6 @@ TModelCalcerOnPool::TModelCalcerOnPool(
     if (BlockParams.FirstId == BlockParams.LastId) {
         return;
     }
-    PrepareObjectsDataProviderForEvaluation(*objectsData);
-
     const int threadCount = executor->GetThreadCount() + 1; // one for current thread
     BlockParams.SetBlockCount(threadCount);
     QuantizedDataForThreads.resize(BlockParams.GetBlockCount());
@@ -384,7 +366,6 @@ TLeafIndexCalcerOnPool::TLeafIndexCalcerOnPool(
     , CurrBatchSize(Min(DocCount, NModelEvaluation::FORMULA_EVALUATION_BLOCK_SIZE))
     , CurrDocIndex(0)
 {
-    PrepareObjectsDataProviderForEvaluation(*objectsData);
     FixupTreeEnd(model.GetTreeCount(), treeStart, &treeEnd);
     CB_ENSURE(TreeEnd == size_t(treeEnd));
 
@@ -476,8 +457,6 @@ TVector<ui32> CalcLeafIndexesMulti(
     NPar::ILocalExecutor* executor /* = nullptr */)
 {
     FixupTreeEnd(model.GetTreeCount(), treeStart, &treeEnd);
-    PrepareObjectsDataProviderForEvaluation(*objectsData);
-
     const size_t objCount = objectsData->GetObjectCount();
     TVector<ui32> result(objCount * (treeEnd - treeStart), 0);
 
@@ -622,5 +601,5 @@ TVector<TVector<double>> ApplyUncertaintyPredictions(
         virtualEnsemblesCount,
         &approxes,
         &executor);
-    return PrepareEval(predictionType, virtualEnsemblesCount, model.GetLossFunctionName(), approxes,  &executor);
+    return PrepareEval(predictionType, model.GetLossFunctionName(), approxes,  &executor);
 }

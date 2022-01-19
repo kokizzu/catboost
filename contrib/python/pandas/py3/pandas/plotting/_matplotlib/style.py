@@ -1,10 +1,11 @@
-from __future__ import annotations
-
 import itertools
 from typing import (
     TYPE_CHECKING,
     Collection,
+    Dict,
     Iterator,
+    List,
+    Optional,
     Sequence,
     Union,
     cast,
@@ -28,9 +29,9 @@ Color = Union[str, Sequence[float]]
 
 def get_standard_colors(
     num_colors: int,
-    colormap: Colormap | None = None,
+    colormap: Optional["Colormap"] = None,
     color_type: str = "default",
-    color: dict[str, Color] | Color | Collection[Color] | None = None,
+    color: Optional[Union[Dict[str, Color], Color, Collection[Color]]] = None,
 ):
     """
     Get standard colors based on `colormap`, `color_type` or `color` inputs.
@@ -79,11 +80,11 @@ def get_standard_colors(
 
 def _derive_colors(
     *,
-    color: Color | Collection[Color] | None,
-    colormap: str | Colormap | None,
+    color: Optional[Union[Color, Collection[Color]]],
+    colormap: Optional[Union[str, "Colormap"]],
     color_type: str,
     num_colors: int,
-) -> list[Color]:
+) -> List[Color]:
     """
     Derive colors from either `colormap`, `color_type` or `color` inputs.
 
@@ -128,7 +129,7 @@ def _derive_colors(
         return _get_colors_from_color_type(color_type, num_colors=num_colors)
 
 
-def _cycle_colors(colors: list[Color], num_colors: int) -> Iterator[Color]:
+def _cycle_colors(colors: List[Color], num_colors: int) -> Iterator[Color]:
     """Cycle colors until achieving max of `num_colors` or length of `colors`.
 
     Extra colors will be ignored by matplotlib if there are more colors
@@ -139,15 +140,15 @@ def _cycle_colors(colors: list[Color], num_colors: int) -> Iterator[Color]:
 
 
 def _get_colors_from_colormap(
-    colormap: str | Colormap,
+    colormap: Union[str, "Colormap"],
     num_colors: int,
-) -> list[Color]:
+) -> List[Color]:
     """Get colors from colormap."""
     colormap = _get_cmap_instance(colormap)
     return [colormap(num) for num in np.linspace(0, 1, num=num_colors)]
 
 
-def _get_cmap_instance(colormap: str | Colormap) -> Colormap:
+def _get_cmap_instance(colormap: Union[str, "Colormap"]) -> "Colormap":
     """Get instance of matplotlib colormap."""
     if isinstance(colormap, str):
         cmap = colormap
@@ -158,8 +159,8 @@ def _get_cmap_instance(colormap: str | Colormap) -> Colormap:
 
 
 def _get_colors_from_color(
-    color: Color | Collection[Color],
-) -> list[Color]:
+    color: Union[Color, Collection[Color]],
+) -> List[Color]:
     """Get colors from user input color."""
     if len(color) == 0:
         raise ValueError(f"Invalid color argument: {color}")
@@ -172,7 +173,7 @@ def _get_colors_from_color(
     return list(_gen_list_of_colors_from_iterable(color))
 
 
-def _is_single_color(color: Color | Collection[Color]) -> bool:
+def _is_single_color(color: Union[Color, Collection[Color]]) -> bool:
     """Check if `color` is a single color, not a sequence of colors.
 
     Single color is of these kinds:
@@ -205,7 +206,7 @@ def _gen_list_of_colors_from_iterable(color: Collection[Color]) -> Iterator[Colo
             raise ValueError(f"Invalid color {x}")
 
 
-def _is_floats_color(color: Color | Collection[Color]) -> bool:
+def _is_floats_color(color: Union[Color, Collection[Color]]) -> bool:
     """Check if color comprises a sequence of floats representing color."""
     return bool(
         is_list_like(color)
@@ -214,7 +215,7 @@ def _is_floats_color(color: Color | Collection[Color]) -> bool:
     )
 
 
-def _get_colors_from_color_type(color_type: str, num_colors: int) -> list[Color]:
+def _get_colors_from_color_type(color_type: str, num_colors: int) -> List[Color]:
     """Get colors from user input color type."""
     if color_type == "default":
         return _get_default_colors(num_colors)
@@ -224,7 +225,7 @@ def _get_colors_from_color_type(color_type: str, num_colors: int) -> list[Color]
         raise ValueError("color_type must be either 'default' or 'random'")
 
 
-def _get_default_colors(num_colors: int) -> list[Color]:
+def _get_default_colors(num_colors: int) -> List[Color]:
     """Get `num_colors` of default colors from matplotlib rc params."""
     import matplotlib.pyplot as plt
 
@@ -232,12 +233,12 @@ def _get_default_colors(num_colors: int) -> list[Color]:
     return colors[0:num_colors]
 
 
-def _get_random_colors(num_colors: int) -> list[Color]:
+def _get_random_colors(num_colors: int) -> List[Color]:
     """Get `num_colors` of random colors."""
     return [_random_color(num) for num in range(num_colors)]
 
 
-def _random_color(column: int) -> list[float]:
+def _random_color(column: int) -> List[float]:
     """Get a random color represented as a list of length 3"""
     # GH17525 use common._random_state to avoid resetting the seed
     rs = com.random_state(column)

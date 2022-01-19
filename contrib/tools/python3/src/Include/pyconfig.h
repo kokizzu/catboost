@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef Py_BUILD_CORE
-#define ABIFLAGS ""
+#define ABIFLAGS "m"
 #define PREFIX "/var/empty"
 #define EXEC_PREFIX "/var/empty"
 #define VERSION "3.9"
@@ -11,11 +11,11 @@
 #if defined(__linux__)
 #define PLATFORM "linux"
 #define MULTIARCH "x86_64-linux-gnu"
-#define SOABI "cpython-39-x86_64-linux-gnu"
+#define SOABI "cpython-39m-x86_64-linux-gnu"
 #elif defined(__APPLE__)
 #define PLATFORM "darwin"
 #define MULTIARCH "darwin"
-#define SOABI "cpython-39-darwin"
+#define SOABI "cpython-39m-darwin"
 #endif
 #endif
 
@@ -26,11 +26,7 @@
 #endif
 
 #if defined(__APPLE__)
-#  if defined(__arm64__)
-#    include "pyconfig-osx-arm64.h"
-#  else
-#    include "pyconfig-osx.h"
-#  endif
+#include "pyconfig-osx.h"
 #endif
 
 #if defined(_MSC_VER)

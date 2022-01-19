@@ -97,14 +97,10 @@ namespace NCB {
             NCB::NPrivate::CreateTrainDirWithTmpDirIfNotExist(outputFileOptions.GetTrainDir(), &tmpDir);
         }
 
-        const bool haveLearnFeaturesInMemory = HaveFeaturesInMemory(
-            *catBoostOptions,
-            poolLoadParams ? MakeMaybe(poolLoadParams->LearnSetPath) : Nothing()
-        );
+        const bool haveLearnFeaturesInMemory = HaveLearnFeaturesInMemory(poolLoadParams, *catBoostOptions);
 
         TTrainingDataProviders trainingData = GetTrainingData(
             pools,
-            /*trainDataCanBeEmpty*/ false,
             /* borders */ Nothing(), // borders are already loaded to quantizedFeaturesInfo
             /*ensureConsecutiveIfDenseLearnFeaturesDataForCpu*/ haveLearnFeaturesInMemory,
             outputFileOptions.AllowWriteFiles(),
@@ -126,11 +122,8 @@ namespace NCB {
         TOutputFilesOptions outputFileOptions,
         const TPoolLoadParams* poolLoadParams,
         const TFeaturesSelectOptions& featuresSelectOptions,
-        const TMaybe<TCustomMetricDescriptor>& evalMetricDescriptor,
         const TDataProviders& pools,
         TFullModel* dstModel,
-        const TVector<TEvalResult*>& evalResultPtrs,
-        TMetricsAndTimeLeftHistory* metricsAndTimeHistory,
         NPar::ILocalExecutor* executor
     ) {
         TSetLogging inThisScope(catBoostOptions.LoggingLevel);
@@ -154,29 +147,17 @@ namespace NCB {
             executor
         );
 
-        const bool haveLearnFeaturesInMemory = HaveFeaturesInMemory(
-            catBoostOptions,
-            poolLoadParams ? MakeMaybe(poolLoadParams->LearnSetPath) : Nothing()
-        );
+        const bool haveLearnFeaturesInMemory = HaveLearnFeaturesInMemory(poolLoadParams, catBoostOptions);
         // TODO(ilyzhin) support distributed training with quantized pool
         CB_ENSURE(haveLearnFeaturesInMemory, "Features selection doesn't support distributed training with quantized pool yet.");
-
-        THolder<TMasterContext> masterContext;
-
         if (catBoostOptions.SystemOptions->IsMaster()) {
-            masterContext.Reset(new TMasterContext(catBoostOptions.SystemOptions));
+            InitializeMaster(catBoostOptions.SystemOptions);
             if (!haveLearnFeaturesInMemory) {
-                TVector<TObjectsGrouping> testObjectsGroupings;
-                for (const auto& testDataset : trainingData.Test) {
-                    testObjectsGroupings.push_back(*(testDataset->ObjectsGrouping));
-                }
-                SetTrainDataFromQuantizedPools(
+                SetTrainDataFromQuantizedPool(
                     *poolLoadParams,
                     catBoostOptions,
-                    TObjectsGrouping(*trainingData.Learn->ObjectsGrouping),
-                    std::move(testObjectsGroupings),
+                    *trainingData.Learn->ObjectsGrouping,
                     *trainingData.Learn->MetaInfo.FeaturesLayout,
-                    labelConverter,
                     &rand
                 );
             } else {
@@ -206,13 +187,10 @@ namespace NCB {
             catBoostOptions,
             outputFileOptions,
             featuresSelectOptions,
-            evalMetricDescriptor,
             pools,
             labelConverter,
             trainingData,
             dstModel,
-            evalResultPtrs,
-            metricsAndTimeHistory,
             executor
         );
 
@@ -224,17 +202,18 @@ namespace NCB {
             summary.EliminatedFeaturesNames.push_back(featuresNames[featureIdx]);
         }
 
+        if (catBoostOptions.SystemOptions->IsMaster()) {
+            FinalizeMaster(catBoostOptions.SystemOptions);
+        }
+
         return summary;
     }
 
 
     NJson::TJsonValue SelectFeatures(
         const NJson::TJsonValue& plainJsonParams,
-        const TMaybe<TCustomMetricDescriptor>& evalMetricDescriptor,
         const TDataProviders& pools,
-        TFullModel* dstModel,
-        const TVector<TEvalResult*>& testApproxes,
-        TMetricsAndTimeLeftHistory* metricsAndTimeHistory
+        TFullModel* dstModel
     ) {
         NJson::TJsonValue catBoostJsonOptions;
         NJson::TJsonValue outputOptionsJson;
@@ -259,11 +238,8 @@ namespace NCB {
             outputFileOptions,
             /*poolLoadParams*/ nullptr,
             featuresSelectOptions,
-            evalMetricDescriptor,
             pools,
             dstModel,
-            testApproxes,
-            metricsAndTimeHistory,
             &executor
         );
         return ToJson(summary);

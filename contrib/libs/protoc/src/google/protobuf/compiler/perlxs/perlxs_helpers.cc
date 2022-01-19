@@ -7,14 +7,14 @@
 namespace google {
 namespace protobuf {
 
-extern TProtoStringType StringReplace(const TProtoStringType& s, const TProtoStringType& oldsub,
-			    const TProtoStringType& newsub, bool replace_all);
+extern string StringReplace(const string& s, const string& oldsub,
+			    const string& newsub, bool replace_all);
 
 namespace compiler {
 namespace perlxs {
 
 void
-SetupDepthVars(std::map<TProtoStringType, TProtoStringType>& vars, int depth)
+SetupDepthVars(std::map<string, string>& vars, int depth)
 {
   std::ostringstream ost_pdepth;
   std::ostringstream ost_depth;

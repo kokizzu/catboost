@@ -45,7 +45,6 @@ Y_UNIT_TEST_SUITE(TRawTargetData) {
             MakeIntrusive<TObjectsGrouping>(objectCount),
             std::move(rawTargetData),
             false,
-            false,
             &localExecutor
         );
     }
@@ -60,7 +59,6 @@ Y_UNIT_TEST_SUITE(TRawTargetData) {
         return TRawTargetDataProvider(
             MakeIntrusive<TObjectsGrouping>(TVector<TGroupBounds>(groupBounds)),
             std::move(rawTargetData),
-            false,
             false,
             &localExecutor
         );
@@ -80,7 +78,7 @@ Y_UNIT_TEST_SUITE(TRawTargetData) {
 
         auto rawTargetDataProvider = CreateProviderSimple(rawTarget.size(), rawTargetData);
 
-        const TVector<TString>* rawTargetStringData = std::get_if<TVector<TString>>(
+        const TVector<TString>* rawTargetStringData = GetIf<TVector<TString>>(
             *rawTargetDataProvider.GetOneDimensionalTarget()
         );
         UNIT_ASSERT(rawTargetStringData);
@@ -99,7 +97,7 @@ Y_UNIT_TEST_SUITE(TRawTargetData) {
 
         auto rawTargetDataProvider = CreateProviderSimple(objectCount, rawTargetData);
 
-        const ITypedSequencePtr<float>* rawTargetFloatData = std::get_if<ITypedSequencePtr<float>>(
+        const ITypedSequencePtr<float>* rawTargetFloatData = GetIf<ITypedSequencePtr<float>>(
             *rawTargetDataProvider.GetOneDimensionalTarget()
         );
         UNIT_ASSERT(rawTargetFloatData);
@@ -164,7 +162,7 @@ Y_UNIT_TEST_SUITE(TRawTargetData) {
                     UNIT_ASSERT_VALUES_EQUAL(targetData.size(), target.size());
 
                     for (auto i : xrange(target.size())) {
-                        UNIT_ASSERT_EQUAL(std::get<TVector<TString>>(targetData[i]), target[i]);
+                        UNIT_ASSERT_EQUAL(Get<TVector<TString>>(targetData[i]), target[i]);
                     }
                 }
             }
@@ -687,7 +685,6 @@ Y_UNIT_TEST_SUITE(TRawTargetData) {
                     targetDataGroupingVector[rawTargetDataIdx],
                     std::move(rawTargetData),
                     false,
-                    false,
                     &localExecutor
                 );
 
@@ -708,7 +705,6 @@ Y_UNIT_TEST_SUITE(TRawTargetData) {
                 TRawTargetDataProvider expectedSubsetDataProvider(
                     expectedSubsetGrouping,
                     std::move(expectedSubsetRawTargetData),
-                    false,
                     false,
                     &localExecutor
                 );
@@ -854,7 +850,6 @@ Y_UNIT_TEST_SUITE(TRawTargetData) {
                     targetDataGroupingVector[rawTargetDataIdx],
                     std::move(rawTargetData),
                     false,
-                    false,
                     &localExecutor
                 );
 
@@ -875,7 +870,6 @@ Y_UNIT_TEST_SUITE(TRawTargetData) {
                 TRawTargetDataProvider expectedSubsetDataProvider(
                     expectedSubsetGrouping,
                     std::move(expectedSubsetRawTargetData),
-                    false,
                     false,
                     &localExecutor
                 );

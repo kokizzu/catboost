@@ -5,7 +5,6 @@
 
 #include <catboost/libs/helpers/exception.h>
 #include <catboost/libs/logging/logging.h>
-#include <catboost/private/libs/options/enum_helpers.h>
 
 #include <util/generic/hash_set.h>
 #include <util/stream/fwd.h>
@@ -56,10 +55,6 @@ namespace NCB {
 
     const TVector<TVector<TVector<double>>>& TEvalResult::GetRawValuesConstRef() const {
         return RawValues;
-    }
-
-    size_t TEvalResult::GetEnsemblesCount() const {
-        return EnsemblesCount;
     }
 
     void TEvalResult::ClearRawValues() {
@@ -182,8 +177,7 @@ namespace NCB {
         TIntrusivePtr<IPoolColumnsPrinter> poolColumnsPrinter,
         std::pair<int, int> testFileWhichOf,
         ui64 docIdOffset,
-        TMaybe<std::pair<size_t, size_t>> evalParameters,
-        double binClassLogitThreshold) {
+        TMaybe<std::pair<size_t, size_t>> evalParameters) {
 
         TFeatureIdToDesc featureIdToDesc = GetFeatureIdToDesc(pool);
 
@@ -191,7 +185,6 @@ namespace NCB {
 
         const auto targetDim = pool.RawTargetData.GetTargetDimension();
         const bool isMultiTarget = targetDim > 1;
-        const bool isMultiLabel = !lossFunctionName.empty() && IsMultiLabelObjective(lossFunctionName);
 
         for (const auto& outputColumn : outputColumns) {
             EPredictionType type;
@@ -200,12 +193,10 @@ namespace NCB {
                                      type,
                                      lossFunctionName,
                                      isMultiTarget,
-                                     evalResult.GetEnsemblesCount(),
                                      visibleLabelsHelper,
                                      evalParameters,
                                      &columnPrinter,
-                                     executor,
-                                     binClassLogitThreshold);
+                                     executor);
                 continue;
             }
             EColumn outputType;
@@ -216,14 +207,10 @@ namespace NCB {
                         TStringBuilder header;
                         header << outputColumn;
                         if (targetDim > 1) {
-                            if (isMultiLabel) {
-                                header << ":Class=" << visibleLabelsHelper.GetVisibleClassNameFromClass(targetIdx);
-                            } else {
-                                header << ":Dim=" << targetIdx;
-                            }
+                            header << ":Dim=" << targetIdx;
                         }
                         if (const ITypedSequencePtr<float>* typedSequence
-                                = std::get_if<ITypedSequencePtr<float>>(&(target[targetIdx])))
+                                = GetIf<ITypedSequencePtr<float>>(&(target[targetIdx])))
                         {
                             columnPrinter.push_back(
                                 MakeHolder<TArrayPrinter<float>>(
@@ -234,7 +221,7 @@ namespace NCB {
                         } else {
                             columnPrinter.push_back(
                                 MakeHolder<TArrayPrinter<TString>>(
-                                    std::get<TVector<TString>>(target[targetIdx]),
+                                    Get<TVector<TString>>(target[targetIdx]),
                                     header
                                 )
                             );
@@ -356,8 +343,7 @@ namespace NCB {
         std::pair<int, int> testFileWhichOf,
         bool writeHeader,
         ui64 docIdOffset,
-        TMaybe<std::pair<size_t, size_t>> evalParameters,
-        double binClassLogitThreshold) {
+        TMaybe<std::pair<size_t, size_t>> evalParameters) {
 
         TVector<THolder<IColumnPrinter>> columnPrinter = InitializeColumnWriter(
             evalResult,
@@ -369,8 +355,7 @@ namespace NCB {
             poolColumnsPrinter,
             testFileWhichOf,
             docIdOffset,
-            evalParameters,
-            binClassLogitThreshold);
+            evalParameters);
 
         if (writeHeader) {
             TString delimiter = "";
@@ -404,8 +389,7 @@ namespace NCB {
         std::pair<int, int> testFileWhichOf,
         const TDsvFormatOptions& testSetFormat,
         bool writeHeader,
-        ui64 docIdOffset,
-        double binClassLogitThreshold) {
+        ui64 docIdOffset) {
 
         TIntrusivePtr<IPoolColumnsPrinter> poolColumnsPrinter = CreatePoolColumnPrinter(
             testSetPath,
@@ -423,9 +407,7 @@ namespace NCB {
             poolColumnsPrinter,
             testFileWhichOf,
             writeHeader,
-            docIdOffset,
-            {},
-            binClassLogitThreshold);
+            docIdOffset);
     }
 
 } // namespace NCB

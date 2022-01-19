@@ -1231,22 +1231,14 @@ subtype_dealloc(PyObject *self)
         /* Extract the type again; tp_del may have changed it */
         type = Py_TYPE(self);
 
-        // Don't read type memory after calling basedealloc() since basedealloc()
-        // can deallocate the type and free its memory.
-        int type_needs_decref = (type->tp_flags & Py_TPFLAGS_HEAPTYPE
-                                 && !(base->tp_flags & Py_TPFLAGS_HEAPTYPE));
-
         /* Call the base tp_dealloc() */
         assert(basedealloc);
         basedealloc(self);
 
-        /* Can't reference self beyond this point. It's possible tp_del switched
-           our type from a HEAPTYPE to a non-HEAPTYPE, so be careful about
-           reference counting. Only decref if the base type is not already a heap
-           allocated type. Otherwise, basedealloc should have decref'd it already */
-        if (type_needs_decref) {
+       /* Only decref if the base type is not already a heap allocated type.
+          Otherwise, basedealloc should have decref'd it already */
+        if (type->tp_flags & Py_TPFLAGS_HEAPTYPE && !(base->tp_flags & Py_TPFLAGS_HEAPTYPE))
             Py_DECREF(type);
-        }
 
         /* Done */
         return;
@@ -1341,12 +1333,6 @@ subtype_dealloc(PyObject *self)
     if (_PyType_IS_GC(base)) {
         _PyObject_GC_TRACK(self);
     }
-
-    // Don't read type memory after calling basedealloc() since basedealloc()
-    // can deallocate the type and free its memory.
-    int type_needs_decref = (type->tp_flags & Py_TPFLAGS_HEAPTYPE
-                             && !(base->tp_flags & Py_TPFLAGS_HEAPTYPE));
-
     assert(basedealloc);
     basedealloc(self);
 
@@ -1354,9 +1340,8 @@ subtype_dealloc(PyObject *self)
        our type from a HEAPTYPE to a non-HEAPTYPE, so be careful about
        reference counting. Only decref if the base type is not already a heap
        allocated type. Otherwise, basedealloc should have decref'd it already */
-    if (type_needs_decref) {
-        Py_DECREF(type);
-    }
+    if (type->tp_flags & Py_TPFLAGS_HEAPTYPE && !(base->tp_flags & Py_TPFLAGS_HEAPTYPE))
+      Py_DECREF(type);
 
   endlabel:
     Py_TRASHCAN_END
@@ -3119,14 +3104,6 @@ PyType_FromSpec(PyType_Spec *spec)
     return PyType_FromSpecWithBases(spec, NULL);
 }
 
-/* private in 3.10 and 3.9.8+; public in 3.11 */
-PyObject *
-_PyType_GetQualName(PyTypeObject *type)
-{
-    return type_qualname(type, NULL);
-}
-
-
 void *
 PyType_GetSlot(PyTypeObject *type, int slot)
 {
@@ -3673,8 +3650,10 @@ static PyMethodDef type_methods[] = {
 };
 
 PyDoc_STRVAR(type_doc,
+/* this text signature cannot be accurate yet.  will fix.  --larry */
+"type(object_or_name, bases, dict)\n"
 "type(object) -> the object's type\n"
-"type(name, bases, dict, **kwds) -> a new type");
+"type(name, bases, dict) -> a new type");
 
 static int
 type_traverse(PyTypeObject *type, visitproc visit, void *arg)

@@ -2,36 +2,23 @@
 Operator classes for eval.
 """
 
-from __future__ import annotations
-
 from datetime import datetime
+from distutils.version import LooseVersion
 from functools import partial
 import operator
-from typing import (
-    Callable,
-    Iterable,
-)
+from typing import Callable, Iterable, Optional, Union
 
 import numpy as np
 
 from pandas._libs.tslibs import Timestamp
 
-from pandas.core.dtypes.common import (
-    is_list_like,
-    is_scalar,
-)
+from pandas.core.dtypes.common import is_list_like, is_scalar
 
 import pandas.core.common as com
-from pandas.core.computation.common import (
-    ensure_decoded,
-    result_type_many,
-)
+from pandas.core.computation.common import ensure_decoded, result_type_many
 from pandas.core.computation.scope import DEFAULT_GLOBALS
 
-from pandas.io.formats.printing import (
-    pprint_thing,
-    pprint_thing_encoded,
-)
+from pandas.io.formats.printing import pprint_thing, pprint_thing_encoded
 
 REDUCTIONS = ("sum", "prod")
 
@@ -70,7 +57,7 @@ class UndefinedVariableError(NameError):
     NameError subclass for local variables.
     """
 
-    def __init__(self, name: str, is_local: bool | None = None):
+    def __init__(self, name: str, is_local: Optional[bool] = None):
         base_msg = f"{repr(name)} is not defined"
         if is_local:
             msg = f"local variable {base_msg}"
@@ -82,7 +69,8 @@ class UndefinedVariableError(NameError):
 class Term:
     def __new__(cls, name, env, side=None, encoding=None):
         klass = Constant if not isinstance(name, str) else cls
-        # error: Argument 2 for "super" not an instance of argument 1
+        # pandas\core\computation\ops.py:72: error: Argument 2 for "super" not
+        # an instance of argument 1  [misc]
         supr_new = super(Term, klass).__new__  # type: ignore[misc]
         return supr_new(klass)
 
@@ -215,7 +203,7 @@ class Op:
 
     op: str
 
-    def __init__(self, op: str, operands: Iterable[Term | Op], encoding=None):
+    def __init__(self, op: str, operands: Iterable[Union[Term, "Op"]], encoding=None):
         self.op = _bool_op_map.get(op, op)
         self.operands = operands
         self.encoding = encoding
@@ -603,7 +591,7 @@ class MathCall(Op):
         self.func = func
 
     def __call__(self, env):
-        # error: "Op" not callable
+        # pandas\core\computation\ops.py:592: error: "Op" not callable  [operator]
         operands = [op(env) for op in self.operands]  # type: ignore[operator]
         with np.errstate(all="ignore"):
             return self.func.func(*operands)
@@ -615,8 +603,15 @@ class MathCall(Op):
 
 class FuncNode:
     def __init__(self, name: str):
-        if name not in MATHOPS:
+        from pandas.core.computation.check import NUMEXPR_INSTALLED, NUMEXPR_VERSION
+
+        if name not in MATHOPS or (
+            NUMEXPR_INSTALLED
+            and NUMEXPR_VERSION < LooseVersion("2.6.9")
+            and name in ("floor", "ceil")
+        ):
             raise ValueError(f'"{name}" is not a supported function')
+
         self.name = name
         self.func = getattr(np, name)
 

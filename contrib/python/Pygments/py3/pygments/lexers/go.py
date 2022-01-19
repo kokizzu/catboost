@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.go
     ~~~~~~~~~~~~~~~~~~
@@ -12,7 +13,7 @@ import re
 
 from pygments.lexer import RegexLexer, bygroups, words
 from pygments.token import Text, Comment, Operator, Keyword, Name, String, \
-    Number, Punctuation, Whitespace
+    Number, Punctuation
 
 __all__ = ['GoLexer']
 
@@ -25,17 +26,17 @@ class GoLexer(RegexLexer):
     """
     name = 'Go'
     filenames = ['*.go']
-    aliases = ['go', 'golang']
+    aliases = ['go']
     mimetypes = ['text/x-gosrc']
 
     flags = re.MULTILINE | re.UNICODE
 
     tokens = {
         'root': [
-            (r'\n', Whitespace),
-            (r'\s+', Whitespace),
-            (r'(\\)(\n)', bygroups(Text, Whitespace)),  # line continuations
-            (r'//(.*?)$', Comment.Single),
+            (r'\n', Text),
+            (r'\s+', Text),
+            (r'\\\n', Text),  # line continuations
+            (r'//(.*?)\n', Comment.Single),
             (r'/(\\\n)?[*](.|\n)*?[*](\\\n)?/', Comment.Multiline),
             (r'(import|package)\b', Keyword.Namespace),
             (r'(var|func|struct|map|chan|type|interface|const)\b',

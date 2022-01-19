@@ -51,7 +51,7 @@ namespace {
         }
     };
 
-    IProtocolFactory* GLOBAL_FACTORY = nullptr;
+    static IProtocolFactory* GLOBAL_FACTORY = nullptr;
 }
 
 void NNeh::SetGlobalFactory(IProtocolFactory* factory) {

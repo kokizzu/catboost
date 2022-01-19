@@ -55,7 +55,6 @@ public:
         , OutputStream(nullptr)
         , ErrorStream(nullptr)
         , Nice(0)
-        , FuncAfterFork(std::function<void()>())
     {
     }
 
@@ -237,17 +236,6 @@ public:
     }
 
     /**
-     * @brief specifies pure function to be called in the child process after fork, before calling execve
-     * @note currently ignored on windows
-     * @param function function to be called after fork
-     * @return self
-    */
-    inline TShellCommandOptions& SetFuncAfterFork(const std::function<void()>& function) {
-        FuncAfterFork = function;
-        return *this;
-    }
-
-    /**
      * @brief create a pipe for child input
      * Write end of the pipe will be accessible via TShellCommand::GetInputHandle
      *
@@ -322,7 +310,6 @@ public:
     int Nice = 0;
 
     static const size_t DefaultSyncPollDelay = 1000; // ms
-    std::function<void()> FuncAfterFork = {};
 };
 
 /**

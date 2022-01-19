@@ -1,6 +1,6 @@
 
 
-PY3TEST()
+PYTEST()
 
 TEST_SRCS(
     conftest.py
@@ -40,7 +40,7 @@ DATA(
     arcadia/catboost/pytest/data
 )
 
-IF (OPENSOURCE AND AUTOCHECK)
+IF (CATBOOST_OPENSOURCE AND AUTOCHECK)
     INCLUDE(${ARCADIA_ROOT}/catboost//oss/checks/check_deps.inc)
 ENDIF()
 

@@ -64,15 +64,15 @@ namespace NCatboostCuda {
         }
 
         TStripeBuffer<const TDataPartition> CurrentParts() const {
-            return NCudaLib::ParallelStripeView(Partitions, TSlice(0, Leaves.size())).AsConstBuf();
+            return NCudaLib::ParallelStripeView(Partitions, TSlice(0, Leaves.size()));
         }
 
         TStripeBuffer<const double> CurrentPartStats() const {
-            return NCudaLib::ParallelStripeView(PartitionStats, TSlice(0, Leaves.size())).AsConstBuf();
+            return NCudaLib::ParallelStripeView(PartitionStats, TSlice(0, Leaves.size()));
         }
 
         NCudaLib::TCudaBuffer<const TDataPartition, NCudaLib::TStripeMapping, NCudaLib::EPtrType::CudaHost> CurrentPartsCpu() const {
-            return NCudaLib::ParallelStripeView(PartitionsCpu, TSlice(0, Leaves.size())).AsConstBuf();
+            return NCudaLib::ParallelStripeView(PartitionsCpu, TSlice(0, Leaves.size()));
         }
     };
 

@@ -24,9 +24,9 @@ cdef extern from "catboost/python-package/catboost/monoforest_helpers.h" namespa
 
 
 cdef extern from "catboost/python-package/catboost/monoforest_helpers.h" namespace "NMonoForest":
-    TString ConvertFullModelToPolynomString(const TFullModel& fullModel) except +ProcessException
-    TVector[THumanReadableMonom] ConvertFullModelToPolynom(const TFullModel& fullModel) except +ProcessException
-    TVector[TFeatureExplanation] ExplainFeatures(const TFullModel& fullModel) except +ProcessException
+    TString ConvertFullModelToPolynomString(const TFullModel& fullModel)
+    TVector[THumanReadableMonom] ConvertFullModelToPolynom(const TFullModel& fullModel)
+    TVector[TFeatureExplanation] ExplainFeatures(const TFullModel& fullModel)
 
 
 class Split:
@@ -100,7 +100,7 @@ class FeatureExplanation:
         if self.type == "Float":
             values.append(self.expected_bias[dim])
             for border_expl in self.borders_explanations:
-                values.append(values[len(values) - 1] + border_expl.expected_value_change[dim])
+                values.append(values[-1] + border_expl.expected_value_change[dim])
         else:
             for border_expl in self.borders_explanations:
                 values.append(self.expected_bias[dim] + border_expl.expected_value_change[dim])

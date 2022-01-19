@@ -20,7 +20,6 @@
 #include <catboost/private/libs/options/load_options.h>
 #include <catboost/private/libs/options/output_file_options.h>
 #include <catboost/private/libs/options/plain_options_helper.h>
-#include <catboost/private/libs/options/pool_metainfo_options.h>
 
 #include <library/cpp/json/json_writer.h>
 
@@ -50,7 +49,6 @@ static void LoadOptions(
     NJson::TJsonValue outputOptionsJson;
     NJson::TJsonValue featuresSelectJsonOptions;
     InitOptions(paramsFile, &catBoostJsonOptions, &outputOptionsJson, &featuresSelectJsonOptions);
-    LoadPoolMetaInfoOptions(poolLoadParams->PoolMetaInfoPath, &catBoostJsonOptions);
 
     ConvertIgnoredFeaturesFromStringToIndices(*poolLoadParams, &catBoostFlatJsonOptions);
     NCatboostOptions::PlainJsonToOptions(catBoostFlatJsonOptions, &catBoostJsonOptions, &outputOptionsJson, &featuresSelectJsonOptions);
@@ -82,8 +80,6 @@ static TDataProviders LoadPools(
         objectsOrder,
         /*readTestData*/true,
         TDatasetSubset::MakeColumns(),
-        TVector<TDatasetSubset>(poolLoadParams.TestSetPaths.size(), TDatasetSubset::MakeColumns()),
-        catBoostOptions.DataProcessingOptions->ForceUnitAutoPairWeights,
         &classLabels,
         executor,
         /*profile*/nullptr
@@ -154,18 +150,14 @@ int mode_select_features(int argc, const char* argv[]) {
         &executor
     );
 
-    TVector<TEvalResult> evalResults(pools.Test.size());
 
     const TFeaturesSelectionSummary summary = SelectFeatures(
         catBoostOptions,
         outputOptions,
         &poolLoadParams,
         featuresSelectOptions,
-        /*evalMetricDescriptor*/ Nothing(),
         pools,
         /*dstModel*/ nullptr,
-        /*evalResults*/ GetMutablePointers(evalResults),
-        /*metricsAndTimeHistory*/ nullptr,
         &executor
     );
     SaveSummaryToFile(summary, featuresSelectOptions.ResultPath);

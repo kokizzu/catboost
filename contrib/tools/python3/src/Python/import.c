@@ -296,9 +296,6 @@ _PyImport_Fini2(void)
     PyMemAllocatorEx old_alloc;
     _PyMem_SetDefaultAllocator(PYMEM_DOMAIN_RAW, &old_alloc);
 
-    // Reset PyImport_Inittab
-    PyImport_Inittab = _PyImport_Inittab;
-
     /* Free memory allocated by PyImport_ExtendInittab() */
     PyMem_RawFree(inittab_copy);
     inittab_copy = NULL;
@@ -710,9 +707,7 @@ _PyImport_FixupExtensionObject(PyObject *mod, PyObject *name,
         return -1;
     }
 
-    // bpo-44050: Extensions and def->m_base.m_copy can be updated
-    // when the extension module doesn't support sub-interpreters.
-    if (_Py_IsMainInterpreter(tstate) || def->m_size == -1) {
+    if (_Py_IsMainInterpreter(tstate)) {
         if (def->m_size == -1) {
             if (def->m_base.m_copy) {
                 /* Somebody already imported the module,
@@ -1870,7 +1865,7 @@ PyImport_ImportModuleLevelObject(PyObject *name, PyObject *globals,
     }
 
     if (mod != NULL && mod != Py_None) {
-        if (import_ensure_initialized(tstate, mod, abs_name) < 0) {
+        if (import_ensure_initialized(tstate, mod, name) < 0) {
             goto error;
         }
     }

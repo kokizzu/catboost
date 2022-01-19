@@ -71,6 +71,8 @@ static PyObject* module_connect(PyObject* self, PyObject* args, PyObject*
     int uri = 0;
     double timeout = 5.0;
 
+    PyObject* result;
+
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|diOiOip", kwlist,
                                      &database, &timeout, &detect_types,
                                      &isolation_level, &check_same_thread,
@@ -83,7 +85,13 @@ static PyObject* module_connect(PyObject* self, PyObject* args, PyObject*
         factory = (PyObject*)&pysqlite_ConnectionType;
     }
 
-    return PyObject_Call(factory, args, kwargs);
+    if (PySys_Audit("sqlite3.connect", "O", database) < 0) {
+        return NULL;
+    }
+
+    result = PyObject_Call(factory, args, kwargs);
+
+    return result;
 }
 
 PyDoc_STRVAR(module_connect_doc,

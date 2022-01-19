@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.styles.tango
     ~~~~~~~~~~~~~~~~~~~~~
@@ -55,7 +56,7 @@ class TangoStyle(Style):
     styles = {
         # No corresponding class for the following:
         #Text:                     "", # class:  ''
-        Whitespace:                "#f8f8f8",      # class: 'w'
+        Whitespace:                "underline #f8f8f8",      # class: 'w'
         Error:                     "#a40000 border:#ef2929", # class: 'err'
         Other:                     "#000000",                # class 'x'
 

@@ -1,6 +1,6 @@
 
 
-PY3TEST()
+PYTEST()
 
 TEST_SRCS(
     conftest.py
@@ -17,7 +17,7 @@ DEPENDS(
 
 SIZE(MEDIUM)
 
-TAG(ya:yt)
+TAG(ya:yt ya:ytexec)
 
 YT_SPEC(catboost/pytest/cuda_tests/yt_spec.yson)
 

@@ -31,12 +31,9 @@ cdef class IntervalTree(IntervalMixin):
     we are emulating the IndexEngine interface
     """
     cdef readonly:
-        ndarray left, right
-        IntervalNode root
-        object dtype
+        object left, right, root, dtype
         str closed
         object _is_overlapping, _left_sorter, _right_sorter
-        Py_ssize_t _na_count
 
     def __init__(self, left, right, closed='right', leaf_size=100):
         """
@@ -68,7 +65,6 @@ cdef class IntervalTree(IntervalMixin):
 
         # GH 23352: ensure no nan in nodes
         mask = ~np.isnan(self.left)
-        self._na_count = len(mask) - mask.sum()
         self.left = self.left[mask]
         self.right = self.right[mask]
         indices = indices[mask]
@@ -77,7 +73,7 @@ cdef class IntervalTree(IntervalMixin):
         self.root = node_cls(self.left, self.right, indices, leaf_size)
 
     @property
-    def left_sorter(self) -> np.ndarray:
+    def left_sorter(self):
         """How to sort the left labels; this is used for binary search
         """
         if self._left_sorter is None:
@@ -85,7 +81,7 @@ cdef class IntervalTree(IntervalMixin):
         return self._left_sorter
 
     @property
-    def right_sorter(self) -> np.ndarray:
+    def right_sorter(self):
         """How to sort the right labels
         """
         if self._right_sorter is None:
@@ -93,7 +89,7 @@ cdef class IntervalTree(IntervalMixin):
         return self._right_sorter
 
     @property
-    def is_overlapping(self) -> bool:
+    def is_overlapping(self):
         """
         Determine if the IntervalTree contains overlapping intervals.
         Cached as self._is_overlapping.
@@ -113,19 +109,17 @@ cdef class IntervalTree(IntervalMixin):
         return self._is_overlapping
 
     @property
-    def is_monotonic_increasing(self) -> bool:
+    def is_monotonic_increasing(self):
         """
         Return True if the IntervalTree is monotonic increasing (only equal or
         increasing values), else False
         """
-        if self._na_count > 0:
-            return False
         values = [self.right, self.left]
 
         sort_order = np.lexsort(values)
         return is_monotonic(sort_order, False)[0]
 
-    def get_indexer(self, scalar_t[:] target) -> np.ndarray:
+    def get_indexer(self, scalar_t[:] target):
         """Return the positions corresponding to unique intervals that overlap
         with the given array of scalar targets.
         """
@@ -186,7 +180,7 @@ cdef class IntervalTree(IntervalMixin):
                     n_elements=self.root.n_elements))
 
     # compat with IndexEngine interface
-    def clear_mapping(self) -> None:
+    def clear_mapping(self):
         pass
 
 
@@ -209,49 +203,12 @@ cdef sort_values_and_indices(all_values, all_indices, subset):
 # Nodes
 # ----------------------------------------------------------------------
 
-@cython.internal
-cdef class IntervalNode:
-    cdef readonly:
-        int64_t n_elements, n_center, leaf_size
-        bint is_leaf_node
-
-    def __repr__(self) -> str:
-        if self.is_leaf_node:
-            return (
-                f"<{type(self).__name__}: {self.n_elements} elements (terminal)>"
-            )
-        else:
-            n_left = self.left_node.n_elements
-            n_right = self.right_node.n_elements
-            n_center = self.n_elements - n_left - n_right
-            return (
-                f"<{type(self).__name__}: "
-                f"pivot {self.pivot}, {self.n_elements} elements "
-                f"({n_left} left, {n_right} right, {n_center} overlapping)>"
-            )
-
-    def counts(self):
-        """
-        Inspect counts on this node
-        useful for debugging purposes
-        """
-        if self.is_leaf_node:
-            return self.n_elements
-        else:
-            m = len(self.center_left_values)
-            l = self.left_node.counts()
-            r = self.right_node.counts()
-            return (m, (l, r))
-
-
 # we need specialized nodes and leaves to optimize for different dtype and
 # closed values
 
 NODE_CLASSES = {}
 
-
-@cython.internal
-cdef class Float64ClosedLeftIntervalNode(IntervalNode):
+cdef class Float64ClosedLeftIntervalNode:
     """Non-terminal node for an IntervalTree
 
     Categorizes intervals by those that fall to the left, those that fall to
@@ -263,6 +220,8 @@ cdef class Float64ClosedLeftIntervalNode(IntervalNode):
         int64_t[:] center_left_indices, center_right_indices, indices
         float64_t min_left, max_right
         float64_t pivot
+        int64_t n_elements, n_center, leaf_size
+        bint is_leaf_node
 
     def __init__(self,
                  ndarray[float64_t, ndim=1] left,
@@ -390,13 +349,36 @@ cdef class Float64ClosedLeftIntervalNode(IntervalNode):
             else:
                 result.extend(self.center_left_indices)
 
+    def __repr__(self) -> str:
+        if self.is_leaf_node:
+            return ('<Float64ClosedLeftIntervalNode: '
+                    '%s elements (terminal)>' % self.n_elements)
+        else:
+            n_left = self.left_node.n_elements
+            n_right = self.right_node.n_elements
+            n_center = self.n_elements - n_left - n_right
+            return ('<Float64ClosedLeftIntervalNode: '
+                    'pivot %s, %s elements (%s left, %s right, %s '
+                    'overlapping)>' % (self.pivot, self.n_elements,
+                                       n_left, n_right, n_center))
+
+    def counts(self):
+        """
+        Inspect counts on this node
+        useful for debugging purposes
+        """
+        if self.is_leaf_node:
+            return self.n_elements
+        else:
+            m = len(self.center_left_values)
+            l = self.left_node.counts()
+            r = self.right_node.counts()
+            return (m, (l, r))
 
 NODE_CLASSES['float64',
              'left'] = Float64ClosedLeftIntervalNode
 
-
-@cython.internal
-cdef class Float64ClosedRightIntervalNode(IntervalNode):
+cdef class Float64ClosedRightIntervalNode:
     """Non-terminal node for an IntervalTree
 
     Categorizes intervals by those that fall to the left, those that fall to
@@ -408,6 +390,8 @@ cdef class Float64ClosedRightIntervalNode(IntervalNode):
         int64_t[:] center_left_indices, center_right_indices, indices
         float64_t min_left, max_right
         float64_t pivot
+        int64_t n_elements, n_center, leaf_size
+        bint is_leaf_node
 
     def __init__(self,
                  ndarray[float64_t, ndim=1] left,
@@ -535,13 +519,36 @@ cdef class Float64ClosedRightIntervalNode(IntervalNode):
             else:
                 result.extend(self.center_left_indices)
 
+    def __repr__(self) -> str:
+        if self.is_leaf_node:
+            return ('<Float64ClosedRightIntervalNode: '
+                    '%s elements (terminal)>' % self.n_elements)
+        else:
+            n_left = self.left_node.n_elements
+            n_right = self.right_node.n_elements
+            n_center = self.n_elements - n_left - n_right
+            return ('<Float64ClosedRightIntervalNode: '
+                    'pivot %s, %s elements (%s left, %s right, %s '
+                    'overlapping)>' % (self.pivot, self.n_elements,
+                                       n_left, n_right, n_center))
+
+    def counts(self):
+        """
+        Inspect counts on this node
+        useful for debugging purposes
+        """
+        if self.is_leaf_node:
+            return self.n_elements
+        else:
+            m = len(self.center_left_values)
+            l = self.left_node.counts()
+            r = self.right_node.counts()
+            return (m, (l, r))
 
 NODE_CLASSES['float64',
              'right'] = Float64ClosedRightIntervalNode
 
-
-@cython.internal
-cdef class Float64ClosedBothIntervalNode(IntervalNode):
+cdef class Float64ClosedBothIntervalNode:
     """Non-terminal node for an IntervalTree
 
     Categorizes intervals by those that fall to the left, those that fall to
@@ -553,6 +560,8 @@ cdef class Float64ClosedBothIntervalNode(IntervalNode):
         int64_t[:] center_left_indices, center_right_indices, indices
         float64_t min_left, max_right
         float64_t pivot
+        int64_t n_elements, n_center, leaf_size
+        bint is_leaf_node
 
     def __init__(self,
                  ndarray[float64_t, ndim=1] left,
@@ -680,13 +689,36 @@ cdef class Float64ClosedBothIntervalNode(IntervalNode):
             else:
                 result.extend(self.center_left_indices)
 
+    def __repr__(self) -> str:
+        if self.is_leaf_node:
+            return ('<Float64ClosedBothIntervalNode: '
+                    '%s elements (terminal)>' % self.n_elements)
+        else:
+            n_left = self.left_node.n_elements
+            n_right = self.right_node.n_elements
+            n_center = self.n_elements - n_left - n_right
+            return ('<Float64ClosedBothIntervalNode: '
+                    'pivot %s, %s elements (%s left, %s right, %s '
+                    'overlapping)>' % (self.pivot, self.n_elements,
+                                       n_left, n_right, n_center))
+
+    def counts(self):
+        """
+        Inspect counts on this node
+        useful for debugging purposes
+        """
+        if self.is_leaf_node:
+            return self.n_elements
+        else:
+            m = len(self.center_left_values)
+            l = self.left_node.counts()
+            r = self.right_node.counts()
+            return (m, (l, r))
 
 NODE_CLASSES['float64',
              'both'] = Float64ClosedBothIntervalNode
 
-
-@cython.internal
-cdef class Float64ClosedNeitherIntervalNode(IntervalNode):
+cdef class Float64ClosedNeitherIntervalNode:
     """Non-terminal node for an IntervalTree
 
     Categorizes intervals by those that fall to the left, those that fall to
@@ -698,6 +730,8 @@ cdef class Float64ClosedNeitherIntervalNode(IntervalNode):
         int64_t[:] center_left_indices, center_right_indices, indices
         float64_t min_left, max_right
         float64_t pivot
+        int64_t n_elements, n_center, leaf_size
+        bint is_leaf_node
 
     def __init__(self,
                  ndarray[float64_t, ndim=1] left,
@@ -825,13 +859,36 @@ cdef class Float64ClosedNeitherIntervalNode(IntervalNode):
             else:
                 result.extend(self.center_left_indices)
 
+    def __repr__(self) -> str:
+        if self.is_leaf_node:
+            return ('<Float64ClosedNeitherIntervalNode: '
+                    '%s elements (terminal)>' % self.n_elements)
+        else:
+            n_left = self.left_node.n_elements
+            n_right = self.right_node.n_elements
+            n_center = self.n_elements - n_left - n_right
+            return ('<Float64ClosedNeitherIntervalNode: '
+                    'pivot %s, %s elements (%s left, %s right, %s '
+                    'overlapping)>' % (self.pivot, self.n_elements,
+                                       n_left, n_right, n_center))
+
+    def counts(self):
+        """
+        Inspect counts on this node
+        useful for debugging purposes
+        """
+        if self.is_leaf_node:
+            return self.n_elements
+        else:
+            m = len(self.center_left_values)
+            l = self.left_node.counts()
+            r = self.right_node.counts()
+            return (m, (l, r))
 
 NODE_CLASSES['float64',
              'neither'] = Float64ClosedNeitherIntervalNode
 
-
-@cython.internal
-cdef class Int64ClosedLeftIntervalNode(IntervalNode):
+cdef class Int64ClosedLeftIntervalNode:
     """Non-terminal node for an IntervalTree
 
     Categorizes intervals by those that fall to the left, those that fall to
@@ -843,6 +900,8 @@ cdef class Int64ClosedLeftIntervalNode(IntervalNode):
         int64_t[:] center_left_indices, center_right_indices, indices
         int64_t min_left, max_right
         int64_t pivot
+        int64_t n_elements, n_center, leaf_size
+        bint is_leaf_node
 
     def __init__(self,
                  ndarray[int64_t, ndim=1] left,
@@ -970,13 +1029,36 @@ cdef class Int64ClosedLeftIntervalNode(IntervalNode):
             else:
                 result.extend(self.center_left_indices)
 
+    def __repr__(self) -> str:
+        if self.is_leaf_node:
+            return ('<Int64ClosedLeftIntervalNode: '
+                    '%s elements (terminal)>' % self.n_elements)
+        else:
+            n_left = self.left_node.n_elements
+            n_right = self.right_node.n_elements
+            n_center = self.n_elements - n_left - n_right
+            return ('<Int64ClosedLeftIntervalNode: '
+                    'pivot %s, %s elements (%s left, %s right, %s '
+                    'overlapping)>' % (self.pivot, self.n_elements,
+                                       n_left, n_right, n_center))
+
+    def counts(self):
+        """
+        Inspect counts on this node
+        useful for debugging purposes
+        """
+        if self.is_leaf_node:
+            return self.n_elements
+        else:
+            m = len(self.center_left_values)
+            l = self.left_node.counts()
+            r = self.right_node.counts()
+            return (m, (l, r))
 
 NODE_CLASSES['int64',
              'left'] = Int64ClosedLeftIntervalNode
 
-
-@cython.internal
-cdef class Int64ClosedRightIntervalNode(IntervalNode):
+cdef class Int64ClosedRightIntervalNode:
     """Non-terminal node for an IntervalTree
 
     Categorizes intervals by those that fall to the left, those that fall to
@@ -988,6 +1070,8 @@ cdef class Int64ClosedRightIntervalNode(IntervalNode):
         int64_t[:] center_left_indices, center_right_indices, indices
         int64_t min_left, max_right
         int64_t pivot
+        int64_t n_elements, n_center, leaf_size
+        bint is_leaf_node
 
     def __init__(self,
                  ndarray[int64_t, ndim=1] left,
@@ -1115,13 +1199,36 @@ cdef class Int64ClosedRightIntervalNode(IntervalNode):
             else:
                 result.extend(self.center_left_indices)
 
+    def __repr__(self) -> str:
+        if self.is_leaf_node:
+            return ('<Int64ClosedRightIntervalNode: '
+                    '%s elements (terminal)>' % self.n_elements)
+        else:
+            n_left = self.left_node.n_elements
+            n_right = self.right_node.n_elements
+            n_center = self.n_elements - n_left - n_right
+            return ('<Int64ClosedRightIntervalNode: '
+                    'pivot %s, %s elements (%s left, %s right, %s '
+                    'overlapping)>' % (self.pivot, self.n_elements,
+                                       n_left, n_right, n_center))
+
+    def counts(self):
+        """
+        Inspect counts on this node
+        useful for debugging purposes
+        """
+        if self.is_leaf_node:
+            return self.n_elements
+        else:
+            m = len(self.center_left_values)
+            l = self.left_node.counts()
+            r = self.right_node.counts()
+            return (m, (l, r))
 
 NODE_CLASSES['int64',
              'right'] = Int64ClosedRightIntervalNode
 
-
-@cython.internal
-cdef class Int64ClosedBothIntervalNode(IntervalNode):
+cdef class Int64ClosedBothIntervalNode:
     """Non-terminal node for an IntervalTree
 
     Categorizes intervals by those that fall to the left, those that fall to
@@ -1133,6 +1240,8 @@ cdef class Int64ClosedBothIntervalNode(IntervalNode):
         int64_t[:] center_left_indices, center_right_indices, indices
         int64_t min_left, max_right
         int64_t pivot
+        int64_t n_elements, n_center, leaf_size
+        bint is_leaf_node
 
     def __init__(self,
                  ndarray[int64_t, ndim=1] left,
@@ -1260,13 +1369,36 @@ cdef class Int64ClosedBothIntervalNode(IntervalNode):
             else:
                 result.extend(self.center_left_indices)
 
+    def __repr__(self) -> str:
+        if self.is_leaf_node:
+            return ('<Int64ClosedBothIntervalNode: '
+                    '%s elements (terminal)>' % self.n_elements)
+        else:
+            n_left = self.left_node.n_elements
+            n_right = self.right_node.n_elements
+            n_center = self.n_elements - n_left - n_right
+            return ('<Int64ClosedBothIntervalNode: '
+                    'pivot %s, %s elements (%s left, %s right, %s '
+                    'overlapping)>' % (self.pivot, self.n_elements,
+                                       n_left, n_right, n_center))
+
+    def counts(self):
+        """
+        Inspect counts on this node
+        useful for debugging purposes
+        """
+        if self.is_leaf_node:
+            return self.n_elements
+        else:
+            m = len(self.center_left_values)
+            l = self.left_node.counts()
+            r = self.right_node.counts()
+            return (m, (l, r))
 
 NODE_CLASSES['int64',
              'both'] = Int64ClosedBothIntervalNode
 
-
-@cython.internal
-cdef class Int64ClosedNeitherIntervalNode(IntervalNode):
+cdef class Int64ClosedNeitherIntervalNode:
     """Non-terminal node for an IntervalTree
 
     Categorizes intervals by those that fall to the left, those that fall to
@@ -1278,6 +1410,8 @@ cdef class Int64ClosedNeitherIntervalNode(IntervalNode):
         int64_t[:] center_left_indices, center_right_indices, indices
         int64_t min_left, max_right
         int64_t pivot
+        int64_t n_elements, n_center, leaf_size
+        bint is_leaf_node
 
     def __init__(self,
                  ndarray[int64_t, ndim=1] left,
@@ -1405,13 +1539,36 @@ cdef class Int64ClosedNeitherIntervalNode(IntervalNode):
             else:
                 result.extend(self.center_left_indices)
 
+    def __repr__(self) -> str:
+        if self.is_leaf_node:
+            return ('<Int64ClosedNeitherIntervalNode: '
+                    '%s elements (terminal)>' % self.n_elements)
+        else:
+            n_left = self.left_node.n_elements
+            n_right = self.right_node.n_elements
+            n_center = self.n_elements - n_left - n_right
+            return ('<Int64ClosedNeitherIntervalNode: '
+                    'pivot %s, %s elements (%s left, %s right, %s '
+                    'overlapping)>' % (self.pivot, self.n_elements,
+                                       n_left, n_right, n_center))
+
+    def counts(self):
+        """
+        Inspect counts on this node
+        useful for debugging purposes
+        """
+        if self.is_leaf_node:
+            return self.n_elements
+        else:
+            m = len(self.center_left_values)
+            l = self.left_node.counts()
+            r = self.right_node.counts()
+            return (m, (l, r))
 
 NODE_CLASSES['int64',
              'neither'] = Int64ClosedNeitherIntervalNode
 
-
-@cython.internal
-cdef class Uint64ClosedLeftIntervalNode(IntervalNode):
+cdef class Uint64ClosedLeftIntervalNode:
     """Non-terminal node for an IntervalTree
 
     Categorizes intervals by those that fall to the left, those that fall to
@@ -1423,6 +1580,8 @@ cdef class Uint64ClosedLeftIntervalNode(IntervalNode):
         int64_t[:] center_left_indices, center_right_indices, indices
         uint64_t min_left, max_right
         uint64_t pivot
+        int64_t n_elements, n_center, leaf_size
+        bint is_leaf_node
 
     def __init__(self,
                  ndarray[uint64_t, ndim=1] left,
@@ -1550,13 +1709,36 @@ cdef class Uint64ClosedLeftIntervalNode(IntervalNode):
             else:
                 result.extend(self.center_left_indices)
 
+    def __repr__(self) -> str:
+        if self.is_leaf_node:
+            return ('<Uint64ClosedLeftIntervalNode: '
+                    '%s elements (terminal)>' % self.n_elements)
+        else:
+            n_left = self.left_node.n_elements
+            n_right = self.right_node.n_elements
+            n_center = self.n_elements - n_left - n_right
+            return ('<Uint64ClosedLeftIntervalNode: '
+                    'pivot %s, %s elements (%s left, %s right, %s '
+                    'overlapping)>' % (self.pivot, self.n_elements,
+                                       n_left, n_right, n_center))
+
+    def counts(self):
+        """
+        Inspect counts on this node
+        useful for debugging purposes
+        """
+        if self.is_leaf_node:
+            return self.n_elements
+        else:
+            m = len(self.center_left_values)
+            l = self.left_node.counts()
+            r = self.right_node.counts()
+            return (m, (l, r))
 
 NODE_CLASSES['uint64',
              'left'] = Uint64ClosedLeftIntervalNode
 
-
-@cython.internal
-cdef class Uint64ClosedRightIntervalNode(IntervalNode):
+cdef class Uint64ClosedRightIntervalNode:
     """Non-terminal node for an IntervalTree
 
     Categorizes intervals by those that fall to the left, those that fall to
@@ -1568,6 +1750,8 @@ cdef class Uint64ClosedRightIntervalNode(IntervalNode):
         int64_t[:] center_left_indices, center_right_indices, indices
         uint64_t min_left, max_right
         uint64_t pivot
+        int64_t n_elements, n_center, leaf_size
+        bint is_leaf_node
 
     def __init__(self,
                  ndarray[uint64_t, ndim=1] left,
@@ -1695,13 +1879,36 @@ cdef class Uint64ClosedRightIntervalNode(IntervalNode):
             else:
                 result.extend(self.center_left_indices)
 
+    def __repr__(self) -> str:
+        if self.is_leaf_node:
+            return ('<Uint64ClosedRightIntervalNode: '
+                    '%s elements (terminal)>' % self.n_elements)
+        else:
+            n_left = self.left_node.n_elements
+            n_right = self.right_node.n_elements
+            n_center = self.n_elements - n_left - n_right
+            return ('<Uint64ClosedRightIntervalNode: '
+                    'pivot %s, %s elements (%s left, %s right, %s '
+                    'overlapping)>' % (self.pivot, self.n_elements,
+                                       n_left, n_right, n_center))
+
+    def counts(self):
+        """
+        Inspect counts on this node
+        useful for debugging purposes
+        """
+        if self.is_leaf_node:
+            return self.n_elements
+        else:
+            m = len(self.center_left_values)
+            l = self.left_node.counts()
+            r = self.right_node.counts()
+            return (m, (l, r))
 
 NODE_CLASSES['uint64',
              'right'] = Uint64ClosedRightIntervalNode
 
-
-@cython.internal
-cdef class Uint64ClosedBothIntervalNode(IntervalNode):
+cdef class Uint64ClosedBothIntervalNode:
     """Non-terminal node for an IntervalTree
 
     Categorizes intervals by those that fall to the left, those that fall to
@@ -1713,6 +1920,8 @@ cdef class Uint64ClosedBothIntervalNode(IntervalNode):
         int64_t[:] center_left_indices, center_right_indices, indices
         uint64_t min_left, max_right
         uint64_t pivot
+        int64_t n_elements, n_center, leaf_size
+        bint is_leaf_node
 
     def __init__(self,
                  ndarray[uint64_t, ndim=1] left,
@@ -1840,13 +2049,36 @@ cdef class Uint64ClosedBothIntervalNode(IntervalNode):
             else:
                 result.extend(self.center_left_indices)
 
+    def __repr__(self) -> str:
+        if self.is_leaf_node:
+            return ('<Uint64ClosedBothIntervalNode: '
+                    '%s elements (terminal)>' % self.n_elements)
+        else:
+            n_left = self.left_node.n_elements
+            n_right = self.right_node.n_elements
+            n_center = self.n_elements - n_left - n_right
+            return ('<Uint64ClosedBothIntervalNode: '
+                    'pivot %s, %s elements (%s left, %s right, %s '
+                    'overlapping)>' % (self.pivot, self.n_elements,
+                                       n_left, n_right, n_center))
+
+    def counts(self):
+        """
+        Inspect counts on this node
+        useful for debugging purposes
+        """
+        if self.is_leaf_node:
+            return self.n_elements
+        else:
+            m = len(self.center_left_values)
+            l = self.left_node.counts()
+            r = self.right_node.counts()
+            return (m, (l, r))
 
 NODE_CLASSES['uint64',
              'both'] = Uint64ClosedBothIntervalNode
 
-
-@cython.internal
-cdef class Uint64ClosedNeitherIntervalNode(IntervalNode):
+cdef class Uint64ClosedNeitherIntervalNode:
     """Non-terminal node for an IntervalTree
 
     Categorizes intervals by those that fall to the left, those that fall to
@@ -1858,6 +2090,8 @@ cdef class Uint64ClosedNeitherIntervalNode(IntervalNode):
         int64_t[:] center_left_indices, center_right_indices, indices
         uint64_t min_left, max_right
         uint64_t pivot
+        int64_t n_elements, n_center, leaf_size
+        bint is_leaf_node
 
     def __init__(self,
                  ndarray[uint64_t, ndim=1] left,
@@ -1985,6 +2219,31 @@ cdef class Uint64ClosedNeitherIntervalNode(IntervalNode):
             else:
                 result.extend(self.center_left_indices)
 
+    def __repr__(self) -> str:
+        if self.is_leaf_node:
+            return ('<Uint64ClosedNeitherIntervalNode: '
+                    '%s elements (terminal)>' % self.n_elements)
+        else:
+            n_left = self.left_node.n_elements
+            n_right = self.right_node.n_elements
+            n_center = self.n_elements - n_left - n_right
+            return ('<Uint64ClosedNeitherIntervalNode: '
+                    'pivot %s, %s elements (%s left, %s right, %s '
+                    'overlapping)>' % (self.pivot, self.n_elements,
+                                       n_left, n_right, n_center))
+
+    def counts(self):
+        """
+        Inspect counts on this node
+        useful for debugging purposes
+        """
+        if self.is_leaf_node:
+            return self.n_elements
+        else:
+            m = len(self.center_left_values)
+            l = self.left_node.counts()
+            r = self.right_node.counts()
+            return (m, (l, r))
 
 NODE_CLASSES['uint64',
              'neither'] = Uint64ClosedNeitherIntervalNode

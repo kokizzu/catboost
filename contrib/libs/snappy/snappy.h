@@ -40,9 +40,7 @@
 #define THIRD_PARTY_SNAPPY_SNAPPY_H__
 
 #include <cstddef>
-#include <string>
-
-#include <util/generic/fwd.h>
+#include <util/generic/string.h>
 
 #include "snappy-stubs-public.h"
 
@@ -76,8 +74,6 @@ namespace snappy {
   //
   // REQUIRES: "input[]" is not an alias of "*compressed".
   size_t Compress(const char* input, size_t input_length,
-                  std::string* compressed);
-  size_t Compress(const char* input, size_t input_length,
                   TString* compressed);
 
   // Decompresses "compressed[0,compressed_length-1]" to "*uncompressed".
@@ -86,8 +82,6 @@ namespace snappy {
   // REQUIRES: "compressed[]" is not an alias of "*uncompressed".
   //
   // returns false if the message is corrupted and could not be decompressed
-  bool Uncompress(const char* compressed, size_t compressed_length,
-                  std::string* uncompressed);
   bool Uncompress(const char* compressed, size_t compressed_length,
                   TString* uncompressed);
 

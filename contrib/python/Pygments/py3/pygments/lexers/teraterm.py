@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.teraterm
     ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -24,7 +25,7 @@ class TeraTermLexer(RegexLexer):
     .. versionadded:: 2.4
     """
     name = 'Tera Term macro'
-    aliases = ['teratermmacro', 'teraterm', 'ttl']
+    aliases = ['ttl', 'teraterm', 'teratermmacro']
     filenames = ['*.ttl']
     mimetypes = ['text/x-teratermmacro']
 

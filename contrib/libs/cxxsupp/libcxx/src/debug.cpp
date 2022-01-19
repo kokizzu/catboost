@@ -200,7 +200,7 @@ __libcpp_db::__insert_c(void* __c, __libcpp_db::_InsertConstruct *__fn)
     __c_node* p = __cbeg_[hc];
     void *buf = malloc(sizeof(__c_node));
     if (buf == nullptr)
-      __throw_bad_alloc();
+        __throw_bad_alloc();
     __cbeg_[hc] = __fn(buf, __c, p);
 
     ++__csz_;
@@ -438,7 +438,7 @@ __libcpp_db::__less_than_comparable(const void* __i, const void* __j) const
     __i_node* j = __find_iterator(__j);
     __c_node* ci = i != nullptr ? i->__c_ : nullptr;
     __c_node* cj = j != nullptr ? j->__c_ : nullptr;
-    return ci == cj;
+    return ci != nullptr && ci == cj;
 }
 
 void

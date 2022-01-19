@@ -37,7 +37,7 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <string>
+#include <util/generic/string.h>
 
 #include "config.h"
  

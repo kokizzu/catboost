@@ -1,7 +1,5 @@
 #include "env.h"
 
-#include <build/scripts/c_templates/svnversion.h>
-
 #include <util/folder/dirut.h>
 #include <util/folder/path.h>
 #include <util/generic/singleton.h>
@@ -15,22 +13,6 @@
 #include <library/cpp/json/json_reader.h>
 #include <library/cpp/json/json_value.h>
 #include <library/cpp/json/json_writer.h>
-
-TString ArcadiaSourceRoot() {
-    if (const auto& sourceRoot = NPrivate::GetTestEnv().SourceRoot) {
-        return sourceRoot;
-    } else {
-        return GetArcadiaSourcePath();
-    }
-}
-
-TString BuildRoot() {
-    if (const auto& buildRoot = NPrivate::GetTestEnv().BuildRoot) {
-        return buildRoot;
-    } else {
-        return GetArcadiaSourcePath();
-    }
-}
 
 TString ArcadiaFromCurrentLocation(TStringBuf where, TStringBuf path) {
     return (TFsPath(ArcadiaSourceRoot()) / TFsPath(where).Parent() / path).Fix();
@@ -79,10 +61,6 @@ TFsPath GetOutputPath() {
 
 const TString& GetRamDrivePath() {
     return NPrivate::GetTestEnv().RamDrivePath;
-}
-
-const TString& GetYtHddPath() {
-    return NPrivate::GetTestEnv().YtHddPath;
 }
 
 const TString& GetOutputRamDrivePath() {
@@ -159,7 +137,6 @@ namespace NPrivate {
         BuildRoot = "";
         WorkPath = "";
         RamDrivePath = "";
-        YtHddPath = "";
         TestOutputRamDrivePath = "";
         GdbPath = "";
         CoreSearchFile = "";
@@ -197,11 +174,6 @@ namespace NPrivate {
                 RamDrivePath = value->GetStringSafe("");
             }
 
-            value = context.GetValueByPath("runtime.yt_hdd_path");
-            if (value) {
-                YtHddPath = value->GetStringSafe("");
-            }
-
             value = context.GetValueByPath("runtime.test_output_ram_drive_path");
             if (value) {
                 TestOutputRamDrivePath = value->GetStringSafe("");
@@ -223,10 +195,6 @@ namespace NPrivate {
             if (value) {
                 CoreSearchFile = value->GetStringSafe("");
             }
-        }
-
-        if (!YtHddPath) {
-            YtHddPath = GetEnv("HDD_PATH");
         }
 
         if (!SourceRoot) {

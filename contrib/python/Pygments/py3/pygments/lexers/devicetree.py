@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     pygments.lexers.devicetree
     ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -10,7 +11,7 @@
 
 from pygments.lexer import RegexLexer, bygroups, include, default, words
 from pygments.token import Comment, Keyword, Name, Number, Operator, \
-    Punctuation, String, Text, Whitespace
+    Punctuation, String, Text
 
 __all__ = ['DevicetreeLexer']
 
@@ -46,8 +47,8 @@ class DevicetreeLexer(RegexLexer):
              bygroups(Comment.Preproc, Comment.Multiline, Comment.Preproc, Punctuation)),
         ],
         'whitespace': [
-            (r'\n', Whitespace),
-            (r'\s+', Whitespace),
+            (r'\n', Text),
+            (r'\s+', Text),
             (r'\\\n', Text),  # line continuation
             (r'//(\n|[\w\W]*?[^\\]\n)', Comment.Single),
             (r'/(\\\n)?[*][\w\W]*?[*](\\\n)?/', Comment.Multiline),
@@ -58,7 +59,7 @@ class DevicetreeLexer(RegexLexer):
             (r'(L?)(")', bygroups(String.Affix, String), 'string'),
             (r'0x[0-9a-fA-F]+', Number.Hex),
             (r'\d+', Number.Integer),
-            (r'([^\s{}/*]*)(\s*)(:)', bygroups(Name.Label, Text, Punctuation), '#pop'),
+            (r'([^\s{}/*]*)(\s*)(:)', bygroups(Name.Label, Text, Punctuation)),
             (words(('compatible', 'model', 'phandle', 'status', '#address-cells',
                     '#size-cells', 'reg', 'virtual-reg', 'ranges', 'dma-ranges',
                     'device_type', 'name'), suffix=r'\b'), Keyword.Reserved),
@@ -73,7 +74,7 @@ class DevicetreeLexer(RegexLexer):
             include('macro'),
 
             # Nodes
-            (r'([^/*@\s&]+|/)(@?)((?:0x)?[0-9a-fA-F,]*)(' + _ws + r')(\{)',
+            (r'([^/*@\s&]+|/)(@?)([0-9a-fA-F,]*)(' + _ws + r')(\{)',
              bygroups(Name.Function, Operator, Number.Integer,
                       Comment.Multiline, Punctuation), 'node'),
 
@@ -88,7 +89,7 @@ class DevicetreeLexer(RegexLexer):
             include('whitespace'),
             include('macro'),
 
-            (r'([^/*@\s&]+|/)(@?)((?:0x)?[0-9a-fA-F,]*)(' + _ws + r')(\{)',
+            (r'([^/*@\s&]+|/)(@?)([0-9a-fA-F,]*)(' + _ws + r')(\{)',
              bygroups(Name.Function, Operator, Number.Integer,
                       Comment.Multiline, Punctuation), '#push'),
 

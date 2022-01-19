@@ -2,7 +2,6 @@ from . import _catboost
 from .core import Pool, CatBoostError, ARRAY_TYPES, PATH_TYPES, STRING_TYPES, fspath, _update_params_quantize_part, _process_synonyms
 from collections import defaultdict
 from contextlib import contextmanager
-import sys
 import numpy as np
 import warnings
 
@@ -252,10 +251,10 @@ def eval_metric(label, approx, metric, weight=None, group_id=None, group_weight=
     Parameters
     ----------
     label : list or numpy.ndarrays or pandas.DataFrame or pandas.Series
-        Object labels with shape (n_objects,) or (n_object, n_target_dimension)
+        Object labels.
 
     approx : list or numpy.ndarrays or pandas.DataFrame or pandas.Series
-        Object approxes with shape (n_objects,) or (n_object, n_approx_dimension).
+        Object approxes.
 
     metric : string
         Metric name.
@@ -289,11 +288,12 @@ def eval_metric(label, approx, metric, weight=None, group_id=None, group_weight=
     -------
     metric results : list with metric values.
     """
-    if len(label) > 0:
-        label = np.transpose(label) if isinstance(label[0], ARRAY_TYPES) else [label]
+    if len(label) > 0 and not isinstance(label[0], ARRAY_TYPES):
+        label = [label]
     if len(approx) == 0:
         approx = [[]]
-    approx = np.transpose(approx) if isinstance(approx[0], ARRAY_TYPES) else [approx]
+    if not isinstance(approx[0], ARRAY_TYPES):
+        approx = [approx]
     return _eval_metric_util(label, approx, metric, weight, group_id, group_weight, subgroup_id, pairs, thread_count)
 
 
@@ -531,8 +531,6 @@ def quantize(
     task_type=None,
     used_ram_limit=None,
     random_seed=None,
-    log_cout=sys.stdout,
-    log_cerr=sys.stderr,
     **kwargs
 ):
     """
@@ -663,11 +661,10 @@ def quantize(
         task_type,
         used_ram_limit,
         random_seed,
-        dev_max_subset_size_for_build_borders
-    )
+        dev_max_subset_size_for_build_borders)
 
     result = Pool(None)
-    result._read(data_path, column_description, pairs, feature_names, delimiter, has_header, ignore_csv_quoting, thread_count, params, log_cout=log_cout, log_cerr=log_cerr)
+    result._read(data_path, column_description, pairs, feature_names, delimiter, has_header, ignore_csv_quoting, thread_count, params)
 
     return result
 

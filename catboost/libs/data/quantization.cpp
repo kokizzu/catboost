@@ -46,7 +46,7 @@ namespace NCB {
         bool hasDenseData,
         NPar::ILocalExecutor* localExecutor
     ) {
-        if (hasDenseData && !std::holds_alternative<TFullSubset<ui32>>(srcSubsetIndexing)) {
+        if (hasDenseData && !HoldsAlternative<TFullSubset<ui32>>(srcSubsetIndexing)) {
             TVector<ui32> srcIndices;
             srcIndices.yresize(srcSubsetIndexing.Size());
             TArrayRef<ui32> srcIndicesRef = srcIndices;
@@ -276,7 +276,7 @@ namespace NCB {
             ui32 nonDefaultValuesInSampleCount = 0;
 
             if (const auto* invertedIndexedSubset
-                    = std::get_if<TInvertedIndexedSubset<ui32>>(&*subsetIndexingForBuildBorders.InvertedSubset))
+                    = GetIf<TInvertedIndexedSubset<ui32>>(&*subsetIndexingForBuildBorders.InvertedSubset))
             {
                 TConstArrayRef<ui32> invertedMapping = invertedIndexedSubset->GetMapping();
                 sparseData.ForEachNonDefault(
@@ -527,7 +527,7 @@ namespace NCB {
             const TFeaturesArraySubsetInvertedIndexing& incrementalInvertedIndexing
         ) const {
             if (const TInvertedIndexedSubset<ui32>* invertedIndexedSubset
-                    = std::get_if<TInvertedIndexedSubset<ui32>>(&incrementalInvertedIndexing))
+                    = GetIf<TInvertedIndexedSubset<ui32>>(&incrementalInvertedIndexing))
             {
                 TConstArrayRef<ui32> invertedIndexedSubsetArray = invertedIndexedSubset->GetMapping();
                 TVector<ui32> nonDefaultIndices;
@@ -579,7 +579,7 @@ namespace NCB {
             const TFeaturesArraySubsetInvertedIndexing& incrementalInvertedIndexing
         ) const {
             if (const TInvertedIndexedSubset<ui32>* invertedIndexedSubset
-                    = std::get_if<TInvertedIndexedSubset<ui32>>(&incrementalInvertedIndexing))
+                    = GetIf<TInvertedIndexedSubset<ui32>>(&incrementalInvertedIndexing))
             {
                 TConstArrayRef<ui32> invertedIndexedSubsetArray = invertedIndexedSubset->GetMapping();
                 TVector<ui32> nonDefaultIndices;
@@ -947,10 +947,10 @@ namespace NCB {
 
         if (const auto* denseSrcFeature = dynamic_cast<const TDenseSrcData*>(&srcFeature)){
             if (const auto* nontrivialIncrementalIndexing
-                = std::get_if<TIndexedSubset<ui32>>(&incrementalDenseIndexing.SrcSubsetIndexing))
+                = GetIf<TIndexedSubset<ui32>>(&incrementalDenseIndexing.SrcSubsetIndexing))
             {
                 TConstArrayRef<ui32> dstIndices
-                    = std::get<TIndexedSubset<ui32>>(incrementalDenseIndexing.DstIndexing);
+                    = Get<TIndexedSubset<ui32>>(incrementalDenseIndexing.DstIndexing);
 
                 denseSrcFeature->GetData()->CloneWithNewSubsetIndexing(
                     &incrementalDenseIndexing.SrcSubsetIndexing
@@ -1124,7 +1124,7 @@ namespace NCB {
             const TFeaturesArraySubsetIndexing* quantizedDataSubsetIndexing,
             NPar::ILocalExecutor* localExecutor,
             TRawObjectsData* rawObjectsData,
-            TQuantizedObjectsData* quantizedObjectsData
+            TQuantizedForCPUObjectsData* quantizedObjectsData
         )
             : ClearSrcObjectsData(clearSrcObjectsData)
             , Options(options)
@@ -1156,7 +1156,7 @@ namespace NCB {
         ) const {
             MakeQuantizedColumn(
                 **srcColumn,
-                *QuantizedObjectsData->QuantizedFeaturesInfo,
+                *QuantizedObjectsData->Data.QuantizedFeaturesInfo,
                 IncrementalDenseIndexing,
                 Options.SparseArrayIndexingType,
                 QuantizedDataSubsetIndexing,
@@ -1171,14 +1171,14 @@ namespace NCB {
         void QuantizeAndClearSrcData(TFloatFeatureIdx floatFeatureIdx) const {
             QuantizeAndClearSrcData(
                 &(RawObjectsData->FloatFeatures[*floatFeatureIdx]),
-                &(QuantizedObjectsData->FloatFeatures[*floatFeatureIdx])
+                &(QuantizedObjectsData->Data.FloatFeatures[*floatFeatureIdx])
             );
         }
 
         void QuantizeAndClearSrcData(TCatFeatureIdx catFeatureIdx) const {
             QuantizeAndClearSrcData(
                 &(RawObjectsData->CatFeatures[*catFeatureIdx]),
-                &(QuantizedObjectsData->CatFeatures[*catFeatureIdx])
+                &(QuantizedObjectsData->Data.CatFeatures[*catFeatureIdx])
             );
         }
 
@@ -1191,7 +1191,7 @@ namespace NCB {
                 **srcColumn,
                 IncrementalDenseIndexing,
                 TValueQuantizer<TColumn>(
-                    *QuantizedObjectsData->QuantizedFeaturesInfo,
+                    *QuantizedObjectsData->Data.QuantizedFeaturesInfo,
                     (*srcColumn)->GetId()
                 ),
                 LocalExecutor,
@@ -1234,7 +1234,7 @@ namespace NCB {
             const ui32 objectCount = QuantizedDataSubsetIndexing->Size();
 
             const TQuantizedFeaturesInfo& quantizedFeaturesInfo
-                = *QuantizedObjectsData->QuantizedFeaturesInfo;
+                = *QuantizedObjectsData->Data.QuantizedFeaturesInfo;
 
             FeaturesLayout.IterateOverAvailableFeatures<FeatureType>(
                 [&] (TFeatureIdx<FeatureType> perTypeFeatureIdx) {
@@ -1280,7 +1280,7 @@ namespace NCB {
         const TFeaturesArraySubsetIndexing* QuantizedDataSubsetIndexing;
         NPar::ILocalExecutor* LocalExecutor;
         TRawObjectsData* RawObjectsData;
-        TQuantizedObjectsData* QuantizedObjectsData;
+        TQuantizedForCPUObjectsData* QuantizedObjectsData;
 
         // TMaybe because of delayed initialization
         TMaybe<TResourceConstrainedExecutor> ResourceConstrainedExecutor;
@@ -1373,7 +1373,7 @@ namespace NCB {
                 ColumnsQuantizer.QuantizedDataSubsetIndexing
             );
 
-            auto& quantizedData = *ColumnsQuantizer.QuantizedObjectsData;
+            auto& quantizedData = ColumnsQuantizer.QuantizedObjectsData->Data;
 
             for (const auto& part : MetaData[aggregateIdx].Parts) {
                 const ui32 flatFeatureIdx = ColumnsQuantizer.FeaturesLayout.GetExternalFeatureIdx(
@@ -1452,7 +1452,7 @@ namespace NCB {
             for (auto bitIdx : xrange(GetAggregatePartsCount(aggregateIdx))) {
                 TMaybe<ui32> defaultBin
                     = GetDefaultQuantizedValue(
-                        *ColumnsQuantizer.QuantizedObjectsData->QuantizedFeaturesInfo,
+                        *ColumnsQuantizer.QuantizedObjectsData->Data.QuantizedFeaturesInfo,
                         GetSrcPart(aggregateIdx, bitIdx)
                     );
                 if (defaultBin) {
@@ -1489,7 +1489,7 @@ namespace NCB {
                 ColumnsQuantizer.QuantizedDataSubsetIndexing
             );
 
-            auto& quantizedData = *ColumnsQuantizer.QuantizedObjectsData;
+            auto& quantizedData = ColumnsQuantizer.QuantizedObjectsData->Data;
 
             for (auto bitIdx : xrange(GetAggregatePartsCount(aggregateIdx))) {
                 const auto part = GetSrcPart(aggregateIdx, bitIdx);
@@ -1563,7 +1563,7 @@ namespace NCB {
             for (auto partIdx : xrange(GetAggregatePartsCount(aggregateIdx))) {
                 TMaybe<ui32> defaultBin
                     = GetDefaultQuantizedValue(
-                        *ColumnsQuantizer.QuantizedObjectsData->QuantizedFeaturesInfo,
+                        *ColumnsQuantizer.QuantizedObjectsData->Data.QuantizedFeaturesInfo,
                         GetSrcPart(aggregateIdx, partIdx)
                     );
                 if (defaultBin) {
@@ -1597,7 +1597,7 @@ namespace NCB {
                 ColumnsQuantizer.QuantizedDataSubsetIndexing
             );
 
-            auto& quantizedData = *ColumnsQuantizer.QuantizedObjectsData;
+            auto& quantizedData = ColumnsQuantizer.QuantizedObjectsData->Data;
 
             for (auto partIdx : xrange(GetAggregatePartsCount(aggregateIdx))) {
                 const auto& part = MetaData[aggregateIdx].Parts[partIdx];
@@ -2001,7 +2001,7 @@ namespace NCB {
             const auto& featureDescription = textOptions.GetTokenizedFeatureDescription(tokenizedFeatureIdx);
             const ui32 textFeatureIdx = featureDescription.TextFeatureId;
 
-            if (textDigitizers->HasDigitizer(tokenizedFeatureIdx + textFeatures.size()) ||
+            if (textDigitizers->HasDigitizer(tokenizedFeatureIdx) ||
                 !featuresLayout.GetInternalFeatureMetaInfo(textFeatureIdx, EFeatureType::Text).IsAvailable) {
                 continue;
             }
@@ -2019,7 +2019,7 @@ namespace NCB {
                 textOptions.GetDictionaryOptions(featureDescription.DictionaryId.Get()),
                 tokenizer
             );
-            textDigitizers->AddDigitizer(textFeatureIdx, tokenizedFeatureIdx + textFeatures.size(), {tokenizer, dictionary});
+            textDigitizers->AddDigitizer(textFeatureIdx, tokenizedFeatureIdx, {tokenizer, dictionary});
         }
     }
 
@@ -2036,16 +2036,34 @@ namespace NCB {
             tokenizedFeatureNames.push_back(featureDescriptions[tokenizedFeatureIdx].FeatureId);
         }
 
-        featuresLayout->IgnoreExternalFeatures(featuresLayout->GetTextFeatureInternalIdxToExternalIdx());
+        TFeaturesLayout layoutWithTokenizedFeatures;
 
-        for (ui32 tokenizedFeatureIdx = 0; tokenizedFeatureIdx < tokenizedFeatureCount; tokenizedFeatureIdx++) {
-            featuresLayout->AddFeature(
+        ui32 tokenizedFeatureIdx = 0;
+        for (ui32 featureIdx = 0; featureIdx < featuresLayout->GetExternalFeatureCount(); featureIdx++) {
+            auto& metaInfo = featuresLayout->GetExternalFeatureMetaInfo(featureIdx);
+            if (metaInfo.Type == EFeatureType::Text) {
+                layoutWithTokenizedFeatures.AddFeature(
+                    TFeatureMetaInfo{
+                        EFeatureType::Text,
+                        tokenizedFeatureNames[tokenizedFeatureIdx]
+                    }
+                );
+                tokenizedFeatureIdx++;
+            } else {
+                layoutWithTokenizedFeatures.AddFeature(TFeatureMetaInfo(metaInfo));
+            }
+        }
+
+        for (; tokenizedFeatureIdx < tokenizedFeatureCount; tokenizedFeatureIdx++) {
+            layoutWithTokenizedFeatures.AddFeature(
                 TFeatureMetaInfo{
                     EFeatureType::Text,
                     tokenizedFeatureNames[tokenizedFeatureIdx]
                 }
             );
         }
+
+        *featuresLayout = std::move(layoutWithTokenizedFeatures);
     }
 
 
@@ -2221,7 +2239,7 @@ namespace NCB {
 
             const bool hasDenseSrcData = rawDataProvider->ObjectsData->HasDenseData();
 
-            TMaybe<TQuantizedBuilderData> data;
+            TMaybe<TQuantizedForCPUBuilderData> data;
             TAtomicSharedPtr<TArraySubsetIndexing<ui32>> subsetIndexing;
             TMaybe<TIncrementalDenseIndexing> incrementalIndexing;
 
@@ -2239,11 +2257,10 @@ namespace NCB {
                     flatFeatureCount
                 );
 
-                data->ObjectsData.FloatFeatures.resize(featuresLayout->GetFloatFeatureCount());
-                data->ObjectsData.CatFeatures.resize(featuresLayout->GetCatFeatureCount());
-                data->ObjectsData.TextFeatures.resize(featuresLayout->GetTextFeatureCount() +
-                                                      quantizedFeaturesInfo->GetTokenizedFeatureCount());
-                data->ObjectsData.EmbeddingFeatures.resize(featuresLayout->GetEmbeddingFeatureCount());
+                data->ObjectsData.Data.FloatFeatures.resize(featuresLayout->GetFloatFeatureCount());
+                data->ObjectsData.Data.CatFeatures.resize(featuresLayout->GetCatFeatureCount());
+                data->ObjectsData.Data.TextFeatures.resize(quantizedFeaturesInfo->GetTokenizedFeatureCount());
+                data->ObjectsData.Data.EmbeddingFeatures.resize(featuresLayout->GetEmbeddingFeatureCount());
 
                 if (storeFeaturesDataAsExternalValuesHolders) {
                     // external columns keep the same subset
@@ -2304,7 +2321,7 @@ namespace NCB {
                                         quantizedFeaturesInfo,
                                         calcQuantizationAndNanModeOnlyInProcessFloatFeatures ?
                                             nullptr
-                                            : &(data->ObjectsData.FloatFeatures[*floatFeatureIdx])
+                                            : &(data->ObjectsData.Data.FloatFeatures[*floatFeatureIdx])
                                     );
 
                                     // exclusive features are bundled later by bundle,
@@ -2350,7 +2367,7 @@ namespace NCB {
                                             subsetIndexing.Get(),
                                             localExecutor,
                                             quantizedFeaturesInfo,
-                                            &(data->ObjectsData.CatFeatures[*catFeatureIdx])
+                                            &(data->ObjectsData.Data.CatFeatures[*catFeatureIdx])
                                         );
 
                                         // exclusive features are bundled later by bundle,
@@ -2383,13 +2400,13 @@ namespace NCB {
                         rawDataProvider->ObjectsData->Data.TextFeatures,
                         subsetIndexing.Get(),
                         quantizedFeaturesInfo->GetTextDigitizers(),
-                        data->ObjectsData.TextFeatures,
+                        data->ObjectsData.Data.TextFeatures,
                         localExecutor
                     );
 
                     MoveEmbeddingFeatures(
                         rawDataProvider->ObjectsData->Data.EmbeddingFeatures,
-                        data->ObjectsData.EmbeddingFeatures,
+                        data->ObjectsData.Data.EmbeddingFeatures,
                         subsetIndexing.Get(),
                         localExecutor
                     );
@@ -2415,7 +2432,7 @@ namespace NCB {
                 "All features are either constant or ignored."
             );
 
-            data->ObjectsData.QuantizedFeaturesInfo = quantizedFeaturesInfo;
+            data->ObjectsData.Data.QuantizedFeaturesInfo = quantizedFeaturesInfo;
 
 
             if (options.BundleExclusiveFeatures) {
@@ -2425,7 +2442,7 @@ namespace NCB {
                         rawDataProvider->ObjectsData->Data,
                         *incrementalIndexing,
                         *featuresLayout,
-                        *(data->ObjectsData.QuantizedFeaturesInfo),
+                        *(data->ObjectsData.Data.QuantizedFeaturesInfo),
                         options.ExclusiveFeaturesBundlingOptions,
                         localExecutor
                     )
@@ -2435,7 +2452,7 @@ namespace NCB {
             if (options.PackBinaryFeaturesForCpu) {
                 data->ObjectsData.PackedBinaryFeaturesData = TPackedBinaryFeaturesData(
                     *featuresLayout,
-                    *data->ObjectsData.QuantizedFeaturesInfo,
+                    *data->ObjectsData.Data.QuantizedFeaturesInfo,
                     data->ObjectsData.ExclusiveFeatureBundlesData
                 );
             }
@@ -2444,7 +2461,7 @@ namespace NCB {
                     *featuresLayout,
                     CreateFeatureGroups(
                         *featuresLayout,
-                        *data->ObjectsData.QuantizedFeaturesInfo,
+                        *data->ObjectsData.Data.QuantizedFeaturesInfo,
                         data->ObjectsData.ExclusiveFeatureBundlesData.FlatFeatureIndexToBundlePart,
                         data->ObjectsData.PackedBinaryFeaturesData.FlatFeatureIndexToPackedBinaryIndex,
                         options.FeaturesGroupingOptions
@@ -2485,11 +2502,10 @@ namespace NCB {
             data->CommonObjectsData.SubsetIndexing = std::move(subsetIndexing);
 
 
-            return MakeDataProvider<TQuantizedObjectsDataProvider>(
+            return MakeDataProvider<TQuantizedForCPUObjectsDataProvider>(
                 objectsGrouping,
                 std::move(*data),
                 false,
-                data->MetaInfo.ForceUnitAutoPairWeights,
                 localExecutor
             );
         }
@@ -2533,7 +2549,7 @@ namespace NCB {
             std::move(dataMetaInfo),
             std::move(rawObjectsDataProvider),
             objectsGrouping,
-            TRawTargetDataProvider(objectsGrouping, std::move(dummyData), true, /*forceUnitAutoPairWeights*/ true, nullptr)
+            TRawTargetDataProvider(objectsGrouping, std::move(dummyData), true, nullptr)
         );
 
         auto quantizedDataProvider = Quantize(
