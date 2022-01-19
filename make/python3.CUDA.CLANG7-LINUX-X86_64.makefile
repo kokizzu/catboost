@@ -11693,6 +11693,7 @@ $(BUILD_ROOT)/catboost/private/libs/quantized_pool/libprivate-libs-quantized_poo
 
 $(BUILD_ROOT)/catboost/private/libs/quantized_pool/detail.cpp.pic.o\
         ::\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/metainfo.pb.h\
         $(SOURCE_ROOT)/catboost/private/libs/quantized_pool/detail.cpp\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/quantized_pool'
@@ -11709,6 +11710,7 @@ $(BUILD_ROOT)/catboost/private/libs/quantized_pool/pool.cpp.pic.o\
 $(BUILD_ROOT)/catboost/private/libs/quantized_pool/print.cpp.pic.o\
         ::\
         $(BUILD_ROOT)/catboost/idl/pool/flat/quantized_chunk_t.fbs.h\
+        $(BUILD_ROOT)/catboost/idl/pool/proto/metainfo.pb.h\
         $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
         $(SOURCE_ROOT)/catboost/private/libs/quantized_pool/print.cpp\
 
