@@ -4558,6 +4558,7 @@ $(BUILD_ROOT)/catboost/libs/data/libcatboost-libs-data.a\
         $(BUILD_ROOT)/catboost/libs/data/feature_index.cpp.pic.o\
         $(BUILD_ROOT)/catboost/libs/data/feature_names_converter.cpp.pic.o\
         $(BUILD_ROOT)/catboost/libs/data/features_layout.cpp.pic.o\
+        $(BUILD_ROOT)/catboost/libs/data/features_layout_helpers.cpp.pic.o\
         $(BUILD_ROOT)/catboost/libs/data/lazy_columns.cpp.pic.o\
         $(BUILD_ROOT)/catboost/libs/data/load_and_quantize_data.cpp.pic.o\
         $(BUILD_ROOT)/catboost/libs/data/load_data.cpp.pic.o\
@@ -4585,7 +4586,7 @@ $(BUILD_ROOT)/catboost/libs/data/libcatboost-libs-data.a\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/libs/data'
 	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/generate_mf.py' --build-root '$(BUILD_ROOT)' --module-name catboost-libs-data -o catboost/libs/data/libcatboost-libs-data.a.mf -t LIBRARY -Ya,lics -Ya,peers
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/catboost/libs/data/libcatboost-libs-data.a' '$(BUILD_ROOT)/catboost/libs/data/async_row_processor.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/baseline.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/borders_io.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/cat_feature_perfect_hash.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/cat_feature_perfect_hash_helper.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/columns.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/composite_columns.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/data_provider.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/data_provider_builders.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/exclusive_feature_bundling.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/external_columns.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/feature_estimators.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/feature_grouping.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/feature_index.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/features_layout.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/feature_names_converter.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/lazy_columns.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/load_data.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/load_and_quantize_data.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/loader.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/meta_info.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/model_dataset_compatibility.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/objects.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/objects_grouping.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/order.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/packed_binary_features.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/proceed_pool_in_blocks.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/quantization.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/quantized_features_info.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/sparse_columns.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/target.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/unaligned_mem.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/util.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/visitor.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/weights.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/baseline.h_serialized.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/columns.h_serialized.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/order.h_serialized.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/target.h_serialized.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/visitor.h_serialized.cpp.pic.o'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/scripts/link_lib.py' ar GNU_AR None '$(BUILD_ROOT)' None '$(BUILD_ROOT)/catboost/libs/data/libcatboost-libs-data.a' '$(BUILD_ROOT)/catboost/libs/data/async_row_processor.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/baseline.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/borders_io.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/cat_feature_perfect_hash.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/cat_feature_perfect_hash_helper.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/columns.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/composite_columns.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/data_provider.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/data_provider_builders.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/exclusive_feature_bundling.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/external_columns.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/feature_estimators.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/feature_grouping.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/feature_index.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/features_layout.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/features_layout_helpers.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/feature_names_converter.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/lazy_columns.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/load_data.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/load_and_quantize_data.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/loader.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/meta_info.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/model_dataset_compatibility.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/objects.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/objects_grouping.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/order.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/packed_binary_features.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/proceed_pool_in_blocks.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/quantization.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/quantized_features_info.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/sparse_columns.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/target.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/unaligned_mem.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/util.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/visitor.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/weights.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/baseline.h_serialized.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/columns.h_serialized.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/order.h_serialized.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/target.h_serialized.cpp.pic.o' '$(BUILD_ROOT)/catboost/libs/data/visitor.h_serialized.cpp.pic.o'
 
 $(BUILD_ROOT)/catboost/libs/data/async_row_processor.cpp.pic.o\
         ::\
@@ -4762,6 +4763,30 @@ $(BUILD_ROOT)/catboost/libs/data/features_layout.cpp.pic.o\
 	mkdir -p '$(BUILD_ROOT)/catboost/libs/data'
 	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/catboost/libs/data/features_layout.cpp.pic.o' '$(SOURCE_ROOT)/catboost/libs/data/features_layout.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libf2c' '-I$(SOURCE_ROOT)/contrib/libs/protobuf/src' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -D_SHARED_PTR_H -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
 
+$(BUILD_ROOT)/catboost/libs/data/features_layout_helpers.cpp.pic.o\
+        ::\
+        $(BUILD_ROOT)/catboost/libs/helpers/flatbuffers/guid.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
+        $(BUILD_ROOT)/catboost/private/libs/text_features/flatbuffers/feature_calcers.fbs.h\
+        $(SOURCE_ROOT)/catboost/libs/data/features_layout_helpers.cpp\
+
+	mkdir -p '$(BUILD_ROOT)/catboost/libs/data'
+	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/catboost/libs/data/features_layout_helpers.cpp.pic.o' '$(SOURCE_ROOT)/catboost/libs/data/features_layout_helpers.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libf2c' '-I$(SOURCE_ROOT)/contrib/libs/protobuf/src' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -D_SHARED_PTR_H -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
+
+$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.iter.fbs.h\
+$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.bfbs\
+        ::\
+        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
+
+$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
+        ::\
+        $(BUILD_ROOT)/contrib/tools/flatc/flatc\
+        $(SOURCE_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs\
+        $(SOURCE_ROOT)/build/scripts/stdout2stderr.py\
+
+	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers'
+	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVRBfdXNlcl9leHRyYV9hcmdzcQhdcQlVBV9wYXRocQpVVSRTL2NhdGJvb3N0L3ByaXZhdGUvbGlicy9lbWJlZGRpbmdfZmVhdHVyZXMvZmxhdGJ1ZmZlcnMvZW1iZWRkaW5nX2ZlYXR1cmVfY2FsY2Vycy5mYnNxC3WFcQxiLg== --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
+
 $(BUILD_ROOT)/catboost/libs/data/lazy_columns.cpp.pic.o\
         ::\
         $(BUILD_ROOT)/catboost/idl/pool/proto/quantization_schema.pb.h\
@@ -4815,20 +4840,6 @@ $(BUILD_ROOT)/catboost/libs/data/model_dataset_compatibility.cpp.pic.o\
 
 	mkdir -p '$(BUILD_ROOT)/catboost/libs/data'
 	'$(CXX)' --target=x86_64-linux-gnu -c -o '$(BUILD_ROOT)/catboost/libs/data/model_dataset_compatibility.cpp.pic.o' '$(SOURCE_ROOT)/catboost/libs/data/model_dataset_compatibility.cpp' '-I$(BUILD_ROOT)' '-I$(SOURCE_ROOT)' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers' '-I$(SOURCE_ROOT)/contrib/libs/linux-headers/_nf' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxx/include' '-I$(SOURCE_ROOT)/contrib/libs/cxxsupp/libcxxrt' '-I$(SOURCE_ROOT)/contrib/libs/zlib/include' '-I$(SOURCE_ROOT)/contrib/libs/double-conversion/include' '-I$(SOURCE_ROOT)/contrib/libs/libf2c' '-I$(SOURCE_ROOT)/contrib/libs/protobuf/src' -pipe -m64 -O3 -g -ggnu-pubnames -fexceptions -fuse-init-array -faligned-allocation -W -Wall -Wno-parentheses -DFAKEID=5020880 '-DARCADIA_ROOT=$(SOURCE_ROOT)' '-DARCADIA_BUILD_ROOT=$(BUILD_ROOT)' -D_THREAD_SAFE -D_PTHREADS -D_REENTRANT -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES -D_LARGEFILE_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -D__LONG_LONG_SUPPORTED -DSSE_ENABLED=1 -DSSE3_ENABLED=1 -DSSSE3_ENABLED=1 -DSSE41_ENABLED=1 -DSSE42_ENABLED=1 -DPOPCNT_ENABLED=1 -DCX16_ENABLED=1 -DCATBOOST_OPENSOURCE=yes -D_libunwind_ -nostdinc++ -D_SHARED_PTR_H -fPIC -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mcx16 -fPIC -std=c++17 -Woverloaded-virtual -Wno-invalid-offsetof -Wno-attributes -Wno-dynamic-exception-spec -Wno-register -Wimport-preprocessor-directive-pedantic -Wno-c++17-extensions -Wno-exceptions -Wno-inconsistent-missing-override -Wno-undefined-var-template -Wno-return-std-move -DCATBOOST_OPENSOURCE=yes -nostdinc++
-
-$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.iter.fbs.h\
-$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.bfbs\
-        ::\
-        $(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
-
-$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h\
-        ::\
-        $(BUILD_ROOT)/contrib/tools/flatc/flatc\
-        $(SOURCE_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs\
-        $(SOURCE_ROOT)/build/scripts/stdout2stderr.py\
-
-	mkdir -p '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers'
-	'$(PYTHON)' '$(SOURCE_ROOT)/build/plugins/_unpickler.py' --src-root '$(SOURCE_ROOT)' --build-root '$(BUILD_ROOT)' --data gAJjZmxhdGMKRmxhdGMKcQApgXEBfXECKFUKX2luY2xfZGlyc3EDXXEEKFUCJFNxBVUCJEJxBmVVDl9yZWZsZWN0X25hbWVzcQeJVRBfdXNlcl9leHRyYV9hcmdzcQhdcQlVBV9wYXRocQpVVSRTL2NhdGJvb3N0L3ByaXZhdGUvbGlicy9lbWJlZGRpbmdfZmVhdHVyZXMvZmxhdGJ1ZmZlcnMvZW1iZWRkaW5nX2ZlYXR1cmVfY2FsY2Vycy5mYnNxC3WFcQxiLg== --tools 1 '$(BUILD_ROOT)/contrib/tools/flatc/flatc'
 
 $(BUILD_ROOT)/catboost/libs/data/objects.cpp.pic.o\
         ::\
@@ -38437,13 +38448,14 @@ clean\
 	rm -f '$(BUILD_ROOT)/catboost/libs/data/feature_index.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/data/feature_names_converter.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/data/features_layout.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/catboost/libs/data/features_layout_helpers.cpp.pic.o'
+	rm -f '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.iter.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.bfbs'
 	rm -f '$(BUILD_ROOT)/catboost/libs/data/lazy_columns.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/data/load_and_quantize_data.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/data/load_data.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/data/loader.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/data/meta_info.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/data/model_dataset_compatibility.cpp.pic.o'
-	rm -f '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.iter.fbs.h' '$(BUILD_ROOT)/catboost/private/libs/embedding_features/flatbuffers/embedding_feature_calcers.bfbs'
 	rm -f '$(BUILD_ROOT)/catboost/libs/data/objects.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/data/objects_grouping.cpp.pic.o'
 	rm -f '$(BUILD_ROOT)/catboost/libs/data/order.cpp.pic.o'
